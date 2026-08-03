@@ -251,7 +251,9 @@ class NormalizationConfig:
     def to_json_file(self, path: str | Path) -> None:
         payload = {"normalizer_version": NORMALIZER_VERSION, **self.to_dict()}
         Path(path).write_text(
-            json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+            json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+            newline="\n",
         )
 
     def fingerprint(self) -> str:
@@ -509,13 +511,17 @@ def main(argv: list[str] | None = None) -> int:
     log.add(result)
 
     if args.output:
-        Path(args.output).write_text(result.normalized, encoding="utf-8")
+        # `newline="\n"`, never the platform default. On Windows `write_text` translates every
+        # \n to \r\n — which would put carriage returns straight back into text this function
+        # just stripped them out of, and make the same corpus hash differently on Windows than
+        # on Linux. Every checksum downstream of here depends on this argument.
+        Path(args.output).write_text(result.normalized, encoding="utf-8", newline="\n")
     else:
         sys.stdout.buffer.write(result.normalized.encode("utf-8"))
 
     payload = json.dumps(log.to_dict(), indent=2, ensure_ascii=False)
     if args.log:
-        Path(args.log).write_text(payload + "\n", encoding="utf-8")
+        Path(args.log).write_text(payload + "\n", encoding="utf-8", newline="\n")
     else:
         print(payload, file=sys.stderr)
     return 0

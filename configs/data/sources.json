@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "acquisition_version": "1.0.0",
+  "sources": [
+    {
+      "name": "fineweb2-urd_Arab",
+      "role": "Primary native Urdu (PRD §6.2)",
+      "repo_id": "HuggingFaceFW/fineweb-2",
+      "repo_type": "dataset",
+      "revision": "af9c13333eb981300149d5ca60a8e9d659b276b9",
+      "config": "urd_Arab",
+      "license": "ODC-By-1.0",
+      "homepage": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-2",
+      "citation": "Penedo et al., FineWeb2 (2024)",
+      "attribution": "FineWeb2, HuggingFaceFW",
+      "notes": "6.87 GB of parquet for a ~120M clean token target, so the default fetch takes the smaller train shard (order 0) plus the eval shard and stops. Shard 001 alone holds 1,547,542 documents averaging ~2,240 chars (~3.5G chars pre-filter), roughly 10x the target. CHECKED 2026-08-03: shards are NOT dump-partitioned — 88 distinct CommonCrawl dumps spanning CC-MAIN-2019-43 to CC-MAIN-2024-18 appear across the shard, and every row group mixes several — so one shard is not a time-biased slice. BUT documents are not shuffled either: row group 0 skews to 2021/2022 dumps and row group 206 to 2024, so a PREFIX of the shard is time-biased. Document selection at stage 9 and for arm A's 25M subsample must be random across the shard, never a prefix or contiguous block, or arm A becomes systematically older web text than arm B. The `test` shard is FineWeb2's own held-out slice of the same crawl; it is NOT a decontaminated eval set for us (stage 8 still applies).",
+      "files": [
+        {
+          "path": "data/urd_Arab/train/001_00000.parquet",
+          "sha256": "a356fe5d478be9bbb3887cbc1ca338f8455e071041352f2023ac7a54799375e2",
+          "size": 2024610997,
+          "split": "train",
+          "order": 0,
+          "note": "smaller of the two train shards; alone this is far past the ~120M token target"
+        },
+        {
+          "path": "data/urd_Arab/test/000_00000.parquet",
+          "sha256": "277ecdeebc1b9327a684243897afc3a8acd1a44774b5c6cc67afc6899298e058",
+          "size": 71344862,
+          "split": "test",
+          "order": 1,
+          "note": "FineWeb2's own held-out slice; candidate eval pool, still requires stage 8"
+        },
+        {
+          "path": "data/urd_Arab/train/000_00000.parquet",
+          "sha256": "a3e64b92cb606bca9ef522bb82d15828beef4825e8998bb43f6e142cc947338d",
+          "size": 4844148326,
+          "split": "train",
+          "order": 2,
+          "note": "the G1 fallback — only needed if stage 5 filtering yields under 100M tokens. Ordered last so a budgeted fetch never blocks the small eval shard behind it."
+        }
+      ]
+    },
+    {
+      "name": "roman-urdu-parl",
+      "role": "Parallel script pairs, and the reference transliteration test split (PRD §6.2, §8.2)",
+      "repo_id": "Mavkif/Roman-Urdu-Parl-split",
+      "repo_type": "dataset",
+      "revision": "b9ef670661582b5f17eff68b4e65fbe25f3cb0b9",
+      "license": "Apache-2.0",
+      "homepage": "https://huggingface.co/datasets/Mavkif/Roman-Urdu-Parl-split",
+      "citation": "Alam & Hussain, Roman-Urdu-Parl; split by Mavkif",
+      "attribution": "Roman-Urdu-Parl (Mavkif/Roman-Urdu-Parl-split)",
+      "notes": "PRD §6.2 warning applies: substantially machine-produced. ~6.37M pairs collapse to ~1.09M unique Urdu sentences, so the native side must be deduplicated hard (stage 6/7) before it enters pretraining, and any transliteration score on the reference split means 'matches that transliterator'. The human-written set in §8.2 exists to close that gap. Eval splits are ordered first so they can be fetched without the 1.19 GB train file.",
+      "files": [
+        {
+          "path": "test_set.csv",
+          "sha256": "c8c39f7b6e364abb6f7a0ef802a5e99794083ba8ad69e713888df471b523155b",
+          "size": 1846199,
+          "split": "test",
+          "order": 0,
+          "note": "official test split — PRD §8.2 reference transliteration set"
+        },
+        {
+          "path": "validation_set.csv",
+          "sha256": "fa4ab3c419da5b51a77caa2d1ed4779618f62440cf804fb70e0c4bc8b8957ef9",
+          "size": 1825822,
+          "split": "validation",
+          "order": 1
+        },
+        {
+          "path": "train_set.csv",
+          "sha256": "e35eef8de7871c70fe54b2f605bfdd64df26244fe40f4d0dc638f8cbd115f00b",
+          "size": 1189435308,
+          "split": "train",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "name": "urdu-wikipedia",
+      "role": "Clean supplementary native Urdu and eval pool (PRD §6.2)",
+      "repo_id": "wikimedia/wikipedia",
+      "repo_type": "dataset",
+      "revision": "b04c8d1ceb2f5cd4588862100d08de323dccfbaa",
+      "config": "20231101.ur",
+      "license": "CC-BY-SA-3.0",
+      "homepage": "https://huggingface.co/datasets/wikimedia/wikipedia",
+      "citation": "Wikimedia Foundation, Urdu Wikipedia dump 2023-11-01",
+      "attribution": "Urdu Wikipedia contributors, dump 20231101",
+      "notes": "Dual-licensed CC BY-SA 3.0 / GFDL upstream; recorded under the CC term. Share-alike: no raw text is redistributed (PRD §6.3) and attribution is carried in data/manifest.json and the technical report. The 2023-11 dump is the newest in this repo revision; staleness is irrelevant for a pretraining corpus and pinning beats freshness here.",
+      "files": [
+        {
+          "path": "20231101.ur/train-00000-of-00001.parquet",
+          "sha256": "f711c56af77a88ea8036282c9c49243d0319fe0ddf08ea4e88800d0482d6f8d0",
+          "size": 167627869,
+          "split": "train",
+          "order": 0
+        }
+      ]
+    }
+  ],
+  "rejected": [
+    {
+      "name": "UrduLM / ALIF Urdu Corpus",
+      "repo_id": "orature/ALIF_Urdu_Corpus_AUC",
+      "license": "CC-BY-SA-4.0",
+      "citation": "arXiv:2601.17664 (25 Jan 2026)",
+      "reason": "The 33 GB corpus is not actually released. The public artifact is a 5,000-row / 14.5 MB preview; the paper's 'released openly' claim is not met for the corpus. Licence was never the blocker.",
+      "notes": "Checked 2026-08-03. The arXiv paper is CC BY-NC-ND-4.0, but that covers the paper, not the data; the preview dataset is CC BY-SA-4.0 and the ALIF-Base-100M model is Apache-2.0. Retained as the PRD §6.1 'how much could we have collected' citation, WITH a qualification the report must carry: of the claimed 33 GB, 5.5 GB is English FineWeb machine-translated to Urdu via Google Translate and 19.4 GB is CommonCrawl, which overlaps Ravaan's own primary source. The ~5-6B-token figure is therefore not 5-6B tokens of independent, human-authored Urdu. Finding B's conclusion survives — even after discounting, collectable Urdu exceeds the ~1.4B Chinchilla-optimal budget for 70M params by several times — but the headline number must be stated with that caveat. Separately useful for Week 5: orature/ALIF-Base-100M is Apache-2.0 and ships a 32k Urdu SentencePiece model, a legitimate external fertility baseline for PRD §7."
+    },
+    {
+      "name": "CulturaX / OSCAR / ROOTS / Makhzan / Bactrian-X",
+      "reason": "Dropped in PRD v2 §6.2: each costs weeks of integration and adds little on top of FineWeb2 for a ~120M-token target.",
+      "notes": "Not a licence or quality judgement. If stage 5 filtering yields under the G1 threshold of 100M tokens, the first fallback is FineWeb2's second train shard, not a new source — adding a source changes the corpus mix and would confound arm A against arm B."
+    }
+  ]
+}

@@ -308,3 +308,28 @@ def test_invalid_config_is_rejected() -> None:
         NormalizationConfig(max_consecutive_newlines=0)
     with pytest.raises(ValueError):
         NormalizationConfig.from_dict({"unify_yeh": True, "unify_zeh": True})
+
+
+# --- Line endings ----------------------------------------------------------
+# On Windows, `Path.write_text` translates every \n to \r\n by default. That would put carriage
+# returns straight back into text this module just removed, and make the same corpus hash
+# differently on Windows than on Linux — silently, and only for one platform's operator.
+
+
+def test_cli_writes_lf_never_crlf(tmp_path) -> None:
+    from ravaan.data.normalization import main
+
+    source = tmp_path / "raw.txt"
+    source.write_bytes("سطر ایک\r\nسطر دو\r\nسطر تین".encode())
+    out, log = tmp_path / "clean.txt", tmp_path / "log.json"
+    assert main([str(source), "-o", str(out), "--log", str(log)]) == 0
+
+    assert b"\r" not in out.read_bytes()
+    assert out.read_bytes().decode("utf-8") == "سطر ایک\nسطر دو\nسطر تین"
+    assert b"\r" not in log.read_bytes()
+
+
+def test_config_files_are_written_with_lf(tmp_path) -> None:
+    path = tmp_path / "normalization.json"
+    NormalizationConfig().to_json_file(path)
+    assert b"\r" not in path.read_bytes()

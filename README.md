@@ -12,14 +12,30 @@ factorization — and measures where, if anywhere, their curves cross.
 | Infilling | FIM (prefix/suffix/middle) | Mask the middle span |
 
 Same corpus, same tokenizer, same parameter count (within 2%), same context length, same optimizer
-and schedule, same tokens processed, same seeds, **same training tasks**. Both are trained to ~33
-epochs over ~300M unique tokens and checkpointed at epochs 1, 2, 4, 8, 16, 33.
+and schedule, same tokens processed, same seeds, **same training tasks**.
 
 The motivating claim from the literature is that masked diffusion overtakes autoregression when
-compute is abundant but unique data is scarce. That result was measured on *artificially subsampled*
-English. Urdu is *naturally* data-constrained, and noisier. Whether the finding survives is open.
+compute is abundant but unique data is scarce. Prabhudesai et al. ([arXiv:2507.15857]) measured
+that on clean English C4 and fitted a critical-compute threshold. Urdu web text is noisier, more
+duplicated and more domain-skewed, and the script, morphology and tokenizer fertility all differ.
+**Does the law transfer?**
+
+Two arms, both processing ~9.9B tokens, differing only in how much unique data those tokens are
+drawn from — because compute is parameters × tokens *processed*, so unique data is free:
+
+| Arm | Unique U | Epochs | Seeds | Predicted |
+|---|---|---|---|---|
+| **A** (primary) | 25M | ~396 | 3 | **1.79× past** the fitted crossover |
+| **B** (bracket) | 100M | ~99 | 1 | **0.09× of** it |
+
+Arm A is predicted to cross and arm B is not, so the paired outcome tests the crossover's
+*location*, not merely its sign. Both arms sit **inside** the reference paper's fitted range of U,
+so no claim here depends on extrapolating their law. The predictions are committed in
+[`reports/preregistration.md`](reports/preregistration.md), written before any training.
 
 **This is not an Urdu chat model, and it will not become one.**
+
+[arXiv:2507.15857]: https://arxiv.org/abs/2507.15857
 
 The full specification lives in [`Ravaan_PRD_v2.md`](Ravaan_PRD_v2.md). Session-by-session status
 lives in [`progress.md`](progress.md).
@@ -28,7 +44,8 @@ lives in [`progress.md`](progress.md).
 
 ## Status
 
-Pre-alpha. Week 1 of 16. Nothing has been trained. See `progress.md`.
+Pre-alpha. Week 1 of 16. Nothing has been trained. Gate G0 (novelty) passed; the corpus pipeline
+has stages 1, 2 and 4 built and the raw corpus on disk. See `progress.md`.
 
 ## Layout
 
@@ -54,14 +71,34 @@ python -m pip install -e ".[dev]"
 # add extras as the pipeline needs them: .[data] .[tokenizer] .[train]
 ```
 
-The core package has no runtime dependencies. Heavy dependencies are opt-in extras so that the
-corpus-normalization stage stays auditable.
+The core package has no runtime dependencies. The corpus pipeline's load-bearing stages —
+acquisition, encoding validation, normalization — are standard-library-only on purpose: they
+decide which bytes the project is built on and what every later stage reads, so they stay
+auditable. Heavy dependencies are opt-in extras, starting at the stage where parquet must be
+parsed.
 
 ## Test
 
 ```bash
 python -m pytest
 ```
+
+## Corpus pipeline
+
+```bash
+python scripts/acquire.py plan                        # sources, licences, sizes, fingerprint
+python scripts/acquire.py fetch --max-bytes 3e9       # download, verify, record the manifest
+python scripts/acquire.py verify                      # re-check what is on disk
+python scripts/validate_encoding.py shard.jsonl --jsonl -o clean.jsonl
+python scripts/normalize.py raw.txt -o clean.txt --log stats.json
+python scripts/corpus_probe.py <shard>.parquet --limit 20000   # what the stages actually did
+```
+
+Sources are declared in [`configs/data/sources.json`](configs/data/sources.json): every source
+pinned to a commit SHA, every file carrying its SHA-256 before download, and every licence checked
+against what PRD §6.3 promises to ship. Sources that were considered and declined stay in the file
+with their reasons — the corpus cap is a design decision, and that is only checkable if what was
+declined sits next to what was taken.
 
 ## Data and release policy
 

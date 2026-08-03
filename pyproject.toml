@@ -17,12 +17,16 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 
-# Stage 4 of the corpus pipeline needs nothing but the standard library, on
-# purpose: normalization is the one component every later stage depends on, and
-# it should stay auditable and dependency-free.
+# Stages 1, 2 and 4 of the corpus pipeline (acquisition, encoding validation,
+# normalization) need nothing but the standard library, on purpose: they decide
+# which bytes the project is built on and what every later stage reads, so they
+# should stay auditable and dependency-free. `[data]` starts at stage 3, where
+# parquet has to be parsed.
 dependencies = []
 
 [project.scripts]
+ravaan-acquire = "ravaan.data.acquisition:main"
+ravaan-validate-encoding = "ravaan.data.encoding:main"
 ravaan-normalize = "ravaan.data.normalization:main"
 
 [project.optional-dependencies]

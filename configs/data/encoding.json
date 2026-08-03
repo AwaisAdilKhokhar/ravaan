@@ -1,0 +1,12 @@
+{
+  "encoding_version": "1.0.0",
+  "strict_utf8": true,
+  "on_decode_error": "reject",
+  "strip_bom": true,
+  "repair_mojibake": true,
+  "max_repair_passes": 3,
+  "max_mojibake_rate": 0.001,
+  "max_replacement_rate": 0.001,
+  "strip_control_chars": true,
+  "max_control_rate": 0.001
+}

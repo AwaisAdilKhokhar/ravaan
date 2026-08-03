@@ -1,10 +1,16 @@
 # --- Corpus and artifacts (never committed; §6.3 release policy is code + manifest only)
 # Leading slash matters: a bare `data/` also matches ravaan/data/ and configs/data/, which would
 # silently drop the corpus pipeline source from the repo.
-/data/
+# Trailing `*` matters too: git cannot re-include a file whose *parent directory* is excluded,
+# so `/data/` + `!/data/manifest.json` silently ignores the negation. `/data/*` excludes the
+# entries rather than the directory, which is what makes the exceptions below work.
+/data/*
 !/data/.gitkeep
+!/data/manifest.json
+/data/raw/
 /checkpoints/
 /runs/
+/logs/
 wandb/
 *.arrow
 *.parquet

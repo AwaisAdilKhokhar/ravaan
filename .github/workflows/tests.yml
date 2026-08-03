@@ -1,0 +1,31 @@
+# PRD §8.1: the engineering invariants are CI, never a results table. §14 makes "all §8.1
+# invariants passing in CI" a ship criterion, so this file is part of the definition of done.
+#
+# The corpus pipeline's load-bearing stages (acquisition, encoding, normalization) are
+# standard-library-only by design, so the default job installs no runtime dependencies at all —
+# if that ever stops being true, this job is where it shows up.
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Oldest supported and current. Urdu text handling depends on Unicode data, which moves
+        # between releases; running both is how a version-dependent normalization rule surfaces.
+        python-version: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: pytest -q

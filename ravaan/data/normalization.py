@@ -343,11 +343,17 @@ def _expand_presentation_forms(text: str) -> str:
     return PRESENTATION_FORMS_RE.sub(lambda m: unicodedata.normalize("NFKC", m.group()), text)
 
 
+@lru_cache(maxsize=8)
+def _newline_run_re(max_newlines: int) -> re.Pattern[str]:
+    """Compiled once per distinct cap — this runs over every document in the corpus."""
+    return re.compile(f"\n{{{max_newlines + 1},}}")
+
+
 def _collapse_whitespace(text: str, max_newlines: int) -> str:
     text = _LINE_BREAK_RE.sub("\n", text)
     text = _HORIZONTAL_SPACE_RE.sub(" ", text)
     text = _SPACE_AROUND_NEWLINE_RE.sub("\n", text)
-    text = re.sub("\n{%d,}" % (max_newlines + 1), "\n" * max_newlines, text)
+    text = _newline_run_re(max_newlines).sub("\n" * max_newlines, text)
     return text.strip()
 
 

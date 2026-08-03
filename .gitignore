@@ -16,6 +16,12 @@ wandb/
 *.parquet
 *.jsonl
 *.jsonl.zst
+# ...except the ones under reports/, which are evidence rather than corpus. The stage-5
+# validation sample is a .jsonl and the review sheet beside it is useless without it — the
+# `score` command reads the metrics from here. Third time a blanket ignore has nearly dropped
+# something load-bearing (session 2's bare `data/`, session 4's `/data/`), so: verified with
+# `git check-ignore -v reports/quality_sample.jsonl`, which now reports nothing.
+!/reports/*.jsonl
 *.txt.zst
 *.model
 *.vocab

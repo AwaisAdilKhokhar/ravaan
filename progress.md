@@ -5,9 +5,10 @@ Spec is the PRD; this file is the state of play. **Read the "Next session" secti
 first.**
 
 - **Started:** 2026-08-03 (Week 1 of 16)
-- **Current phase:** Weeks 1–2 complete → Weeks 3–4, corpus freeze. Pipeline stages 1, 2, 3 and 4
-  are built and validated on real text; next is stage 5 (quality filtering) and its 200-sample
-  manual validation.
+- **Current phase:** Weeks 1–2 complete → Weeks 3–4, corpus freeze. Pipeline stages 1–5 are built
+  and validated on real text, and stage 5's 200-sample validation is adjudicated, scored and
+  written up ([`reports/quality_validation.md`](reports/quality_validation.md)). Next is stage 6
+  (exact dedup).
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
 - **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds
@@ -15,7 +16,10 @@ first.**
 - **Preregistration:** ✅ committed [`reports/preregistration.md`](reports/preregistration.md) —
   4 falsifiable predictions, before any training.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 233 passing (69 normalization · 57 encoding · 57 acquisition · 32 langid · 18 shards)
+- **Tests:** 276 passing (69 normalization · 57 encoding · 57 acquisition · 43 quality · 32 langid
+  · 18 shards)
+- **Committed.** Sessions 6 and 7 are in git as one commit — stage 5, its 200-sample validation and
+  the write-up are one deliverable.
 
 ---
 
@@ -44,7 +48,8 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 |---|---|---|
 | **Urdu normalization (stage 4)** | §6.3.4 | ✅ |
 | Arabic-variant spelling is site-correlated (Finding F) | §6.3.4 | ✅ answered |
-| Quality filtering (stage 5) + 200-sample manual validation | §6.3.5 | ⬜ |
+| Quality filtering (stage 5) | §6.3.5 | ✅ |
+| 200-sample validation — drawn, adjudicated, scored, written up | §6.3.5 | 🟡 native-speaker pass outstanding |
 | Exact dedup (stage 6) | §6.3.6 | ⬜ |
 | MinHash near-dedup (stage 7) | §6.3.7 | ⬜ |
 | Eval decontamination (stage 8) | §6.3.8 | ⬜ |
@@ -583,6 +588,264 @@ document.
 
 ---
 
+### Session 6 — 2026-08-04
+
+**Done**
+
+1. **Quality filtering — stage 5** (`ravaan/data/quality.py`, `configs/data/quality.json`,
+   43 tests). All five §6.3.5 rule families — script ratio, repetition, URL density, HTML residue,
+   replacement-character frequency — plus a length floor. Four properties it is built around.
+   - **Every rule is evaluated; none short-circuits.** The log records `rejections` (documents each
+     rule fired on, overlapping) *and* `sole_rejections` (documents only that rule rejected). The
+     second number is the one that says whether a rule is filtering the corpus or agreeing with
+     another rule. Stages 2 and 3 both turned out to be assertions rather than filters on FineWeb2
+     and the only reason that is known is that it was measured; stage 5 measures it by
+     construction.
+   - **Thresholds are per population.** §6.3.5 reads as one Urdu-script floor, and that floor
+     deletes the entire ~40M-token Roman Urdu population, which is Latin script by definition. The
+     rule is instead "share of letters in the scripts this stage-3 label is *expected* to be
+     written in", and the label is threaded through from stage 3.
+   - **Measurement is separable from scoring.** `measure()` produces thresholds-free metrics;
+     `score()` applies a config to them. This is what let the 200-sample validation be adjudicated
+     once and then replayed against every candidate threshold in seconds instead of re-reading
+     40,000 documents per candidate.
+   - **Stage 5 rejects; it does not repair.** Stage 2 repairs mojibake because the correct output
+     is not a matter of opinion. Stripping a document's boilerplate to save it means deciding what
+     its content was.
+
+2. **The 200-sample manual validation (PRD §6.3.5)** — `scripts/quality_sample.py` (draw + score),
+   `reports/quality_sample.md` (the review sheet, adjudicated), `reports/quality_sample.jsonl`,
+   `reports/quality_validation.json`. **This changed four of the six rule families.**
+   - **The sample is stratified and the strata are never pooled.** 100 uniform (50 per source) to
+     estimate false *accepts* honestly; 100 oversampled from rejections, spread across families
+     smallest-first, to measure each rule's precision. A uniform 200 would have contained zero or
+     one rejected FineWeb2 document and could not have validated a single rejection.
+   - Both strata are drawn by `stable_unit` on the document id, so the sample is reproducible from
+     the seed on any machine and in any read order.
+
+3. **`scripts/probe.py`** — stages 2→5 over a real source, replacing **both** `corpus_probe.py` and
+   `stage3_probe.py`, which are deleted. This closes the carried-forward item. It reproduces
+   session 5's Finding F numbers exactly (top 1% of domains carry 65.3% of variant hits, corpus-wide
+   1.37/kchar, `alhassanain.com` 54.39, `aaj.tv` 0.00), which is the cross-check that the
+   consolidation changed nothing. It adds per-metric percentile distributions and a reservoir of
+   *rejected* examples per rule family — a threshold is only defensible once you have read what it
+   deletes.
+
+**The validation is the finding: inherited English thresholds do not transfer, in three
+different ways**
+
+Rae et al.'s Gopher repetition values reject **13.7% of FineWeb2 `urd_Arab`**, and reading that
+13.7% shows it is almost entirely clean Urdu news prose. Two mechanisms, both specific to this
+material:
+
+- **Urdu news wire copy restates the headline verbatim in the lead paragraph.** It is the house
+  style. A 500-character article carrying its own 60-character headline twice is over 20% duplicate
+  5-grams by arithmetic, with nothing wrong with it.
+- **Function-word density.** Urdu's compound verbs and postpositional phrases (کے مطابق، کی جانب
+  سے، ہو گیا ہے) make a repeated five-word run ordinary where the English equivalent is a template.
+
+The other half of the argument is that the repetition which matters in *this* corpus is
+cross-document, not within-document: Wikipedia's geographic stub farms and Finding F's republished
+religious texts are near-duplicates of each other, which is stages 6–7's job. So stage 5's
+repetition family is a backstop against a single pathological document, not the corpus's repetition
+control.
+
+**What the 200 documents changed, and by how much**
+
+| | before validation | after |
+|---|---|---|
+| Agreement, uniform stratum | 0.76 | **0.92** |
+| Agreement, all 200 | 0.675 | **0.855** |
+| False accepts (uniform, n=91→67) | **24** | **4** |
+| `too_short` precision | 1.00 (32) | 0.93 (75) |
+| `repetition` precision | 0.60 | **1.00** |
+| `html_residue` precision | 0.38 | **1.00** |
+| `script_ratio` precision | 0.55 | 0.50 |
+
+Four threshold changes, each forced by documents rather than by taste:
+
+- **`min_chars` 200 → 400.** The largest single result. At 200 the rule had *perfect* precision —
+  32 of 32 rejections agreed with — and was still the filter's biggest error source, because it was
+  letting through 24 of the 91 documents a human would drop: Urdu Wikipedia's template geo-stubs,
+  one factual sentence wrapped in section headers and category footers, running 200–420 characters.
+  **A rule can be perfectly precise and still be set far too low, and only the accept side shows
+  it.** That is what the uniform stratum is for.
+- **`max_dup_ngram_ratio` 0.40 → 0.60, and n=2 dropped from `max_top_ngram_ratio`.** The validation
+  split the repetition family cleanly: **the top-n-gram rules discriminate and the duplicate-n-gram
+  rules did not.** Every top-n-gram rejection was a Wikipedia disambiguation or list page and a
+  human agreed with all of them; the duplicate rules were rejecting *biographies*, because an
+  article about one person repeats that person's name and the formulae of the genre. Separately,
+  n=2 was the one top-n-gram rule with a false positive — a 4,700-character article on the UN
+  Convention on the Rights of the Child scores 0.38 on بچوں کے, which is its topic, not its
+  boilerplate. Dropping n=2 took the family to precision 1.00 while still rejecting every list page.
+- **`max_html_ratio` 0.02 → 0.10.** The pattern is precise about what it *matches* — across 7,999
+  probed documents every hit was a genuine tag, including wiki `<ref>`/`<noinclude>`, with no false
+  positives — and 0.02 was wrong about what that means. It was deleting clean Wikipedia biographies
+  carrying five stray `</i>` tags. The rule should fire when a document *is* markup, not when it
+  *contains* some.
+- **`min_urdu_script_ratio` 0.70 → 0.60, and this one is not fixed.** It is the rule the validation
+  could not repair, and the report should say so. At 0.70 precision was 0.55; at 0.60 it is 0.50.
+  The failure is structural rather than a threshold: an Urdu news article quoting an English tweet
+  scores 0.57, a porn-spam page with Urdu keyword salad scores 0.58, and an Urdu ghazal printed
+  beside its Roman transliteration scores 0.52. Latin share does not separate them because it is
+  not what distinguishes them. 0.60 keeps Urdu journalism and still removes the wholly-English
+  pages stage 3 let through. The language decision belongs to stage 3, which made it on far better
+  evidence.
+
+`max_url_ratio` was also raised (0.10 → 0.30) from the distribution alone, before the sample: every
+document between 0.10 and 0.30 was a legitimate Wikipedia article whose *references and
+external-links section* is made of URLs — structurally identical to a link farm by this metric, and
+the same artefact that made Wikipedia look 30% bilingual to stage 3 in session 5. Citation-heavy
+articles are systematically the longer, better-sourced ones, so a threshold that catches them
+changes corpus composition in the wrong direction.
+
+**Measured — stage 5 on real text, 20,000 documents per source**
+
+| | FineWeb2 `urd_Arab` | Urdu Wikipedia |
+|---|---|---|
+| documents kept | **96.48%** | **46.72%** |
+| **characters kept** | **99.48%** | **87.38%** |
+| `too_short` fired / sole | 694 / 694 | 10,568 / 10,174 |
+| `script_ratio` | 9 / 9 | 61 / 22 |
+| `repetition` | 0 | 406 / 55 |
+| `html_residue` | 0 | 12 / 4 |
+| `url_density` | 0 | 7 / 4 |
+| `replacement_chars` | 0 | 0 |
+
+- **Stage 5 is very nearly an assertion on FineWeb2 — the same shape as stages 2 and 3, for the
+  same reason.** FineWeb2 already ran encoding, language and Gopher-style repetition filtering, so
+  what is left for stage 5 to remove is 0.5% of the characters. This is now the third stage where
+  the honest report is "this source was already clean in this dimension", and the three together
+  are a real finding about what FineWeb2 is.
+- **Wikipedia loses half its documents and an eighth of its characters**, which is the right shape:
+  the rejected half is the template stub farm, and stage 7 would have collapsed those anyway.
+- **`replacement_chars` never fired on either source, as designed.** Stage 2 already enforces the
+  same 0.001 rate, so in the assembled pipeline this rule cannot fire; it exists so stage 5 is
+  sound when run standalone. `sole_rejections` reporting zero for it is the honest way to say so.
+- **G1 is not at risk.** FineWeb2 shard 001 is ~3.5G characters before filtering and keeps 99.48%,
+  which is roughly an order of magnitude past the ~120M-token target.
+
+**The normalizer on FineWeb2 — session 4's carried-forward caveat, now closed**
+
+The same 200 documents went through stage 4. On the 96 FineWeb2 documents in the sample, **14.6%
+were changed** (against 13.7% measured over 20,000 in session 4 — consistent), and the rules that
+fired are the Urdu-specific ones: heh 37, yeh 29, teh_marbuta 6, zero_width 5, presentation_forms 5,
+alef 4, digits 2, kaf 1. Net character delta +80 across the sample, i.e. normalization makes
+FineWeb2 very slightly *longer*, as session 4 predicted (presentation-form expansion, no whitespace
+slack to reclaim). **No rule misfired on any of the 200** — nothing folded a preserved grapheme,
+and every change inspected was a genuine variant unification.
+
+**Decisions made**
+
+| Decision | Rationale |
+|---|---|
+| The 200-sample validation is **stratified**, and the strata are scored separately and never pooled | Stage 5 rejects 0.26% of FineWeb2 under the pre-validation config. A uniform 200 contains zero or one rejected document and cannot validate a rejection; a purely rejection-sampled 200 cannot estimate false accepts. Both questions are real, so both strata exist, and the report says which number came from which. |
+| `measure()` and `score()` are separate functions | Human adjudication is the expensive half and it is a judgement about *documents*, so it survives a threshold change. Storing metrics rather than verdicts is what made a five-threshold sweep against human labels a minute's work. |
+| A length floor is added although §6.3.5 does not list it | The population it removes is the one every other rule measures badly: a 200-character document has no repetition, no meaningful URL density, and a script ratio computed over a dozen letters. It is also, measured, the single highest-precision rule in the stage. Flagged inline as an addition, as the normalizer's extra folds were. |
+| Sentence-unit sources get a **named** config (`for_sentences()`), not a special case in the driver | Roman-Urdu-Parl's rows are ~45-character sentences; the document floor would delete the entire source. Making it a named config keeps it in the fingerprint, so the manifest records which rules ran on which source instead of it being implicit in a script. |
+| Rejection examples are sampled per rule family, smallest family first | Rules that fire rarely are exactly the ones whose thresholds rest on the least evidence. A proportional draw leaves them uninspected — `html_residue` fired 12 times in 20,000 Wikipedia documents and its threshold was wrong. |
+| Both probe scripts are replaced by one, and the old two deleted | The carried-forward item. Two probes that disagree about how to sample are worse than one; the consolidation is verified by reproducing Finding F's numbers exactly. |
+
+**Fixed during the session**
+
+- **`.gitignore`'s blanket `*.jsonl` would have silently dropped half the validation deliverable.**
+  `reports/quality_sample.jsonl` holds the metrics the review sheet is scored against — without it
+  the marked-up `.md` cannot be replayed and the validation is not reproducible. Added
+  `!/reports/*.jsonl`. **This is the third time a blanket ignore has nearly cost this repo
+  something load-bearing** (session 2's bare `data/`, session 4's `/data/`), and the lesson is now
+  explicit in the file: verify with `git status`, not with `git check-ignore`, whose exit code
+  reports the *last matching pattern* and returns 0 even when that pattern is the negation.
+- **Urdu on a Windows console raises rather than mangles.** `PYTHONIOENCODING` is not set by
+  default and cp1252 cannot encode Arabic script, so any probe printing a sample crashed with
+  `UnicodeEncodeError`. Both new scripts pin `sys.stdout`/`sys.stderr` to UTF-8 at import. This is
+  the fourth platform-default bug in this repo (sessions 2, 4 ×2, 6) and they have all been the
+  same shape: a default that is invisible on Linux and wrong here.
+
+**Not committed to git.** Session 6's work is on disk, lint-clean and with all 276 tests passing,
+but no commit was made — stopping point was called before that. `git status` shows the full set:
+`ravaan/data/quality.py`, `configs/data/quality.json`, `tests/test_quality.py`, `scripts/probe.py`,
+`scripts/quality_sample.py`, the four `reports/` artefacts, the deletions of `scripts/corpus_probe.py`
+and `scripts/stage3_probe.py`, and edits to `pyproject.toml`, `ravaan/data/__init__.py` and
+`.gitignore`.
+
+---
+
+### Session 7 — 2026-08-04
+
+**Done — the two leftovers from session 6, then the repo is clean.**
+
+1. **`reports/quality_validation.md` written** — the paper trail PRD §6.3.5 asks for. Method (why
+   two strata), the before/after table, one section per threshold change with the documents that
+   forced it, `script_ratio` written up as the rule that could not be fixed, the shipped filter's
+   full error budget, and four open items. Every number in it was re-derived from the committed
+   artefacts during the write-up rather than copied from session 6's notes, which is how the three
+   corrections below surfaced.
+
+2. **Session 6 + 7 committed.** One commit: stage 5, the validation, and the write-up are one
+   deliverable. 276 tests passing, `ruff check` clean.
+
+**Three things the write-up found by re-deriving instead of quoting**
+
+- **The 13.7% Gopher claim now has a decomposition, and it is sharper than the claim.** Re-ran the
+  probe under Rae et al.'s repetition values (`reports/probe_fineweb2_gopher.json`): 2,753 / 19,997
+  = **13.77%**, reproducing session 6. The new part is *which* rules do it — `dup_5gram` 2,353,
+  `dup_6gram` 1,675, down to `dup_10gram` 1,185, while **`top_2gram` and `top_4gram` fire on zero
+  documents and `top_3gram` on one.** The entire 13.77% is the duplicate-n-gram half. Session 6
+  inferred the top/dup split from 200 adjudicated documents; it now also holds corpus-wide, from a
+  completely different instrument. Two independent measurements agreeing is worth more in the
+  report than either.
+- **The duplicate-n-gram rules are near-inert at the shipped thresholds.** Disabling them entirely
+  changes Wikipedia's kept count by **4 documents in 19,999** and FineWeb2's by **0**. On the 200
+  they reject nothing the top-n-gram rules do not already reject. They stay as a backstop, but
+  `quality.py`'s own doctrine — a rule with no sole rejections is agreeing, not filtering — says
+  this has to be stated rather than left to be discovered. Added to the report's open items.
+- **The `script_ratio` failure is worse than session 6 recorded, in the direction that helps.**
+  Session 6 quoted the band from memory as "news 0.66, spam 0.58, ghazal 0.52". Measured, the
+  documents interleave far more tightly — 0.479 keep, 0.481 drop, 0.517 keep, 0.542 drop, 0.543
+  drop, 0.570 keep, 0.578 drop, 0.579 drop, 0.587 drop, 0.589 keep, 0.594 keep. There is no cut
+  anywhere in the range. A four-point sweep confirms it: precision 0.25 / 0.50 / 0.55 / 0.56 at
+  thresholds 0.50 / 0.60 / 0.70 / 0.80, while the number of documents affected changes 16×. **No
+  threshold makes this rule better than a coin flip.** progress.md's 0.66 is corrected above.
+
+**Also measured while writing it**
+
+- **The stratification argument is now a number, not an estimate.** Re-measured the pre-validation
+  config on FineWeb2: **51 rejections in 19,997 = 0.2550%**. A uniform 200 would have contained
+  zero or one rejected FineWeb2 document. This is the justification for having a rejection stratum
+  at all and it should not have rested on a remembered figure.
+- **`min_words` is slack.** At the shipped settings it never rejects a document `min_chars` does
+  not — 0 of 200. This corpus runs 4.82 characters per word, so `min_words` 40 ≈ 193 characters
+  against a 400-character floor. The length rule is `min_chars` alone in practice.
+- **The length floor does not separate cleanly either, and the report says so.** All four remaining
+  false accepts are Wikipedia template stubs at 411–602 characters; all four false rejects are
+  genuine articles at 276–388. Good short news and bad short stubs occupy the same band. 400 vs 500
+  is one document out of 67 decided — statistically indistinguishable, and 400 was kept as the more
+  conservative of the two.
+- **Raising `max_html_ratio` to 0.10 has a named cost:** two `{{Infobox}}` dumps become false
+  accepts. The fix is not a lower threshold — `{{Infobox}}` is *wiki* markup and the rule counts
+  HTML tags. Belongs in Wikipedia preprocessing. Open item.
+
+**Fixed during the session**
+
+- **The pre-validation config existed only as a fingerprint.** `quality_sample.jsonl` recorded
+  `57790136526b` and nothing anywhere recorded what it *was*, so the before/after table could not
+  be reproduced — the "before" column was only replayable because the JSONL happens to store the
+  verdicts it was drawn with. Recovered by inverting the stored metrics against the stored
+  rejections to bracket every threshold, then confirming against the fingerprint, and committed as
+  `reports/quality_config_before.json`. **A fingerprint identifies a config; it does not preserve
+  one.** Both scoring commands in the report were re-run and reproduce the committed JSON exactly.
+
+**Decisions made**
+
+| Decision | Rationale |
+|---|---|
+| The report leads with the machine-adjudication caveat in a callout, not a footnote | It is the one place the deliverable does not match what §6.3.5 implies. A caveat at the bottom of a report is one that gets dropped when the report is summarised. |
+| Precision going *down* on two rules is reported as the headline, next to agreement going up | `too_short` 1.00 → 0.93 and `script_ratio` 0.55 → 0.50 while false accepts fell 24 → 4. The pre-validation filter was not making precision errors, it was making coverage errors — confidently rejecting too little of the wrong kind. Hiding the precision drop would hide the actual finding. |
+| The Gopher comparison config is quoted inline in the report, not added to `configs/data/` | `configs/data/` means "configs the pipeline runs with". A config that exists only to reproduce a comparison belongs in the document that makes the comparison; the probe output it produced is committed as evidence. |
+| `reports/probe_stage3_*.json` kept although `stage3_probe.py` is gone | The English and Roman-Urdu-Parl runs are the evidence for stage 3's 0% / 0.21% cross-language error rates, which the new probe's two source runs do not cover. Deleting the tool does not make its measurements wrong. |
+
+---
+
 ## Open questions for you
 
 1. ~~**Config format.**~~ **Decided in session 4: JSON, for the whole data pipeline.** Three
@@ -622,35 +885,56 @@ document.
 
 ## Next session
 
-**Primary task: quality filtering, pipeline stage 5 (PRD §6.3.5) — with its 200-sample manual
-validation.**
+Session 6's two leftovers are **done** — the write-up exists and everything is committed. The
+next task is stage 6.
 
-Stages 1, 2, 3 and 4 all exist now and all four have been pointed at real text. Stage 5 is the
-next gate, and it is the one the PRD explicitly requires human validation for.
-
-1. **`ravaan/data/quality.py`** — Urdu-script ratio, repetition, URL density, HTML residue,
-   replacement-character frequency, per §6.3.5. Stage 3 already computes script ratios, so the
-   Urdu-script rule should read them rather than recompute; the rest is new.
-2. **The 200-sample manual validation is the deliverable, not the code.** §6.3.5 requires the
-   rules to be validated against 200 manually inspected random samples. Draw them with
-   `ShardReader(sample_rate=...)` so the sample is reproducible from a seed, and write them out
-   in a form a person can actually read and mark up.
-3. **Put the same 200 through the normalizer** — this closes session 4's carried-forward caveat
-   that stage 4 has only been validated on Wikipedia, and it costs nothing extra once the sample
-   exists.
-4. **Then stage 6 (exact dedup).** It is cheap, and Finding F says it will be interesting:
+1. **Stage 6 (exact dedup).** It is cheap, and Finding F says it will be interesting:
    religious publishers republish the same texts across domains, so normalizing before hashing
    should surface cross-publisher duplicates that raw hashing would miss. Worth measuring both
-   ways once, since the claim is now a prediction rather than an assumption.
+   ways once, since the claim is now a prediction rather than an assumption. Session 6 adds a
+   second prediction: Urdu Wikipedia's template stub farm ("X ایران کا ایک گاؤں جو Y میں واقع
+   ہے۔") should dominate the near-duplicate clusters, and stage 5 already removes about half of it
+   on length alone — so measure dedup yield **after** stage 5, not on raw text, or the win will be
+   double-counted.
+   - Session 7 sharpens the second prediction into a test with **named documents**: the four
+     surviving false accepts (`urdu-wikipedia:122264`, `:122214`, `:363641`, `:122110` — Fortune-1000
+     company and geo stubs at 411–602 characters) are exactly what a length rule cannot see and a
+     dedup pass should not miss. If stage 6/7 does not cluster those four, the near-dedup is not
+     doing the job stage 5's error budget is counting on it to do.
 
 **Do not start** tokenizer work or modelling. The tokenizer is timeboxed to Week 5.
 
 **Carried forward**
 
-- **The normalizer is validated on Wikipedia only.** Every rule fires (session 4, Measured), but
-  Wikipedia is not representative. PRD §6.3.5 requires 200 manually inspected samples for the
-  quality filter — put the same 200 through the normalizer and confirm no rule misfires on real
-  **FineWeb2** Urdu before the freeze.
+- **The 200-sample validation was adjudicated by Claude, not by a native speaker.** This is the
+  one place the deliverable does not yet match what §6.3.5 implies. The judgements are real work
+  and they found four wrong thresholds, but "200 manually inspected samples" in a report should
+  mean a fluent Urdu speaker, and the sheet is built to be marked up by one:
+  `reports/quality_sample.md` has a `**verdict:**` line per document and
+  `scripts/quality_sample.py score --quality-config …` replays any marking against any config
+  without re-reading the corpus. **The highest-value thing a native speaker could do is re-mark
+  the 29 disagreements** listed in `reports/quality_validation.json`, which is maybe twenty
+  minutes of work rather than a full pass. Until then the technical report must describe the
+  validation as machine-adjudicated, and say so in those words.
+- **`script_ratio` is the weak rule and its weakness is now measured, not suspected.** Precision
+  0.50 at the shipped threshold, and session 7's sweep shows **no threshold anywhere in the usable
+  range beats 0.56** while the affected document count moves 16×. If a native-speaker pass confirms
+  it, the honest options are to drop the rule entirely (stage 3 already made the language decision
+  on better evidence) or to replace Latin *share* with something that actually separates the cases
+  — the discriminator in the sample was whether the Latin was quoted material or the page's own
+  content, which is closer to stage 3's lowercase-running-text test than to a ratio. Tuning the
+  number is not an option. Decide before the freeze.
+- **The duplicate-n-gram rules are near-inert and it is on the record.** 4 documents in 19,999 on
+  Wikipedia, 0 on FineWeb2, 0 on the 200-sample beyond what the top-n-gram rules already catch.
+  Keep them as a backstop with that stated, or drop them — but they must not be described as the
+  corpus's repetition control. Revisit once stage 6/7 has measured what cross-document repetition
+  actually looks like here, since that is the comparison that decides whether a within-document
+  backstop is worth keeping at all.
+- **Wiki markup is not HTML.** `{{Infobox}}` template dumps clear `max_html_ratio` at any usable
+  threshold — the rule counts HTML tags, and lowering it to catch them costs ~8 clean biographies
+  per 2 stubs. The fix belongs in Wikipedia-specific preprocessing ahead of stage 5, not in the
+  threshold. Two of the shipped filter's four false accepts would remain regardless; the other two
+  are the stub farm, which is stage 7's.
 - **The infilling share is unresolved.** PRD §4.2 sets 10%; reported FIM practice is 50–90% with no
   left-to-right degradation (review §6). If 10% leaves Ravaan-AR genuinely bad at infilling, A2
   loses its meaning — the *fair* baseline would also be undertrained, and §4.1's whole fairness
@@ -663,8 +947,18 @@ next gate, and it is the one the PRD explicitly requires human validation for.
   general lesson, not a one-off: 57 unit tests passed on a detector that would have deleted 3% of a
   clean corpus. Fixture tests prove a rule does what it says; only real text shows whether it fires
   on the right things. Every threshold in stages 2, 3 and 5 gets a probe run before the freeze.
-  Session 5 did this for stage 3 and it caught two population-level mislabels, so the practice is
-  now load-bearing rather than aspirational.
+  Session 5 did this for stage 3 and it caught two population-level mislabels; session 6 did it for
+  stage 5 and the distribution pass alone moved three thresholds before a human saw a document. The
+  practice is load-bearing, and session 6 adds a corollary: **the distribution tells you where the
+  documents are, not which of them are good.** Every stage-5 threshold that survived the
+  distribution still had to be moved by the sample.
+- ~~**`scripts/corpus_probe.py` is redundant with `scripts/stage3_probe.py`.**~~ **Resolved in
+  session 6** — both deleted, replaced by `scripts/probe.py` covering stages 2→5. The consolidation
+  is verified by reproducing Finding F's numbers exactly.
+- ~~**The normalizer is validated on Wikipedia only.**~~ **Resolved in session 6** — the 200-sample
+  set went through stage 4, 14.6% of FineWeb2 documents changed (against 13.7% over 20,000 in
+  session 4), the Urdu-specific rules are the ones that fire, and no rule misfired on any of the
+  200.
 - **⚠️ The code-switched budget may not be reachable from these sources.** PRD §6.1 asks for ~10M
   code-switched tokens. Measured share by letters: **0.54% of FineWeb2** and **2.6% of Urdu
   Wikipedia**. Extrapolated over shard 001 (~3.5G characters) plus the full Wikipedia dump
@@ -679,10 +973,6 @@ next gate, and it is the one the PRD explicitly requires human validation for.
   sentence that is ~49M characters ≈ 12M tokens, well under the ~40M target. Stage 6 will settle
   it; if it holds, §6.1's Roman Urdu figure needs the same treatment §6.1's native figure got in
   v2.1.
-- **`scripts/corpus_probe.py` is now redundant with `scripts/stage3_probe.py`.** The older script
-  reads parquet ad hoc and predates the shard reader; the newer one runs stages 2→3 through it and
-  covers the same ground plus langid. Fold the stage-4 reporting into `stage3_probe.py` and delete
-  the old one, or keep it and port it to `ShardReader` — but not both, and not indefinitely.
 
 **Retry when convenient:** OpenReview `W5Ht05jF4c` — still behind the browser-verification wall as
 of 2026-08-03 (both API v1 and v2 return `ChallengeRequiredError`). Lower stakes now that both arms

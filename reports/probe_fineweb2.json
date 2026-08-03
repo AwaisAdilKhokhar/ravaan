@@ -1,0 +1,299 @@
+{
+  "source": "fineweb2-urd_Arab",
+  "split": "train",
+  "limit": 20000,
+  "sample_rate": 0.02,
+  "seed": 0,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 20000,
+    "documents_accepted": 19997,
+    "documents_rejected": 3,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.99985,
+    "bytes_in": 81707081,
+    "chars_out": 46112946,
+    "replacement_chars": 34,
+    "mojibake_chars": 4,
+    "control_chars": 0,
+    "verdicts": {
+      "ok": 19997,
+      "replacement_heavy": 3
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 19997,
+    "documents_kept": 19997,
+    "keep_rate": 1.0,
+    "documents_by_prior": 0,
+    "prior_rate": 0.0,
+    "mixed_documents": 585,
+    "letters": 35154729,
+    "labels": {
+      "code_switched": 111,
+      "urdu": 19886
+    },
+    "letters_by_label": {
+      "code_switched": 185667,
+      "urdu": 34969062
+    },
+    "segment_letters": {
+      "arabic": 1958,
+      "code_switched": 19831,
+      "english": 102628,
+      "hindi": 992,
+      "other": 33948,
+      "persian": 268,
+      "roman_urdu": 5341,
+      "urdu": 670819
+    }
+  },
+  "stage4_normalization": {
+    "normalizer_version": "1.0.0",
+    "config_fingerprint": "afc7afac420e",
+    "config": {
+      "expand_presentation_forms": true,
+      "unify_yeh": true,
+      "unify_kaf": true,
+      "unify_heh": true,
+      "map_teh_marbuta": true,
+      "unify_alef": true,
+      "remove_tatweel": true,
+      "remove_zero_width": true,
+      "remove_zwnj": true,
+      "remove_bidi_marks": true,
+      "remove_harakat": false,
+      "digits": "ascii",
+      "normalize_whitespace": true,
+      "max_consecutive_newlines": 2
+    },
+    "documents": 19997,
+    "documents_changed": 2834,
+    "chars_in": 46112946,
+    "chars_out": 46137729,
+    "chars_removed": -24783,
+    "counts": {
+      "alef": 3412,
+      "digits": 13228,
+      "heh": 12279,
+      "kaf": 12326,
+      "presentation_forms": 6812,
+      "tatweel": 1093,
+      "teh_marbuta": 4330,
+      "whitespace": 395,
+      "yeh": 31033,
+      "zero_width": 86
+    }
+  },
+  "stage5_quality": {
+    "quality_version": "1.0.0",
+    "config_fingerprint": "53d04d3fd079",
+    "config": {
+      "min_chars": 400,
+      "min_words": 40,
+      "min_urdu_script_ratio": 0.6,
+      "min_roman_script_ratio": 0.6,
+      "min_mixed_script_ratio": 0.9,
+      "max_dup_line_ratio": 0.5,
+      "max_top_ngram_ratio": {
+        "3": 0.26,
+        "4": 0.22
+      },
+      "max_dup_ngram_ratio": {
+        "5": 0.6,
+        "6": 0.58,
+        "7": 0.56,
+        "8": 0.54,
+        "9": 0.52,
+        "10": 0.5
+      },
+      "max_repetition_words": 100000,
+      "max_url_ratio": 0.3,
+      "max_html_ratio": 0.1,
+      "max_replacement_rate": 0.001
+    },
+    "documents": 19997,
+    "documents_kept": 19294,
+    "documents_rejected": 703,
+    "keep_rate": 0.964845,
+    "chars_in": 46137729,
+    "chars_kept": 45898475,
+    "char_keep_rate": 0.994814,
+    "rejections": {
+      "script_ratio": 9,
+      "too_short": 694
+    },
+    "families": {
+      "script_ratio": 9,
+      "too_short": 694
+    },
+    "sole_rejections": {
+      "script_ratio": 9,
+      "too_short": 694
+    },
+    "by_label": {
+      "code_switched": 111,
+      "urdu": 19886
+    },
+    "kept_by_label": {
+      "code_switched": 101,
+      "urdu": 19193
+    },
+    "chars_kept_by_label": {
+      "code_switched": 236019,
+      "urdu": 45662456
+    },
+    "truncated_documents": 0
+  },
+  "stage5_distributions": {
+    "chars": {
+      "p1": 308.0,
+      "p5": 445.0,
+      "p25": 822.0,
+      "p50": 1348.0,
+      "p75": 2494.0,
+      "p90": 5032.0,
+      "p95": 6900.0,
+      "p99": 13168.0,
+      "max": 237156.0,
+      "mean": 2307.23253
+    },
+    "dup_line_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.09414,
+      "max": 0.19958,
+      "mean": 0.00244
+    },
+    "html_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.0,
+      "max": 0.00264,
+      "mean": 0.0
+    },
+    "max_dup_ngram": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.03863,
+      "p75": 0.09489,
+      "p90": 0.16045,
+      "p95": 0.20144,
+      "p99": 0.26735,
+      "max": 0.39844,
+      "mean": 0.05943
+    },
+    "max_top_ngram": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.01727,
+      "p50": 0.03036,
+      "p75": 0.04762,
+      "p90": 0.06621,
+      "p95": 0.07848,
+      "p99": 0.10031,
+      "max": 0.19244,
+      "mean": 0.0342
+    },
+    "script_ratio": {
+      "p1": 0.8224,
+      "p5": 0.94828,
+      "p25": 0.99845,
+      "p50": 1.0,
+      "p75": 1.0,
+      "p90": 1.0,
+      "p95": 1.0,
+      "p99": 1.0,
+      "max": 1.0,
+      "mean": 0.99051
+    },
+    "url_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.00698,
+      "max": 0.11805,
+      "mean": 0.00027
+    },
+    "words": {
+      "p1": 62.0,
+      "p5": 91.0,
+      "p25": 169.0,
+      "p50": 281.0,
+      "p75": 523.0,
+      "p90": 1078.0,
+      "p95": 1483.0,
+      "p99": 2809.0,
+      "max": 47692.0,
+      "mean": 488.38236
+    }
+  },
+  "stage5_rejected_examples": {
+    "script_ratio": [
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:d533d1c2-8d11-4b4b-bab9-971d7a7f7578>",
+        "text": "فعال Lovard پاکستان کوپن اور پرومو کوڈز کے لئے ستمبر 2023\n- تمام (6)\n- کوپن (5)\nکے بارے میں Lovard\nLovard designers set out to make a collection that is less about a specific period or season and more about pieces meant to change with a woman as her personal style develops in all the different direc"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:731dbfbe-9197-4d53-af9d-4a3c4aaf4e49>",
+        "text": "علی سدپارہ کے بیٹے ساجد سدپارہ نے والد کے ساتھ گزاری جانے والی آخری رات کی ویڈیو اپنے ٹوئٹر اکاؤنٹ پر شیئر کی ہے، ساجد علی سدپارا نے ویڈیو کے کیپشن میں لکھا کہ ٹیم اور میرے والد کے ساتھ آخری اور میری زندگی کی دشوار ترین رات۔\nThe last & hardest night of my life, together with team & my beloved father"
+      }
+    ],
+    "too_short": [
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:2503407d-2812-41ea-abc4-969563be478a>",
+        "text": "وزیراعظم شہباز شریف اور اپوزیشن لیڈر راجہ ریاض کی ملاقات طے پا گئی۔\nذرائع کے مطابق وزیراعظم اور اپوزیشن لیڈر میں نگران وزیراعظم کےمعاملے پر کل بات ہو گی ، وزیراعظم اور اپوزیشن لیڈرکی جانب سے 3،3 نام دئیے جائیں گے۔\nملاقات میں اتفاق رائے ہونے کے بعد نام کا اعلان کیا جائے گا۔"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:0b0bba42-e4a3-4284-a176-3b5cca837bca>",
+        "text": "اگر آپ کسی زبردست اور فیچرز سے بھرپور آن لائن فوٹو ایڈیٹر کی تلاش میں ہیں تو آپ کی یہ تلاش ہم ختم کیے دیتے ہیں۔\nBrowsing Tag\nفوٹو\nآج کل تقریباً تمام اسمارٹ فونز میں جی پی ایس (GPS)موجود ہوتا ہے، جس کی وجہ سے فون سے بنائی گئی ہر تصویر میں جی پی ایس کوآرڈنیٹس (coordinates) موجود ہوتے ہیں۔ یعنی ہر تصوی"
+      }
+    ]
+  },
+  "glotlid_agreement": {
+    "urd_Arab -> urdu": 19886,
+    "urd_Arab -> code_switched": 111
+  }
+}

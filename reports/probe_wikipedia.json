@@ -1,0 +1,361 @@
+{
+  "source": "urdu-wikipedia",
+  "split": null,
+  "limit": 20000,
+  "sample_rate": 0.15,
+  "seed": 0,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 20000,
+    "documents_accepted": 19999,
+    "documents_rejected": 1,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.99995,
+    "bytes_in": 40841750,
+    "chars_out": 23531009,
+    "replacement_chars": 112,
+    "mojibake_chars": 2,
+    "control_chars": 0,
+    "verdicts": {
+      "ok": 19999,
+      "replacement_heavy": 1
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 19999,
+    "documents_kept": 19882,
+    "keep_rate": 0.99415,
+    "documents_by_prior": 34,
+    "prior_rate": 0.0017,
+    "mixed_documents": 6249,
+    "letters": 17573410,
+    "labels": {
+      "arabic": 3,
+      "code_switched": 1018,
+      "empty": 21,
+      "english": 61,
+      "other": 32,
+      "urdu": 18864
+    },
+    "letters_by_label": {
+      "arabic": 4043,
+      "code_switched": 450481,
+      "empty": 252,
+      "english": 54092,
+      "other": 57345,
+      "urdu": 17007197
+    },
+    "segment_letters": {
+      "arabic": 5435,
+      "code_switched": 105400,
+      "english": 317231,
+      "other": 94978,
+      "persian": 2135,
+      "roman_urdu": 2040,
+      "urdu": 1633854
+    }
+  },
+  "stage4_normalization": {
+    "normalizer_version": "1.0.0",
+    "config_fingerprint": "afc7afac420e",
+    "config": {
+      "expand_presentation_forms": true,
+      "unify_yeh": true,
+      "unify_kaf": true,
+      "unify_heh": true,
+      "map_teh_marbuta": true,
+      "unify_alef": true,
+      "remove_tatweel": true,
+      "remove_zero_width": true,
+      "remove_zwnj": true,
+      "remove_bidi_marks": true,
+      "remove_harakat": false,
+      "digits": "ascii",
+      "normalize_whitespace": true,
+      "max_consecutive_newlines": 2
+    },
+    "documents": 19999,
+    "documents_changed": 18768,
+    "chars_in": 23531009,
+    "chars_out": 23377333,
+    "chars_removed": 153676,
+    "counts": {
+      "alef": 2260,
+      "bidi": 288,
+      "digits": 3852,
+      "heh": 5474,
+      "kaf": 1817,
+      "presentation_forms": 9783,
+      "tatweel": 565,
+      "teh_marbuta": 4121,
+      "whitespace": 169909,
+      "yeh": 11307,
+      "zero_width": 375,
+      "zwnj": 426
+    }
+  },
+  "stage5_quality": {
+    "quality_version": "1.0.0",
+    "config_fingerprint": "53d04d3fd079",
+    "config": {
+      "min_chars": 400,
+      "min_words": 40,
+      "min_urdu_script_ratio": 0.6,
+      "min_roman_script_ratio": 0.6,
+      "min_mixed_script_ratio": 0.9,
+      "max_dup_line_ratio": 0.5,
+      "max_top_ngram_ratio": {
+        "3": 0.26,
+        "4": 0.22
+      },
+      "max_dup_ngram_ratio": {
+        "5": 0.6,
+        "6": 0.58,
+        "7": 0.56,
+        "8": 0.54,
+        "9": 0.52,
+        "10": 0.5
+      },
+      "max_repetition_words": 100000,
+      "max_url_ratio": 0.3,
+      "max_html_ratio": 0.1,
+      "max_replacement_rate": 0.001
+    },
+    "documents": 19999,
+    "documents_kept": 9343,
+    "documents_rejected": 10656,
+    "keep_rate": 0.467173,
+    "chars_in": 23377333,
+    "chars_kept": 20426587,
+    "char_keep_rate": 0.873777,
+    "rejections": {
+      "html_residue": 12,
+      "repetition:dup_10gram": 4,
+      "repetition:dup_5gram": 10,
+      "repetition:dup_6gram": 10,
+      "repetition:dup_7gram": 8,
+      "repetition:dup_8gram": 4,
+      "repetition:dup_9gram": 3,
+      "repetition:dup_lines": 7,
+      "repetition:top_3gram": 292,
+      "repetition:top_4gram": 127,
+      "script_ratio": 61,
+      "too_short": 10568,
+      "url_density": 7
+    },
+    "families": {
+      "html_residue": 12,
+      "repetition": 406,
+      "script_ratio": 61,
+      "too_short": 10568,
+      "url_density": 7
+    },
+    "sole_rejections": {
+      "html_residue": 4,
+      "repetition": 55,
+      "script_ratio": 22,
+      "too_short": 10174,
+      "url_density": 4
+    },
+    "by_label": {
+      "arabic": 3,
+      "code_switched": 1018,
+      "empty": 21,
+      "english": 61,
+      "other": 32,
+      "urdu": 18864
+    },
+    "kept_by_label": {
+      "arabic": 1,
+      "code_switched": 338,
+      "english": 16,
+      "other": 19,
+      "urdu": 8969
+    },
+    "chars_kept_by_label": {
+      "arabic": 4986,
+      "code_switched": 404601,
+      "english": 63634,
+      "other": 79954,
+      "urdu": 19873412
+    },
+    "truncated_documents": 0
+  },
+  "stage5_distributions": {
+    "chars": {
+      "p1": 78.0,
+      "p5": 151.0,
+      "p25": 269.0,
+      "p50": 383.0,
+      "p75": 782.0,
+      "p90": 2130.0,
+      "p95": 3523.0,
+      "p99": 11513.0,
+      "max": 360320.0,
+      "mean": 1168.9251
+    },
+    "dup_line_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.1444,
+      "max": 0.81132,
+      "mean": 0.00369
+    },
+    "html_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.0,
+      "max": 0.30569,
+      "mean": 0.00018
+    },
+    "max_dup_ngram": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.11783,
+      "p95": 0.17734,
+      "p99": 0.30492,
+      "max": 0.97779,
+      "mean": 0.02767
+    },
+    "max_top_ngram": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0388,
+      "p75": 0.11221,
+      "p90": 0.16949,
+      "p95": 0.20625,
+      "p99": 0.28696,
+      "max": 0.58621,
+      "mean": 0.06561
+    },
+    "script_ratio": {
+      "p1": 0.65068,
+      "p5": 0.76256,
+      "p25": 0.89459,
+      "p50": 1.0,
+      "p75": 1.0,
+      "p90": 1.0,
+      "p95": 1.0,
+      "p99": 1.0,
+      "max": 1.0,
+      "mean": 0.9424
+    },
+    "url_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.0,
+      "max": 0.67775,
+      "mean": 0.00062
+    },
+    "words": {
+      "p1": 15.0,
+      "p5": 27.0,
+      "p25": 49.0,
+      "p50": 70.0,
+      "p75": 153.0,
+      "p90": 431.0,
+      "p95": 723.0,
+      "p99": 2438.0,
+      "max": 78516.0,
+      "mean": 235.19121
+    }
+  },
+  "stage5_rejected_examples": {
+    "html_residue": [
+      {
+        "doc_id": "urdu-wikipedia:1022097",
+        "text": "لورا کرافٹ اتحاد 90/سبز کی ایک جرمن سیاست دان ہیں جو 2021 کے جرمن وفاقی انتخابات کے بعد سے بنڈسٹیگ کی رکن ہیں، <ref name=\"bundestag_profile\"></ref جو ضلع کی نمائندگی کرتی ہیں۔\n\nحوالہ جات\n\nاکیسویں صدی کے جرمن سیاست دان\nاکیسویں صدی کی جرمن خواتین سیاست دان\nویکی ڈیٹا سے مطابقت رکھنے والی مختصر تفصیل"
+      },
+      {
+        "doc_id": "urdu-wikipedia:396870",
+        "text": "وفیات\n\nدسمبر\n\n<noinclude>\n\n2060ء کی دہائی\n2063ء\nاکیسویں صدی\nمستقبل کی دہائیاں\nمستقبل کے خط زمانی"
+      }
+    ],
+    "repetition": [
+      {
+        "doc_id": "urdu-wikipedia:120433",
+        "text": "نصف النہار درجہ 100 درج ذیل دو نصف النہار سے مربوط ہو سکتا ہے:\nنصف النہار درجہ 100 مشرقی، گرین وچ مشرقی نصف النہار کا خط طول البلد۔\nنصف النہار درجہ 100 مغربی، گرین وچ مغربی نصف النہار کا خط طول البلد۔\n\nضد ابہام صفحات"
+      },
+      {
+        "doc_id": "urdu-wikipedia:425739",
+        "text": "بیلمونٹ، الینوائے ریاستہائے متحدہ امریکا کا ایک آباد مقام جو الینوائے میں واقع ہے۔\n\nمزید دیکھیے\nریاستہائے متحدہ امریکا\nفہرست ریاستہائے متحدہ امریکہ کے شہر\n\nحوالہ جات"
+      }
+    ],
+    "script_ratio": [
+      {
+        "doc_id": "urdu-wikipedia:1093705",
+        "text": "اسکاٹش آسٹریلوی (, )\nآسٹریلیا کے رہائشی ہیں جو مکمل یا جزوی طور پر اسکاٹش نسل کے ہیں۔\n\nحوالہ جات\n\nبیرونی روابط\nThe Scottish Australian (Scottish Australian history blog)\nScottish Australian Heritage Council\nScotland's Links with Australia and New Zealand\nScottish Emigration Database\n(History of Scot"
+      },
+      {
+        "doc_id": "urdu-wikipedia:197716",
+        "text": "ینگینگ میانمار کا ایک رہائشی علاقہ جو Myitkyina District میں واقع ہے۔\n\nمزید دیکھیے\nمیانمار\nفہرست میانمار کے شہر\n\nحوالہ جات\n\nShort description is different from Wikidata"
+      }
+    ],
+    "too_short": [
+      {
+        "doc_id": "urdu-wikipedia:186420",
+        "text": "جنووکا، گمنا باوا پودلاسکا پولینڈ کا ایک رہائشی علاقہ جو Gmina Biała Podlaska میں واقع ہے۔\n\nمزید دیکھیے\nپولینڈ\nفہرست پولینڈ کے شہر\n\nحوالہ جات\n\nShort description is different from Wikidata"
+      },
+      {
+        "doc_id": "urdu-wikipedia:88330",
+        "text": "آل جموں و کشمیر مسلم کانفرنس آزاد کشمیر، پاکستان کی ایک اہم سیاسی جماعت ہے۔ یہ ایک اسلامی جماعت ہے۔ جو علیحدگی پسند جماعت ہے۔\n\nمزید دیکھیے\nمسئلہ کشمیر\n\nحوالہ جات\n\nآزاد کشمیر کی سیاست\nپاکستان کی اسلامی سیاسی جماعتیں\nپاکستان کی سیاسی جماعتیں\nجموں و کشمیر کے نامکمل مضامین\nآزاد کشمیر کے نامکمل مضامین\nSh"
+      }
+    ],
+    "url_density": [
+      {
+        "doc_id": "urdu-wikipedia:263760",
+        "text": "سنت پیرے دے کسیریس (اسپینی زبان میں: Sant Pere de Casserres) ایک بیندکتن مٹھ ہے۔ یہ لیس ماسئیس دے روڈا (Les Masies de Roda)، اوسونا کومارکا، کاتالونیا، اسپین میں موجود ہے۔ 11 ویں صدی کے روم کے ملکی انداز کی اس عمارت کو 1931 میں بئین دے انتیریس کلچرل کی فہرست میں شامل کر لیا گیا تھا۔\n\nعمارت اور اس کی"
+      },
+      {
+        "doc_id": "urdu-wikipedia:1079609",
+        "text": "صدام نبی آزاد ہندوستانی سیاست دان ہے جو غلام نبی آزاد کے بیٹے ہیں، جنہوں نے جموں و کشمیر کے سابق وزیر اعلیٰ کے طور پر خدمات انجام دیں۔ ان کی والدہ ہندوستانی گلوکارہ شمیم دیو آزاد ہیں۔ وہ اپنے والد کی مدد کے لیے سیاست میں آیا۔ وہ 27 فروری 2023 میں نگین کلب میں پارٹی کے یوتھ کنونشن میں شرکت سے باضابطہ"
+      }
+    ]
+  }
+}

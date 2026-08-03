@@ -1,0 +1,25 @@
+{
+  "quality_version": "1.0.0",
+  "min_chars": 400,
+  "min_words": 40,
+  "min_urdu_script_ratio": 0.6,
+  "min_roman_script_ratio": 0.6,
+  "min_mixed_script_ratio": 0.9,
+  "max_dup_line_ratio": 0.5,
+  "max_top_ngram_ratio": {
+    "3": 0.26,
+    "4": 0.22
+  },
+  "max_dup_ngram_ratio": {
+    "5": 0.6,
+    "6": 0.58,
+    "7": 0.56,
+    "8": 0.54,
+    "9": 0.52,
+    "10": 0.5
+  },
+  "max_repetition_words": 100000,
+  "max_url_ratio": 0.3,
+  "max_html_ratio": 0.1,
+  "max_replacement_rate": 0.001
+}

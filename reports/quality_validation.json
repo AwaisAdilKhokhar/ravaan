@@ -1,0 +1,306 @@
+{
+  "sheet": "reports\\quality_sample.md",
+  "config_fingerprint": "53d04d3fd079",
+  "documents_in_sample": 200,
+  "documents_marked": 200,
+  "documents_unmarked": 0,
+  "invalid_verdicts": [],
+  "uniform": {
+    "marked": 100,
+    "abstained": 0,
+    "agreement": 0.92,
+    "filter_accept_human_keep": 63,
+    "filter_accept_human_drop": 4,
+    "filter_reject_human_keep": 4,
+    "filter_reject_human_drop": 29
+  },
+  "rejected": {
+    "marked": 100,
+    "abstained": 0,
+    "agreement": 0.79,
+    "filter_accept_human_keep": 33,
+    "filter_accept_human_drop": 13,
+    "filter_reject_human_keep": 8,
+    "filter_reject_human_drop": 46
+  },
+  "family_precision": {
+    "html_residue": {
+      "rejected": 3,
+      "human_agreed_drop": 3,
+      "precision": 1.0
+    },
+    "repetition": {
+      "rejected": 8,
+      "human_agreed_drop": 8,
+      "precision": 1.0
+    },
+    "script_ratio": {
+      "rejected": 14,
+      "human_agreed_drop": 7,
+      "precision": 0.5
+    },
+    "too_short": {
+      "rejected": 75,
+      "human_agreed_drop": 70,
+      "precision": 0.9333
+    }
+  },
+  "disagreements": [
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:64abf5c2-31ed-4bdf-972f-bda61c9f991c>",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "English press handout with a little Urdu",
+      "excerpt": "With the compliments of Press Secretary to Chief Minister KP Peshawar\nHANDOUT NO. 1 /PESHAWAR/DT: 15-2-2017\nKhyber Pakhtunkhwa Chief Minister Pervez Khattak has directed for the management, security a"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:cf145205-83cf-495b-9911-020f15852296>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "too_short"
+      ],
+      "note": "---",
+      "excerpt": "23 اکتوبر ، 2021\nلاہو ر کےسروسزاسپتال میں ڈینگی کی مریضہ انتقال کرگئی۔\nورثاء نے الزام لگایا ہےکہ اسپتال انتظامیہ نے وینٹی لیٹرمہیا کرنےسےانکارکردیا تھا اس وجہ سے مریضہ کا انتقال ہوا۔\nدوسری جانب ایم ای"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:70805ab2-1ced-45f4-8527-db82984d06b2>",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "Urdu-Chinese parallel reader; half the document is unusable for this corpus",
+      "excerpt": "ایک دن امی بہت سے پھل لائیں۔\n有一天，妈妈买了很多水果。\nہم کچھ پھل کب کھا سکتے ہیں؟ ہم نے پوچھا۔ ہم آج رات کو پھل کھائیں گے۔ امی نے کہا۔\n我们都问她：“什么时候可以吃水果？”妈妈说：“等今天晚上再吃。”\nمیرا بھائی رحیم لالچی ہے۔ وہ سب پھل چکھتا ہ"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:d34826b4-5ee3-49d4-8470-1d3791307633>",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "police martyr database record, form fields not prose",
+      "excerpt": "Saqlain Raza\nDistrict: RAJAN PUR\nDepartment: Elite Police Force\nRank: ASI\nBelt No.:679\nIncident: Firing\nShahadat Date: 10 Nov 2019\nDescription:\nدوران ڈیوٹی دہشت گردوں سے اندھا دھند فائرنگ کا تبادلہ ہو"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:94e95c8c-b03f-455f-ab74-58b703a27e27>",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "Search Agricultural products and equipment\nAuthor : Muhammad Afzal\nWorking to advance the whole of Pakistani agriculture that improve profitability, stewardship and quality of life by the use of Techn"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:e664dfc6-0c50-4440-a171-ac2c10eda724>",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "Home › Forums › Siasi Discussion › اے پی سی سے دو دن پہلے اپوزیشن لیڈران کی آرمی چیف سے خفیہ ملاقات › اے پی سی سے دو دن پہلے اپوزیشن لیڈران کی آرمی چیف سے خفیہ ملاقات\n- Professional\n- Threads: 35\n- Po"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6d74a28c-cb5e-4cf8-9060-64f35d3fa845>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "too_short"
+      ],
+      "note": "---",
+      "excerpt": "اسلام آباد(وائس آ ف ایشیا) تحریک انصاف نے سیالکوٹ میں پولیس کی کارروائی کو لندن پلان پر عملدرآمد کا آغاز قرار دیتے ہوئے سپریم کورٹ سے سوموٹو نوٹس لینے کا مطالبہ کیا ہے۔ماہر قانون ڈاکٹر بابر اعوان نے ک"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:e485d98a-5bc5-40d5-86e6-4dd46209db22>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "too_short"
+      ],
+      "note": "---",
+      "excerpt": "’معلوم نہ تھا تقریر سےبلاول پریشان ہونگے‘\nوزیرِ خارجہ شاہ محمود قریشی کا کہنا ہے کہ مجھے نہیں معلوم تھا کہ میری ایک تقریر سے بلاول بھٹو زرداری اتنا پریشان ہو جائیں گے، پیپلز پارٹی کے قائد نے کہا کہ یہ"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:36b2888d-6383-484d-9e9f-e3ae7dfe5be5>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "Rekhta dictionary entry — Urdu lexical content with Hindi and English glosses, valuable",
+      "excerpt": "تلاش شدہ نتائج\nمحفوظ شدہ الفاظ\n\"دَولَت لُٹے کوئِلوں پَر مُہْر\" کے متعقلہ نتائج\nدَولَت لُٹے کوئِلوں پَر مُہْر کے اردو معانی\n- بجا اور باموقع خرچ کے موقع پر کفایت شعاری کرنے اور بے جا خرچ کی پروا نہ کرن"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:809542a0-8b39-45cd-81f3-b7d9d5104a1d>",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "لوڈنگ فائلوں کو اپ ڈیٹ کریں، براہ کرم انتظار کریں...\nکیا JPG سے WEBP ؟\nJPG to WEBP JPG امیجز کو WEBP فائل فارمیٹ میں تبدیل کرنے کا ایک مفت آن لائن ٹول ہے۔ اگر آپ ایک یا زیادہ JPG تصاویر کو WEBP میں تب"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:bf7e4280-9a1c-447f-87cc-0a9608995a91>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "Urdu ghazal; sufinama pages carry a Roman transliteration alongside",
+      "excerpt": "کبھی ملی جو ترے درد کی نوا مجھ کو\nکبھی ملی جو ترے درد کی نوا مجھ کو\nخموشیوں نے مجھی سے کیا جدا مجھ کو\nبدن کے سونے کھنڈر میں کبھی جلا مجھ کو\nمیں تیری روح کی ضو ہوں نہ یوں بجھا مجھ کو\nمیں اپنی ذات کی ہم"
+    },
+    {
+      "doc_id": "urdu-wikipedia:122264",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "، نامی یہ کمپنی 2012 میں فارچون میگزین کی سرفہرست 1000 کمپنیوں میں شامل تھی۔ اس کا ہیڈکوارٹر سیئٹل، میں واقع ہے۔ فارچون کی رپورٹ کے مطابق 2012 میں اس میں سی ای او (CEO) کے عہدے پر Kerry K. Killinger ک"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:731dbfbe-9197-4d53-af9d-4a3c4aaf4e49>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "علی سدپارہ کے بیٹے ساجد سدپارہ نے والد کے ساتھ گزاری جانے والی آخری رات کی ویڈیو اپنے ٹوئٹر اکاؤنٹ پر شیئر کی ہے، ساجد علی سدپارا نے ویڈیو کے کیپشن میں لکھا کہ ٹیم اور میرے والد کے ساتھ آخری اور میری "
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:a87307f1-324e-4b70-aeb7-904350aa781b>",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "A Company Registered under Section 42 of Companies Ordinance 1984. Corporate Universal Identification No. 0073421\nVision 21 is Pakistan based non-profit, non- partisan Socio-Political organisation. We"
+    },
+    {
+      "doc_id": "urdu-wikipedia:389650",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "واشنگٹن کاؤنٹی (Washington County) ریاستہائے متحدہ امریکا میں 30 کاؤنٹیوں کا نام ہے جو پہلے امریکی صدر جارج واشنگٹن کے نام پر ہے۔\n\nکاؤنٹیاں\n\nواشنگٹن کاؤنٹی، الاباما\nواشنگٹن کاؤنٹی، آرکنساس\nواشنگٹن کاؤ"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:50b7992d-903f-4d63-ace7-834c3a8f5449>",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "کوئٹہ پولیس کے ڈپٹی انسپکٹر جنرل عبدالرزاق چیمہ کا کہنا تھا کہ موٹرسائیکل پر سوار دہشت گردوں نے آٹو پارٹس کی دکان پر فائرنگ کی جس کے نتیجے میں شیعہ مسلک کا دکان دار موقع پر دم توڑ گئے۔۔۔۔۔\nTrending\n- "
+    },
+    {
+      "doc_id": "urdu-wikipedia:711333",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "too_short"
+      ],
+      "note": "year article with real event entries",
+      "excerpt": "واقعات\n<onlyinclude>\n\nپیدائشیں\n23 فروری – جارج فریدریک ہاندل، جرمنی کا مکپوزر (وفات۔ 1759ء)\n18 اگست – بروک ٹیلر، برطانوی ریاضی دان تھا جس نے ٹیلر سلسلہ دریافت کیا، (وفات :1731ء)\n\nوفیات\n\n6 فروری – بادش"
+    },
+    {
+      "doc_id": "urdu-wikipedia:1085863",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "{{Infobox}} template dump, the document is markup",
+      "excerpt": "{{Infobox NRHP\n|name=ویسٹ پوٹومیک پارک\n|nrhp_type=cp\n|partof=East and West Potomac Parks Historic District\n|partof_refnum=73000217<ref name=\"nris\">\nویسٹ پوٹومیک پارک (لاطینی: West Potomac Park) ریاست "
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:9b5fcd47-43e9-47e9-9400-80936fb0bde2>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "Urdu ghazal",
+      "excerpt": "ہاتھ میں لاٹھی پکڑ کر عشق فرمائیں گے کیا\nہاتھ میں لاٹھی پکڑ کر عشق فرمائیں گے کیا\nبابا جی کچھ اور دن بھی آپ جی پائیں گے کیا\nڈاکٹر کی فیس کا سن کر مریض محترم\nآپریشن سے ہی پہلے کوچ فرمائیں گے کیا\nٹیوشنی"
+    },
+    {
+      "doc_id": "urdu-wikipedia:122110",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "آنیانگ (لاطینی: Anyang) ایک پریفیکچر سطح شہر ہے جو چین میں واقع ہے۔ اس کی مجموعی آبادی 5,172,834 افراد پر مشتمل ہے، یہ ہینان میں واقع ہے۔\n\nمتعلقہ روابط\nفہرست چین کے شہر\n\nحوالہ جات\n\nچھوٹے پیغام خانوں ک"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6fccee0d-a792-4582-a040-340151f2e003>",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "پنجاب پولیس کی پھرتیاں، اصل ملزم کے بجائے 13 ماہ کا بچہ عدالت میں پیش\nروس نے ترکی کے ساتھ دفاعی تعلقات منقطع کر دیئے\nمنصوبےغیرملکی پیسوں سے بنتے اورچلانے کیلئے بھی بیرونی رقم کا انتظارکیاجاتاہ....\nعلم"
+    },
+    {
+      "doc_id": "urdu-wikipedia:919995",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "too_short"
+      ],
+      "note": "---",
+      "excerpt": "ابتدائی جدید جاپانی (جاپانی:近世日本語 تلفظ:کِینسائی نِہوَنگَو) وسطی جاپانی کے بعد اور جدید جاپانی سے پہلے جاپانی زبان کا مرحلے تھا. اس منتقلی کی مدت میں جاپانی زبان نے بہت سے وسطی خصوصیات کو ترک کر دیا او"
+    },
+    {
+      "doc_id": "urdu-wikipedia:264046",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "نوئیسترا سینیورا دیل منزانو کا گرجاگھر (اسپینی زبان میں: Iglesia de Nuestra Seora Del Manzano یا Iglesia de Santa Mara del Manzano) ایک گرجاگھر ہے۔ یہ گرجاگھر برگوس صوبے میں کاستروجیریز (Castrojeriz) "
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:f999247e-4ff6-456e-a9b1-adaf462e9df3>",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "video page: JS notice and furniture dominate",
+      "excerpt": "To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video\nعلمی زمرے:\nاس ویڈیو سی ڈی میں قرآن وحدیث کی روشنی میں اللہ تعالی کی معرفت کی تفصیل اور اس"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:40302212-f569-41a9-83f6-f4eaba63adeb>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "تلاش شدہ نتائج\nمحفوظ شدہ الفاظ\n\"نُکتَہ اُٹھانا\" کے متعقلہ نتائج\nنُکتَہ اُٹھانا کے اردو معانی\n- کسی بات کو موضوع بحث بنانا، کوئی بات یا خیال پیش کرنا، کوئی لطیف یا علمی بات برائے بحث پیش کرنا\nनुक्ता उठ"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:db657d1e-42f9-4e4d-b3e5-9ff5559a1993>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "Urdu ghazal",
+      "excerpt": "جھپٹتے ہیں جھپٹنے کے لیے پرواز کرتے ہیں\nجھپٹتے ہیں جھپٹنے کے لیے پرواز کرتے ہیں\nکبوتر بھی وہی کرنے لگے جو باز کرتے ہیں\nوہی قصے وہی باتیں کہ جو غماز کرتے ہیں\nترے ہم راز کرتے ہیں مرے دم ساز کرتے ہیں\nبصد"
+    },
+    {
+      "doc_id": "urdu-wikipedia:122214",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "، نامی یہ کمپنی 2012 میں فارچون میگزین کی سرفہرست 1000 کمپنیوں میں شامل تھی۔ اس کا ہیڈکوارٹر Tukwila، میں واقع ہے۔ فارچون کی رپورٹ کے مطابق 2012 میں اس میں سی ای او (CEO) کے عہدے پر William S. Ayer کا"
+    },
+    {
+      "doc_id": "urdu-wikipedia:363641",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "فیئرمیاڈی، کینٹکی ریاستہائے متحدہ امریکا کا ایک شہر جو جیفرسن کاؤنٹی میں واقع ہے۔\n\nتفصیلات\nفیئرمیاڈی، کینٹکی کا رقبہ 0.2 مربع کیلومیٹر ہے اور اس کی مجموعی آبادی 264 افراد پر مشتمل ہے اور 160 میٹر سطح "
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:904ff23c-4339-4ba8-acd3-7522b6790825>",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "ایشین گیمز؛ ہاکی میچ میں پاکستان نے چین کو 2 گول سے ہرا دیا\nسری لنکا کیخلاف کامیابی حوصلہ افزا ہے، ہاکی کپتان\nگوانگژو ٹینس میں مونیکا نیکو لسیکو نے ٹرافی حاصل کرلی\nشمالی کوریا کے ویٹ لفٹر اوم یون چول "
+    }
+  ]
+}

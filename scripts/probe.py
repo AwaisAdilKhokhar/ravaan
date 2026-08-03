@@ -1,25 +1,35 @@
 #!/usr/bin/env python
-"""Run stages 2 and 3 over a real source and report what the classifier actually decided.
+"""Run pipeline stages 2→5 over a real source and report what they actually did.
 
 The lesson of Finding D (session 4) is that fixture tests prove a rule does what it says and say
 nothing about whether it fires on the right things: 57 passing unit tests sat on top of a mojibake
-detector that would have deleted 3% of a clean corpus. Stage 3 decides which documents count as
-Urdu, so every threshold in it gets pointed at real text before the freeze.
+detector that would have deleted 3% of a clean corpus. Every threshold in stages 2, 3 and 5
+therefore gets pointed at real text before the freeze, and this is the thing that points it.
 
-Three things it reports, and each answers a question the module cannot answer about itself:
+It replaces `corpus_probe.py` (stages 2+4, read parquet by hand, predated the shard reader) and
+`stage3_probe.py` (stages 2+3). Both covered ground this covers, and two probes that disagree
+about how to sample are worse than one.
 
-* **Label distribution** — what stage 3 does to this source. A source where nothing is rejected
-  and a source where everything is says the same thing: the classifier is not discriminating.
-* **Agreement with FineWeb2's own GlotLID labels** (`language_score`, `top_langs`), where the
-  source carries them. This is the only external language label available without acquiring a new
-  source, and disagreement is informative in both directions.
-* **Known-truth accuracy** with ``--expect``: Roman-Urdu-Parl's Roman column is ~6.37M sentences
-  of Roman Urdu, which makes it a labelled test set for the one decision (Roman Urdu vs English)
-  that PRD §6.3.3 leaves open.
+What it reports, and the question each answers that the modules cannot answer about themselves:
 
-    python scripts/stage3_probe.py --source fineweb2-urd_Arab --limit 20000 --sample-rate 0.02
-    python scripts/stage3_probe.py --source roman-urdu-parl --split validation --expect roman_urdu
-    python scripts/stage3_probe.py --paths reports/*.md --expect english
+* **Stage 5 metric distributions.** Percentiles for every quality metric, per source. This is the
+  output that sets thresholds: the inherited Gopher repetition values reject 13.7% of FineWeb2,
+  and the only way to know that is to look at the distribution rather than at the constant.
+* **Sole rejections.** Documents rejected by exactly one rule family. A rule with no sole
+  rejections is agreeing with another rule, not filtering the corpus.
+* **Label distribution** (stage 3) — a source where nothing is rejected and a source where
+  everything is say the same thing: the classifier is not discriminating.
+* **Agreement with FineWeb2's own GlotLID labels**, where the source carries them. The only
+  external language label available without acquiring a new source.
+* **Known-truth accuracy** with ``--expect``: Roman-Urdu-Parl's Roman column is a labelled test
+  set for the Roman-Urdu-vs-English decision PRD §6.3.3 left open.
+* **Per-domain variant rates** with ``--sites`` — Finding F, that Arabic-variant spelling is a
+  property of publishers rather than of the language.
+
+    python scripts/probe.py --source fineweb2-urd_Arab --limit 20000 --sample-rate 0.02
+    python scripts/probe.py --source urdu-wikipedia --limit 20000 --sites
+    python scripts/probe.py --source roman-urdu-parl --split validation --expect roman_urdu
+    python scripts/probe.py --paths reports/*.md --expect english
 
 Requires the `[data]` extra for parquet sources.
 """
@@ -36,16 +46,40 @@ from urllib.parse import urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+# Urdu on a Windows console is cp1252 by default, which raises rather than mangles. The probe
+# writes Urdu to both streams, so pin them before anything is printed.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+
 from ravaan.data.encoding import EncodingConfig, EncodingLog, validate_text  # noqa: E402
 from ravaan.data.langid import LangIDConfig, LangIDLog, classify  # noqa: E402
-from ravaan.data.normalization import NormalizationConfig, normalize  # noqa: E402
-from ravaan.data.shards import Document, ShardReader  # noqa: E402
+from ravaan.data.normalization import (  # noqa: E402
+    NormalizationConfig,
+    NormalizationLog,
+    normalize,
+)
+from ravaan.data.quality import QualityConfig, QualityLog, check  # noqa: E402
+from ravaan.data.shards import LAYOUTS, Document, ShardReader  # noqa: E402
 
-# Stage 4 rules whose rate per document is the site-correlation question from session 4: FineWeb2
-# changes only 13.7% of documents but averages 0.83 yeh substitutions across all of them, so a
-# minority carries ~6 each. If that minority is a set of publishers rather than a diffuse
-# property of the language, it interacts with near-dedup (stage 7) and with arm A's subsample.
+# Stage 4 rules whose per-character rate is Finding F: FineWeb2 changes only 13.7% of documents
+# but averages 0.83 yeh substitutions across all of them, so a minority carries ~6 each.
 VARIANT_RULES = ("yeh", "heh", "kaf", "teh_marbuta", "alef")
+
+PERCENTILES = (0.01, 0.05, 0.25, 0.50, 0.75, 0.90, 0.95, 0.99)
+
+# Stage-5 metrics worth a distribution. The repetition family is where the published thresholds
+# turned out not to transfer, so every member of it is reported separately.
+QUALITY_METRICS: tuple[str, ...] = (
+    "chars",
+    "words",
+    "script_ratio",
+    "url_ratio",
+    "html_ratio",
+    "dup_line_ratio",
+    "max_top_ngram",
+    "max_dup_ngram",
+)
 
 
 def _paragraphs(paths: list[str], min_chars: int) -> list[Document]:
@@ -58,6 +92,19 @@ def _paragraphs(paths: list[str], min_chars: int) -> list[Document]:
             if len(block) >= min_chars:
                 docs.append(Document(source=path, doc_id=f"{path}:{index}", text=block))
     return docs
+
+
+def _percentiles(values: list[float]) -> dict[str, float]:
+    if not values:
+        return {}
+    ordered = sorted(values)
+    out = {
+        f"p{int(p * 100)}": round(ordered[min(int(p * len(ordered)), len(ordered) - 1)], 5)
+        for p in PERCENTILES
+    }
+    out["max"] = round(ordered[-1], 5)
+    out["mean"] = round(sum(ordered) / len(ordered), 5)
+    return out
 
 
 def _site_row(domain: str, docs: int, chars: int, hits: int, changed: float) -> dict:
@@ -81,7 +128,7 @@ def _domain(url: str | None) -> str:
     return host[4:] if host.startswith("www.") else host
 
 
-def main(argv: list[str] | None = None) -> int:
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--source", help="source name from data/manifest.json")
@@ -100,14 +147,33 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--sites", action="store_true", help="per-domain stage-4 variant rates")
     parser.add_argument("--min-chars", type=int, default=200, help="--paths paragraph minimum")
     parser.add_argument("--examples", type=int, default=2, help="examples to show per label")
+    parser.add_argument("--quality-config", help="stage-5 config JSON (default: shipped defaults)")
     parser.add_argument("--json", help="write the full report here")
-    args = parser.parse_args(argv)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
 
     encoding_config = EncodingConfig()
     langid_config = LangIDConfig()
+    normalization_config = NormalizationConfig()
+    quality_config = (
+        QualityConfig.from_json_file(args.quality_config)
+        if args.quality_config
+        else QualityConfig()
+    )
+    # Roman-Urdu-Parl rows are single sentences; the document-length and line-repetition rules
+    # would reject the whole source. The layout already declares the unit, so read it rather than
+    # asking the operator to remember.
+    unit = LAYOUTS[args.source].unit if args.source in LAYOUTS else "document"
+    if unit == "sentence":
+        quality_config = quality_config.for_sentences()
+
     stage2 = EncodingLog(config=encoding_config)
     stage3 = LangIDLog(config=langid_config)
-    normalization_config = NormalizationConfig()
+    stage4 = NormalizationLog(config=normalization_config)
+    stage5 = QualityLog(config=quality_config)
 
     if args.paths:
         documents: object = _paragraphs(args.paths, args.min_chars)[: args.limit]
@@ -123,25 +189,46 @@ def main(argv: list[str] | None = None) -> int:
         )
         documents = reader
         plan = f"plan {reader.plan_fingerprint()} over {len(reader.files)} file(s)"
-    print(f"reading {plan}", file=sys.stderr)
+    print(f"reading {plan}  (stage-5 unit: {unit})", file=sys.stderr)
 
     rng = random.Random(args.seed)
     examples: dict[str, list[str]] = defaultdict(list)
+    rejected_examples: dict[str, list[tuple[str, str]]] = defaultdict(list)
     seen_per_label: Counter[str] = Counter()
-    glotlid_agree = Counter()
+    seen_per_family: Counter[str] = Counter()
+    glotlid_agree: Counter[str] = Counter()
     glotlid_scores: dict[str, list[float]] = defaultdict(list)
     site_docs: Counter[str] = Counter()
     site_chars: Counter[str] = Counter()
     site_variants: dict[str, Counter[str]] = defaultdict(Counter)
     site_changed: Counter[str] = Counter()
+    metric_values: dict[str, list[float]] = defaultdict(list)
 
     for doc in documents:
         checked = validate_text(doc.text, encoding_config)
         stage2.add(checked)
         if not checked.accepted:
             continue
+
+        # Stage 3 runs on pre-normalization text on purpose: Arabic-keyboard Urdu still writes که
+        # for کہ, and folding first merges the evidence that separates Urdu from Persian.
         result = classify(checked.text or "", langid_config)
         stage3.add(result)
+
+        normalized = normalize(checked.text or "", normalization_config)
+        stage4.add(normalized)
+
+        quality = check(
+            normalized.normalized,
+            quality_config,
+            label=result.label,
+            scripts=result.scripts,
+            letters=result.letters,
+        )
+        stage5.add(quality)
+
+        for name in QUALITY_METRICS:
+            metric_values[name].append(float(getattr(quality.metrics, name)))
 
         # Reservoir sample per label, so examples are not all from the head of the read order.
         seen_per_label[result.label] += 1
@@ -151,19 +238,29 @@ def main(argv: list[str] | None = None) -> int:
         elif rng.random() < args.examples / seen_per_label[result.label]:
             bucket[rng.randrange(args.examples)] = (checked.text or "")[:300]
 
+        # The same reservoir over *rejections*, keyed by rule family. This is the part that gets
+        # read by a human: a threshold is only defensible once you have looked at what it deletes.
+        for family in quality.families:
+            seen_per_family[family] += 1
+            hits = rejected_examples[family]
+            entry = (doc.doc_id, normalized.normalized[:300])
+            if len(hits) < args.examples:
+                hits.append(entry)
+            elif rng.random() < args.examples / seen_per_family[family]:
+                hits[rng.randrange(args.examples)] = entry
+
         # FineWeb2 ships GlotLID's verdict per document. Free external validation.
         language = doc.meta.get("language") if isinstance(doc.meta, dict) else None
         if language:
             script = doc.meta.get("language_script") or "?"
             glotlid_agree[f"{language}_{script} -> {result.label}"] += 1
-            score = doc.meta.get("language_score")
-            if isinstance(score, int | float):
-                glotlid_scores[result.label].append(float(score))
+            glotlid_score = doc.meta.get("language_score")
+            if isinstance(glotlid_score, int | float):
+                glotlid_scores[result.label].append(float(glotlid_score))
 
         if args.sites and result.label in ("urdu", "code_switched"):
             domain = _domain(doc.meta.get("url") if isinstance(doc.meta, dict) else None)
             if domain:
-                normalized = normalize(checked.text or "", normalization_config)
                 site_docs[domain] += 1
                 site_chars[domain] += len(checked.text or "")
                 if normalized.changed:
@@ -173,30 +270,74 @@ def main(argv: list[str] | None = None) -> int:
 
     payload: dict[str, object] = {
         "source": args.source or args.paths,
+        "split": args.split,
+        "limit": args.limit,
+        "sample_rate": args.sample_rate,
+        "seed": args.seed,
         "stage2_encoding": stage2.to_dict(),
         "stage3_langid": stage3.to_dict(),
+        "stage4_normalization": stage4.to_dict(),
+        "stage5_quality": stage5.to_dict(),
+        "stage5_distributions": {
+            name: _percentiles(values) for name, values in sorted(metric_values.items())
+        },
+        "stage5_rejected_examples": {
+            family: [{"doc_id": d, "text": t} for d, t in hits]
+            for family, hits in sorted(rejected_examples.items())
+        },
     }
-
-    print(json.dumps(payload, indent=2, ensure_ascii=False))
 
     # --- human-readable summary on stderr ----------------------------------
     total = stage3.documents
     if total:
-        print(f"\n{total} documents classified", file=sys.stderr)
+        print(f"\n{total} documents classified (stage 3)", file=sys.stderr)
         for label, count in stage3.labels.most_common():
             letters = stage3.letters_by_label[label]
-            share = 100 * count / total
             print(
-                f"  {label:<15} {count:>7}  {share:>5.1f}%  {letters / 1e6:>8.2f}M letters",
+                f"  {label:<15} {count:>7}  {100 * count / total:>5.1f}%  "
+                f"{letters / 1e6:>8.2f}M letters",
                 file=sys.stderr,
             )
         print(
             f"  kept (urdu/roman/code-switched): {100 * stage3.keep_rate:.2f}%  "
-            f"mixed documents: {stage3.mixed_documents}",
+            f"mixed documents: {stage3.mixed_documents}  "
+            f"by prior: {100 * stage3.documents_by_prior / total:.2f}%",
             file=sys.stderr,
         )
-        if stage3.segment_letters:
-            print(f"  segment letters: {dict(stage3.segment_letters)}", file=sys.stderr)
+
+    if stage4.documents:
+        print(
+            f"\nstage 4: {100 * stage4.documents_changed / stage4.documents:.1f}% of documents "
+            f"changed, {stage4.chars_in / 1e6:.2f}M -> {stage4.chars_out / 1e6:.2f}M chars",
+            file=sys.stderr,
+        )
+
+    if stage5.documents:
+        print(
+            f"\nstage 5: kept {stage5.documents_kept}/{stage5.documents} "
+            f"= {100 * stage5.keep_rate:.2f}% of documents, "
+            f"{100 * stage5.char_keep_rate:.2f}% of characters",
+            file=sys.stderr,
+        )
+        print("  family              fired    sole", file=sys.stderr)
+        for family, count in stage5.families.most_common():
+            print(
+                f"  {family:<18} {count:>6}  {stage5.sole_rejections.get(family, 0):>6}",
+                file=sys.stderr,
+            )
+        if not stage5.families:
+            print("  (nothing rejected — this stage is an assertion on this source)",
+                  file=sys.stderr)
+        print("\n  distributions", file=sys.stderr)
+        for name in QUALITY_METRICS:
+            stats = _percentiles(metric_values.get(name, []))
+            if not stats:
+                continue
+            print(
+                f"    {name:<16} p50={stats['p50']:>10.4f} p90={stats['p90']:>10.4f} "
+                f"p99={stats['p99']:>10.4f} max={stats['max']:>10.4f}",
+                file=sys.stderr,
+            )
 
     if args.expect:
         correct = stage3.labels.get(args.expect, 0)
@@ -221,7 +362,6 @@ def main(argv: list[str] | None = None) -> int:
             )
 
     if args.sites and site_docs:
-        # Rates per 1,000 characters, restricted to domains with enough text to mean anything.
         eligible = [d for d, n in site_docs.items() if n >= 5 and site_chars[d] >= 20_000]
         rows = sorted(
             (
@@ -264,9 +404,9 @@ def main(argv: list[str] | None = None) -> int:
                 file=sys.stderr,
             )
 
-    for label, texts in sorted(examples.items()):
-        for text in texts[:1]:
-            print(f"\n--- {label} ---\n  {text[:200]!r}", file=sys.stderr)
+    for family, hits in sorted(rejected_examples.items()):
+        for _, text in hits[:1]:
+            print(f"\n--- rejected by {family} ---\n  {text[:200]!r}", file=sys.stderr)
 
     if args.json:
         Path(args.json).write_text(
@@ -274,6 +414,8 @@ def main(argv: list[str] | None = None) -> int:
             encoding="utf-8",
             newline="\n",
         )
+    else:
+        print(json.dumps(payload, indent=2, ensure_ascii=False))
     return 0
 
 

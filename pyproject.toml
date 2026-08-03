@@ -30,6 +30,7 @@ ravaan-acquire = "ravaan.data.acquisition:main"
 ravaan-validate-encoding = "ravaan.data.encoding:main"
 ravaan-langid = "ravaan.data.langid:main"
 ravaan-normalize = "ravaan.data.normalization:main"
+ravaan-quality = "ravaan.data.quality:main"
 ravaan-shards = "ravaan.data.shards:main"
 
 [project.optional-dependencies]

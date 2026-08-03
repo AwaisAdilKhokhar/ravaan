@@ -1,0 +1,658 @@
+{
+  "sheet": "reports\\quality_sample.md",
+  "documents_in_sample": 200,
+  "documents_marked": 200,
+  "documents_unmarked": 0,
+  "invalid_verdicts": [],
+  "uniform": {
+    "marked": 100,
+    "abstained": 0,
+    "agreement": 0.76,
+    "filter_accept_human_keep": 67,
+    "filter_accept_human_drop": 24,
+    "filter_reject_human_keep": 0,
+    "filter_reject_human_drop": 9
+  },
+  "rejected": {
+    "marked": 100,
+    "abstained": 0,
+    "agreement": 0.59,
+    "filter_accept_human_keep": 0,
+    "filter_accept_human_drop": 0,
+    "filter_reject_human_keep": 41,
+    "filter_reject_human_drop": 59
+  },
+  "family_precision": {
+    "html_residue": {
+      "rejected": 13,
+      "human_agreed_drop": 5,
+      "precision": 0.3846
+    },
+    "repetition": {
+      "rejected": 15,
+      "human_agreed_drop": 9,
+      "precision": 0.6
+    },
+    "script_ratio": {
+      "rejected": 60,
+      "human_agreed_drop": 33,
+      "precision": 0.55
+    },
+    "too_short": {
+      "rejected": 32,
+      "human_agreed_drop": 32,
+      "precision": 1.0
+    }
+  },
+  "disagreements": [
+    {
+      "doc_id": "urdu-wikipedia:1099574",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "repetition:dup_5gram"
+      ],
+      "note": "clean politician biography; repetition is the recurring name plus standard biographical formulae and the category footer",
+      "excerpt": "سمیع اللہ خان ،ایک پاکستانی سیاست دان ہیں جو اگست 2018 سے جنوری 2023 تک پنجاب کی صوبائی اسمبلی کے رکن رہے۔\n\nابتدائی زندگی اور تعلیم\nسمیع اللہ خان 17 اکتوبر 1960 کو لاہور، پاکستان میں پیدا ہوئے۔ انہوں "
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:aa241bbe-c65c-40b6-858a-b44d70ccacb6>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "Urdu health article; the Latin is site furniture, not a language problem",
+      "excerpt": "بستر کی چادر کے نیچے صابن رکھنے سے کیا ہوتا ہے؟ عام سی چیز کا ایسا فائدہ کے آپ بھی یہ کرنے پر مجبور ہوجائیں گےکیا آپ نے کبھی لیٹے لیٹے اپنے پاؤں ہلائے ہیں؟ اکثر لوگ اس عادت میں مبتلا ہوتے ہیں اور بستر"
+    },
+    {
+      "doc_id": "urdu-wikipedia:892083",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "html_residue"
+      ],
+      "note": "---",
+      "excerpt": "دریائے غوربند افغانستان کا ایک دریا ہے جو صوبہ پروان سے ہوتا ہوا گزرتا ہے ۔ یہ دریائے پنجشیر کی ایک معاون دریا ہے ، پھر دریائے سندھ کا ذیلی معاون ، پھر دریائے کابل کا ۔\n\nغوربند مکمل طور پر صوبہ پروان "
+    },
+    {
+      "doc_id": "urdu-wikipedia:121768",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template geo stub: one factual sentence plus navigation footers",
+      "excerpt": "اشکنان () ایک شہر ہے جو ایران میں واقع ہے۔ اس کی مجموعی آبادی 7,513 افراد پر مشتمل ہے، یہ صوبہ فارس میں واقع ہے۔\n\nمتعلقہ روابط\nفہرست ایران کے شہر\n\nحوالہ جات\n\nایران کے شہر\nجغرافیہ شہرستان لامرد کے نامک"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:aae4baa0-1267-4dca-9d72-ea874333f244>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "Shabe Qadr Ki Tasbeeh ” استغفر اللہ ربی من کل ذنب و اتوب الیہ” Ke Barkat Se Aap Allah Ke Bargha Se Apni Har Mushkil Ka Hal Aur Har Hajat Ke Takmeel Fori Hasil Kar Saktay Hain . Es Tasbeeh Ke Barkat Se"
+    },
+    {
+      "doc_id": "urdu-wikipedia:522648",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "html_residue"
+      ],
+      "note": "poet biography; the markup is a few <i>/<ref> tags in an otherwise clean body",
+      "excerpt": "انجم رومانی (پیدائش: 28 ستمبر، 1920ء- وفات: 13 اپریل، 2001ء) پاکستان سے تعلق رکھنے والے اردو زبان کے ممتاز شاعر اور ماہر تعلیم تھے۔\n\nحالات زندگی\nانجم رومانی 28 ستمبر، 1920ء کو سلطان پور لودھی، کپور تھ"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:2c96867e-9750-459c-9bb8-a97b613a10ff>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "اداکارہ حنا الطاف کے مارننگ شو میں دیئے گئے بیان پر ان کے شوہر اداکار آغا علی کو سوشل میڈیا پر تنقید سامنا ہے ۔\nگزشتہ دنوں ایک مارننگ شو کے دوران اداکارہ حنا الطاف نے بتایا تھا کہ شادی سے پہلے آغا نے "
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:44a045ed-f6df-4622-b88a-48212b00efa7>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "وزیراعظم کی کامیابی ہی ملک کی کامیابی ہے، وہی آخری امید ہیں، اداکار شان\nمعروف پاکستانی فلم اسٹار شان شاہد نے سماجی روابط کی ویب سائٹ ٹوئٹر پر ایک جاری کردہ ٹوئٹ میں کہا کہ بہترین پاکستان کے لیے وزیراع"
+    },
+    {
+      "doc_id": "urdu-wikipedia:121962",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "خواف () ہے جو ایران میں واقع ہے۔ اس کی مجموعی آبادی 21,160 افراد پر مشتمل ہے، یہ صوبہ خراسان رضوی میں واقع ہے۔\n\nمتعلقہ روابط\nفہرست ایران کے شہر\n\nحوالہ جات\n\nایران کے شہر\nشہرستان خواف\nShort description "
+    },
+    {
+      "doc_id": "urdu-wikipedia:1000755",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "html_residue"
+      ],
+      "note": "poet biography, same as 22",
+      "excerpt": "ناصر محمود خان المعروف ناصر کاسگنجوی (پیدائش: 10 اکتوبر 1928ء - 22 جون 2002ء) پاکستان سے تعلق رکھنے والے اردو زبان کے ممتاز شاعر تھے۔ انہوں نے غزل، قطعات، نظم اور نعت کی اصنافِ سخن میں طبع آزمائی کی۔\n"
+    },
+    {
+      "doc_id": "urdu-wikipedia:1100741",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "repetition:dup_5gram"
+      ],
+      "note": "clean politician biography, same pattern as 1",
+      "excerpt": "قاضی احمد سعید، ایک پاکستانی سیاست دان ہیں جو 2002 سے مئی 2018 تک پنجاب کی صوبائی اسمبلی کے رکن رہے۔\n\nابتدائی زندگی اور تعلیم\nقاضی احمد سعید یکم جون 1968 کو ضلع رحیم یار خان میں پیدا ہوئے۔ انہوں نے قا"
+    },
+    {
+      "doc_id": "urdu-wikipedia:122009",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "ایو اینجل ایک فحش اداکارہ ہے۔\n\nمتعلقہ روابط\nفہرست فحش اداکارائیں\nفحش فلم\nفحش نگاری\n\nحوالہ جات\n\n1983ء کی پیدائشیں\nبقید حیات شخصیات\nبوداپست کی اداکارائیں\nکاروبار میں مجارستانی خواتین\nکاروباری خواتین\nمجا"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:0333f057-306a-4cf9-9c42-49be760c25da>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "Urdu news quoting an English tweet; the Urdu is the substance",
+      "excerpt": "نئی دہلی: اسرائیل اور فلسطین کے درمیان جاری جنگ کے بیچ حزب اختلاف کے رہنما دارالحکومت میں موجود فلسطینی سفارتکار پہنچ کر یکجہتی کا اظہار کیا۔ اس یکجہتی وفد میں سابق مرکزی وزیر منی شنکر ایئر اور بی ایس"
+    },
+    {
+      "doc_id": "urdu-wikipedia:43806",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "html_residue"
+      ],
+      "note": "---",
+      "excerpt": "پاکستان کو وفاقی دار الحکومت، چار صوبوں، آزاد کشمیر اور گلگت و بلتستان میں تقسیم کیا جاسکتا ہے جو اس کے بڑے بڑے علاقے ہیں۔ سرکاری طور پر پاکستان کے چار صوبے اور ایک وفاقی دار الحکومت ہے جس کے لیے آپ د"
+    },
+    {
+      "doc_id": "urdu-wikipedia:966553",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "repetition:dup_5gram",
+        "repetition:dup_6gram",
+        "repetition:dup_7gram",
+        "repetition:dup_8gram",
+        "repetition:dup_9gram",
+        "repetition:dup_10gram"
+      ],
+      "note": "clean politician biography",
+      "excerpt": "جہانگیر خانزادہ ایک پاکستانی سیاست دان ہیں جو اگست 2018 سے پنجاب کی صوبائی اسمبلی کے رکن ہیں۔ اس سے قبل وہ اکتوبر 2015 سے مئی 2018 تک پنجاب اسمبلی کے رکن رہے۔\n\nابتدائی زندگی اور تعلیم\nجہانگیر خانزادہ "
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:36b2888d-6383-484d-9e9f-e3ae7dfe5be5>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "Rekhta dictionary entry — Urdu lexical content with Hindi and English glosses, valuable",
+      "excerpt": "تلاش شدہ نتائج\nمحفوظ شدہ الفاظ\n\"دَولَت لُٹے کوئِلوں پَر مُہْر\" کے متعقلہ نتائج\nدَولَت لُٹے کوئِلوں پَر مُہْر کے اردو معانی\n- بجا اور باموقع خرچ کے موقع پر کفایت شعاری کرنے اور بے جا خرچ کی پروا نہ کرن"
+    },
+    {
+      "doc_id": "urdu-wikipedia:363923",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "فخراباد1 ایران کا ایک آباد مقام جو Sharifabad Rural District (Sirjan County) میں واقع ہے۔\n\nتفصیلات\nفخراباد1 کی مجموعی آبادی 1,313 افراد پر مشتمل ہے۔\n\nمزید دیکھیے\nایران\nفہرست ایران کے شہر\n\nحوالہ جات\n\nج"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:bf7e4280-9a1c-447f-87cc-0a9608995a91>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "Urdu ghazal; sufinama pages carry a Roman transliteration alongside",
+      "excerpt": "کبھی ملی جو ترے درد کی نوا مجھ کو\nکبھی ملی جو ترے درد کی نوا مجھ کو\nخموشیوں نے مجھی سے کیا جدا مجھ کو\nبدن کے سونے کھنڈر میں کبھی جلا مجھ کو\nمیں تیری روح کی ضو ہوں نہ یوں بجھا مجھ کو\nمیں اپنی ذات کی ہم"
+    },
+    {
+      "doc_id": "urdu-wikipedia:122264",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "، نامی یہ کمپنی 2012 میں فارچون میگزین کی سرفہرست 1000 کمپنیوں میں شامل تھی۔ اس کا ہیڈکوارٹر سیئٹل، میں واقع ہے۔ فارچون کی رپورٹ کے مطابق 2012 میں اس میں سی ای او (CEO) کے عہدے پر Kerry K. Killinger ک"
+    },
+    {
+      "doc_id": "urdu-wikipedia:121168",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "کوستوژے () ایک فرانسیسی کمیون ہے جو فرانس میں واقع ہے۔ اس کی مجموعی آبادی 134 افراد پر مشتمل ہے، یہ Canton of Prats-de-Mollo-la-Preste میں واقع ہے۔\n\nنگار خانہ\n\nمتعلقہ روابط\nفہرست فرانس کے شہر\n\nحوالہ ج"
+    },
+    {
+      "doc_id": "urdu-wikipedia:363620",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "فیئرہون، ساسکاٹون کینیڈا کا ایک محلہ جو ساسکچیوان میں واقع ہے۔\n\nتفصیلات\nفیئرہون، ساسکاٹون کی مجموعی آبادی 4,990 افراد پر مشتمل ہے۔\n\nمزید دیکھیے\nکینیڈا\nفہرست کینیڈا کے شہر\n\nحوالہ جات\n\nکامنز زمرہ جس کا "
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:731dbfbe-9197-4d53-af9d-4a3c4aaf4e49>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "علی سدپارہ کے بیٹے ساجد سدپارہ نے والد کے ساتھ گزاری جانے والی آخری رات کی ویڈیو اپنے ٹوئٹر اکاؤنٹ پر شیئر کی ہے، ساجد علی سدپارا نے ویڈیو کے کیپشن میں لکھا کہ ٹیم اور میرے والد کے ساتھ آخری اور میری "
+    },
+    {
+      "doc_id": "urdu-wikipedia:363239",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "فیبکی سلووینیا کا ایک آباد مقام و cultural heritage site in Slovenia جو Inner Carniola میں واقع ہے۔\n\nتفصیلات\nفیبکی کا رقبہ 1.3 مربع کیلومیٹر ہے اور اس کی مجموعی آبادی 11 افراد پر مشتمل ہے اور 634.6 می"
+    },
+    {
+      "doc_id": "urdu-wikipedia:361752",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "گرادسکو بلدیہ جمہوریہ مقدونیہ کا ایک جمہوریہ مقدونیہ کی بلدیات جو جمہوریہ مقدونیہ میں واقع ہے۔\n\nتفصیلات\nگرادسکو بلدیہ کا رقبہ 236.19 مربع کیلومیٹر ہے اور اس کی مجموعی آبادی 3,760 افراد پر مشتمل ہے۔\n\nم"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:aac109d2-6ad0-41e7-bb54-bb06a3b9f127>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "برطانیہ سے انڈیا کے دورے پر آئے آرچ بشپ آف کینٹربری جسٹن ویلبائے نے اس وقت اپنی عاجزی و انکساری سے لاکھوں لوگوں کے دل جیت لیے جب انہوں نے جلیانوالہ باغ کے سانحے میں ہلاک ہونے والوں کی تعظیم میں نہ صرف"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8f49bf42-91e0-476d-a782-640da2ed0fe7>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "'رواں سال چین سے گوادر تک کارگو کی ترسیل شروع ہو جائیگی '\nگوادر (92نیوز) چیف آف آرمی سٹاف جنرل راحیل شریف نے کہا ہے کہ دشمن انٹیلی جنس ایجنسیاں پاک چین اقتصادی راہداری منصوبے کے خلاف ہیں۔ رواں سال چین"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:efe31a48-ff5f-4aba-a34a-9cb9b4d896d0>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "راولپنڈی: ترجمان افواج پاکستان نے بھارت کی جانب سے لائن آف کنٹرول کے قریب دہشتگردوں کی موجودگی کے دعوے کو مسترد کر دیا ہے۔ ڈی جی آئی ایس پی آر نے کہا ہے پاکستان اور بھارت کے فوجی حکام کا ہاٹ لائن پر ر"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:2740de9f-44fa-46e6-bdb1-23b19a4a18fe>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "اسلام آباد: (پاک آنلائن نیوز) ڈاکٹر طاہرالقادری نے کورونا وائرس کے سبب لوگوں کو گھروں میں رہنے کا مشورہ دیتے ہوئے کہا ہے کہ لوگ اس وقت سے کتابیں پڑھنے کا فائدہ اٹھا لیں۔\nسربراہ منہاج القرآن ڈاکٹر طاہر"
+    },
+    {
+      "doc_id": "urdu-wikipedia:121869",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "تویسرکان () ایک شہر ہے جو ایران میں واقع ہے۔ اس کی مجموعی آبادی 42,520 افراد پر مشتمل ہے، یہ صوبہ ہمدان میں واقع ہے۔\n\nمتعلقہ روابط\nفہرست ایران کے شہر\n\nحوالہ جات\n\nایران کے شہر\nشہرستان تویسرکان میں آباد"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:5d4100ed-29d5-49e8-8bb3-2f253c901795>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "جنیوا: (ویب ڈیسک) عالمی ادارہ صحت (ڈبلیو ایچ او) نے کورونا وائرس کے خاتمے کی ممکنہ تاریخ کا اعلان کر دیا ہے۔\nغیر ملکی میڈیا کے مطابق یہ اہم بات ورلڈ ہیلتھ آرگنائزیشن کے ایمرجنسی پروگرام کی سربراہ ماری"
+    },
+    {
+      "doc_id": "urdu-wikipedia:10788",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "html_residue"
+      ],
+      "note": "year article with real event entries",
+      "excerpt": "جنوری\n\nفروری\n\nمارچ\n19 مارچ - پاکستانی اداکار محمد علی کا انتقال۔\n\nاپریل\n11 اپریل - پاکستان میں عید میلاد النبی کے دن سانحہ نشتر پارک کراچی (2006ء بم دھماکا)\n\nمئی\n\nجون\n\nجولائی\n10 جولائی - پاکستانی شاعر"
+    },
+    {
+      "doc_id": "urdu-wikipedia:623388",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "html_residue"
+      ],
+      "note": "poet biography",
+      "excerpt": "پروفیسر سردار نقوی امروہوی (پیدائش:21 مارچ، 1941ء - وفات: 5 فروری، 2001ء ) پاکستان کے ممتاز اردو مرثیہ گو شاعر تھے۔\n\nحالات زندگی اور تعلیمی سفر\nسید سردار محمد نقوی المعروف سردار نقوی 21 مارچ، 1941ء کو"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:0ba84f2f-f895-466a-b161-42892cd03370>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "repetition:dup_5gram"
+      ],
+      "note": "political statement, real Urdu prose",
+      "excerpt": "سپریم کورٹ بلا تاخیر ذوالفقار مرزا کو طلب کرے: شیخ الاسلام ڈاکٹرمحمد طاہر القادری\nذوالفقار مرزا کے خدشہ کے تناظر میں سپریم کورٹ ان کے بیان اور\nدستاویزات کو فوری طور پر اپنے ریکارڈ میں لے\nپاکستان کے مو"
+    },
+    {
+      "doc_id": "urdu-wikipedia:711333",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "html_residue"
+      ],
+      "note": "year article with real event entries",
+      "excerpt": "واقعات\n<onlyinclude>\n\nپیدائشیں\n23 فروری – جارج فریدریک ہاندل، جرمنی کا مکپوزر (وفات۔ 1759ء)\n18 اگست – بروک ٹیلر، برطانوی ریاضی دان تھا جس نے ٹیلر سلسلہ دریافت کیا، (وفات :1731ء)\n\nوفیات\n\n6 فروری – بادش"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:17a9cd65-43b5-432a-886f-55e9f9b0a022>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "دنیا دہشت گردی کے خلاف جنگ میں ہماری قربانیوں کو تسلیم کرے، آرمی چیف\nافغانستان میں امن چاہتے ہیں مگرپاکستان کااحترام،سیکیورٹی مقدم ہے\nراولپنڈی: آرمی چیف آف اسٹاف جنرل قمر جاوید باجوہ نے کہا ہے کہ پاکس"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:c4922de5-de7d-476c-b519-812b95d98158>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "اسلام آباد (گلف آن لائن) روس نے پاکستانی چاول کی برآمدات سے پابندی ہٹا دی چاول کی برآمدات شروع ہو گئی. پاک روس تعلقات مزید مضبوط ہونے لگے،روس نے پاکستانی چاول کی برآمدات سے پابندی ہٹادی،روس کی جانب سے"
+    },
+    {
+      "doc_id": "urdu-wikipedia:362470",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "زچپیلوکا ریوں یوکرین کا ایک raion of Ukraine جو خارکیو اوبلاست میں واقع ہے۔\n\nتفصیلات\nزچپیلوکا ریوں کا رقبہ 793.6 مربع کیلومیٹر ہے اور اس کی مجموعی آبادی 15,704 افراد پر مشتمل ہے۔\n\nمزید دیکھیے\nیوکرین\nف"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:faebcdb7-e7b3-4835-b2cd-ffd0ada51abc>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "خیبرپختونخوا اور بلوچستان میں تین روزہ انسداد پولیو مہم کا آغاز ہو گیا\nMay 16, 2016\nخیبرپختونخوا اور بلوچستان میں تین روزہ انسداد پولیو مہم کا آغاز ہو گیا\nپشاور / کوئٹہ (92نیوز) خیبرپختونخوا‘ فاٹا اور"
+    },
+    {
+      "doc_id": "urdu-wikipedia:120973",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "نومازو، شیزوکا ایک special city of Japan ہے جو جاپان میں واقع ہے۔ اس کی مجموعی آبادی 198,926 افراد پر مشتمل ہے، یہ شیزوکا پریفیکچر میں واقع ہے۔\n\nمتعلقہ روابط\nجاپان کے شہر\n\nحوالہ جات\n\nجاپان کے آباد ساح"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:58226fe1-1592-4cab-b3d6-a5d86ba78544>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "گذشتہ برسوں کے دوران ہندوستان میں شدت پسند گروہوں کے ذریعہ نقل مکانی کا عمل انتہائی عام ہو رہا ہے۔ سینکڑوں افراد کے انتہا پسند گروہوں کے ذریعہ درجنوں مسلم مردوں کو موت کے گھاٹ اتار دیا گیا اور زیادہ ا"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:9356e702-0f96-4fd9-aa7c-bfe4d092559a>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "علی ظفر کے وکلا نے ریما عمر کو قانون کا سبق یاد دلا دیا\nریما عمر نے ٹویٹ کے ذریعے علی ظفر کے مقدمہ جیتنے کے دعوے کو غلط قرار دیا، گلوکار کے وکلا نے ریما عمر کو قانونی جواب دیئے۔\nمیشا شفیع کی وکیل ریما"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8ae9f04a-5cda-41ee-a5fa-3704b80f9f26>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "انصار برنی ویلفیئر ٹرسٹ کو بھارتی لڑکی کے ورثاء کی تلاش\nکراچی: پاکستان میں موجود بھارتی لڑکی اپنے خاندان سے ملنے کیلئے بے تاب ہے۔\nتفصیلات کے مطابق انصار برنی ویلفیر ٹرسٹ انٹرنیشل کو پاکستان میں موجود "
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:b084d1e8-c6cc-44d0-b9dd-5e4d887da267>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "فواد چوہدری کی بھارتی فوج میں پنجابیوں سے کشمیریوں پر مظالم کا حصہ نہ بننے کی اپیل\nاسلام آباد : وزیر سائنس اینڈ ٹیکنالوجی فواد چوہدری نے بھارتی فوج کے پنجابی سپاہیوں سے کشمیریوں پر مظالم کا حصہ نہ بنن"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:9b5fcd47-43e9-47e9-9400-80936fb0bde2>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "Urdu ghazal",
+      "excerpt": "ہاتھ میں لاٹھی پکڑ کر عشق فرمائیں گے کیا\nہاتھ میں لاٹھی پکڑ کر عشق فرمائیں گے کیا\nبابا جی کچھ اور دن بھی آپ جی پائیں گے کیا\nڈاکٹر کی فیس کا سن کر مریض محترم\nآپریشن سے ہی پہلے کوچ فرمائیں گے کیا\nٹیوشنی"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:47f5ca19-f510-4dac-9b7a-c96d2beaca2d>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "بھارتی طیارہ گرکر تباہ\nنئی دہلی: بھارتی ائیرفورس کا مگ21طیارہ گرکر تباہ ہوگیا جس کے نتیجے میں اسکواڈرن لیڈر ہلاک ہوا ہے۔\nغیرملکی خبررساں ادارے کی رپورٹ کے مطابق جنگی جہاز کا یہ حادثہ بھارتی ریاست پنجا"
+    },
+    {
+      "doc_id": "urdu-wikipedia:122110",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "آنیانگ (لاطینی: Anyang) ایک پریفیکچر سطح شہر ہے جو چین میں واقع ہے۔ اس کی مجموعی آبادی 5,172,834 افراد پر مشتمل ہے، یہ ہینان میں واقع ہے۔\n\nمتعلقہ روابط\nفہرست چین کے شہر\n\nحوالہ جات\n\nچھوٹے پیغام خانوں ک"
+    },
+    {
+      "doc_id": "urdu-wikipedia:363350",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "فاگاگنا اطالیہ کا ایک کمونے جو صوبہ اودینے میں واقع ہے۔\n\nتفصیلات\nفاگاگنا کا رقبہ 37.0 مربع کیلومیٹر ہے اور اس کی مجموعی آبادی 6,279 افراد پر مشتمل ہے۔\n\nمزید دیکھیے\nاطالیہ\nفہرست اطالیہ کے شہر\n\nحوالہ جا"
+    },
+    {
+      "doc_id": "urdu-wikipedia:264046",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "نوئیسترا سینیورا دیل منزانو کا گرجاگھر (اسپینی زبان میں: Iglesia de Nuestra Seora Del Manzano یا Iglesia de Santa Mara del Manzano) ایک گرجاگھر ہے۔ یہ گرجاگھر برگوس صوبے میں کاستروجیریز (Castrojeriz) "
+    },
+    {
+      "doc_id": "urdu-wikipedia:363217",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "ایف۔ جے۔ ٹوراس کازوے ریاستہائے متحدہ امریکا کا ایک geographical object جو گلین کاؤنٹی، جارجیا میں واقع ہے۔\n\nمزید دیکھیے\nریاستہائے متحدہ امریکا\nفہرست ریاستہائے متحدہ امریکہ کے شہر\n\nحوالہ جات\n\nگلین کاؤن"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:28309046-fe03-4afe-ae69-805bee91497f>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "میں بھول گئی تھی، یہ تو لڑکی کی اپنی غلطی ہے ‘خاتون کو ہراساں کرنے پر فنکار برہم’\nیوم آزادی پر اپنی آزادی کا ناجائز فائدہ اٹھاتے ہوئے چار سو درندوں نے خاتون ٹک ٹاکر عائشہ کو زدکوب کیا, بدتمیزی کی اور "
+    },
+    {
+      "doc_id": "urdu-wikipedia:1007996",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "repetition:dup_5gram",
+        "repetition:dup_6gram",
+        "repetition:dup_7gram"
+      ],
+      "note": "cricketer biography; dup-ngram is career-record prose about one person",
+      "excerpt": "فاروق رشید ڈار (پیدائش: 15 اکتوبر 1958ء کو کراچی ، سندھ )، ایک سابق پاکستانی کرکٹ کھلاڑی ہیں ۔\n\nفرسٹ کلاس کیریئر\nرشید نے 17 فروری 1979ء کو 1978/79ء بی سی سی پی پیٹرنز ٹرافی کے دوران کراچی بلیوز کے خلا"
+    },
+    {
+      "doc_id": "urdu-wikipedia:364086",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "فالکون میسا، ٹیکساس ریاستہائے متحدہ امریکا کا ایک مردم شماری نامزد مقام جو زاپاٹا کاؤنٹی، ٹیکساس میں واقع ہے۔\n\nتفصیلات\nفالکون میسا، ٹیکساس کا رقبہ 4.0 مربع کیلومیٹر ہے اور اس کی مجموعی آبادی 405 افراد"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:559f2de7-a3a5-4cb2-9a87-defc679da5bb>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "html_residue"
+      ],
+      "note": "cricket article with an embedded Twitter card",
+      "excerpt": "دس ہزار رنز بنانے والے نے دل جیت لیا !\nاگر یہ لکھوں کہ یونس خان پر پیار آنے لگا ہے تو غلط نہیں ہو گا۔\nوہ یونس خان جو کرکٹ سےلگن ، سخت محنت اور بیٹنگ کے حوالے سے تو مشہور تھا ہی مگر اس کی ایک پہچان جلد"
+    },
+    {
+      "doc_id": "urdu-wikipedia:363022",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "ایوانو-فرانکیوسک اوبلاست یوکرین کا ایک یوکرین کے اوبلاست جو یوکرین میں واقع ہے۔\n\nتفصیلات\nایوانو-فرانکیوسک اوبلاست کا رقبہ 13,900 مربع کیلومیٹر ہے اور اس کی مجموعی آبادی 1,381,700 افراد پر مشتمل ہے۔\n\nم"
+    },
+    {
+      "doc_id": "urdu-wikipedia:364083",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "فالکون ہیغٹس، مینیسوٹا ریاستہائے متحدہ امریکا کا ایک شہر جو مینیسوٹا میں واقع ہے۔\n\nتفصیلات\nفالکون ہیغٹس، مینیسوٹا کا رقبہ 5.80 مربع کیلومیٹر ہے اور اس کی مجموعی آبادی 5,321 افراد پر مشتمل ہے اور 291 م"
+    },
+    {
+      "doc_id": "urdu-wikipedia:121667",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "آیسک () ایک شہر ہے جو ایران میں واقع ہے۔ اس کی مجموعی آبادی 5,023 افراد پر مشتمل ہے، یہ صوبہ خراسان جنوبی میں واقع ہے۔\n\nمتعلقہ روابط\nفہرست ایران کے شہر\n\nحوالہ جات\n\nایران کے شہر\nجغرافیہ شہرستان سرایان "
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:61a7ba31-dd4e-4b04-b682-354f8bf4a86e>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "اپنے عجیب و غریب بیانات اور ٹوئٹس کی وجہ سے خبروں میں رہنے والے فلم ہدایت کار رام گوپال ورما نے کہا کہ کچھ بھارتی فلمساز آر آر آر کے ہدایت کار راجامولی کو قتل کرنے کی سازش کررہے ہیں۔\nفلمساز رام گوپال "
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:40302212-f569-41a9-83f6-f4eaba63adeb>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "---",
+      "excerpt": "تلاش شدہ نتائج\nمحفوظ شدہ الفاظ\n\"نُکتَہ اُٹھانا\" کے متعقلہ نتائج\nنُکتَہ اُٹھانا کے اردو معانی\n- کسی بات کو موضوع بحث بنانا، کوئی بات یا خیال پیش کرنا، کوئی لطیف یا علمی بات برائے بحث پیش کرنا\nनुक्ता उठ"
+    },
+    {
+      "doc_id": "urdu-wikipedia:363822",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "فاک-فاک ریگینکی انڈونیشیا کا ایک regency of Indonesia جو مغربی پاپوا (صوبہ) میں واقع ہے۔\n\nتفصیلات\nفاک-فاک ریگینکی کا رقبہ 11,036.48 مربع کیلومیٹر ہے اور اس کی مجموعی آبادی 77,112 افراد پر مشتمل ہے۔\n\nم"
+    },
+    {
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:db657d1e-42f9-4e4d-b3e5-9ff5559a1993>",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "script_ratio"
+      ],
+      "note": "Urdu ghazal",
+      "excerpt": "جھپٹتے ہیں جھپٹنے کے لیے پرواز کرتے ہیں\nجھپٹتے ہیں جھپٹنے کے لیے پرواز کرتے ہیں\nکبوتر بھی وہی کرنے لگے جو باز کرتے ہیں\nوہی قصے وہی باتیں کہ جو غماز کرتے ہیں\nترے ہم راز کرتے ہیں مرے دم ساز کرتے ہیں\nبصد"
+    },
+    {
+      "doc_id": "urdu-wikipedia:363420",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "فاگلاویک ( سویڈش: Fåglavik) سویڈن کا ایک urban area of Sweden جو Herrljunga Municipality میں واقع ہے۔\n\nتفصیلات\nفاگلاویک کا رقبہ 0.57 مربع کیلومیٹر ہے اور اس کی مجموعی آبادی 209 افراد پر مشتمل ہے۔\n\nمزی"
+    },
+    {
+      "doc_id": "urdu-wikipedia:780634",
+      "filter": "reject",
+      "human": "keep",
+      "reasons": [
+        "repetition:top_2gram"
+      ],
+      "note": "UN Convention on the Rights of the Child article — the repeated bigram is the topic",
+      "excerpt": "اقوام متحدہ کا بچوں کے حقوق پر کنونشن کے 42 نکات ہیں جو تمام بچوں کے حقوق کے بارے میں بتاتے ہیں۔ یہ 1989ء میں تیار ہوا اور ناروے میں اس پر 1991 میں اس پر دستخط ہوئے تھے۔ اس قانون کا تعلّق بچوں اور 18 "
+    },
+    {
+      "doc_id": "urdu-wikipedia:122214",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "، نامی یہ کمپنی 2012 میں فارچون میگزین کی سرفہرست 1000 کمپنیوں میں شامل تھی۔ اس کا ہیڈکوارٹر Tukwila، میں واقع ہے۔ فارچون کی رپورٹ کے مطابق 2012 میں اس میں سی ای او (CEO) کے عہدے پر William S. Ayer کا"
+    },
+    {
+      "doc_id": "urdu-wikipedia:121691",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub, 375 chars of one sentence plus categories",
+      "excerpt": "ایلار لائی ایک فحش اداکارہ ہے۔\n\nمزید دیکھیے\nفہرست فحش اداکارائیں\n\nحوالہ جات\n\n1984ء کی پیدائشیں\nاکیسویں صدی کی نارویجن گلوکارائیں\nایرانی خواتین ماڈل\nایرانی فحش اداکارائیں\nایرانی گلوکارائیں\nبقید حیات شخ"
+    },
+    {
+      "doc_id": "urdu-wikipedia:363641",
+      "filter": "accept",
+      "human": "drop",
+      "reasons": [],
+      "note": "template stub: one factual sentence plus section headers and category footers",
+      "excerpt": "فیئرمیاڈی، کینٹکی ریاستہائے متحدہ امریکا کا ایک شہر جو جیفرسن کاؤنٹی میں واقع ہے۔\n\nتفصیلات\nفیئرمیاڈی، کینٹکی کا رقبہ 0.2 مربع کیلومیٹر ہے اور اس کی مجموعی آبادی 264 افراد پر مشتمل ہے اور 160 میٹر سطح "
+    }
+  ]
+}

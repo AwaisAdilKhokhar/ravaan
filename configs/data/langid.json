@@ -1,0 +1,14 @@
+{
+  "langid_version": "1.0.0",
+  "min_letters": 20,
+  "mixed_min_ratio": 0.1,
+  "min_margin": 0.02,
+  "min_evidence": 0.08,
+  "urdu_letter_weight": 4.0,
+  "arabic_letter_weight": 2.0,
+  "sentence_min_letters": 8,
+  "latin_running_text_rate": 0.5,
+  "code_switch_min_share": 0.1,
+  "alternation_min_share": 0.3,
+  "max_segments": 400
+}

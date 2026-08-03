@@ -1,0 +1,70 @@
+{
+  "source": "roman-urdu-parl",
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 16218,
+    "documents_accepted": 16218,
+    "documents_rejected": 0,
+    "documents_repaired": 0,
+    "acceptance_rate": 1.0,
+    "bytes_in": 714968,
+    "chars_out": 714968,
+    "replacement_chars": 0,
+    "mojibake_chars": 0,
+    "control_chars": 0,
+    "verdicts": {
+      "ok": 16218
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 16218,
+    "documents_kept": 12835,
+    "keep_rate": 0.791405,
+    "documents_by_prior": 462,
+    "prior_rate": 0.028487,
+    "mixed_documents": 0,
+    "letters": 576075,
+    "labels": {
+      "empty": 2887,
+      "english": 34,
+      "other": 462,
+      "roman_urdu": 12835
+    },
+    "letters_by_label": {
+      "empty": 39264,
+      "english": 1068,
+      "other": 14637,
+      "roman_urdu": 521106
+    },
+    "segment_letters": {}
+  },
+  "expected_label": "roman_urdu",
+  "accuracy": 0.7914
+}

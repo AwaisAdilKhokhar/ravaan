@@ -5,7 +5,9 @@ Spec is the PRD; this file is the state of play. **Read the "Next session" secti
 first.**
 
 - **Started:** 2026-08-03 (Week 1 of 16)
-- **Current phase:** Weeks 1–2 — literature review, corpus acquisition, language/script ID
+- **Current phase:** Weeks 1–2 complete → Weeks 3–4, corpus freeze. Pipeline stages 1, 2, 3 and 4
+  are built and validated on real text; next is stage 5 (quality filtering) and its 200-sample
+  manual validation.
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
 - **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds
@@ -13,7 +15,7 @@ first.**
 - **Preregistration:** ✅ committed [`reports/preregistration.md`](reports/preregistration.md) —
   4 falsifiable predictions, before any training.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 183 passing (69 normalization · 57 encoding · 57 acquisition)
+- **Tests:** 233 passing (69 normalization · 57 encoding · 57 acquisition · 32 langid · 18 shards)
 
 ---
 
@@ -34,12 +36,14 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | Roman-Urdu-Parl acquisition + checksums | §6.2 | ✅ |
 | Urdu Wikipedia dump acquisition + checksums | §6.2 | ✅ |
 | Encoding validation (stage 2) | §6.3.2 | ✅ |
-| Language / script ID (stage 3) | §6.3.3 | ⬜ |
+| Streaming shard reader (`ravaan/data/shards.py`) | §6.3 | ✅ |
+| Language / script ID (stage 3) | §6.3.3 | ✅ |
 
 ### Weeks 3–4 — corpus freeze (**G1**: clean corpus ≥ 100M tokens — PRD v2.1 §11; was 150M in v2.0)
 | Item | PRD | Status |
 |---|---|---|
 | **Urdu normalization (stage 4)** | §6.3.4 | ✅ |
+| Arabic-variant spelling is site-correlated (Finding F) | §6.3.4 | ✅ answered |
 | Quality filtering (stage 5) + 200-sample manual validation | §6.3.5 | ⬜ |
 | Exact dedup (stage 6) | §6.3.6 | ⬜ |
 | MinHash near-dedup (stage 7) | §6.3.7 | ⬜ |
@@ -418,6 +422,167 @@ Download throughput ≈ 2.4 MB/s, so the 3.4 GB working set is ~25 minutes. Not 
 
 ---
 
+### Session 5 — 2026-08-04
+
+**Done**
+
+1. **Streaming shard reader** (`ravaan/data/shards.py`, 18 tests). The iterator every stage from 3
+   onward consumes: parquet and CSV, `(source, doc_id, text, meta)`, resumable. Built around
+   three properties.
+   - **A prefix is not a sample — enforced, not documented.** Finding E's consequence is now
+     structural: the default read order is a seeded shuffle of row groups *and* of rows inside
+     them, and `order="sequential"` is the option you have to ask for by name. The biased read is
+     still available and still fast; it just cannot happen by accident.
+   - **Selection is stable, and it is not the shuffle.** `stable_unit(doc_id, salt)` hashes a
+     document id to [0, 1) with blake2b, so `sample_rate` — and, later, stage 9's splits and arm
+     A's 25M subsample — depend only on the id. Two runs that read the corpus in different
+     orders, or resume at different offsets, select the *same* documents. Shuffling decides what
+     you look at first; hashing decides what belongs to what. Conflating them is how arm A stops
+     being a subsample of arm B.
+   - **Resumption is exact or it fails.** A checkpoint carries a plan fingerprint over file
+     digests + layout + seed + sample rate, and `resume()` refuses a checkpoint from a different
+     plan rather than resuming into a different document order. A pass that silently skips and
+     duplicates documents is worse than one that crashed.
+   - CSV gets a byte-offset block index built in one pass and cached beside the file, keyed on the
+     acquisition digest. Re-reading from the top for every block is quadratic and Roman-Urdu-Parl's
+     train split is 1.2 GB / 6.37M rows.
+   - Column layouts are **declared per source**, not auto-detected. Auto-detection picks "the
+     first string column", and a corpus accidentally made of the `url` column would score as
+     English and vanish at stage 3, looking exactly like a language filter working.
+
+2. **Language / script ID — stage 3** (`ravaan/data/langid.py`, `configs/data/langid.json`,
+   32 tests). Document-level, sentence-level only for mixed documents, per §6.3.3. Separates the
+   three populations §6.1 budgets separately rather than just accepting or rejecting.
+   - Script is measured (Unicode ranges, one `str.translate` pass over letters only); language is
+     inferred. Every result carries its script ratios *and* its language scores, so a label can be
+     argued with.
+   - **Roman Urdu vs English is answered with word lists, not a model — recorded as the decision
+     §6.3.3 left open.** fastText's lid.176 has no Roman Urdu label at all (it knows `ur` only in
+     Arabic script), so it would scatter this population into English/Indonesian/Malay and we
+     would lose it silently. Roman Urdu has no standard orthography, so what discriminates it is
+     frequent function words *in all their spellings* — which is what a word list is and what a
+     model trained on standardised text is not. And it costs no GB-scale dependency in a pipeline
+     that is otherwise standard-library-only.
+   - **Urdu vs Persian vs Arabic leans on Urdu's own letters first.** Stage 3 runs *before*
+     normalization, so Arabic-keyboard Urdu still writes که for کہ — the Persian word. Folding
+     first would merge the evidence instead of separating it. ٹ ڈ ڑ ں ے ھ ہ ۓ ۂ have no such
+     problem: no Arabic key produces them.
+
+3. **`scripts/stage3_probe.py`** — stages 2→3 over a real source, with `--expect` for
+   known-truth sources and `--sites` for the per-domain analysis. It found two corpus-level
+   mislabels within its first two runs (below). Reports in `reports/probe_stage3_*.json`.
+
+**Measured — stage 3 on real text**
+
+| | FineWeb2 `urd_Arab` | Urdu Wikipedia | Roman-Urdu-Parl (Roman col.) | English prose |
+|---|---|---|---|---|
+| documents | 19,997 | 19,999 | 16,218 | 148 |
+| **urdu** | **99.4%** | **93.6%** | — | — |
+| **roman_urdu** | — | — | **79.1%** (96.3% of non-empty) | **0%** |
+| **code_switched** | 0.6% | 5.7% | — | — |
+| english / arabic / persian | 0 / 0 / 0 | 0.4% / 0.1% / 0.0% | 0.2% / — / — | 84.5% / — / — |
+| `other` (no evidence) | 0 | 0.2% | 2.8% | 15.5% |
+| `empty` (too short) | 0 | 0.1% | 17.8% | 0 |
+| labelled **by prior**, not evidence | **0.00%** | 0.18% | — | — |
+
+- **Both error directions are cheap.** English → Roman Urdu is **0%** (the direction that would
+  pollute a population the report makes claims about); Roman Urdu → English is **0.2%**. The
+  `other` bucket is an abstention, not a guess, and that is where the residual sits.
+- **FineWeb2 agrees with itself.** Cross-tabulated against FineWeb2's own GlotLID output, all
+  19,997 documents are `urd_Arab`, and mean GlotLID confidence is **0.978** for documents we call
+  Urdu against **0.922** for the ones we call code-switched — independent corroboration that the
+  code-switched set is the harder material, from a classifier we did not write.
+- **Stage 3 is an assertion on FineWeb2, a filter on Wikipedia** — the same shape as stage 2, for
+  the same reason: FineWeb2 is already GlotLID-filtered to `urd_Arab`. Nothing was rejected, and
+  claiming stage 3 "cleaned" that source would be measuring the thermometer.
+- **The Roman-Urdu-Parl `empty` rate is a unit mismatch, not a failure.** Its rows are single
+  sentences, and 17.8% of them have fewer than 20 letters. The Arabic-script side of the same
+  rows classifies as Urdu **99.95%** of the time excluding those. For a curated parallel corpus
+  the source declaration *is* the label; stage 3 is a sanity check there, not a gate.
+
+**Finding F — Arabic-variant spelling is a property of publishers, not of the language.**
+
+Session 4 left this open: FineWeb2 changes only 13.7% of documents yet averages 0.83 yeh
+substitutions across all of them, so a minority carries ~6 each. Checked against the `url` column
+over 2,935 domains, and the answer is unambiguous.
+
+- **The top 1% of domains carry 65.3% of all Arabic-variant hits.** Against a corpus-wide rate of
+  **1.37 variants per 1,000 characters**: `alhassanain.com` **54.4** (40×, 100% of documents
+  changed), `tebyan.net` **37.1** (27×, Iranian), `banuri.edu.pk` **22.2** (16×, a Karachi
+  seminary, 62 documents), `mazameen.com` **21.1**, `urdufatwa.com` **14.2** (96% changed).
+  Pakistani news sites sit at **exactly zero**: `aaj.tv` (69 documents, 97k characters) 0.00,
+  `archive.urdu.siasat.com` 0.00, `24newshd.tv` 0.00.
+- **Measured per character, not per document — the first version of this table was wrong.** Rates
+  per document conflate the property with length, and the domains at the top publish book-length
+  pages: `alhassanain.com` showed 3,484 hits per document over six documents, which is exactly
+  what six very long documents look like. Per character it is still 40× the corpus rate, so the
+  conclusion survives the correction — but it did not have to.
+- The mechanism is legible: publishers who set Arabic alongside Urdu, and Iranian/Arab-world
+  publishers producing Urdu editions, compose on Arabic and Persian input systems. Pakistani
+  newsrooms use Urdu ones. The split is by *publisher type*, not by topic or by crawl date.
+- **Three consequences, all of which outlive this session.**
+  1. **Stage 4 is doing publisher-level orthographic unification, not cosmetic tidying.** Without
+     it the same word from `alhassanain.com` and from `aaj.tv` occupies two vocabulary entries.
+  2. **The stage order 4 → 6/7 is now justified by data, not by taste.** Religious publishers
+     republish the same hadith and tafsir texts across many domains; normalizing *before* dedup is
+     what makes those cross-publisher duplicates hash alike. Deduping raw text would miss exactly
+     the duplicates that are most concentrated.
+  3. **Arm A's subsample stays sound, and only because selection is per document.** A property
+     this concentrated would be badly distorted by any site-level or block-level sampling; random
+     document selection keeps it in proportion, with somewhat higher variance. This is the second
+     independent argument for the reader's design.
+
+**Two mislabels the probe caught that the unit tests could not**
+
+Both are Finding D's lesson again, and both would have moved a *population* rather than a
+document.
+
+- **30% of Urdu Wikipedia came out "code-switched" on the first run.** The cause was Urdu prose
+  quoting a foreign name — "سینٹ-موریس، ہوتے-مرنے (فرانسیسی: Saint-Maurice, Haute-Marne) فرانس کا
+  ایک فرانسیسی کمیون" is a quarter Latin letters by volume. The fix is not a threshold but a
+  distinction: **names are capitalised and embedded content words are not.** A mixed span now has
+  to be lowercase *running text* on the Latin side to count as switching (those stubs score 0.00;
+  real switching scores ~1.00). This matters because the misrouted documents would have left the
+  ~120M-token native budget for the ~10M-token code-switched one.
+- **The alternation threshold was set from a measured distribution, not chosen.** Across 1,920
+  mixed Wikipedia articles the English share has a sharp mode at 0.10–0.20 (1,064 documents) that
+  is not bilingual writing at all — it is the English reference list and category footer every
+  Wikipedia article carries — and then collapses (298 at 0.20–0.30, 39 at 0.30–0.40). The
+  threshold sits at **0.30**, in the valley after the artifact. Wikipedia's code-switched share
+  went 30.4% → 26.4% → **5.7%** across the two fixes.
+- The word lists were extended the same way: by mining the sentences Roman-Urdu-Parl's validation
+  split *failed* to label and reading what they were made of. `aik`, `ne`, `na`, `hi`, `hon`,
+  `tak`, `koi` — among the most frequent words in the language — were simply missing.
+
+**Decisions made**
+
+| Decision | Rationale |
+|---|---|
+| Roman Urdu vs English by **word list**, no model | Recorded above. The deciding argument is not cost: lid.176 has no `urd_Latn` label at all, so the off-the-shelf option fails *silently* on the population §6.1 budgets 40M tokens for. |
+| Ambiguous words are removed from **both** lists, and the intersection is public | `the` (they were), `to` (then), `or` (and), `he` (is), `us` (that), `do` (two), `main` (I/in), `so`, `say` are frequent in both languages. Left in, they hand a free vote to whichever list is longer. `AMBIGUOUS_LATIN_WORDS` is exported because it is the classifier's main known weakness and belongs in the report. |
+| Arabic-script text with no function-word evidence is called Urdu, and **flagged as decided by the prior** | Headings, name lists and poetry fragments have nothing to measure. Calling them Urdu is right for an Urdu-filtered corpus; reporting them alongside documents that were actually classified is not. `prior_rate` goes in the manifest — 0.00% on FineWeb2, 0.18% on Wikipedia. |
+| Urdu quoting Arabic scripture stays **urdu**; Arabic and Persian are not code-switch partners | Religious and legal Urdu quotes Arabic constantly. A classifier tuned to reject Arabic-looking text strips a *register* of Urdu, not a language — and that is a corpus-composition change disguised as a quality filter. |
+| Two code-switch thresholds, not one | They measure different things. Intra-sentential mixing is unambiguous evidence (0.10); a document that merely alternates between monolingual blocks needs much more (0.30) because "Urdu article + English reference list" is document furniture. One knob for both is how Wikipedia ended up 30% bilingual. |
+| One `mixed_min_ratio`, not a `dominant_script_ratio` as well | Two names for one boundary is how a band of documents ends up matching neither rule and falling through to `other` with nothing having decided it. |
+| Reader stays parquet-only for `[data]`; the *deciding* stages stay stdlib | Same argument as stages 1–2. `[data]` is now needed to **read** the corpus, never to decide anything about it. |
+
+**Fixed during the session**
+
+- **Document ids moved when the read seed moved.** The positional id fallback was built from the
+  row's index *in the shuffled block* rather than in the file, so the same document got a
+  different id under a different seed — which would have silently repartitioned stage 9's splits,
+  broken arm A's "same documents, fewer of them" guarantee, and made exact dedup miss. Caught by
+  reading three ids in a row that were suspiciously `0, 1, 2`. The permutation now moves the pair,
+  never the number inside it; two tests lock it.
+- **`random.Random((seed, index))` is a TypeError on Python 3.14** — tuple seeds were removed.
+  Replaced with an integer seed derived through blake2b, which is stable across interpreter
+  versions; string seeds are not something a resumable corpus pass should depend on. CI runs 3.11
+  and 3.13, so this would have been a local-only failure on the operator's machine.
+- **`csv.field_size_limit` defaults to 128 KiB** and silently truncates longer fields. Raised;
+  corpus documents are routinely larger.
+
+---
+
 ## Open questions for you
 
 1. ~~**Config format.**~~ **Decided in session 4: JSON, for the whole data pipeline.** Three
@@ -457,30 +622,26 @@ Download throughput ≈ 2.4 MB/s, so the 3.4 GB working set is ~25 minutes. Not 
 
 ## Next session
 
-**Primary task: language / script identification, pipeline stage 3 (PRD §6.3.3).**
+**Primary task: quality filtering, pipeline stage 5 (PRD §6.3.5) — with its 200-sample manual
+validation.**
 
-Stages 1, 2 and 4 exist and the corpus is on disk. Stage 3 is the gap between them, and it is the
-one that decides what "Urdu" means for this project — which makes it the last stage where a wrong
-default silently changes the corpus rather than the code.
+Stages 1, 2, 3 and 4 all exist now and all four have been pointed at real text. Stage 5 is the
+next gate, and it is the one the PRD explicitly requires human validation for.
 
-1. **A streaming shard reader.** `scripts/corpus_probe.py` reads parquet ad hoc; stages 2→3→4 need
-   a real iterator over a pinned shard that yields `(source, doc_id, text)` and can be resumed.
-   This is the first thing that genuinely needs the `[data]` extra. Everything downstream
-   (dedup, filtering, packing) consumes it, so build it once and properly.
-2. **`ravaan/data/langid.py`** — document-level ID, sentence-level only for mixed documents, per
-   §6.3.3. Three populations have to come out separately labelled, because §6.1 budgets them
-   separately: native Urdu (~120M tokens), Roman Urdu (~40M), code-switched (~10M). A script-ratio
-   classifier over Unicode blocks handles native-vs-Roman cheaply; the hard case is **Roman Urdu
-   vs. English**, which share an alphabet and which no off-the-shelf langid separates well.
-   Decide explicitly whether that needs a model or a word-list heuristic, and record the choice.
-3. **Carry Finding E into the reader.** Document selection must be random across the shard, never
-   a prefix or a contiguous block — otherwise arm A's 25M subsample is systematically older web
-   text than arm B's 100M, confounding the primary endpoint with crawl date. The reader should
-   make the biased option the one you have to ask for, as `corpus_probe.py` now does.
-4. **Is Arabic-variant spelling site-correlated?** FineWeb2 changes only 13.7% of documents but
-   averages 0.83 yeh substitutions across all of them, so a minority carries ~6 each. Check the
-   `url` column at stage 3: if it is a per-publisher property, it interacts with near-dedup
-   (stage 7) and with the arm A subsample.
+1. **`ravaan/data/quality.py`** — Urdu-script ratio, repetition, URL density, HTML residue,
+   replacement-character frequency, per §6.3.5. Stage 3 already computes script ratios, so the
+   Urdu-script rule should read them rather than recompute; the rest is new.
+2. **The 200-sample manual validation is the deliverable, not the code.** §6.3.5 requires the
+   rules to be validated against 200 manually inspected random samples. Draw them with
+   `ShardReader(sample_rate=...)` so the sample is reproducible from a seed, and write them out
+   in a form a person can actually read and mark up.
+3. **Put the same 200 through the normalizer** — this closes session 4's carried-forward caveat
+   that stage 4 has only been validated on Wikipedia, and it costs nothing extra once the sample
+   exists.
+4. **Then stage 6 (exact dedup).** It is cheap, and Finding F says it will be interesting:
+   religious publishers republish the same texts across domains, so normalizing before hashing
+   should surface cross-publisher duplicates that raw hashing would miss. Worth measuring both
+   ways once, since the claim is now a prediction rather than an assumption.
 
 **Do not start** tokenizer work or modelling. The tokenizer is timeboxed to Week 5.
 
@@ -502,6 +663,26 @@ default silently changes the corpus rather than the code.
   general lesson, not a one-off: 57 unit tests passed on a detector that would have deleted 3% of a
   clean corpus. Fixture tests prove a rule does what it says; only real text shows whether it fires
   on the right things. Every threshold in stages 2, 3 and 5 gets a probe run before the freeze.
+  Session 5 did this for stage 3 and it caught two population-level mislabels, so the practice is
+  now load-bearing rather than aspirational.
+- **⚠️ The code-switched budget may not be reachable from these sources.** PRD §6.1 asks for ~10M
+  code-switched tokens. Measured share by letters: **0.54% of FineWeb2** and **2.6% of Urdu
+  Wikipedia**. Extrapolated over shard 001 (~3.5G characters) plus the full Wikipedia dump
+  (~324M), that is roughly **27M characters ≈ 7M tokens** — the right order of magnitude but
+  *below* target and with no margin. Three ways out, in preference order: (a) fetch FineWeb2 train
+  shard 000 as well, which roughly doubles it at ~$0 and ~25 minutes; (b) accept a smaller
+  code-switched share and say so; (c) add a social-media source, which means a new licence-gate
+  decision. **Decide before the freeze, not after.** Note this is the one population where more
+  data is genuinely scarce — Finding B's "Urdu is not data-constrained" holds for *native* Urdu.
+- **Roman Urdu's 40M-token target is unverified after dedup.** PRD §6.2 already warns that
+  Roman-Urdu-Parl's 6.37M pairs collapse to ~1.09M unique Urdu sentences. At ~45 characters a
+  sentence that is ~49M characters ≈ 12M tokens, well under the ~40M target. Stage 6 will settle
+  it; if it holds, §6.1's Roman Urdu figure needs the same treatment §6.1's native figure got in
+  v2.1.
+- **`scripts/corpus_probe.py` is now redundant with `scripts/stage3_probe.py`.** The older script
+  reads parquet ad hoc and predates the shard reader; the newer one runs stages 2→3 through it and
+  covers the same ground plus langid. Fold the stage-4 reporting into `stage3_probe.py` and delete
+  the old one, or keep it and port it to `ShardReader` — but not both, and not indefinitely.
 
 **Retry when convenient:** OpenReview `W5Ht05jF4c` — still behind the browser-verification wall as
 of 2026-08-03 (both API v1 and v2 return `ChallengeRequiredError`). Lower stakes now that both arms

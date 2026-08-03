@@ -1,0 +1,83 @@
+{
+  "source": "urdu-wikipedia",
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 20000,
+    "documents_accepted": 19999,
+    "documents_rejected": 1,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.99995,
+    "bytes_in": 40501086,
+    "chars_out": 23358685,
+    "replacement_chars": 112,
+    "mojibake_chars": 0,
+    "control_chars": 0,
+    "verdicts": {
+      "ok": 19999,
+      "replacement_heavy": 1
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 19999,
+    "documents_kept": 19849,
+    "keep_rate": 0.9925,
+    "documents_by_prior": 37,
+    "prior_rate": 0.00185,
+    "mixed_documents": 6365,
+    "letters": 17444198,
+    "labels": {
+      "arabic": 10,
+      "code_switched": 1134,
+      "empty": 18,
+      "english": 89,
+      "other": 32,
+      "persian": 1,
+      "urdu": 18715
+    },
+    "letters_by_label": {
+      "arabic": 4475,
+      "code_switched": 476925,
+      "empty": 227,
+      "english": 55500,
+      "other": 82647,
+      "persian": 49,
+      "urdu": 16824375
+    },
+    "segment_letters": {
+      "arabic": 5718,
+      "code_switched": 124592,
+      "english": 307738,
+      "other": 90421,
+      "persian": 1659,
+      "roman_urdu": 2281,
+      "urdu": 1640193
+    }
+  }
+}

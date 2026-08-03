@@ -1,5 +1,18 @@
-"""Corpus pipeline: acquisition, normalization, langid, dedup, quality, corruption, packing."""
+"""Corpus pipeline: acquisition, normalization, langid, dedup, quality, corruption, packing.
 
+Stage 3's reader (`ravaan.data.shards`) is deliberately *not* re-exported here: importing it
+pulls in parquet support from the `[data]` extra, and the stages that decide what the corpus
+contains should stay importable without it.
+"""
+
+from ravaan.data.langid import (
+    LANGID_VERSION,
+    LangIDConfig,
+    LangIDLog,
+    LangIDResult,
+    classify,
+    script_ratios,
+)
 from ravaan.data.normalization import (
     NORMALIZER_VERSION,
     NormalizationConfig,
@@ -10,10 +23,16 @@ from ravaan.data.normalization import (
 )
 
 __all__ = [
+    "LANGID_VERSION",
     "NORMALIZER_VERSION",
+    "LangIDConfig",
+    "LangIDLog",
+    "LangIDResult",
     "NormalizationConfig",
     "NormalizationLog",
     "NormalizationResult",
+    "classify",
     "normalize",
     "normalize_text",
+    "script_ratios",
 ]

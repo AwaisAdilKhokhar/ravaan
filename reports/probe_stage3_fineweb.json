@@ -1,0 +1,300 @@
+{
+  "source": "fineweb2-urd_Arab",
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 20000,
+    "documents_accepted": 19997,
+    "documents_rejected": 3,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.99985,
+    "bytes_in": 81707081,
+    "chars_out": 46112946,
+    "replacement_chars": 34,
+    "mojibake_chars": 4,
+    "control_chars": 0,
+    "verdicts": {
+      "ok": 19997,
+      "replacement_heavy": 3
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 19997,
+    "documents_kept": 19997,
+    "keep_rate": 1.0,
+    "documents_by_prior": 0,
+    "prior_rate": 0.0,
+    "mixed_documents": 585,
+    "letters": 35154729,
+    "labels": {
+      "code_switched": 111,
+      "urdu": 19886
+    },
+    "letters_by_label": {
+      "code_switched": 185667,
+      "urdu": 34969062
+    },
+    "segment_letters": {
+      "arabic": 1958,
+      "code_switched": 19831,
+      "english": 102628,
+      "hindi": 992,
+      "other": 33948,
+      "persian": 268,
+      "roman_urdu": 5341,
+      "urdu": 670819
+    }
+  },
+  "glotlid_agreement": {
+    "urd_Arab -> urdu": 19886,
+    "urd_Arab -> code_switched": 111
+  },
+  "sites": {
+    "domains": 2935,
+    "domains_measured": 295,
+    "chars": 46112946,
+    "variant_hits": 63380,
+    "variants_per_kchar_overall": 1.37,
+    "share_from_top_1pct_of_domains": 0.6533,
+    "highest_rate": [
+      {
+        "domain": "alhassanain.com",
+        "docs": 6,
+        "kchars": 384.3,
+        "variants_per_kchar": 54.39,
+        "changed_pct": 100.0
+      },
+      {
+        "domain": "tebyan.net",
+        "docs": 10,
+        "kchars": 28.9,
+        "variants_per_kchar": 37.1,
+        "changed_pct": 100.0
+      },
+      {
+        "domain": "banuri.edu.pk",
+        "docs": 62,
+        "kchars": 77.3,
+        "variants_per_kchar": 22.23,
+        "changed_pct": 58.1
+      },
+      {
+        "domain": "mazameen.com",
+        "docs": 10,
+        "kchars": 79.0,
+        "variants_per_kchar": 21.14,
+        "changed_pct": 40.0
+      },
+      {
+        "domain": "urdufatwa.com",
+        "docs": 25,
+        "kchars": 40.8,
+        "variants_per_kchar": 14.21,
+        "changed_pct": 96.0
+      },
+      {
+        "domain": "udannews.in",
+        "docs": 5,
+        "kchars": 27.0,
+        "variants_per_kchar": 9.2,
+        "changed_pct": 60.0
+      },
+      {
+        "domain": "dailyurducolumns.com",
+        "docs": 5,
+        "kchars": 31.0,
+        "variants_per_kchar": 8.97,
+        "changed_pct": 40.0
+      },
+      {
+        "domain": "abualsarmad.com",
+        "docs": 5,
+        "kchars": 31.7,
+        "variants_per_kchar": 7.16,
+        "changed_pct": 100.0
+      },
+      {
+        "domain": "urdulib.com",
+        "docs": 17,
+        "kchars": 131.1,
+        "variants_per_kchar": 7.01,
+        "changed_pct": 76.5
+      },
+      {
+        "domain": "magazine.mohaddis.com",
+        "docs": 8,
+        "kchars": 79.8,
+        "variants_per_kchar": 6.73,
+        "changed_pct": 75.0
+      },
+      {
+        "domain": "dawateislami.net",
+        "docs": 23,
+        "kchars": 68.1,
+        "variants_per_kchar": 6.68,
+        "changed_pct": 91.3
+      },
+      {
+        "domain": "urdu.1news.eu",
+        "docs": 5,
+        "kchars": 21.0,
+        "variants_per_kchar": 6.66,
+        "changed_pct": 20.0
+      },
+      {
+        "domain": "shamilaurdu.com",
+        "docs": 153,
+        "kchars": 157.6,
+        "variants_per_kchar": 6.65,
+        "changed_pct": 95.4
+      },
+      {
+        "domain": "alfazlonline.org",
+        "docs": 19,
+        "kchars": 124.6,
+        "variants_per_kchar": 5.89,
+        "changed_pct": 78.9
+      },
+      {
+        "domain": "qurano.com",
+        "docs": 9,
+        "kchars": 35.5,
+        "variants_per_kchar": 5.43,
+        "changed_pct": 100.0
+      }
+    ],
+    "lowest_rate": [
+      {
+        "domain": "dailynigraan.net",
+        "docs": 15,
+        "kchars": 31.5,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 0.0
+      },
+      {
+        "domain": "dailymanzar.com",
+        "docs": 33,
+        "kchars": 95.3,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 0.0
+      },
+      {
+        "domain": "dailychitral.com",
+        "docs": 22,
+        "kchars": 50.4,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 0.0
+      },
+      {
+        "domain": "dailyazadiquetta.com",
+        "docs": 10,
+        "kchars": 29.2,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 0.0
+      },
+      {
+        "domain": "dailyasas.com.pk",
+        "docs": 38,
+        "kchars": 39.9,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 0.0
+      },
+      {
+        "domain": "creativeknots.com",
+        "docs": 6,
+        "kchars": 22.6,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 16.7
+      },
+      {
+        "domain": "chitraltoday.net",
+        "docs": 6,
+        "kchars": 20.7,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 0.0
+      },
+      {
+        "domain": "boogra.com",
+        "docs": 9,
+        "kchars": 31.6,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 0.0
+      },
+      {
+        "domain": "bestinformativearticles.com",
+        "docs": 8,
+        "kchars": 27.8,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 0.0
+      },
+      {
+        "domain": "asalmedia.com",
+        "docs": 10,
+        "kchars": 23.7,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 0.0
+      },
+      {
+        "domain": "archive.urdu.siasat.com",
+        "docs": 13,
+        "kchars": 27.0,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 7.7
+      },
+      {
+        "domain": "androidsis.com",
+        "docs": 37,
+        "kchars": 140.9,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 0.0
+      },
+      {
+        "domain": "actualidadliteratura.com",
+        "docs": 6,
+        "kchars": 20.9,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 0.0
+      },
+      {
+        "domain": "actualidadiphone.com",
+        "docs": 26,
+        "kchars": 60.7,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 0.0
+      },
+      {
+        "domain": "aaj.tv",
+        "docs": 69,
+        "kchars": 96.9,
+        "variants_per_kchar": 0.0,
+        "changed_pct": 0.0
+      }
+    ]
+  }
+}

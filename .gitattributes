@@ -1,0 +1,10 @@
+# Normalize line endings so the repo is byte-identical across Windows and Linux checkouts.
+# This matters more than usual here: normalization fixtures and Urdu test data are
+# whitespace-sensitive, and CRLF sneaking into a corpus file would change its checksum.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.model binary
+*.pt binary
+*.safetensors binary

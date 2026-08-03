@@ -1,0 +1,17 @@
+{
+  "normalizer_version": "1.0.0",
+  "expand_presentation_forms": true,
+  "unify_yeh": true,
+  "unify_kaf": true,
+  "unify_heh": true,
+  "map_teh_marbuta": true,
+  "unify_alef": true,
+  "remove_tatweel": true,
+  "remove_zero_width": true,
+  "remove_zwnj": true,
+  "remove_bidi_marks": true,
+  "remove_harakat": false,
+  "digits": "ascii",
+  "normalize_whitespace": true,
+  "max_consecutive_newlines": 2
+}

@@ -1,0 +1,42 @@
+# --- Corpus and artifacts (never committed; §6.3 release policy is code + manifest only)
+# Leading slash matters: a bare `data/` also matches ravaan/data/ and configs/data/, which would
+# silently drop the corpus pipeline source from the repo.
+/data/
+!/data/.gitkeep
+/checkpoints/
+/runs/
+wandb/
+*.arrow
+*.parquet
+*.jsonl
+*.jsonl.zst
+*.txt.zst
+*.model
+*.vocab
+*.pt
+*.bin
+*.safetensors
+*.npy
+
+# --- Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.env
+
+# --- Tooling
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# --- Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

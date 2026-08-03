@@ -18,10 +18,13 @@ before Stage C.
 
 2. **⚠️ Finding A — the planned budget does not reach the predicted crossover.** Applying the
    reference paper's own fitted scaling law to Ravaan's specification (70M params, U = 300M unique
-   tokens, 33 epochs) puts the run **≈125× below** the compute at which diffusion is predicted to
-   overtake AR. Reaching the crossover at U = 300M would take ≈4,100 epochs. As specified, the
+   tokens, 33 epochs) puts the run **≈124× below** the compute at which diffusion is predicted to
+   overtake AR. Reaching the crossover at U = 300M would take ≈4,080 epochs. As specified, the
    headline experiment is predicted to return "no crossover" *before it is run* — a null result by
    construction, which is the same class of flaw v2 was written to remove from v1.
+   **Verified against the typeset PDF 2026-08-03** (§2.2). The authors independently corroborate it:
+   at U = 500M they required a 2.3B-parameter model and still saw no convergence at 130 epochs
+   (§2.4).
 
 3. **⚠️ Finding B — the "naturally data-constrained" premise does not hold at 70M parameters.**
    UrduLM (January 2026) curated and openly released a 33 GB Urdu corpus of roughly 5–6B tokens.
@@ -77,35 +80,70 @@ repetition; diffusion did not, within the budget explored.
 
 ### 2.2 The numbers that matter
 
-**Data-reuse half-life** (epochs over which repeated data retains half its value):
+✅ **All values below were verified against the typeset PDF on 2026-08-03.**
 
-| | Reported by authors' blog | Third-party extraction |
+**Data-reuse half-life** `R*_D` — the epoch count beyond which repeated data yields significantly
+diminishing returns. Formally, effective data `D' = U + U·R*_D·(1 − e^−(E−1)/R*_D)`.
+
+| Source | Diffusion | AR |
 |---|---|---|
-| Diffusion `R_D*` | ≈ **500** | 512.85 |
-| AR `R_D*` | ≈ **15** | 31.93 |
+| **This paper's own fits** | **512.85** | **31.93** |
+| Muennighoff et al. (prior work, AR only) | — | ≈15 |
 
-⚠️VERIFY — the AR figure differs by ~2× between sources. The authors' own CMU blog says ≈15. The
-direction and order of magnitude (diffusion tolerates repetition ~30× longer than AR) is consistent
-across every source and is the load-bearing fact.
+**The apparent ~2× discrepancy in earlier drafts is resolved**: ≈15 is Muennighoff et al.'s prior
+estimate for AR, quoted by this paper for contrast; 31.93 is this paper's *own* fitted AR value. The
+paper rounds its own figures to "≈500 vs ≈15" in summary prose, comparing its diffusion fit against
+the prior AR estimate. Both numbers are correct; they have different provenance. **Cite 512.85 and
+31.93** — same paper, same fitting procedure, the only like-for-like pair.
 
-**Critical compute threshold.** The fitted relation, which is the useful form:
+**Critical compute threshold.** Verbatim from Figure 6:
 
 ```
-log10(U) = 0.460 · log10(C) − 7.052        U in millions of unique tokens, C in FLOPs
+log10(U) = 0.460 · log10(C) − 1.050        U in RAW unique tokens, C in FLOPs
+C_crit(U) = 2.12 × 10^1.956 · U^2.174      equivalent closed form
 ```
 
-⚠️VERIFY against the paper's typeset equation. A closed form was also reported as
-`C_crit(U) = 2.12 × 10^1.956 · U^2.174`, whose rendering is ambiguous; the log-linear fit above is
-used throughout this document because it survives a unit check (§2.3).
+> **Correction to earlier drafts of this document.** The intercept was previously written as
+> −7.052. That is the *same* fit with U expressed in millions — 7.052 − 1.050 = 6.002 = log10(10⁶) —
+> so every downstream number was unaffected (125× → 124×), but the units were unstated. Raw tokens,
+> as the paper writes them, are used throughout. The two published forms agree to **0.1%**; both are
+> implemented in `scripts/crossover.py` and cross-checked against each other on every run.
 
 ### 2.3 Unit check — why the fit above can be trusted
 
 The paper's own maximum budget is 100M parameters × 80B tokens = **4.80 × 10¹⁹ FLOPs** (at C = 6ND).
-The fit predicts the crossover for their largest budget U = 100M at **4.77 × 10¹⁹ FLOPs**.
+The fit predicts the crossover for their largest budget U = 100M at **4.72 × 10¹⁹ FLOPs**.
 
-Ratio: **1.01×**. Their maximum compute lands essentially exactly on their own crossover, which is
+Ratio: **1.02×**. Their maximum compute lands essentially exactly on their own crossover, which is
 what a paper reporting "diffusion overtakes AR at the top of our sweep" should look like. The units
 are confirmed. Reproduce with `scripts/crossover.py`.
+
+### 2.4 The authors tried to scale past it, and ran out of compute
+
+Quoted from the paper, and the single most relevant passage for Ravaan:
+
+> "Guided by the critical compute threshold derived in Section 3.3, we scale training to **500M
+> unique tokens** and train a **2.3B-parameter** diffusion model under the predicted compute budget.
+> The model is trained for **130 epochs**, after which we observe **no signs of convergence** and
+> terminate due to compute limitations."
+
+At U = 500M the authors needed a 2.3B-parameter model, reached 130 epochs, and *still* did not
+converge — on a lab compute budget. This is independent confirmation of Finding A from the authors
+themselves: **U in the hundreds of millions is not reachable at small scale.** Ravaan proposes
+U = 300M at 70M parameters for 33 epochs.
+
+### 2.5 Two further details that bear on Ravaan's design
+
+- **The reference architecture ladder is nearly identical to PRD §5.** Table 5 lists a 74M-parameter
+  config at `d_model 640, ffw 1664, kv_size 64, n_heads 10, n_layers 10`. PRD §5 specifies 70M at
+  `d=640, FFN 1728, head dim 64, 10 heads, 12 layers`. This is a happy accident worth keeping — it
+  makes Ravaan's models directly comparable to a row of the reference paper's own sweep, and the
+  report should say so.
+- **The authors flag a bias toward AR in their own setup.** They adopt Muennighoff et al.'s
+  hyperparameters and note this "may provide a slight advantage to autoregressive models," since
+  those hyperparameters were tuned for AR. Ravaan inherits this problem and should state how it
+  chose hyperparameters — PRD §4.1 matches optimizer and schedule across the pair but does not say
+  whose defaults they are. A schedule tuned on AR is not a neutral choice.
 
 ---
 
@@ -119,9 +157,9 @@ Applying the same fit to PRD §4.3 and §5:
 | Unique tokens U | 300M |
 | Epochs | 33 → 9.9B tokens processed |
 | Planned compute C = 6ND | **4.16 × 10¹⁸ FLOPs** |
-| Predicted crossover C_crit(300M) | **5.19 × 10²⁰ FLOPs** |
-| **Shortfall** | **125×** |
-| Epochs needed to reach crossover at U = 300M | **≈ 4,120** |
+| Predicted crossover C_crit(300M) | **5.14 × 10²⁰ FLOPs** |
+| **Shortfall** | **124×** |
+| Epochs needed to reach crossover at U = 300M | **≈ 4,080** |
 
 Crucially, **U is free**. Total compute is set by parameters × tokens processed, so changing how
 much *unique* data those 10B tokens are drawn from costs nothing. The reachability of the crossover
@@ -129,11 +167,11 @@ is purely a design choice:
 
 | Unique U | Epochs to 10B | C_crit | Planned C / C_crit |
 |---|---|---|---|
-| 10M | 990 | 3.19 × 10¹⁷ | **13.0×** ✅ |
-| 25M | 396 | 2.34 × 10¹⁸ | **1.78×** ✅ |
-| 50M | 198 | 1.06 × 10¹⁹ | 0.39× ❌ |
-| 100M | 99 | 4.77 × 10¹⁹ | 0.09× ❌ |
-| 300M *(as specified)* | 33 | 5.19 × 10²⁰ | **0.01×** ❌ |
+| 10M | 990 | 3.16 × 10¹⁷ | **13.2×** ✅ |
+| 25M | 396 | 2.32 × 10¹⁸ | **1.79×** ✅ |
+| 50M | 198 | 1.05 × 10¹⁹ | 0.40× ❌ |
+| 100M | 99 | 4.72 × 10¹⁹ | 0.09× ❌ |
+| 300M *(as specified)* | 33 | 5.14 × 10²⁰ | **0.01×** ❌ |
 
 **Consequence.** PRD §12 offers "no crossover below 33 epochs at 70M params on Urdu" as a
 publishable fallback. That fallback is much weaker than it looks: the English scaling law *already
@@ -276,6 +314,11 @@ endpoint, brackets the crossover from both sides so the *location* can be compar
 English fit rather than just its sign, and costs two extra runs rather than more GPU-hours per run.
 Option 3 is out of budget. Option 0 is predicted to be null before it starts.
 
+> ✅ **Decision taken 2026-08-03: Option 2.** U ∈ {25M, 100M}; 3 seeds at U = 25M (primary),
+> 1 seed at U = 100M (bracket). Both arms sit inside the reference paper's fitted range of
+> U ∈ {25, 50, 100}M, so the comparison never relies on extrapolating their scaling law.
+> Preregistered in `reports/preregistration.md`.
+
 Under Option 2 the research question sharpens from "does diffusion win for Urdu" to:
 
 > **Does the data-constrained crossover between masked diffusion and autoregression occur where the
@@ -325,11 +368,17 @@ defence intact: the endpoint is the *curve*, not the winner.
 
 ## 10. Open items
 
-| # | Item | Blocking? |
+| # | Item | Status |
 |---|---|---|
-| 1 | Verify `C_crit` equation and both `R_D*` values against the typeset PDF of arXiv:2507.15857 | Yes — §3 rests on it |
-| 2 | Read OpenReview `W5Ht05jF4c` for reviewer critique of the scaling-law fit | Yes — same |
+| 1 | Verify `C_crit` equation and both `R_D*` values against the typeset PDF of arXiv:2507.15857 | ✅ **Done 2026-08-03.** Intercept corrected to −1.050 (raw tokens); half-life discrepancy resolved as a provenance difference (§2.2). Finding A survives at 124×. |
+| 2 | Read OpenReview `W5Ht05jF4c` for reviewer critique of the scaling-law fit | ❌ **Blocked** — browser verification wall. Retry manually. The one critique that would weaken Finding A is a reviewer disputing extrapolation of `C_crit` beyond U = 100M, which is exactly the regime Ravaan cares about. |
 | 3 | Confirm UrduLM corpus licence and availability (NC would conflict with PRD §6.3) | Before corpus freeze |
 | 4 | Confirm FineWeb2 `urd_Arab` token count — not published per-language; must be measured | Week 3 |
 | 5 | Search Urdu-language and regional venues (CLE Lahore, LREC regional) not indexed here | Before publication |
 | 6 | Attribute or drop the TinyStories AR-vs-MDLM comparison in §6 | Before publication |
+
+**Note on item 2.** The paper's fit is estimated over U ∈ {25, 50, 100}M. Ravaan's chosen arms are
+U = 25M and U = 100M — **both inside that fitted range**, which is deliberate. The 300M figure in §3
+is an *extrapolation* beyond the fitted range and should be reported as indicative only. This is a
+further argument for Option 2 over Option 0: it keeps the comparison inside the region where the
+reference law is actually supported by data.

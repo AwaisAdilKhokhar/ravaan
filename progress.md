@@ -8,8 +8,10 @@ first.**
 - **Current phase:** Weeks 1–2 — literature review, corpus acquisition, language/script ID
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
-- **⚠️ Blocking decision open:** G0 passed on novelty but surfaced two findings that require the
-  experimental design to change before Stage C. See "Decision required" below.
+- **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds
+  at 25M, 1 at 100M. PRD amended to v2.1; preregistration committed.
+- **Preregistration:** ✅ committed [`reports/preregistration.md`](reports/preregistration.md) —
+  4 falsifiable predictions, before any training.
 - **Spend to date:** $0.00 of $150 hard cap
 - **Tests:** 67 passing
 
@@ -24,7 +26,9 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 |---|---|---|
 | Repo scaffold, packaging, license, CI-able test suite | §13 | ✅ |
 | Literature review → `reports/literature_review.md` (**G0**) | §11 | ✅ |
-| Act on lit-review Findings A & B — revise PRD §1/§4.3/§6.1 | — | ⛔ needs your call |
+| Verify Finding A against typeset PDF | — | ✅ |
+| Act on Findings A & B — PRD amended to v2.1 | §0.1 | ✅ |
+| Preregistration → `reports/preregistration.md` | §4.5 | ✅ |
 | FineWeb2 `urd_Arab` acquisition + checksums | §6.2, §6.3.1 | ⬜ |
 | Roman-Urdu-Parl acquisition + checksums | §6.2 | ⬜ |
 | Urdu Wikipedia dump acquisition + checksums | §6.2 | ⬜ |
@@ -150,11 +154,11 @@ commit (and, if you want it, add a GitHub remote + CI workflow).
 
 ---
 
-## ⛔ Decision required before Weeks 3–11
+## ✅ Decision taken 2026-08-03 — Option 2 (two-point law)
 
 Findings A and B are one problem seen twice: the PRD picked a model size at which Urdu is not
 data-constrained, so the unique-data budget must be chosen artificially regardless. Because U costs
-nothing, this is fixable at **zero additional GPU spend** — only run *count* changes.
+nothing, this was fixable at **zero additional GPU spend** — only run *count* changed.
 
 | Option | Design | Reaches crossover? | Cost |
 |---|---|---|---|
@@ -164,8 +168,57 @@ nothing, this is fixable at **zero additional GPU spend** — only run *count* c
 | 3. Scale model up | ~300M params | Yes | Far over $150 |
 
 Option 2 keeps the 3-seed protocol on the primary endpoint and brackets the crossover so its
-*location* — not just its sign — can be tested against the English fit. Full reasoning and the list
-of PRD edits each option implies: review §8.
+*location* — not just its sign — can be tested against the English fit. Full reasoning: review §8.
+**Applied** in PRD v2.1 §0.1 and `reports/preregistration.md`.
+
+---
+
+### Session 3 — 2026-08-03 (same day)
+
+**Done**
+
+1. **Verified Finding A against the typeset PDF** (`pymupdf`; the automated PDF reader had failed).
+   **Finding A survives: 124× short**, essentially unchanged.
+   - **Constant corrected.** The fit is `log10(U) = 0.460·log10(C) − 1.050` with **U in raw
+     tokens**. The earlier draft's −7.052 was the same fit with U in millions
+     (7.052 − 1.050 = 6.002 = log10(10⁶)), so every downstream number held — but the units had been
+     unstated. The paper's closed form `C_crit = 2.12×10^1.956·U^2.174` agrees to **0.1%**; both are
+     now implemented and cross-checked on every run of `scripts/crossover.py`.
+   - **Half-life discrepancy resolved — it was never a contradiction.** ≈15 is *Muennighoff et al.'s*
+     prior AR estimate, quoted for contrast; **31.93** is this paper's own AR fit; **512.85** is its
+     diffusion fit. Cite 512.85/31.93 — the only like-for-like pair.
+   - **The authors corroborate Finding A themselves.** At U = 500M they needed a **2.3B**-parameter
+     model, ran **130 epochs**, and reported *no signs of convergence*. U in the hundreds of
+     millions is not reachable at small scale.
+   - **Bonus:** the paper's Table 5 lists a 74M config at `d_model 640, ffw 1664, kv 64, heads 10` —
+     nearly identical to PRD §5's 70M spec. Ravaan's models line up with a row of the reference
+     sweep; the report should say so.
+   - **Bonus (a problem):** the authors note their hyperparameters, taken from Muennighoff et al.,
+     "may provide a slight advantage to autoregressive models." Ravaan inherits this. Now handled
+     explicitly in preregistration §6.
+
+2. **PRD amended to v2.1** with a §0.1 changelog. Edits: §1 (research question reframed), §4.3
+   (two-arm sweep), §4.4 (MARIA prior art), §4.5, §6.1 (corpus 300M → 120M), §9 (budget: 8 runs,
+   ~$134), §10, §11 (G1, G4), §12, §14. Every correction is marked inline — nothing silently
+   changed.
+
+3. **`reports/preregistration.md` committed** — PRD §4.5's requirement, satisfied in Week 1 rather
+   than Week 9. Four falsifiable predictions (P1–P4), a committed reading for **every** outcome
+   combination including the one that indicates a bug, and §7 "what would make this report a
+   negative result" written before any data exists.
+
+**Decisions made**
+
+| Decision | Rationale |
+|---|---|
+| Both arms placed **inside** the reference paper's fitted range U ∈ {25,50,100}M | Their law is *estimated* there; the 300M figure was an extrapolation. No Ravaan claim now depends on trusting the law outside where it was fitted — which also de-risks open item 2 (the OpenReview critique still unread). |
+| Arm A's 25M corpus is a **seeded subsample of** the frozen 100M corpus, not a separate collection | The arms must differ in size and nothing else. Separately collecting 25M would confound U with source mix. |
+| Preregistration commits a reading for the incoherent outcome (no cross in A, cross in B) | Naming it in advance as *"indicates a bug — debug, do not report"* is what stops it being rationalised into a finding later. |
+| Budget rebalanced, not raised | 6 → 8 runs funded by trimming the failed-run contingency 80 → 60 GPU-h. Total ~$134, still under the $150 cap. Arm A's 3 seeds are named as the last thing to cut. |
+
+**Still open:** OpenReview `W5Ht05jF4c` sits behind a browser-verification wall. The only critique
+that would materially weaken Finding A is a reviewer disputing `C_crit` extrapolation — and keeping
+both arms inside the fitted range largely neutralises that risk.
 
 ---
 
@@ -198,47 +251,39 @@ of PRD edits each option implies: review §8.
 
 ## Next session
 
-**Primary task: verify the two numbers Finding A rests on, then act on the design decision.**
+**Primary task: corpus acquisition, pipeline stage 1 (PRD §6.3.1).**
 
-Finding A is currently strong enough to redirect the project and *not* strong enough to bet the
-project on — its constants came from automated extraction of HTML and a blog post, not the typeset
-paper, and two sources disagreed by ~2× on the AR half-life. Verify before anything is rebuilt
-around it.
+Week 1's planning work is complete — G0 passed, the design is decided, the PRD is amended, and the
+preregistration is committed. Everything from here needs real corpus text on disk. The revised
+target is **~120M unique clean tokens**, down from 300M, which shortens Weeks 3–4.
 
-1. **Verify against the PDF of arXiv:2507.15857** (open items 1–2 in the review):
-   - the closed-form `C_crit(U)` equation and the `log10(U) = 0.460·log10(C) − 7.052` fit;
-   - both `R_D*` half-lives (blog says ~500 / ~15; a third-party extraction said 512.85 / 31.93);
-   - read OpenReview `W5Ht05jF4c` for reviewer critique of the scaling-law fit specifically. If
-     reviewers doubted its extrapolation, Finding A weakens and Option 0 gets more defensible.
-   - `pip install pymupdf` or use the arXiv HTML v7 — the automated PDF reader failed on this file.
-   - Update `scripts/crossover.py` constants and re-run; the review's numbers must still hold.
+1. **`configs/data/sources.json` + `ravaan/data/acquisition.py`** — a declarative source manifest:
+   HF dataset id, **pinned revision/commit SHA**, licence, expected size. FineWeb2 and Wikipedia
+   both move; an unpinned revision makes the corpus irreproducible. Write SHA-256 checksums to
+   `data/manifest.json`. Tests over a small fixture, not a live download.
+2. **Evaluate UrduLM's corpus as a source** (arXiv:2601.17664 — 33 GB, ~5–6B tokens, "released
+   openly"). **Check the licence first**: the arXiv listing shows CC BY-NC-ND, which would conflict
+   with PRD §6.3's permissive-checkpoint policy. If NC, it can still serve as the §6.1
+   "could-have-collected" citation and a tokenizer-fertility baseline without entering training.
+3. **`ravaan/data/encoding.py`** — stage 2 encoding validation: strict UTF-8 decode, replacement-char
+   rate, mojibake detection. With tests.
+4. `pip install -e ".[data]"` — nothing in the repo needs it yet.
 
-2. **Apply the design decision** once you've chosen an option (review §8.3). If Option 2:
-   - write `reports/preregistration.md` — U values, predicted `C_crit` per arm, primary endpoint,
-     and the falsifiable prediction, committed and timestamped **before** Stage C (PRD §4.5);
-   - make the §8.4 edits to the PRD (§1, §4.3, §6.1, §4.2, §11 G4) — that list is the changelog;
-   - corpus target drops from 300M to ~100M unique tokens, which shortens Weeks 3–4.
+**Do not start** tokenizer work or modelling. The tokenizer is timeboxed to Week 5.
 
-3. **Then start acquisition (stage 1)** — unchanged by the decision, since over-collecting is free
-   and you can always subsample down to the chosen U:
-   - `ravaan/data/acquisition.py` + `configs/data/sources.json` — declarative manifest (HF dataset
-     id, **pinned revision**, license, expected size) writing SHA-256 checksums to
-     `data/manifest.json`. FineWeb2 and Wikipedia both move; pin them.
-   - Add **UrduLM's corpus** to the candidate sources (review §4) — but check its licence first,
-     since CC BY-NC-ND would conflict with PRD §6.3's permissive-checkpoint policy.
-   - `ravaan/data/encoding.py` — stage 2 encoding validation (strict UTF-8, replacement-char rate,
-     mojibake detection), with tests.
-   - `pip install -e ".[data]"` — nothing in the repo needs it yet.
+**Three caveats to carry forward**
 
-**Do not start** tokenizer work or any modelling. The tokenizer is timeboxed to Week 5 and its
-vocab-size choice may interact with the revised corpus size.
+- **Validate the normalizer on real text.** Its rules were checked against hand-written fixtures
+  only. PRD §6.3.5 requires 200 manually inspected samples for the *quality filter* — put the same
+  200 through the normalizer and confirm no rule misfires on real FineWeb2 Urdu before the freeze.
+- **The infilling share is unresolved.** PRD §4.2 sets 10%; reported FIM practice is 50–90% with no
+  left-to-right degradation (review §6). If 10% leaves Ravaan-AR genuinely bad at infilling, A2
+  loses its meaning — the *fair* baseline would also be undertrained, and §4.1's whole fairness
+  argument weakens. **Decide before the task mixture is frozen ahead of Stage C.** This is the last
+  substantive open design question.
+- **Hyperparameter provenance.** Preregistration §6 commits to taking the reference paper's config
+  untuned, and to stating that it likely favours AR. Record the source when the training config is
+  written in Week 6 — not retroactively.
 
-**Two caveats to carry forward**
-
-- The normalizer's rules were validated against hand-written fixtures, not real corpus text. PRD
-  §6.3.5 requires 200 manually inspected samples for the *quality filter* — put the same 200
-  through the normalizer and confirm no rule misfires on real FineWeb2 Urdu before the freeze.
-- PRD §4.2 sets the infilling share at 10%. Reported FIM practice is 50–90% with no left-to-right
-  degradation (review §6). If 10% leaves Ravaan-AR bad at infilling, the A2 "unfair baseline"
-  comparison loses its meaning — the fair baseline would also be undertrained. Decide before the
-  task mixture is frozen ahead of Stage C.
+**Retry when convenient:** OpenReview `W5Ht05jF4c` (browser-verification wall) for reviewer critique
+of the `C_crit` fit. Lower stakes now that both arms sit inside the fitted range.

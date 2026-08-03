@@ -1,8 +1,8 @@
 # Ravaan v2: Does Masked Diffusion Pay Off for a Genuinely Low-Resource Language?
 
-**Version:** 2.0
-**Status:** Proposed
-**Supersedes:** v1.1 (August 2, 2026)
+**Version:** 2.1
+**Status:** Amended 2026-08-03 after the Week 1 literature review (Gate G0 — passed). See §0.1.
+**Supersedes:** v2.0 (August 3, 2026); v1.1 (August 2, 2026)
 **Project type:** Open-source NLP research and portfolio project
 **Development model:** Solo, part-time, rented spot GPUs
 **Hard compute cap:** USD 150
@@ -29,11 +29,31 @@
 
 ---
 
+## 0.1 What changed in v2.1, and why
+
+The Week 1 literature review (`reports/literature_review.md`) passed Gate G0 on novelty but produced two findings that invalidated part of the v2.0 design. Both were verified against the typeset source paper on 2026-08-03.
+
+| Area | v2.0 | v2.1 | Reason |
+|---|---|---|---|
+| Unique corpus U | 300M tokens, 33 epochs | **U ∈ {25M, 100M}**; ~396 and ~99 epochs | At 70M params, U = 300M sits **124× below** the compute at which the reference paper's own fitted law predicts a crossover. v2.0's headline experiment returned "no crossover" *predictably* — a null by construction. U costs nothing (compute = params × tokens processed), so this is fixed at zero extra GPU spend |
+| Framing | Urdu is *naturally* data-constrained, unlike artificially subsampled English | **Does the English scaling law transfer to noisy non-English text?** | UrduLM (arXiv:2601.17664) released ~5–6B Urdu tokens. Chinchilla-optimal for 70M params is ~1.4B. Urdu is **not** data-constrained at this scale, so the v2.0 contrast does not hold |
+| Core runs | 6 (2 models × 3 seeds) | **8** (3 seeds at U=25M, 1 seed at U=100M, both models) | Bracketing the crossover lets the *location* be tested, not just the sign. Same GPU-hours per run |
+| §4.1 novelty claim | Implicit: FIM-matched comparison is the contribution | **Explicitly not novel** — MARIA (arXiv:2502.06901) is prior art | Must be cited. A2's argument is weaker without it |
+| Preregistration | Named in §4.5, unwritten | **Written and committed** — `reports/preregistration.md` | Committed 2026-08-03, before any training |
+
+**Unchanged:** the matched pair (§4.1), task mixture shares (§4.2, but see the open question on infilling share), model specification (§5), tokenizer (§7), evaluation (§8), the $150 cap (§9), and the definition of done (§14).
+
+---
+
 ## 1. Research question
 
-**Primary.** Holding unique data and training tasks fixed, at what compute budget — if ever — does a masked diffusion parameterization overtake an autoregressive one for Urdu, and does that crossover sit where the English result predicts?
+**Primary.** Does the data-constrained crossover between masked diffusion and autoregression occur where the English scaling law predicts, when the training corpus is naturally noisy non-English Nastaliq-script web text rather than clean C4?
 
-The motivating claim from the literature is that masked diffusion outperforms AR when compute is abundant but unique data is scarce, because random-order factorization acts as implicit data augmentation. That result was measured on *artificially subsampled* English. Urdu is *naturally* data-constrained, and its corpora are noisier, more duplicated, and more domain-skewed than a C4 subsample. Whether the finding survives contact with a real low-resource language is open.
+The motivating claim from the literature is that masked diffusion outperforms AR when compute is abundant but unique data is scarce, because random-order factorization acts as implicit data augmentation. Prabhudesai et al. (arXiv:2507.15857) measured this on English C4 at U ∈ {25, 50, 100}M and fitted a critical-compute threshold `log10(U) = 0.460·log10(C) − 1.050`.
+
+Urdu corpora are noisier, more duplicated, and more domain-skewed than a C4 subsample, and the script, morphology and tokenizer fertility all differ. Whether a law fitted on clean English holds on that material is open. **Both Ravaan arms sit inside the reference paper's fitted range of U**, so no claim here depends on extrapolating their law.
+
+> **Corrected in v2.1.** v2.0 argued Urdu is *naturally* data-constrained while English was *artificially* subsampled. That contrast does not survive: ~5–6B Urdu tokens are collectable and a 70M model can use ~1.4B. Ravaan subsamples deliberately, exactly as the English study did. This is stated plainly rather than defended — see `literature_review.md` §4.
 
 **Secondary.** Does adding script-aware corruption training (transliteration, OCR restoration, spacing repair, code-switch normalization) help both parameterizations equally, or does one absorb it better?
 
@@ -45,7 +65,7 @@ The motivating claim from the literature is that masked diffusion outperforms AR
 
 1. **Ravaan-DIFF** — masked diffusion LM, ~70M params, released checkpoint
 2. **Ravaan-AR** — compute-matched autoregressive baseline, released checkpoint
-3. **The epoch-crossover curve** — validation bits-per-byte vs. epochs for both, 3 seeds each
+3. **The epoch-crossover curve** — validation bits-per-byte vs. compute for both models at U ∈ {25M, 100M}; 3 seeds in arm A, 1 in arm B
 4. **Urdu corpus pipeline** — code, manifest, checksums, statistics (no raw text redistribution)
 5. **Urdu SentencePiece tokenizer** — 16k, with a fertility benchmark across native/Roman/mixed script
 6. **Evaluation suite** — including a hand-corrected real-OCR test set and a human-written transliteration set
@@ -97,9 +117,20 @@ Corruptions are generated dynamically at training time from clean text, with the
 
 ### 4.3 The epoch sweep
 
-Fix a unique corpus **U ≈ 300M tokens**. Train each model to ~33 epochs (~10B tokens processed). Checkpoint at epochs **1, 2, 4, 8, 16, 33** and evaluate every checkpoint.
+Two arms, both processing ~9.9B tokens, differing only in how much unique data those tokens are drawn from:
 
-This is the primary experiment and it costs one run per model per seed. Epoch 1 sits near the Chinchilla-optimal point where AR is expected to lead; epoch 33 is deep into the regime where the diffusion advantage is predicted to appear. The question is whether the curves cross, and where.
+| Arm | Unique U | Epochs | Seeds | Predicted position |
+|---|---|---|---|---|
+| **A** (primary) | 25M | ~396 | 3 | **1.79× past** C_crit = 2.32 × 10¹⁸ FLOPs |
+| **B** (bracket) | 100M | ~99 | 1 | **0.09× of** C_crit = 4.72 × 10¹⁹ FLOPs |
+
+Checkpoint at **1, 2, 5, 10, 25, 50, 100% of tokens processed** — identical fractions for both models and both arms, so the curves share a compute x-axis. Evaluate every checkpoint.
+
+This is the primary experiment and it costs one run per model per arm per seed (8 total). Arm A is predicted to *cross*; arm B is predicted *not* to. The paired outcome is the result: it tests the crossover's **location** against the English fit, not merely its sign.
+
+> **Corrected in v2.1.** v2.0 fixed U ≈ 300M and asserted "epoch 33 is deep into the regime where the diffusion advantage is predicted to appear." Against the reference paper's own fitted law that is wrong by two orders of magnitude — U = 300M at 70M params for 33 epochs is **124× below** C_crit and would need ~4,080 epochs. The authors corroborate this themselves: at U = 500M they required a 2.3B-parameter model and saw no convergence at 130 epochs. Reproduce with `scripts/crossover.py`.
+
+**Why this costs nothing.** Compute is parameters × tokens processed. How much *unique* data those tokens are drawn from is free. Only the number of runs changed (6 → 8).
 
 **Methodological note that must appear in the report:** the diffusion objective yields an *upper bound* (ELBO) on likelihood, not exact NLL. Comparing a diffusion ELBO against exact AR NLL is conservative — it disadvantages diffusion. Report both, state the bound explicitly, and treat downstream task metrics (which are directly comparable) as the tiebreaker.
 
@@ -116,10 +147,12 @@ Report **bits-per-byte**, not bits-per-token, so the comparison is tokenizer-ind
 
 A2 is included deliberately. Running the broken baseline alongside the fair one lets you quantify exactly how much the unfair comparison would have inflated the result — which is a more interesting paragraph than the result itself.
 
+**Prior art, and a scope correction.** The FIM-matched comparison in §4.1 is *methodologically necessary but not novel*. MARIA (arXiv:2502.06901) already reports that a properly-equipped AR model outperforms discrete diffusion baselines at infilling across all mask rates. It must be cited, and A2 must be framed as quantifying the inflation on **Urdu**, not as discovering that the unfair baseline inflates results.
+
 ### 4.5 Statistical protocol
 
-- **3 seeds** per core config (AR, DIFF). Ablations get 1 seed and are reported as directional.
-- **Primary endpoint, preregistered:** the sign and location of the AR/DIFF crossover in validation BPB across the epoch sweep. Committed to the repo with a timestamp before Stage C begins.
+- **3 seeds** per core config (AR, DIFF) in **arm A**; 1 seed in arm B, reported as directional. Ablations get 1 seed and are reported as directional.
+- **Primary endpoint, preregistered:** the sign and compute-location of the AR/DIFF crossover in validation BPB across arm A's sweep. **Committed 2026-08-03 in `reports/preregistration.md`, before any training** — including four falsifiable predictions (P1–P4) and a committed reading for every outcome combination.
 - **Secondary endpoints (3, Holm-corrected):** transliteration chrF on the human-written set, infill exact-match, OCR CER reduction on the real-OCR set.
 - Paired bootstrap confidence intervals on all task metrics. If a CI includes zero, say so in the abstract.
 - No metric is added to the results table after seeing results.
@@ -154,13 +187,17 @@ Exact parameter counts must be computed programmatically and asserted equal with
 
 | Component | Target |
 |---|---|
-| Clean native Urdu | ~300M unique tokens |
+| Clean native Urdu | **~120M unique tokens** (100M for arm B + ~20% headroom for filtering losses) |
 | Roman Urdu | ~40M tokens |
 | Code-switched | ~10M tokens |
 | Parallel script pairs | ~500K deduplicated pairs |
 | Held-out eval | ~5K sequences, decontaminated |
 
-**Record separately how much clean data you *could* have collected.** "We deliberately capped at 300M to sit in the data-constrained regime" is a design decision; "300M was all we could get" is a limitation. The report must be able to tell the reader which.
+Arm A's 25M-token corpus is a **deterministic, seeded subsample** of the frozen 100M corpus — not a separate collection — so the two arms differ in size and nothing else. The subsample manifest is checksummed and committed.
+
+**How much clean data could we have collected?** ~5–6B tokens. UrduLM (arXiv:2601.17664, Jan 2026) curated and released 33 GB / ~5–6B tokens of Urdu. **Capping is therefore a deliberate design decision, not a limitation**, and the report must say so in exactly those terms. v2.0 asked this question; v2.1 records the answer.
+
+> **Corrected in v2.1.** Target reduced from ~300M to ~120M. See §0.1 and §4.3 — at U = 300M the primary experiment cannot reach the crossover it exists to measure. This shortens Weeks 3–4.
 
 ### 6.2 Sources
 
@@ -241,12 +278,14 @@ Validation BPB by epoch and by script; transliteration CER/WER/chrF with named-e
 |---|---|---|
 | Debug and tiny pilots | Kaggle free tier | $0 |
 | Throughput tuning | 20 | $7 |
-| 6 core runs (2 models × 3 seeds) | 140 | $50 |
+| 8 core runs (arm A: 2 models × 3 seeds; arm B: 2 models × 1 seed) | 187 | $66 |
 | 2 ablation runs (A1, A2) | 45 | $16 |
 | Evaluation sampling | 25 | $9 |
-| Failed runs and restarts | 80 | $28 |
+| Failed runs and restarts | 60 | $21 |
 | Storage | — | $15 |
-| **Total** | **~310** | **~$125** |
+| **Total** | **~337** | **~$134** |
+
+Per-run cost is unchanged from v2.0 — every run processes the same ~9.9B tokens. Only the run count rose, 6 → 8, funded by trimming the failed-run contingency from 80 to 60 GPU-hours. **If that contingency proves tight, drop arm B's seed to a shared-seed pair or cut ablation A1 — never cut arm A's 3 seeds**, which carry the primary endpoint.
 
 **Hard cap: $150.** Assumes RTX 4090-class spot instances at ~$0.35/hr. Verify against live marketplace pricing in Week 6 before committing.
 
@@ -260,8 +299,8 @@ Roughly 250–320 person-hours across 16 weeks, or about 16–20 hrs/week.
 
 | Weeks | Work | Output |
 |---|---|---|
-| 1–2 | Literature review; corpus acquisition; language/script ID | Lit review settling the novelty question in writing; raw corpus on disk |
-| 3–4 | Normalization, dedup, quality filter, decontamination | **Frozen corpus v1** + manifest + statistics |
+| 1–2 | Literature review; corpus acquisition; language/script ID | ✅ Lit review + **preregistration** committed W1; raw corpus on disk |
+| 3–4 | Normalization, dedup, quality filter, decontamination | **Frozen corpus v1** (~120M tokens) + seeded 25M subsample + manifest + statistics |
 | 5 | Tokenizer training and benchmark | **Frozen tokenizer** + checksum |
 | 6–7 | Shared backbone, AR head, MDLM objective, tiny-model validation, throughput measurement | **Gate 1** |
 | 8 | Pilot runs at 20M params, all 4 configs, 1 seed | **Gate 2** |
@@ -282,10 +321,10 @@ Every gate below can actually fail. v1's Gate D ("script-aware improves at least
 | Gate | When | Proceed if | Kill / fallback |
 |---|---|---|---|
 | **G0** | End W2 | Literature review confirms the comparison is unpublished | Reframe or stop |
-| **G1** | End W4 | Clean corpus ≥ 150M tokens | 50–150M → drop to 40M params. Below 50M → stop |
-| **G2** | End W7 | Measured throughput implies core runs ≤ $80 | Shrink model, never epoch count |
+| **G1** | End W4 | Clean corpus ≥ **100M** tokens (arm B needs 100M; arm A subsamples from it) | 25–100M → run arm A only, report single-arm. Below 25M → stop |
+| **G2** | End W7 | Measured throughput implies 8 core runs ≤ $90 | Shrink model, never epoch count |
 | **G3** | End W8 | 20M pilot DIFF produces coherent Urdu after 50 epochs; both models resume from checkpoint correctly | Implementation bug — debug, do not scale |
-| **G4** | Mid W10 | Epoch curves are separating or converging in a legible way | No signal by epoch 16 → stop at 3 seeds, report the flat result |
+| **G4** | Mid W10 | Arm A curves are separating or converging in a legible way **by 50% of tokens processed** | No signal by then → complete arm A's 3 seeds, cut arm B, report the flat result as the primary finding per preregistration §7 |
 | **G5** | W13 hard date | Automatic results are in hand | Cut human eval and demo, ship the report |
 
 ---
@@ -294,7 +333,7 @@ Every gate below can actually fail. v1's Gate D ("script-aware improves at least
 
 | Risk | Mitigation |
 |---|---|
-| No crossover appears within budget | The primary endpoint is the *curve*, not the winner. "No crossover below 33 epochs at 70M params on Urdu" is a publishable, citable result |
+| No crossover appears within budget | The primary endpoint is the *curve*, not the winner. Because arm A is placed **1.79× past** the predicted C_crit, "no crossover where the English law predicts one" is now a genuine falsification of transfer — a publishable, citable result. **This defence did not hold in v2.0**, where the design sat 124× short and the English law itself already predicted no crossover; confirming that would have been no finding at all |
 | Roman-Urdu-Parl is machine-generated | Human-written test set; scope the claim explicitly if it disagrees with the reference set |
 | Seed variance swamps the effect | 3 seeds, paired bootstrap CIs, report intervals not point estimates |
 | Diffusion ELBO vs. AR exact NLL not directly comparable | Report both, state the bound, lead with downstream metrics |
@@ -336,7 +375,7 @@ ravaan/
 **Ship criteria** — all must hold:
 
 - Both models trained from random initialization on identical data, tasks, and compute
-- Epoch sweep complete at 3 seeds per core config
+- Epoch sweep complete: 3 seeds per model in arm A (U=25M), 1 seed per model in arm B (U=100M)
 - Preregistration committed before results were seen, and honoured
 - Real-OCR and human-written transliteration test sets built and used
 - Human evaluation completed or its absence explained

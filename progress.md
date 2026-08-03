@@ -6,8 +6,10 @@ first.**
 
 - **Started:** 2026-08-03 (Week 1 of 16)
 - **Current phase:** Weeks 1–2 — literature review, corpus acquisition, language/script ID
-- **Next gate:** **G0** (end of Week 2) — literature review must confirm the AR/DIFF comparison for
-  Urdu is unpublished, *in writing*. Fail → reframe or stop.
+- **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
+  [`reports/literature_review.md`](reports/literature_review.md).
+- **⚠️ Blocking decision open:** G0 passed on novelty but surfaced two findings that require the
+  experimental design to change before Stage C. See "Decision required" below.
 - **Spend to date:** $0.00 of $150 hard cap
 - **Tests:** 67 passing
 
@@ -21,7 +23,8 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | Item | PRD | Status |
 |---|---|---|
 | Repo scaffold, packaging, license, CI-able test suite | §13 | ✅ |
-| Literature review → `reports/literature_review.md` (**G0**) | §11 | ⬜ |
+| Literature review → `reports/literature_review.md` (**G0**) | §11 | ✅ |
+| Act on lit-review Findings A & B — revise PRD §1/§4.3/§6.1 | — | ⛔ needs your call |
 | FineWeb2 `urd_Arab` acquisition + checksums | §6.2, §6.3.1 | ⬜ |
 | Roman-Urdu-Parl acquisition + checksums | §6.2 | ⬜ |
 | Urdu Wikipedia dump acquisition + checksums | §6.2 | ⬜ |
@@ -101,6 +104,69 @@ report and release (W15–16).
 **Not committed to git.** The repo still has zero commits; say the word and I'll make the initial
 commit (and, if you want it, add a GitHub remote + CI workflow).
 
+### Session 2 — 2026-08-03
+
+**Done**
+
+1. **Initial commit** (`afa0cc9`) — 20 files, 1,792 lines. Caught a `.gitignore` bug while staging:
+   a bare `data/` pattern matches at *any* depth, so it silently excluded `ravaan/data/` (the whole
+   normalization module) and `configs/data/`. Anchored to `/data/`. Added `.gitattributes` pinning
+   `eol=lf` — CRLF drifting into a corpus file would change its checksum.
+
+2. **Literature review → `reports/literature_review.md`. Gate G0 PASSES on novelty.**
+   No masked diffusion LM for Urdu exists; the data-constrained diffusion result has not been
+   replicated outside English. The precise claim that is now supportable in writing, with its
+   hedge and search date, is in §8.1 of the review.
+
+3. **`scripts/crossover.py`** — reproduces the review's compute arithmetic from the reference
+   paper's fitted scaling law.
+
+**Two findings that outrank the novelty verdict**
+
+- **Finding A — the planned budget is ~125× below the predicted crossover.** Applying
+  Prabhudesai et al.'s own fitted law to PRD §4.3/§5 (70M params, U = 300M, 33 epochs = 4.16e18
+  FLOPs) against C_crit(300M) = 5.19e20 FLOPs. Reaching the crossover at U = 300M would take
+  ~4,120 epochs. **PRD §4.3's claim that "epoch 33 is deep into the regime where the diffusion
+  advantage is predicted to appear" is incorrect by two orders of magnitude.** As specified, the
+  headline experiment returns "no crossover" predictably — a null by construction, the same class
+  of flaw v2 was written to remove from v1.
+  - The reading is trustworthy: the paper's *own* max budget lands at 1.01× its *own* crossover.
+  - **U is free.** Compute is parameters × tokens processed; how much unique data those 10B tokens
+    are drawn from costs nothing. At the same compute, U = 25M reaches 1.78× past the crossover.
+
+- **Finding B — "naturally data-constrained" does not hold at 70M params.** UrduLM (arXiv:2601.17664,
+  Jan 2026) released a 33 GB / ~5–6B-token Urdu corpus. Chinchilla-optimal for 70M is ~1.4B tokens,
+  so Urdu has ~4× more data than the model can use. PRD §1's contrast — English *artificially*
+  subsampled vs Urdu *naturally* constrained — does not survive. This does settle §6.1's "could we
+  have collected more" question on the record: **capping is deliberate.**
+
+**Decisions made**
+
+| Decision | Rationale |
+|---|---|
+| Every load-bearing number tagged ⚠️VERIFY in the review | The `C_crit` constants and one half-life value came from automated extraction of HTML/blog, not the typeset PDF, and two sources disagreed ~2× on the AR half-life. A gate document that hides its own uncertainty is worse than no gate. |
+| Review states its own search limits explicitly | "No Urdu diffusion LM found" across seven query families is not proof none exists; regional venues are under-indexed. The novelty claim carries a hedge and a search date. |
+| MARIA (arXiv:2502.06901) flagged as prior art | It reports properly-equipped AR beating discrete diffusion at infilling. PRD §4.1's fairness argument is real but **not novel**, and the A2 ablation is weaker without citing it. |
+
+---
+
+## ⛔ Decision required before Weeks 3–11
+
+Findings A and B are one problem seen twice: the PRD picked a model size at which Urdu is not
+data-constrained, so the unique-data budget must be chosen artificially regardless. Because U costs
+nothing, this is fixable at **zero additional GPU spend** — only run *count* changes.
+
+| Option | Design | Reaches crossover? | Cost |
+|---|---|---|---|
+| 0. Unchanged | U = 300M, 33 epochs | No (0.01×) | 6 core runs |
+| 1. Retarget U | U = 25M, ~400 epochs, 3 seeds | Yes (1.78×) | 6 core runs |
+| **2. Two-point law** *(recommended)* | U ∈ {25M, 100M}; 3 seeds at 25M, 1 at 100M | Yes at 25M, brackets at 100M | 8 core runs |
+| 3. Scale model up | ~300M params | Yes | Far over $150 |
+
+Option 2 keeps the 3-seed protocol on the primary endpoint and brackets the crossover so its
+*location* — not just its sign — can be tested against the English fit. Full reasoning and the list
+of PRD edits each option implies: review §8.
+
 ---
 
 ## Open questions for you
@@ -132,39 +198,47 @@ commit (and, if you want it, add a GitHub remote + CI workflow).
 
 ## Next session
 
-**Primary task: literature review → `reports/literature_review.md` (Gate G0).**
+**Primary task: verify the two numbers Finding A rests on, then act on the design decision.**
 
-This is the one item that can kill the project, it is due end of Week 2, and everything downstream
-is wasted effort if it fails. It is also the only remaining Week 1–2 task that does not depend on
-downloading anything.
+Finding A is currently strong enough to redirect the project and *not* strong enough to bet the
+project on — its constants came from automated extraction of HTML and a blog post, not the typeset
+paper, and two sources disagreed by ~2× on the AR half-life. Verify before anything is rebuilt
+around it.
 
-Concretely:
+1. **Verify against the PDF of arXiv:2507.15857** (open items 1–2 in the review):
+   - the closed-form `C_crit(U)` equation and the `log10(U) = 0.460·log10(C) − 7.052` fit;
+   - both `R_D*` half-lives (blog says ~500 / ~15; a third-party extraction said 512.85 / 31.93);
+   - read OpenReview `W5Ht05jF4c` for reviewer critique of the scaling-law fit specifically. If
+     reviewers doubted its extrapolation, Finding A weakens and Option 0 gets more defensible.
+   - `pip install pymupdf` or use the arXiv HTML v7 — the automated PDF reader failed on this file.
+   - Update `scripts/crossover.py` constants and re-run; the review's numbers must still hold.
 
-1. Create `reports/literature_review.md` with a structure that can actually answer G0:
-   - Masked diffusion LMs: MDLM, SEDD, LLaDA, and the diffusion-vs-AR scaling/data-constrained
-     work that motivates the whole hypothesis (find the exact paper making the "diffusion wins
-     when data-constrained, compute-abundant" claim, and pin down its crossover numbers so §4.3
-     can state whether Urdu lands where English predicted).
-   - Existing Urdu LMs and Urdu pretraining corpora.
-   - Any existing diffusion LM for Urdu or a comparable low-resource language.
-   - **Verdict section:** is this comparison unpublished? Written down, with citations, so §3's
-     "no claim to be first until the literature review says so in writing" is satisfied.
-2. Record the verdict and date in this file's status board, and flip G0 to pass/fail.
+2. **Apply the design decision** once you've chosen an option (review §8.3). If Option 2:
+   - write `reports/preregistration.md` — U values, predicted `C_crit` per arm, primary endpoint,
+     and the falsifiable prediction, committed and timestamped **before** Stage C (PRD §4.5);
+   - make the §8.4 edits to the PRD (§1, §4.3, §6.1, §4.2, §11 G4) — that list is the changelog;
+   - corpus target drops from 300M to ~100M unique tokens, which shortens Weeks 3–4.
 
-**Then, if G0 passes and time remains — start acquisition (stage 1):**
+3. **Then start acquisition (stage 1)** — unchanged by the decision, since over-collecting is free
+   and you can always subsample down to the chosen U:
+   - `ravaan/data/acquisition.py` + `configs/data/sources.json` — declarative manifest (HF dataset
+     id, **pinned revision**, license, expected size) writing SHA-256 checksums to
+     `data/manifest.json`. FineWeb2 and Wikipedia both move; pin them.
+   - Add **UrduLM's corpus** to the candidate sources (review §4) — but check its licence first,
+     since CC BY-NC-ND would conflict with PRD §6.3's permissive-checkpoint policy.
+   - `ravaan/data/encoding.py` — stage 2 encoding validation (strict UTF-8, replacement-char rate,
+     mojibake detection), with tests.
+   - `pip install -e ".[data]"` — nothing in the repo needs it yet.
 
-3. `ravaan/data/acquisition.py` + `configs/data/sources.json` — declarative source manifest
-   (HF dataset id, revision/commit pin, license, expected size) with SHA-256 checksums written to
-   `data/manifest.json`. Pin revisions: FineWeb2 and Wikipedia both move.
-4. `ravaan/data/encoding.py` — stage 2 encoding validation (strict UTF-8 decode, replacement-char
-   rate, mojibake detection), with tests.
-5. Install the `data` extra (`pip install -e ".[data]"`) — nothing in the repo needs it yet.
+**Do not start** tokenizer work or any modelling. The tokenizer is timeboxed to Week 5 and its
+vocab-size choice may interact with the revised corpus size.
 
-**Do not start** normalization tuning, tokenizer work, or any modelling. Stage 4 is done and
-frozen until real corpus text exists to validate it against; the tokenizer is explicitly timeboxed
-to Week 5.
+**Two caveats to carry forward**
 
-**One caveat to carry forward:** the normalizer's rules were validated against hand-written
-fixtures, not real corpus text. PRD §6.3.5 requires 200 manually inspected samples for the
-*quality filter* — take the same 200 samples through the normalizer at the same time and confirm
-no rule is misfiring on real FineWeb2 Urdu before the corpus is frozen.
+- The normalizer's rules were validated against hand-written fixtures, not real corpus text. PRD
+  §6.3.5 requires 200 manually inspected samples for the *quality filter* — put the same 200
+  through the normalizer and confirm no rule misfires on real FineWeb2 Urdu before the freeze.
+- PRD §4.2 sets the infilling share at 10%. Reported FIM practice is 50–90% with no left-to-right
+  degradation (review §6). If 10% leaves Ravaan-AR bad at infilling, the A2 "unfair baseline"
+  comparison loses its meaning — the fair baseline would also be undertrained. Decide before the
+  task mixture is frozen ahead of Stage C.

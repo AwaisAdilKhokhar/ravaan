@@ -1,0 +1,11 @@
+{
+  "decontamination_version": "1.0.0",
+  "containment_threshold": 0.8,
+  "retain_hits_above": 0.5,
+  "min_shingles": 8,
+  "exact_document_match": true,
+  "exact_line_match": true,
+  "min_line_chars": 40,
+  "max_index_shingles": 40000000,
+  "max_retained_hits": 20000000
+}

@@ -45,7 +45,7 @@ lives in [`progress.md`](progress.md).
 ## Status
 
 Pre-alpha. Weeks 3–4 of 16. Nothing has been trained. Gate G0 (novelty) passed; the corpus
-pipeline has stages 1–6 built and validated against real text, and the raw corpus is on disk.
+pipeline has stages 1–8 built and validated against real text, and the raw corpus is on disk.
 See `progress.md`.
 
 ## Layout
@@ -73,10 +73,10 @@ python -m pip install -e ".[dev]"
 ```
 
 The core package has no runtime dependencies. Every stage that *decides* something — acquisition,
-encoding validation, language ID, normalization, quality filtering, exact dedup — is
-standard-library-only on purpose: they choose which bytes the project is built on and what every
-later stage reads, so they stay auditable. Heavy dependencies are opt-in extras, and `[data]` is
-needed only to *read* the corpus, where parquet must be parsed.
+encoding validation, language ID, normalization, quality filtering, exact and near dedup, and
+evaluation decontamination — is standard-library-only on purpose: they choose which bytes the
+project is built on and what every later stage reads, so they stay auditable. Heavy dependencies
+are opt-in extras, and `[data]` is needed only to *read* the corpus, where parquet must be parsed.
 
 ## Test
 
@@ -96,6 +96,9 @@ python scripts/normalize.py raw.txt -o clean.txt --log stats.json
 # what the stages actually do on real text — every threshold gets one of these before the freeze
 python scripts/probe.py --source fineweb2-urd_Arab --limit 20000 --sample-rate 0.02   # stages 2-5
 python scripts/dedup.py --source urdu-wikipedia --limit 250000                        # stage 6
+python scripts/neardedup.py --source urdu-wikipedia --limit 0 --sweep 0.7 0.8 0.9      # stage 7
+python scripts/decontaminate.py --eval roman-urdu-parl:test \
+    --source roman-urdu-parl --split train --both-columns --limit 0                    # stage 8
 
 # the 200-sample manual validation PRD §6.3.5 requires
 python scripts/quality_sample.py draw --out reports/quality_sample.md
@@ -103,8 +106,11 @@ python scripts/quality_sample.py draw --out reports/quality_sample.md
 
 Fixture tests prove a rule does what it says; only real text shows whether it fires on the right
 things. Session 4 found a mojibake detector that passed 57 unit tests and would have deleted 3% of
-a clean corpus, so every threshold in stages 2, 3, 5 and 6 is pointed at the actual sources before
-the corpus is frozen, and the output is committed under `reports/probe_*.json`.
+a clean corpus, so every threshold in stages 2, 3, 5, 6, 7 and 8 is pointed at the actual sources
+before the corpus is frozen, and the output is committed under `reports/probe_*.json`. Session 10
+is the sharpest case: stage 8's first run over real text reported 648 contaminated documents, and
+reading them showed 59 of every 60 was a false positive from a threshold that meant one thing in
+words and another in characters.
 
 Sources are declared in [`configs/data/sources.json`](configs/data/sources.json): every source
 pinned to a commit SHA, every file carrying its SHA-256 before download, and every licence checked

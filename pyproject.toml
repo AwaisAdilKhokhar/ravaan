@@ -17,8 +17,8 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 
-# Stages 1-6 of the corpus pipeline (acquisition, encoding validation, language
-# ID, normalization, quality filtering, exact dedup) need nothing but the
+# Stages 1-7 of the corpus pipeline (acquisition, encoding validation, language
+# ID, normalization, quality filtering, exact and near dedup) need nothing but
 # standard library, on purpose: they decide which bytes the project is built on
 # and what every later stage reads, so they should stay auditable and
 # dependency-free. `[data]` is needed only to *read* the corpus —
@@ -27,9 +27,11 @@ dependencies = []
 
 [project.scripts]
 ravaan-acquire = "ravaan.data.acquisition:main"
+ravaan-decontaminate = "ravaan.data.decontamination:main"
 ravaan-dedup = "ravaan.data.dedup:main"
 ravaan-validate-encoding = "ravaan.data.encoding:main"
 ravaan-langid = "ravaan.data.langid:main"
+ravaan-minhash = "ravaan.data.minhash:main"
 ravaan-normalize = "ravaan.data.normalization:main"
 ravaan-quality = "ravaan.data.quality:main"
 ravaan-shards = "ravaan.data.shards:main"

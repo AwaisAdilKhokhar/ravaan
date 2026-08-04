@@ -1,0 +1,2477 @@
+{
+  "decontamination_version": "1.0.0",
+  "config": {
+    "containment_threshold": 0.8,
+    "retain_hits_above": 0.5,
+    "min_shingles": 8,
+    "exact_document_match": true,
+    "exact_line_match": true,
+    "min_line_chars": 40,
+    "max_index_shingles": 40000000,
+    "max_retained_hits": 20000000
+  },
+  "config_fingerprint": "de84efb88b8d",
+  "eval_sets": {
+    "roman-urdu-parl-test-roman": 16241,
+    "roman-urdu-parl-test-urdu": 16241
+  },
+  "eval_items": 32482,
+  "eval_items_unmeasurable": 9836,
+  "eval_shingles": 76609,
+  "eval_lines": 5914,
+  "checked": 74489,
+  "kept": 74275,
+  "removed": 214,
+  "keep_rate": 0.997127,
+  "contamination_rate": 0.002873,
+  "chars_in": 178510720,
+  "chars_kept": 170524774,
+  "char_keep_rate": 0.955263,
+  "removed_by_reason": {
+    "contaminated": 214
+  },
+  "removed_by_eval_set": {
+    "roman-urdu-parl-test-urdu": 214
+  },
+  "removed_by_source": {
+    "fineweb2-urd_Arab": 214
+  },
+  "by_source": {
+    "fineweb2-urd_Arab": 74489
+  },
+  "eval_coverage": {
+    "roman-urdu-parl-test-roman": {
+      "items": 16241,
+      "items_found_in_corpus": 0,
+      "share": 0.0
+    },
+    "roman-urdu-parl-test-urdu": {
+      "items": 16241,
+      "items_found_in_corpus": 72,
+      "share": 0.004433
+    }
+  },
+  "hits_retained": 3322903,
+  "containment_histogram": {
+    "0.50-0.60": 2479285,
+    "0.60-0.70": 644730,
+    "0.70-0.80": 157816,
+    "0.80-0.90": 35787,
+    "0.90-1.00": 4900,
+    "1.00": 385
+  },
+  "jaccard_histogram": {
+    "0.00-0.10": 3322858,
+    "0.10-0.20": 45
+  },
+  "eval_specs": [
+    {
+      "name": "roman-urdu-parl-test-roman",
+      "shingle_size": 5,
+      "shingle_unit": "char",
+      "min_shingles": 25,
+      "containment_threshold": 0.9
+    },
+    {
+      "name": "roman-urdu-parl-test-urdu",
+      "shingle_size": 5,
+      "shingle_unit": "char",
+      "min_shingles": 25,
+      "containment_threshold": 0.9
+    }
+  ],
+  "shinglings": [
+    {
+      "shingle_size": 5,
+      "shingle_unit": "char",
+      "distinct_shingles": 76609
+    }
+  ],
+  "top_hits": [
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1691",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1692",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1693",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1694",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1695",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1696",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:09504107-d87d-4e8c-af4e-db55131e3327>",
+      "containment": 1.0,
+      "jaccard": 0.0293,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 1162,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:0bdbe66b-0766-40d1-accc-ad2d4f79b111>",
+      "containment": 1.0,
+      "jaccard": 0.0083,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 4103,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:0da97c41-9d56-434d-b091-a1134d85e6be>",
+      "containment": 1.0,
+      "jaccard": 0.0029,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 11699,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:3290e4d6-e035-4eb2-b7de-e05d357fea1e>",
+      "containment": 1.0,
+      "jaccard": 0.0146,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 2331,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:35d699ae-e2c4-446f-ae55-919116041b70>",
+      "containment": 1.0,
+      "jaccard": 0.0101,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 3376,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:7f74bc55-d792-4486-9a3e-d4618419192b>",
+      "containment": 1.0,
+      "jaccard": 0.0015,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 22489,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:838d12c1-a614-4e82-9ad2-c3a41848b03b>",
+      "containment": 1.0,
+      "jaccard": 0.0035,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 9595,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:9c30d085-f922-428e-a1a7-eb5fcac984a9>",
+      "containment": 1.0,
+      "jaccard": 0.0016,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 21430,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:a75a9560-a9fc-4396-a8b3-b336717506e5>",
+      "containment": 1.0,
+      "jaccard": 0.0011,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 29848,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:bbc04425-8594-4bdd-8f1c-84626c42bcc4>",
+      "containment": 1.0,
+      "jaccard": 0.0198,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 1719,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:c238d5fc-2a4a-4fd7-bb6b-7dc16cb9676e>",
+      "containment": 1.0,
+      "jaccard": 0.0086,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 3948,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:d1335390-f396-4484-a461-b7114101f669>",
+      "containment": 1.0,
+      "jaccard": 0.007,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 4888,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:efa672af-f795-4777-918b-78c9d3a04076>",
+      "containment": 1.0,
+      "jaccard": 0.006,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 5686,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:f090b815-dba3-4134-9daa-97794f212662>",
+      "containment": 1.0,
+      "jaccard": 0.0128,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 2659,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1803",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:f6ec43c0-9875-4117-a7d7-39d02de70aa6>",
+      "containment": 1.0,
+      "jaccard": 0.0027,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 12371,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:09504107-d87d-4e8c-af4e-db55131e3327>",
+      "containment": 1.0,
+      "jaccard": 0.0293,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 1162,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:0bdbe66b-0766-40d1-accc-ad2d4f79b111>",
+      "containment": 1.0,
+      "jaccard": 0.0083,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 4103,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:0da97c41-9d56-434d-b091-a1134d85e6be>",
+      "containment": 1.0,
+      "jaccard": 0.0029,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 11699,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:3290e4d6-e035-4eb2-b7de-e05d357fea1e>",
+      "containment": 1.0,
+      "jaccard": 0.0146,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 2331,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:35d699ae-e2c4-446f-ae55-919116041b70>",
+      "containment": 1.0,
+      "jaccard": 0.0101,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 3376,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:7f74bc55-d792-4486-9a3e-d4618419192b>",
+      "containment": 1.0,
+      "jaccard": 0.0015,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 22489,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:838d12c1-a614-4e82-9ad2-c3a41848b03b>",
+      "containment": 1.0,
+      "jaccard": 0.0035,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 9595,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:9c30d085-f922-428e-a1a7-eb5fcac984a9>",
+      "containment": 1.0,
+      "jaccard": 0.0016,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 21430,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:a75a9560-a9fc-4396-a8b3-b336717506e5>",
+      "containment": 1.0,
+      "jaccard": 0.0011,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 29848,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:bbc04425-8594-4bdd-8f1c-84626c42bcc4>",
+      "containment": 1.0,
+      "jaccard": 0.0198,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 1719,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:c238d5fc-2a4a-4fd7-bb6b-7dc16cb9676e>",
+      "containment": 1.0,
+      "jaccard": 0.0086,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 3948,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:d1335390-f396-4484-a461-b7114101f669>",
+      "containment": 1.0,
+      "jaccard": 0.007,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 4888,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:efa672af-f795-4777-918b-78c9d3a04076>",
+      "containment": 1.0,
+      "jaccard": 0.006,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 5686,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:f090b815-dba3-4134-9daa-97794f212662>",
+      "containment": 1.0,
+      "jaccard": 0.0128,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 2659,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1804",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:f6ec43c0-9875-4117-a7d7-39d02de70aa6>",
+      "containment": 1.0,
+      "jaccard": 0.0027,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 12371,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:09504107-d87d-4e8c-af4e-db55131e3327>",
+      "containment": 1.0,
+      "jaccard": 0.0293,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 1162,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:0bdbe66b-0766-40d1-accc-ad2d4f79b111>",
+      "containment": 1.0,
+      "jaccard": 0.0083,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 4103,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:0da97c41-9d56-434d-b091-a1134d85e6be>",
+      "containment": 1.0,
+      "jaccard": 0.0029,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 11699,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:3290e4d6-e035-4eb2-b7de-e05d357fea1e>",
+      "containment": 1.0,
+      "jaccard": 0.0146,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 2331,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:35d699ae-e2c4-446f-ae55-919116041b70>",
+      "containment": 1.0,
+      "jaccard": 0.0101,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 3376,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:7f74bc55-d792-4486-9a3e-d4618419192b>",
+      "containment": 1.0,
+      "jaccard": 0.0015,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 22489,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:838d12c1-a614-4e82-9ad2-c3a41848b03b>",
+      "containment": 1.0,
+      "jaccard": 0.0035,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 9595,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:9c30d085-f922-428e-a1a7-eb5fcac984a9>",
+      "containment": 1.0,
+      "jaccard": 0.0016,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 21430,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:a75a9560-a9fc-4396-a8b3-b336717506e5>",
+      "containment": 1.0,
+      "jaccard": 0.0011,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 29848,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:bbc04425-8594-4bdd-8f1c-84626c42bcc4>",
+      "containment": 1.0,
+      "jaccard": 0.0198,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 1719,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:c238d5fc-2a4a-4fd7-bb6b-7dc16cb9676e>",
+      "containment": 1.0,
+      "jaccard": 0.0086,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 3948,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:d1335390-f396-4484-a461-b7114101f669>",
+      "containment": 1.0,
+      "jaccard": 0.007,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 4888,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:efa672af-f795-4777-918b-78c9d3a04076>",
+      "containment": 1.0,
+      "jaccard": 0.006,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 5686,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:f090b815-dba3-4134-9daa-97794f212662>",
+      "containment": 1.0,
+      "jaccard": 0.0128,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 2659,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1805",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:f6ec43c0-9875-4117-a7d7-39d02de70aa6>",
+      "containment": 1.0,
+      "jaccard": 0.0027,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 12371,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:09504107-d87d-4e8c-af4e-db55131e3327>",
+      "containment": 1.0,
+      "jaccard": 0.0293,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 1162,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:0bdbe66b-0766-40d1-accc-ad2d4f79b111>",
+      "containment": 1.0,
+      "jaccard": 0.0083,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 4103,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:0da97c41-9d56-434d-b091-a1134d85e6be>",
+      "containment": 1.0,
+      "jaccard": 0.0029,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 11699,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:3290e4d6-e035-4eb2-b7de-e05d357fea1e>",
+      "containment": 1.0,
+      "jaccard": 0.0146,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 2331,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:35d699ae-e2c4-446f-ae55-919116041b70>",
+      "containment": 1.0,
+      "jaccard": 0.0101,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 3376,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:7f74bc55-d792-4486-9a3e-d4618419192b>",
+      "containment": 1.0,
+      "jaccard": 0.0015,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 22489,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:838d12c1-a614-4e82-9ad2-c3a41848b03b>",
+      "containment": 1.0,
+      "jaccard": 0.0035,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 9595,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:9c30d085-f922-428e-a1a7-eb5fcac984a9>",
+      "containment": 1.0,
+      "jaccard": 0.0016,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 21430,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:a75a9560-a9fc-4396-a8b3-b336717506e5>",
+      "containment": 1.0,
+      "jaccard": 0.0011,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 29848,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:bbc04425-8594-4bdd-8f1c-84626c42bcc4>",
+      "containment": 1.0,
+      "jaccard": 0.0198,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 1719,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:c238d5fc-2a4a-4fd7-bb6b-7dc16cb9676e>",
+      "containment": 1.0,
+      "jaccard": 0.0086,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 3948,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:d1335390-f396-4484-a461-b7114101f669>",
+      "containment": 1.0,
+      "jaccard": 0.007,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 4888,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:efa672af-f795-4777-918b-78c9d3a04076>",
+      "containment": 1.0,
+      "jaccard": 0.006,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 5686,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:f090b815-dba3-4134-9daa-97794f212662>",
+      "containment": 1.0,
+      "jaccard": 0.0128,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 2659,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1806",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:f6ec43c0-9875-4117-a7d7-39d02de70aa6>",
+      "containment": 1.0,
+      "jaccard": 0.0027,
+      "intersection": 34,
+      "eval_shingles": 34,
+      "doc_shingles": 12371,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1866",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 29,
+      "eval_shingles": 29,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1867",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 29,
+      "eval_shingles": 29,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1868",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 29,
+      "eval_shingles": 29,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1869",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 29,
+      "eval_shingles": 29,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1870",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 29,
+      "eval_shingles": 29,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:1871",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 29,
+      "eval_shingles": 29,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2074",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2075",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2418",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:15e173c3-25dc-4220-803a-96436221afce>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 43952,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2418",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2419",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:15e173c3-25dc-4220-803a-96436221afce>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 43952,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2419",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2420",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:15e173c3-25dc-4220-803a-96436221afce>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 43952,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2420",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2421",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:15e173c3-25dc-4220-803a-96436221afce>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 43952,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2421",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2422",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:15e173c3-25dc-4220-803a-96436221afce>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 43952,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2422",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2423",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:15e173c3-25dc-4220-803a-96436221afce>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 43952,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2423",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2543",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2544",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2545",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2546",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2547",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2548",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2549",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2550",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2843",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:e649b16f-57c5-4e7c-a56d-901891ce1efe>",
+      "containment": 1.0,
+      "jaccard": 0.0052,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 5349,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2843",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:ed0d6897-dc29-413c-ba8b-bf84650bed52>",
+      "containment": 1.0,
+      "jaccard": 0.008,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 3521,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2844",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:e649b16f-57c5-4e7c-a56d-901891ce1efe>",
+      "containment": 1.0,
+      "jaccard": 0.0052,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 5349,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2844",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:ed0d6897-dc29-413c-ba8b-bf84650bed52>",
+      "containment": 1.0,
+      "jaccard": 0.008,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 3521,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2845",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:e649b16f-57c5-4e7c-a56d-901891ce1efe>",
+      "containment": 1.0,
+      "jaccard": 0.0052,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 5349,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2845",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:ed0d6897-dc29-413c-ba8b-bf84650bed52>",
+      "containment": 1.0,
+      "jaccard": 0.008,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 3521,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2846",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:e649b16f-57c5-4e7c-a56d-901891ce1efe>",
+      "containment": 1.0,
+      "jaccard": 0.0052,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 5349,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2846",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:ed0d6897-dc29-413c-ba8b-bf84650bed52>",
+      "containment": 1.0,
+      "jaccard": 0.008,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 3521,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2847",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:e649b16f-57c5-4e7c-a56d-901891ce1efe>",
+      "containment": 1.0,
+      "jaccard": 0.0052,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 5349,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:2847",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:ed0d6897-dc29-413c-ba8b-bf84650bed52>",
+      "containment": 1.0,
+      "jaccard": 0.008,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 3521,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:3350",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:a75a9560-a9fc-4396-a8b3-b336717506e5>",
+      "containment": 1.0,
+      "jaccard": 0.001,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 29848,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:3351",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:a75a9560-a9fc-4396-a8b3-b336717506e5>",
+      "containment": 1.0,
+      "jaccard": 0.001,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 29848,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:3352",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:a75a9560-a9fc-4396-a8b3-b336717506e5>",
+      "containment": 1.0,
+      "jaccard": 0.001,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 29848,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:363",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:0995c8b3-7810-4e71-a839-1ce8acd9e721>",
+      "containment": 1.0,
+      "jaccard": 0.0114,
+      "intersection": 39,
+      "eval_shingles": 39,
+      "doc_shingles": 3418,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:363",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6229bd2b-4cf1-4424-ad4e-bdc3c750c9a6>",
+      "containment": 1.0,
+      "jaccard": 0.0111,
+      "intersection": 39,
+      "eval_shingles": 39,
+      "doc_shingles": 3511,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:363",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:e97f6641-b664-45f5-9625-9b145c445508>",
+      "containment": 1.0,
+      "jaccard": 0.0223,
+      "intersection": 39,
+      "eval_shingles": 39,
+      "doc_shingles": 1748,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:4127",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0004,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:4128",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0004,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:4129",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0004,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:4130",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0004,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:4131",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0004,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:4132",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0004,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:4133",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0004,
+      "intersection": 30,
+      "eval_shingles": 30,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:425",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:425",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:10a63ff8-a90e-4633-8438-c2faacb25a53>",
+      "containment": 1.0,
+      "jaccard": 0.0029,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 9354,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:4785",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:4786",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:4787",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:4788",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:4789",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:4790",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:4791",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:5036",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6e88c4c0-af2c-4e07-a7fb-55d6b041bb66>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 29,
+      "eval_shingles": 29,
+      "doc_shingles": 36120,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:5037",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6e88c4c0-af2c-4e07-a7fb-55d6b041bb66>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 29,
+      "eval_shingles": 29,
+      "doc_shingles": 36120,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:5038",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6e88c4c0-af2c-4e07-a7fb-55d6b041bb66>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 29,
+      "eval_shingles": 29,
+      "doc_shingles": 36120,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:5039",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6e88c4c0-af2c-4e07-a7fb-55d6b041bb66>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 29,
+      "eval_shingles": 29,
+      "doc_shingles": 36120,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:5040",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6e88c4c0-af2c-4e07-a7fb-55d6b041bb66>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 29,
+      "eval_shingles": 29,
+      "doc_shingles": 36120,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:5041",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6e88c4c0-af2c-4e07-a7fb-55d6b041bb66>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 29,
+      "eval_shingles": 29,
+      "doc_shingles": 36120,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:5042",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6e88c4c0-af2c-4e07-a7fb-55d6b041bb66>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 29,
+      "eval_shingles": 29,
+      "doc_shingles": 36120,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:505",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:f51c364f-c617-49ba-8d7f-1fbb1b5eb2b7>",
+      "containment": 1.0,
+      "jaccard": 0.0218,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 1282,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:505",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:fe540979-5314-42f2-82e3-3b6cd33b63ea>",
+      "containment": 1.0,
+      "jaccard": 0.0129,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 2168,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:5129",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 31,
+      "eval_shingles": 31,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:5130",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 31,
+      "eval_shingles": 31,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:5131",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 31,
+      "eval_shingles": 31,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:5132",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 31,
+      "eval_shingles": 31,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:5133",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 31,
+      "eval_shingles": 31,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:5346",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:5347",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6135",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6136",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6137",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6138",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6139",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6584",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6584",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6585",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6585",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6586",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6586",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6587",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6587",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6588",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6588",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6589",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6589",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0005,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6590",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 31,
+      "eval_shingles": 31,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6591",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 31,
+      "eval_shingles": 31,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6592",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 31,
+      "eval_shingles": 31,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6593",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 31,
+      "eval_shingles": 31,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6594",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 31,
+      "eval_shingles": 31,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6595",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 31,
+      "eval_shingles": 31,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6761",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 41,
+      "eval_shingles": 41,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6762",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 41,
+      "eval_shingles": 41,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6763",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 41,
+      "eval_shingles": 41,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6764",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 41,
+      "eval_shingles": 41,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6765",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 41,
+      "eval_shingles": 41,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6766",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 41,
+      "eval_shingles": 41,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6767",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 41,
+      "eval_shingles": 41,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6768",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 41,
+      "eval_shingles": 41,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6769",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8182a28d-d4d3-43b5-89d2-9885d012cce6>",
+      "containment": 1.0,
+      "jaccard": 0.0008,
+      "intersection": 41,
+      "eval_shingles": 41,
+      "doc_shingles": 54239,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6952",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6df9de82-98ef-4ef9-9bb4-ee339ea60cf6>",
+      "containment": 1.0,
+      "jaccard": 0.0012,
+      "intersection": 49,
+      "eval_shingles": 49,
+      "doc_shingles": 40457,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6953",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6df9de82-98ef-4ef9-9bb4-ee339ea60cf6>",
+      "containment": 1.0,
+      "jaccard": 0.0012,
+      "intersection": 49,
+      "eval_shingles": 49,
+      "doc_shingles": 40457,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6954",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6df9de82-98ef-4ef9-9bb4-ee339ea60cf6>",
+      "containment": 1.0,
+      "jaccard": 0.0012,
+      "intersection": 49,
+      "eval_shingles": 49,
+      "doc_shingles": 40457,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6955",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6df9de82-98ef-4ef9-9bb4-ee339ea60cf6>",
+      "containment": 1.0,
+      "jaccard": 0.0012,
+      "intersection": 49,
+      "eval_shingles": 49,
+      "doc_shingles": 40457,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:6956",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6df9de82-98ef-4ef9-9bb4-ee339ea60cf6>",
+      "containment": 1.0,
+      "jaccard": 0.0012,
+      "intersection": 49,
+      "eval_shingles": 49,
+      "doc_shingles": 40457,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7100",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7101",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7102",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7103",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7104",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7105",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 27,
+      "eval_shingles": 27,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7240",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:15e173c3-25dc-4220-803a-96436221afce>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 43952,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7241",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:15e173c3-25dc-4220-803a-96436221afce>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 43952,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7242",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:15e173c3-25dc-4220-803a-96436221afce>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 43952,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7243",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:15e173c3-25dc-4220-803a-96436221afce>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 43952,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7244",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:15e173c3-25dc-4220-803a-96436221afce>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 43952,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7245",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:15e173c3-25dc-4220-803a-96436221afce>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 43952,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7246",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:15e173c3-25dc-4220-803a-96436221afce>",
+      "containment": 1.0,
+      "jaccard": 0.0006,
+      "intersection": 25,
+      "eval_shingles": 25,
+      "doc_shingles": 43952,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7408",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 26,
+      "eval_shingles": 26,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7409",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 26,
+      "eval_shingles": 26,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7410",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 26,
+      "eval_shingles": 26,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7411",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 26,
+      "eval_shingles": 26,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7412",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 26,
+      "eval_shingles": 26,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7538",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7539",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 83093,
+      "exact": ""
+    },
+    {
+      "eval_set": "roman-urdu-parl-test-urdu",
+      "eval_id": "roman-urdu-parl:test_set.csv:0:7540",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:1098ff01-0456-4624-9ccd-e0ec944eb6b6>",
+      "containment": 1.0,
+      "jaccard": 0.0003,
+      "intersection": 28,
+      "eval_shingles": 28,
+      "doc_shingles": 83093,
+      "exact": ""
+    }
+  ],
+  "eval_sets_loaded": {
+    "roman-urdu-parl-test-roman": {
+      "source": "roman-urdu-parl",
+      "split": "test",
+      "items": 16241,
+      "shingle_size": 5,
+      "shingle_unit": "char",
+      "min_shingles": 25,
+      "containment_threshold": 0.9
+    },
+    "roman-urdu-parl-test-urdu": {
+      "source": "roman-urdu-parl",
+      "split": "test",
+      "items": 16241,
+      "shingle_size": 5,
+      "shingle_unit": "char",
+      "min_shingles": 25,
+      "containment_threshold": 0.9
+    }
+  },
+  "sources": [
+    "fineweb2-urd_Arab=0.05"
+  ],
+  "limit": 0,
+  "sample_rate": null,
+  "seed": 0,
+  "columns": "both",
+  "quality_filtered": true,
+  "exact_deduplicated": false,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 77211,
+    "documents_accepted": 77196,
+    "documents_rejected": 15,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.999806,
+    "bytes_in": 317767632,
+    "chars_out": 179331301,
+    "replacement_chars": 117,
+    "mojibake_chars": 4,
+    "control_chars": 0,
+    "verdicts": {
+      "ok": 77196,
+      "replacement_heavy": 15
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 77196,
+    "documents_kept": 77196,
+    "keep_rate": 1.0,
+    "documents_by_prior": 0,
+    "prior_rate": 0.0,
+    "mixed_documents": 2302,
+    "letters": 136661940,
+    "labels": {
+      "code_switched": 401,
+      "urdu": 76795
+    },
+    "letters_by_label": {
+      "code_switched": 669997,
+      "urdu": 135991943
+    },
+    "segment_letters": {
+      "arabic": 5266,
+      "code_switched": 73965,
+      "english": 457012,
+      "hindi": 6954,
+      "other": 141047,
+      "persian": 1996,
+      "roman_urdu": 22454,
+      "urdu": 2659958
+    }
+  },
+  "stage5_quality": {
+    "fineweb2-urd_Arab": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "53d04d3fd079",
+      "config": {
+        "min_chars": 400,
+        "min_words": 40,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 0.5,
+        "max_top_ngram_ratio": {
+          "3": 0.26,
+          "4": 0.22
+        },
+        "max_dup_ngram_ratio": {
+          "5": 0.6,
+          "6": 0.58,
+          "7": 0.56,
+          "8": 0.54,
+          "9": 0.52,
+          "10": 0.5
+        },
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 77196,
+      "documents_kept": 74489,
+      "documents_rejected": 2707,
+      "keep_rate": 0.964933,
+      "chars_in": 179439914,
+      "chars_kept": 178510720,
+      "char_keep_rate": 0.994822,
+      "rejections": {
+        "script_ratio": 42,
+        "too_short": 2674
+      },
+      "families": {
+        "script_ratio": 42,
+        "too_short": 2674
+      },
+      "sole_rejections": {
+        "script_ratio": 33,
+        "too_short": 2665
+      },
+      "by_label": {
+        "code_switched": 401,
+        "urdu": 76795
+      },
+      "kept_by_label": {
+        "code_switched": 357,
+        "urdu": 74132
+      },
+      "chars_kept_by_label": {
+        "code_switched": 850477,
+        "urdu": 177660243
+      },
+      "truncated_documents": 0
+    }
+  },
+  "sweep": [
+    {
+      "threshold": 0.8,
+      "documents_removed": 1313,
+      "eval_items_hit": {
+        "roman-urdu-parl-test-urdu": 5333
+      }
+    },
+    {
+      "threshold": 0.9,
+      "documents_removed": 214,
+      "eval_items_hit": {
+        "roman-urdu-parl-test-urdu": 1977
+      }
+    },
+    {
+      "threshold": 1.0,
+      "documents_removed": 35,
+      "eval_items_hit": {
+        "roman-urdu-parl-test-urdu": 263
+      }
+    }
+  ]
+}

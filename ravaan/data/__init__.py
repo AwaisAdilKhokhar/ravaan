@@ -5,6 +5,16 @@ pulls in parquet support from the `[data]` extra, and the stages that decide wha
 contains should stay importable without it.
 """
 
+from ravaan.data.decontamination import (
+    DECONTAMINATION_VERSION,
+    ContaminationHit,
+    DecontaminationConfig,
+    DecontaminationLog,
+    DecontaminationVerdict,
+    Decontaminator,
+    EvalSetSpec,
+    decontaminate,
+)
 from ravaan.data.dedup import (
     DEDUP_VERSION,
     DedupConfig,
@@ -20,6 +30,14 @@ from ravaan.data.langid import (
     LangIDResult,
     classify,
     script_ratios,
+)
+from ravaan.data.minhash import (
+    MINHASH_VERSION,
+    MinHashConfig,
+    MinHashDeduplicator,
+    MinHashLog,
+    NearDuplicateVerdict,
+    near_deduplicate,
 )
 from ravaan.data.normalization import (
     NORMALIZER_VERSION,
@@ -40,17 +58,29 @@ from ravaan.data.quality import (
 )
 
 __all__ = [
+    "DECONTAMINATION_VERSION",
     "DEDUP_VERSION",
     "LANGID_VERSION",
+    "MINHASH_VERSION",
     "NORMALIZER_VERSION",
     "QUALITY_VERSION",
+    "ContaminationHit",
+    "DecontaminationConfig",
+    "DecontaminationLog",
+    "DecontaminationVerdict",
+    "Decontaminator",
     "DedupConfig",
     "DedupLog",
     "DedupVerdict",
+    "EvalSetSpec",
     "ExactDeduplicator",
     "LangIDConfig",
     "LangIDLog",
     "LangIDResult",
+    "MinHashConfig",
+    "MinHashDeduplicator",
+    "MinHashLog",
+    "NearDuplicateVerdict",
     "NormalizationConfig",
     "NormalizationLog",
     "NormalizationResult",
@@ -60,8 +90,10 @@ __all__ = [
     "QualityResult",
     "check",
     "classify",
+    "decontaminate",
     "deduplicate",
     "measure",
+    "near_deduplicate",
     "normalize",
     "normalize_text",
     "script_ratios",

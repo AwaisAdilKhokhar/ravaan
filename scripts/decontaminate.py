@@ -1,0 +1,517 @@
+#!/usr/bin/env python
+"""Run pipeline stages 2→8 over real sources and report what the eval sets actually touch.
+
+The fourth driver, after `scripts/probe.py` (2→5), `scripts/dedup.py` (2→6) and
+`scripts/neardedup.py` (2→7). Stage 8 needs its own for a reason none of the others had: **it is
+the only stage whose failure is silent.** A bad threshold at stage 5 deletes documents somebody
+notices; a stage 8 that misses contamination removes nothing, raises nothing, and hands back a
+clean corpus. The cost arrives months later, in §8.2's evaluation numbers.
+
+Four questions it exists to answer:
+
+* **Is the Roman-Urdu-Parl reference split already inside its own train split?** PRD §6.2 warns the
+  source is machine-produced and its 6.37M pairs collapse to ~1.09M unique Urdu sentences. If the
+  test rows are also train rows, the transliteration chrF number in §4.5's secondary endpoints is
+  measuring memorisation. This is the acceptance test, and it is asked of **both columns**, because
+  a parallel corpus can leak on either side.
+* **Which half of §6.3.8 fires, and on what?** Finding L measured the hash half returning a
+  confident zero on the wiki path. The two halves are counted separately here for exactly that
+  reason — a single "contaminated" total would hide which instrument was blind.
+* **How much of a *test set* is compromised?** Not the same question as how many training documents
+  were removed, and much the more important of the two. `eval_coverage` is that number.
+* **Where should the threshold sit?** ``--sweep`` re-decides at other containments from the same
+  pass, exactly, and ``--hits-out`` writes the measured overlaps to read. Session 6's lesson.
+
+**Sampling is honest here, and this is the one stage where that is true of a cross-document
+measurement.** Finding G forbids sampling stages 6 and 7 because a *pair* statistic sampled at rate
+r is measured at r². Stage 8 is not a pair statistic: the eval side is indexed **whole** and only
+the corpus side is sampled, so a contaminated document is detected with probability r, not r². Same
+exception Finding G names for the cross-source case. The absolute count still scales by 1/r; the
+rate does not need to.
+
+    python scripts/decontaminate.py --eval roman-urdu-parl:test:char \\
+        --source roman-urdu-parl --limit 200000 --both-columns
+    python scripts/decontaminate.py --eval roman-urdu-parl:test:char \\
+        --source urdu-wikipedia --source fineweb2-urd_Arab --limit 0
+
+Requires the `[data]` extra for parquet sources.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from collections.abc import Iterator
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+# Urdu on a Windows console is cp1252 by default, which raises rather than mangles.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+
+from dataclasses import replace  # noqa: E402
+
+from ravaan.data.decontamination import (  # noqa: E402
+    DecontaminationConfig,
+    Decontaminator,
+    EvalSetSpec,
+)
+from ravaan.data.dedup import DedupConfig, ExactDeduplicator  # noqa: E402
+from ravaan.data.encoding import EncodingConfig, EncodingLog, validate_text  # noqa: E402
+from ravaan.data.langid import LangIDConfig, LangIDLog, classify  # noqa: E402
+from ravaan.data.normalization import NormalizationConfig, normalize_text  # noqa: E402
+from ravaan.data.quality import QualityConfig, QualityLog, check  # noqa: E402
+from ravaan.data.shards import LAYOUTS, ShardReader  # noqa: E402
+
+URDU_COLUMN = "Urdu text"
+
+
+class Pipeline:
+    """Stages 2→5 over a set of readers, yielding what reaches stage 8.
+
+    The same chain the other drivers run, with one addition: ``columns="both"`` emits each row of a
+    parallel source **twice**, as ``id#roman`` and ``id#urdu``. Roman-Urdu-Parl is the
+    transliteration test set's own source, so contamination can arrive on either side, and a driver
+    that read one column would clear the corpus on evidence from half of it.
+    """
+
+    def __init__(self, readers: list[ShardReader], *, quality: bool, columns: str) -> None:
+        self.readers = readers
+        self.quality = quality
+        self.columns = columns
+        self.encoding_config = EncodingConfig()
+        self.langid_config = LangIDConfig()
+        self.normalization_config = NormalizationConfig()
+        self.stage2 = EncodingLog(config=self.encoding_config)
+        self.stage3 = LangIDLog(config=self.langid_config)
+        self.stage5: dict[str, QualityLog] = {}
+        self.logging = True
+
+    def _quality_config(self, source: str) -> QualityConfig:
+        config = QualityConfig()
+        if LAYOUTS.get(source) and LAYOUTS[source].unit == "sentence":
+            config = config.for_sentences()
+        if source not in self.stage5:
+            self.stage5[source] = QualityLog(config=config)
+        return config
+
+    def _variants(self, doc) -> list[tuple[str, str]]:
+        if self.columns == "urdu":
+            return [(doc.doc_id, doc.meta.get(URDU_COLUMN) or "")]
+        if self.columns == "both" and doc.meta.get(URDU_COLUMN):
+            return [
+                (f"{doc.doc_id}#roman", doc.text or ""),
+                (f"{doc.doc_id}#urdu", doc.meta[URDU_COLUMN]),
+            ]
+        return [(doc.doc_id, doc.text or "")]
+
+    def __iter__(self) -> Iterator[tuple[str, str, str, str]]:
+        """``(doc_id, normalized, raw, source)`` for every document reaching stage 8."""
+        for reader in self.readers:
+            for doc in reader:
+                for doc_id, text in self._variants(doc):
+                    if not text:
+                        continue
+                    checked = validate_text(text, self.encoding_config)
+                    if self.logging:
+                        self.stage2.add(checked)
+                    if not checked.accepted:
+                        continue
+                    repaired = checked.text or ""
+                    result = classify(repaired, self.langid_config)
+                    if self.logging:
+                        self.stage3.add(result)
+                    normalized = normalize_text(repaired, self.normalization_config)
+                    if self.quality:
+                        quality_config = self._quality_config(doc.source)
+                        verdict = check(
+                            normalized,
+                            quality_config,
+                            label=result.label,
+                            scripts=result.scripts,
+                            letters=result.letters,
+                        )
+                        if self.logging:
+                            self.stage5[doc.source].add(verdict)
+                        if not verdict.accepted:
+                            continue
+                    yield doc_id, normalized, repaired, doc.source
+        self.logging = False
+
+
+def _parse_eval(spec: str) -> tuple[str, str, str]:
+    """``"roman-urdu-parl:test:char"`` -> ``(source, split, unit)``. Split and unit are optional."""
+    parts = spec.split(":")
+    if not parts[0]:
+        raise SystemExit(f"--eval needs a source name, got {spec!r}")
+    source = parts[0]
+    split = parts[1] if len(parts) > 1 and parts[1] else "test"
+    unit = parts[2] if len(parts) > 2 and parts[2] else ""
+    if unit and unit not in ("word", "char"):
+        raise SystemExit(f"--eval {spec}: unit must be 'word' or 'char', got {unit!r}")
+    return source, split, unit
+
+
+def _spec_for(name: str, source: str, unit: str) -> EvalSetSpec:
+    """Build a test set's spec from its *declared layout*, not from its row lengths.
+
+    Sentence-unit sources get :meth:`EvalSetSpec.for_sentences` — character shingles, a 25-shingle
+    floor and a 0.90 containment threshold, all three moved by reading real hits. Deciding from the
+    layout rather than from measured row length keeps the choice reproducible from the manifest,
+    which is the same argument `shards.py` makes for declaring columns instead of detecting them.
+
+    An explicit ``UNIT`` on the command line overrides the unit only; the companion thresholds stay
+    with whichever variant the layout selected, because they were measured together.
+    """
+    layout = LAYOUTS.get(source)
+    spec = EvalSetSpec(name=name)
+    if layout is not None and layout.unit == "sentence":
+        spec = spec.for_sentences()
+    if unit and unit != spec.shingle_unit:
+        spec = replace(spec, shingle_unit=unit)
+    return spec
+
+
+def load_eval_sets(
+    index: Decontaminator,
+    specs: list[str],
+    *,
+    manifest: str,
+    limit: int | None,
+    both_columns: bool,
+) -> dict[str, dict]:
+    """Index every test set through stages 2→4, and report what went in.
+
+    Stage 5 is deliberately **not** run on the eval side. A test set is an instrument, not corpus:
+    quality-filtering it would silently drop the items stage 8 is least able to afford to lose, and
+    an eval item that stage 5 would have rejected is still contamination if it is in the training
+    data. Stages 2 and 4 do run, because the eval sets must be normalized by the same pass as the
+    corpus or the comparison measures the normalizer rather than the overlap.
+    """
+    encoding_config = EncodingConfig()
+    normalization_config = NormalizationConfig()
+    loaded: dict[str, dict] = {}
+
+    for spec in specs:
+        source, split, unit = _parse_eval(spec)
+        reader = ShardReader.from_manifest(
+            source, manifest_path=manifest, split=split, limit=limit
+        )
+        layout = LAYOUTS.get(source)
+        parallel = both_columns and layout is not None and URDU_COLUMN in layout.meta_columns
+
+        names = []
+        if parallel:
+            names = [f"{source}-{split}-roman", f"{source}-{split}-urdu"]
+        else:
+            names = [f"{source}-{split}"]
+        for name in names:
+            eval_spec = _spec_for(name, source, unit)
+            index.add_eval_set(eval_spec)
+            loaded[name] = {
+                "source": source,
+                "split": split,
+                "items": 0,
+                **{k: v for k, v in eval_spec.to_dict().items() if k != "name"},
+            }
+
+        for doc in reader:
+            variants = (
+                [(names[0], doc.text or ""), (names[1], doc.meta.get(URDU_COLUMN) or "")]
+                if parallel
+                else [(names[0], doc.text or "")]
+            )
+            for name, text in variants:
+                if not text:
+                    continue
+                checked = validate_text(text, encoding_config)
+                if not checked.accepted:
+                    continue
+                normalized = normalize_text(checked.text or "", normalization_config)
+                index.add_eval_item(name, doc.doc_id, normalized)
+                loaded[name]["items"] += 1
+    return loaded
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
+    parser.add_argument(
+        "--eval",
+        action="append",
+        required=True,
+        metavar="SOURCE[:SPLIT[:UNIT]]",
+        help="test set to decontaminate against, e.g. `roman-urdu-parl:test:char`. SPLIT defaults "
+        "to 'test'; UNIT defaults to 'char' for sentence-unit sources and 'word' otherwise",
+    )
+    parser.add_argument(
+        "--source",
+        action="append",
+        required=True,
+        metavar="NAME[=RATE]",
+        help="training source to check; an optional per-source sampling rate overrides "
+        "--sample-rate. Unlike stages 6 and 7, sampling is honest here — the eval side is indexed "
+        "whole, so a contaminated document is found with probability r rather than r^2",
+    )
+    parser.add_argument("-m", "--manifest", default="data/manifest.json")
+    parser.add_argument("--split", help="restrict the training sources to one split")
+    parser.add_argument(
+        "--limit", type=int, default=20_000, help="documents per source; 0 for no limit"
+    )
+    parser.add_argument(
+        "--eval-limit", type=int, default=0, help="eval items per set; 0 for no limit"
+    )
+    parser.add_argument("--sample-rate", type=float, help="stable per-document sampling rate")
+    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--config", help="stage-8 config JSON (default: shipped defaults)")
+    parser.add_argument("--threshold", type=float, help="override containment_threshold")
+    parser.add_argument(
+        "--retain-above", type=float, help="keep measured hits down to this containment"
+    )
+    parser.add_argument(
+        "--sweep",
+        nargs="+",
+        type=float,
+        help="also report removals at these containment thresholds, exactly, from the same pass",
+    )
+    parser.add_argument(
+        "--both-columns",
+        action="store_true",
+        help="read both columns of a parallel source, as `id#roman` and `id#urdu`. Roman-Urdu-Parl "
+        "is the transliteration test set's own source and can leak on either side",
+    )
+    parser.add_argument(
+        "--urdu-side", action="store_true", help="read only the Urdu column of a parallel source"
+    )
+    parser.add_argument(
+        "--no-quality", action="store_true", help="check everything stage 3 kept, not stage 5's"
+    )
+    parser.add_argument(
+        "--exact-dedup",
+        action="store_true",
+        help="run stage 6 first, so contamination is counted against distinct documents. Off by "
+        "default: unlike stage 7, stage 8's verdict is per document and does not double-count a "
+        "duplicate group, so the extra corpus pass buys only a cleaner denominator",
+    )
+    parser.add_argument(
+        "--no-exact-match",
+        action="store_true",
+        help="switch off both halves of the exact match, to measure the fuzzy half alone",
+    )
+    parser.add_argument("--removals", help="write contaminated document ids here, one per line")
+    parser.add_argument("--hits-out", help="write every measured hit here as JSONL, to read")
+    parser.add_argument("--examples", type=int, default=10, help="hits to print")
+    parser.add_argument("--json", help="write the full report here")
+    return parser
+
+
+def _parse_source(spec: str, default_rate: float | None) -> tuple[str, float | None]:
+    if "=" not in spec:
+        return spec, default_rate
+    name, _, raw = spec.partition("=")
+    rate = float(raw)
+    if not 0.0 < rate <= 1.0:
+        raise SystemExit(f"--source {spec}: rate must be in (0, 1], got {rate}")
+    return name, None if rate == 1.0 else rate
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+
+    config = (
+        DecontaminationConfig.from_json_file(args.config)
+        if args.config
+        else DecontaminationConfig()
+    )
+    overrides: dict = {}
+    if args.threshold is not None:
+        overrides["containment_threshold"] = args.threshold
+        overrides["retain_hits_above"] = min(config.retain_hits_above, args.threshold)
+    if args.retain_above is not None:
+        overrides["retain_hits_above"] = args.retain_above
+    if args.no_exact_match:
+        overrides["exact_document_match"] = False
+        overrides["exact_line_match"] = False
+    if overrides:
+        config = DecontaminationConfig.from_dict({**config.to_dict(), **overrides})
+
+    if args.both_columns and args.urdu_side:
+        raise SystemExit("--both-columns and --urdu-side are mutually exclusive")
+    columns = "both" if args.both_columns else ("urdu" if args.urdu_side else "text")
+
+    index = Decontaminator(config)
+    print("stage 8: indexing eval sets", file=sys.stderr)
+    loaded = load_eval_sets(
+        index,
+        args.eval,
+        manifest=args.manifest,
+        limit=args.eval_limit or None,
+        both_columns=args.both_columns or args.urdu_side,
+    )
+    index.seal()
+    for name, record in sorted(loaded.items()):
+        print(
+            f"  {name:<36} {record['items']:>8,} items, {record['shingle_unit']} shingles",
+            file=sys.stderr,
+        )
+    print(
+        f"  {index.log.eval_items:,} items total, {index.log.eval_shingles:,} distinct shingles, "
+        f"{index.log.eval_lines:,} indexed lines, "
+        f"{index.log.eval_items_unmeasurable:,} below min_shingles (exact-only)",
+        file=sys.stderr,
+    )
+
+    sources = [_parse_source(spec, args.sample_rate) for spec in args.source]
+    readers = [
+        ShardReader.from_manifest(
+            name,
+            manifest_path=args.manifest,
+            split=args.split,
+            limit=args.limit or None,
+            sample_rate=rate,
+            seed=args.seed,
+        )
+        for name, rate in sources
+    ]
+    for (name, rate), reader in zip(sources, readers, strict=True):
+        print(
+            f"reading {name}: plan {reader.plan_fingerprint()} over {len(reader.files)} file(s)"
+            + (f", sampled at {rate}" if rate else ""),
+            file=sys.stderr,
+        )
+
+    pipeline = Pipeline(readers, quality=not args.no_quality, columns=columns)
+    exact: ExactDeduplicator | None = None
+
+    if args.exact_dedup:
+        exact = ExactDeduplicator(
+            DedupConfig.from_dict({**DedupConfig().to_dict(), "paragraph_mode": "off"})
+        )
+        print("stage 6 phase 1: indexing", file=sys.stderr)
+        for doc_id, normalized, raw, source in pipeline:
+            exact.index(doc_id, normalized, raw=raw, source=source)
+        exact.seal()
+        print("stage 6 phase 2 + stage 8", file=sys.stderr)
+        for doc_id, normalized, raw, source in pipeline:
+            if exact.decide(doc_id, normalized, raw=raw, source=source).kept:
+                index.check(doc_id, normalized, source=source)
+    else:
+        print("stage 8: checking the corpus", file=sys.stderr)
+        for doc_id, normalized, _raw, source in pipeline:
+            index.check(doc_id, normalized, source=source)
+
+    log = index.log
+    payload = index.to_dict()
+    payload["eval_sets_loaded"] = loaded
+    payload["sources"] = args.source
+    payload["limit"] = args.limit
+    payload["sample_rate"] = args.sample_rate
+    payload["seed"] = args.seed
+    payload["columns"] = columns
+    payload["quality_filtered"] = not args.no_quality
+    payload["exact_deduplicated"] = args.exact_dedup
+    payload["stage2_encoding"] = pipeline.stage2.to_dict()
+    payload["stage3_langid"] = pipeline.stage3.to_dict()
+    payload["stage5_quality"] = {s: q.to_dict() for s, q in sorted(pipeline.stage5.items())}
+    if exact is not None:
+        payload["stage6_exact"] = exact.to_dict()
+
+    print(
+        f"\nstage 8: kept {log.kept:,}/{log.checked:,} = {100 * log.keep_rate:.4f}% of documents, "
+        f"{100 * log.char_keep_rate:.4f}% of characters",
+        file=sys.stderr,
+    )
+    print(
+        f"  {log.removed:,} contaminated documents removed "
+        f"({100 * log.contamination_rate:.4f}% of what was checked)",
+        file=sys.stderr,
+    )
+    if log.removed_by_reason:
+        print("\n  which half of §6.3.8 fired", file=sys.stderr)
+        for reason, count in sorted(log.removed_by_reason.items()):
+            print(f"    {reason:<20} {count:>10,}", file=sys.stderr)
+
+    print(
+        "\n  eval coverage — the share of each TEST SET found in the training corpus",
+        file=sys.stderr,
+    )
+    for name, record in sorted(log.eval_coverage().items()):
+        print(
+            f"    {name:<36} {record['items_found_in_corpus']:>8,}/{record['items']:<8,} "
+            f"= {100 * record['share']:.4f}%",
+            file=sys.stderr,
+        )
+
+    if log.by_source:
+        print("\n  by training source", file=sys.stderr)
+        for source in sorted(log.by_source):
+            seen = log.by_source[source]
+            removed = log.removed_by_source.get(source, 0)
+            print(
+                f"    {source:<28} {removed:>8,}/{seen:<10,} = {100 * removed / seen:.4f}% removed",
+                file=sys.stderr,
+            )
+
+    if log.containment_histogram:
+        print("\n  containment of retained hits (jaccard beside it — Finding M's gap)",
+              file=sys.stderr)
+        for band in sorted(log.containment_histogram, reverse=True):
+            print(
+                f"    {band}  containment {log.containment_histogram[band]:>9,}"
+                f"   jaccard {log.jaccard_histogram.get(band, 0):>9,}",
+                file=sys.stderr,
+            )
+
+    hits = index.hits()
+    if hits:
+        print("\n  strongest hits", file=sys.stderr)
+        for hit in hits[: args.examples]:
+            print(
+                f"    {hit.eval_set}/{hit.eval_id} in {hit.doc_id}\n"
+                f"      containment {hit.containment:.3f}  jaccard {hit.jaccard:.3f}  "
+                f"shingles {hit.intersection}/{hit.eval_shingles} of eval, "
+                f"{hit.doc_shingles} in doc" + (f"  [{hit.exact}]" if hit.exact else ""),
+                file=sys.stderr,
+            )
+
+    if args.sweep:
+        payload["sweep"] = index.sweep(args.sweep)
+        print("\n  containment sweep (exact, from the retained hits of this one pass)",
+              file=sys.stderr)
+        for row in payload["sweep"]:
+            if "note" in row:
+                print(f"    {row['threshold']:>5.2f} {row['note']}", file=sys.stderr)
+                continue
+            items = sum(row["eval_items_hit"].values())
+            print(
+                f"    {row['threshold']:>5.2f} {row['documents_removed']:>10,} documents, "
+                f"{items:>8,} eval items",
+                file=sys.stderr,
+            )
+
+    if args.removals:
+        cut = config.containment_threshold
+        removed = sorted({hit.doc_id for hit in hits if hit.containment >= cut})
+        Path(args.removals).write_text(
+            "".join(f"{doc_id}\n" for doc_id in removed), encoding="utf-8", newline="\n"
+        )
+        print(f"\nwrote {len(removed):,} contaminated ids to {args.removals}", file=sys.stderr)
+
+    if args.hits_out:
+        with Path(args.hits_out).open("w", encoding="utf-8", newline="\n") as handle:
+            for hit in hits:
+                handle.write(json.dumps(hit.to_dict(), ensure_ascii=False) + "\n")
+        print(f"wrote {len(hits):,} measured hits to {args.hits_out}", file=sys.stderr)
+
+    report = json.dumps(payload, indent=2, ensure_ascii=False)
+    if args.json:
+        Path(args.json).write_text(report + "\n", encoding="utf-8", newline="\n")
+    else:
+        print(report)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

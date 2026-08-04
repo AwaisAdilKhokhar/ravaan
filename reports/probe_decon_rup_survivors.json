@@ -1,0 +1,262 @@
+[
+ {
+  "containment": 1.0,
+  "jaccard": 1.0,
+  "exact": "document",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:4890",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:2772#roman",
+  "eval": "parcham sitara o Halal",
+  "doc": "parcham sitara o halal"
+ },
+ {
+  "containment": 0.9643,
+  "jaccard": 0.931,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:0:284",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6129#roman",
+  "eval": "Sayeda shagufata , May 17 , 2007",
+  "doc": "Sayeda shagufata , May 17 , 2009"
+ },
+ {
+  "containment": 0.9355,
+  "jaccard": 0.87,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:606",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#roman",
+  "eval": "layibriri ka naya project hona chahiye jis se aap ke sath mein bhi se haasil karkay duayen dun ga",
+  "doc": "layibriri ka naya project hona chahiye jis hum aap ke sath mein bhi se haasil karkay duayen dun ga"
+ },
+ {
+  "containment": 0.9355,
+  "jaccard": 0.87,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:607",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#roman",
+  "eval": "layibriri ka naya project hona chahiye jis se aap ke sath mein bhi se haasil karkay duayen dun ga",
+  "doc": "layibriri ka naya project hona chahiye jis hum aap ke sath mein bhi se haasil karkay duayen dun ga"
+ },
+ {
+  "containment": 0.9355,
+  "jaccard": 0.87,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:608",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#roman",
+  "eval": "layibriri ka naya project hona chahiye jis se aap ke sath mein bhi se haasil karkay duayen dun ga",
+  "doc": "layibriri ka naya project hona chahiye jis hum aap ke sath mein bhi se haasil karkay duayen dun ga"
+ },
+ {
+  "containment": 0.9355,
+  "jaccard": 0.87,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:611",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#roman",
+  "eval": "layibriri ka naya project hona chahiye jis se aap ke sath mein bhi se haasil karkay duayen dun ga",
+  "doc": "layibriri ka naya project hona chahiye jis hum aap ke sath mein bhi se haasil karkay duayen dun ga"
+ },
+ {
+  "containment": 0.9355,
+  "jaccard": 0.87,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:614",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#roman",
+  "eval": "layibriri ka naya project hona chahiye jis se aap ke sath mein bhi se haasil karkay duayen dun ga",
+  "doc": "layibriri ka naya project hona chahiye jis hum aap ke sath mein bhi se haasil karkay duayen dun ga"
+ },
+ {
+  "containment": 0.9302,
+  "jaccard": 0.8696,
+  "exact": "",
+  "set": "roman-urdu-parl-test-urdu",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:606",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#urdu",
+  "eval": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس سے آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا",
+  "doc": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس ہم آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا"
+ },
+ {
+  "containment": 0.9302,
+  "jaccard": 0.8696,
+  "exact": "",
+  "set": "roman-urdu-parl-test-urdu",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:607",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#urdu",
+  "eval": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس سے آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا",
+  "doc": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس ہم آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا"
+ },
+ {
+  "containment": 0.9302,
+  "jaccard": 0.8696,
+  "exact": "",
+  "set": "roman-urdu-parl-test-urdu",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:608",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#urdu",
+  "eval": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس سے آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا",
+  "doc": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس ہم آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا"
+ },
+ {
+  "containment": 0.9302,
+  "jaccard": 0.8696,
+  "exact": "",
+  "set": "roman-urdu-parl-test-urdu",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:609",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#urdu",
+  "eval": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس سے آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا",
+  "doc": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس ہم آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا"
+ },
+ {
+  "containment": 0.9302,
+  "jaccard": 0.8696,
+  "exact": "",
+  "set": "roman-urdu-parl-test-urdu",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:610",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#urdu",
+  "eval": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس سے آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا",
+  "doc": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس ہم آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا"
+ },
+ {
+  "containment": 0.9302,
+  "jaccard": 0.8696,
+  "exact": "",
+  "set": "roman-urdu-parl-test-urdu",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:611",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#urdu",
+  "eval": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس سے آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا",
+  "doc": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس ہم آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا"
+ },
+ {
+  "containment": 0.9302,
+  "jaccard": 0.8696,
+  "exact": "",
+  "set": "roman-urdu-parl-test-urdu",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:612",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#urdu",
+  "eval": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس سے آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا",
+  "doc": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس ہم آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا"
+ },
+ {
+  "containment": 0.9302,
+  "jaccard": 0.8696,
+  "exact": "",
+  "set": "roman-urdu-parl-test-urdu",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:613",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#urdu",
+  "eval": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس سے آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا",
+  "doc": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس ہم آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا"
+ },
+ {
+  "containment": 0.9302,
+  "jaccard": 0.8696,
+  "exact": "",
+  "set": "roman-urdu-parl-test-urdu",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:614",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#urdu",
+  "eval": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس سے آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا",
+  "doc": "لائیبریری کا نیا پراجیکٹ ہونا چاہیے جس ہم آپ کے ساتھ میں بھی فائدہ حاصل کرکے دعائیں دوں گا"
+ },
+ {
+  "containment": 0.9255,
+  "jaccard": 0.8614,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:610",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#roman",
+  "eval": "layibriri ka naya project hona chahiye jis say aap ke sath mein bhi se haasil karkay duayen dun ga",
+  "doc": "layibriri ka naya project hona chahiye jis hum aap ke sath mein bhi se haasil karkay duayen dun ga"
+ },
+ {
+  "containment": 0.9231,
+  "jaccard": 0.8571,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:0:1350",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:3075#roman",
+  "eval": "zeeshan Haider , feb 22 , 2009",
+  "doc": "zeeshan Haider , feb 22 , 2010"
+ },
+ {
+  "containment": 0.9231,
+  "jaccard": 0.5,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:0:1597",
+  "doc_id": "roman-urdu-parl:train_set.csv:543:6704#roman",
+  "eval": "bohat si daad qubool kijiyej !",
+  "doc": "is achay intikhab par bohat si daad qubool kijiyej"
+ },
+ {
+  "containment": 0.9231,
+  "jaccard": 0.5,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:0:1597",
+  "doc_id": "roman-urdu-parl:train_set.csv:543:6705#roman",
+  "eval": "bohat si daad qubool kijiyej !",
+  "doc": "is achay intakhab par bohat si daad qubool kijiyej"
+ },
+ {
+  "containment": 0.9231,
+  "jaccard": 0.5,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:0:1597",
+  "doc_id": "roman-urdu-parl:train_set.csv:543:6706#roman",
+  "eval": "bohat si daad qubool kijiyej !",
+  "doc": "is achay intikhab par bohat si daad qubool kijiyej"
+ },
+ {
+  "containment": 0.9231,
+  "jaccard": 0.5,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:0:1597",
+  "doc_id": "roman-urdu-parl:train_set.csv:543:6708#roman",
+  "eval": "bohat si daad qubool kijiyej !",
+  "doc": "is achay intikhab par bohat si daad qubool kijiyej"
+ },
+ {
+  "containment": 0.92,
+  "jaccard": 0.8519,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:0:1375",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6057#roman",
+  "eval": "qaisrani , decemeber 8 , 2006",
+  "doc": "qaisrani , decemeber 8 , 2013"
+ },
+ {
+  "containment": 0.92,
+  "jaccard": 0.4894,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:0:1598",
+  "doc_id": "roman-urdu-parl:train_set.csv:543:6707#roman",
+  "eval": "baat si daad qubool kijiyej !",
+  "doc": "is achay intikhab par baat si daad qubool kijiyej"
+ },
+ {
+  "containment": 0.9149,
+  "jaccard": 0.8431,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:609",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#roman",
+  "eval": "layibriri ka naya project hona chahiye jiss se aap ke sath mein bhi se haasil karkay duayen dun ga",
+  "doc": "layibriri ka naya project hona chahiye jis hum aap ke sath mein bhi se haasil karkay duayen dun ga"
+ },
+ {
+  "containment": 0.9022,
+  "jaccard": 0.8058,
+  "exact": "",
+  "set": "roman-urdu-parl-test-roman",
+  "eval_id": "roman-urdu-parl:test_set.csv:1:613",
+  "doc_id": "roman-urdu-parl:train_set.csv:58:6137#roman",
+  "eval": "layibriri ka naya project hona chahiye jis se aap ke sath mein bhi se hasil karkay duayen dun ga",
+  "doc": "layibriri ka naya project hona chahiye jis hum aap ke sath mein bhi se haasil karkay duayen dun ga"
+ }
+]

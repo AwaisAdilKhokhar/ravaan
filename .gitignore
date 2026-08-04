@@ -22,6 +22,9 @@ wandb/
 # something load-bearing (session 2's bare `data/`, session 4's `/data/`), so: verified with
 # `git check-ignore -v reports/quality_sample.jsonl`, which now reports nothing.
 !/reports/*.jsonl
+# Detached-run console logs (`nohup … > reports/.decon_wiki.log`). Transient scratch, not evidence —
+# the evidence is the JSON the run writes. Dot-prefixed so it cannot collide with a report name.
+/reports/.*.log
 *.txt.zst
 *.model
 *.vocab

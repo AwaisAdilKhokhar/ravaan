@@ -5,13 +5,15 @@ Spec is the PRD; this file is the state of play. **Read the "Next session" secti
 first.**
 
 - **Started:** 2026-08-03 (Week 1 of 16)
-- **Current phase:** Weeks 1–2 complete → Weeks 3–4, corpus freeze. Pipeline stages 1–6 are built
+- **Current phase:** Weeks 1–2 complete → Weeks 3–4, corpus freeze. Pipeline stages 1–8 are built
   and validated on real text; stage 5's 200-sample validation is adjudicated, scored and written up
-  ([`reports/quality_validation.md`](reports/quality_validation.md)), and stage 6 has run **complete
-  passes over every source** — Urdu Wikipedia, both columns of Roman-Urdu-Parl, and FineWeb2 against
-  Wikipedia. Next is stage 7 (MinHash near-dedup), which session 8 hands a measured acceptance test,
-  a measured expectation of near-inertness on the primary source, and the one population where it
-  demonstrably has real work to do.
+  ([`reports/quality_validation.md`](reports/quality_validation.md)), stage 6 has run **complete
+  passes over every source**, stage 7's threshold is chosen from measured pairs and written up
+  ([`reports/neardedup_threshold.md`](reports/neardedup_threshold.md)), and stage 8's instrument and
+  thresholds are chosen the same way ([`reports/decontamination.md`](reports/decontamination.md)).
+  **Session 9's Finding M is acted on and session 10 overturned the other half of its handoff**: the
+  MinHash sketch cannot answer stage 8's question at all, and the exact answer is affordable — see
+  Finding N. Next is stage 9 (splits), which stage 8 must then be run against a second time.
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
 - **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds
@@ -19,10 +21,10 @@ first.**
 - **Preregistration:** ✅ committed [`reports/preregistration.md`](reports/preregistration.md) —
   4 falsifiable predictions, before any training.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 317 passing (69 normalization · 57 encoding · 57 acquisition · 43 quality · 41 dedup
-  · 32 langid · 18 shards)
-- **Committed** through session 7. Sessions 6 and 7 are one commit — stage 5, its 200-sample
-  validation and the write-up are one deliverable.
+- **Tests:** 429 passing (69 normalization · 60 decontamination · 57 encoding · 57 acquisition ·
+  52 minhash · 43 quality · 41 dedup · 32 langid · 18 shards)
+- **Committed** through session 8. Sessions 6 and 7 are one commit — stage 5, its 200-sample
+  validation and the write-up are one deliverable. Sessions 9 and 10 are uncommitted.
 
 ---
 
@@ -55,8 +57,16 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | 200-sample validation — drawn, adjudicated, scored, written up | §6.3.5 | 🟡 native-speaker pass outstanding |
 | **Exact dedup (stage 6)** | §6.3.6 | ✅ |
 | Full passes: Wikipedia, Roman-Urdu-Parl (both columns), FineWeb2 ∩ Wikipedia | §6.3.6 | ✅ |
-| MinHash near-dedup (stage 7) | §6.3.7 | ⬜ |
-| Eval decontamination (stage 8) | §6.3.8 | ⬜ |
+| **MinHash near-dedup (stage 7)** | §6.3.7 | ✅ |
+| Threshold chosen from measured pairs + sweep → `reports/neardedup_threshold.md` | §6.3.7 | ✅ |
+| Full passes: Urdu Wikipedia; Wikipedia × FineWeb2's wiki-host documents | §6.3.7 | ✅ |
+| Full passes: FineWeb2 self-similarity, Roman-Urdu-Parl (char shingles) | §6.3.7 | ⬜ deferred to freeze (~2.3 h) |
+| **Eval decontamination (stage 8)** | §6.3.8 | ✅ |
+| Instrument + thresholds chosen from read hits → `reports/decontamination.md` | §6.3.8 | ✅ |
+| Acceptance test: Roman-Urdu-Parl test-in-train, both columns | §6.2, §6.3.8 | ✅ |
+| Full passes: Urdu Wikipedia (complete); FineWeb2 at 5% | §6.3.8 | ✅ |
+| Full pass: FineWeb2 complete shard | §6.3.8 | ⬜ deferred to freeze |
+| Second stage-8 run, against the held-out split | §6.3.8 | ⬜ blocked on stage 9 |
 | Split creation (stage 9) | §6.3.9 | ⬜ |
 | Tokenization + packing (stage 10) | §6.3.10 | ⬜ |
 | PII regex pass (phones, emails) | §6.3 | ⬜ |
@@ -1160,6 +1170,371 @@ all 1,547,542 documents:
 
 ---
 
+### Session 9 — 2026-08-04
+
+**Done**
+
+1. **MinHash near-deduplication — stage 7** (`ravaan/data/minhash.py`, `configs/data/minhash.json`,
+   52 tests). Document level, word 5-grams, Jaccard ≥ 0.80, per §6.3.7. Four properties it is
+   built around.
+   - **The estimator is one-permutation hashing with densification, not k-permutation MinHash.**
+     Classic MinHash applies K permutations to every shingle: at K=128 over the ~400 word-5-grams
+     an average document carries, that is ~50,000 modular operations per document, and the deciding
+     stages are standard-library-only by doctrine, so the constant factor *is* the design. OPH
+     hashes each shingle **once**, bins it, and fills empty bins from a fixed random probe order.
+     Measured: **~0.25 ms per document against ~3.6 ms**, hours against minutes on a full shard.
+   - **Unbiasedness is measured, not asserted** — the one thing a hand-rolled estimator must not be
+     trusted about. Against exact set Jaccard the bias is **< 0.008** across overlaps 0.5–0.95, and
+     the spread matches the theoretical `sqrt(J(1-J)/K)` = 0.035 at J = 0.8. It also holds in the
+     regime that worried me: at 30 words a document leaves five bins in six empty and densification
+     does nearly all the work, and the estimate stays unbiased with the standard error rising only
+     0.026 → 0.048. That is what makes `min_shingles` 8 rather than 128. A per-bin breakdown pins
+     the subtle half directly: **bins empty in *both* documents match at 0.7311 against an exact
+     Jaccard of 0.7297** — densification agreeing at exactly the Jaccard rate is the property the
+     whole stage rests on, and it is now a test.
+   - **Jaccard decides; containment is measured beside it**, the same move stage 6 makes with
+     raw-vs-normalized hashes. Containment is free — the sketch already needs the set sizes and the
+     algebra is exact — and Finding L's population is the reason. It turned out to matter for a
+     minority rather than the majority (below), which is a better outcome than the module was
+     designed for and is still not nothing.
+   - **Which copy survives does not depend on read order**, and `document_key` is *imported* from
+     stage 6 rather than reimplemented: two dedup stages that disagreed about which of two copies is
+     canonical would produce a corpus neither of them describes. Bucket representatives are chosen
+     the same way, so even the candidate set is a function of the corpus rather than of the pass.
+   - **Stage 7 is single-pass, and that is a real difference from stage 6.** Stage 6 stores one
+     integer per distinct *content* and pays a second read to stay order-independent. Stage 7
+     cannot — comparing documents to each other means holding a sketch per *document* — so the ids
+     are already in memory and a second pass would buy nothing. The cost is memory, stated rather
+     than discovered: ~700 bytes a document, so a full 1.5M-document FineWeb2 shard is ~1 GB.
+
+2. **`scripts/neardedup.py`** — stages 2→7 over real sources. Two things it does that the earlier
+   drivers do not, both forced by what stage 7 is.
+   - **It runs on stage 6's survivors by default.** Every exact duplicate is also a near duplicate
+     at J = 1.0, so a stage 7 measured on pre-stage-6 text claims stage 6's removals as its own —
+     Finding J's double-count, one stage on. `--no-exact-dedup` measures the other way.
+   - **`--host-filter NAME=SUBSTRING`, applied before any stage.** Finding L's population is 0.154%
+     of FineWeb2 shard 001, so reaching it by sampling means reading the shard many times over.
+     Naming it by URL costs one parquet scan and answers the question exactly — and because the
+     filter runs ahead of stages 2–5, the expensive stages only ever see the 2,388 documents that
+     matter.
+
+3. **`reports/neardedup_threshold.md`** — the threshold decision record, in the shape session 7
+   wrote for stage 5. Every table in it comes from two corpus passes rather than twenty, because
+   the pass retains each candidate pair with its measured similarity and `sweep()` re-clusters at
+   any threshold exactly.
+
+**The threshold is 0.80, and the largest-cluster column is the argument**
+
+Urdu Wikipedia, complete dump, after stages 2–6 (`reports/probe_minhash_wikipedia.json`):
+
+| threshold | clusters | removed | largest cluster |
+|---|---|---|---|
+| 0.30 | 1,236 | 15,853 | **9,979** |
+| 0.50 | 1,502 | 6,734 | 518 |
+| 0.60 | 1,157 | 2,795 | 88 |
+| 0.70 | 357 | 657 | 25 |
+| **0.80** | **118** | **179** | **23** |
+| 0.90 | 38 | 45 | 6 |
+
+Clustering is connected components, so transitivity is deliberate — A ≈ B and B ≈ C are one
+document even when the A–C estimate lands under the cut — and chaining is the price. The table
+shows where that price becomes ruinous: at 0.30 a **single component swallows 9,979 documents,
+10.7% of the entire dump**, all but one of which would be deleted. Nothing in Urdu Wikipedia is
+9,979 copies of one article. Above 0.70 the largest cluster is stable at 23–25 and removals fall
+smoothly; **0.80 sits inside that stable region with margin on both sides**, which is what a
+threshold should look like. Stage 7 removes **0.19% of Urdu Wikipedia** there.
+
+**Finding M — stage 7 finds 633 cross-source clusters where exact dedup finds 1, and the acceptance
+test session 8 wrote before the code passes.**
+
+Session 8's test: Urdu Wikipedia articles also sit inside FineWeb2 as crawled HTML, 2,388 documents
+in shard 001 come from wiki hosts, not one is byte-identical to its counterpart, and "if stage 7
+does not cluster those, it is not doing the job stage 8 needs it to have done." Measured by pulling
+that population out by URL and running it against the complete Wikipedia dump — 2,159 survive
+stages 2–6 and join 93,597 Wikipedia documents (`reports/probe_minhash_joint.json`):
+
+| | stage 6 (exact) | stage 7 at 0.80 |
+|---|---|---|
+| cross-source groups / clusters | **1** | **633** |
+| FineWeb2 wiki-host documents removed | — | 302 of 2,159 (14.0%) |
+| Wikipedia documents removed as cross-source | — | 331 |
+
+- **Every cross-source cluster is size 2** — one article, one crawled copy — which is the right
+  shape and says the clusters are not chaining.
+- **The accounting balances against the standalone run exactly.** 179 Wikipedia-internal removals
+  here, the same 179 the Wikipedia-only pass produced, plus 331 + 302 cross-source and 1
+  FineWeb2-internal = 813. Two independent runs agreeing to the document.
+- **The module's central expectation was wrong about the majority, and right about the residue.**
+  It was built expecting the crawled copy to be the article buried in navigation chrome, which
+  Jaccard cannot see and containment can. Measured, most joint pairs are *high* Jaccard with
+  near-identical shingle counts — 0.992 at 884/882, 0.984 at 174/173 — because FineWeb2's
+  HTML-to-text extraction strips most chrome. So the shipped Jaccard threshold suffices for them.
+  But **11 of 49 sampled cross-source pairs fall below 0.80**, and those are the predicted shape:
+  **J = 0.656 with containment 1.000 at 150/96 shingles** — a Wikipedia article whose every shingle
+  is in the FineWeb2 copy, scoring 0.656 because the crawled page carries 54 shingles it does not.
+- **This converts Finding L's requirement on stage 8 from an argument into a measurement.** §6.3.8
+  says "hash + fuzzy match". A Jaccard-thresholded fuzzy match cannot see that pair and a
+  containment-thresholded one cannot miss it. **Stage 8 must score containment against the eval
+  sets, not Jaccard**, or it reports a confident under-count on the most likely contamination path
+  in the project.
+
+**Finding I confirmed against the real code, and more decisively than predicted**
+
+Session 8 predicted stage 5's four surviving false accepts would not be caught at any shingle size.
+Measured at threshold **0.50** with high-recall banding — far more aggressive than ships — all four
+come back `kept=True, cluster=-1, cluster_size=1` (`reports/probe_minhash_findingI.json`). The
+highest pairwise similarity among them is **J = 0.258** (`:122214`–`:122264`, the two company
+stubs); four of the six pairs measure **0.000**. They are not near the cut, they are nowhere near
+it. **The four survive the whole pipeline**, so `quality_validation.md`'s error budget correction
+is now confirmed rather than predicted: stage 5's false-accept rate is stage 5's, not a debt owed
+to a later stage.
+
+**A claim that did not survive its own control — recorded because it nearly shipped**
+
+An early comparison showed (16, 8) banding removing 178 documents and (32, 4) removing 813 at the
+same threshold. That looks like a 4.6× recall gap, it was briefly written into the config as one,
+and it is a **confound**: the 813 came from the *joint* run, whose population includes the 2,159
+FineWeb2 documents that duplicate Wikipedia. Two different corpora, and the difference attributed
+to the parameter that happened to change. Run on the identical population:
+
+| Urdu Wikipedia, threshold 0.80 | clusters | removed | largest |
+|---|---|---|---|
+| bands 16 × 8 (`probe_minhash_wikipedia_bands16x8.json`) | 118 | 178 | 23 |
+| bands 32 × 4 (shipped) | 118 | 179 | 23 |
+
+The same corpus to within one document. **The banding does not change what stage 7 removes.** It
+changes what the *sweep* can measure: (16, 8) has 6% recall at J = 0.5, so every row of the table
+above below ~0.70 would be reporting the banding rather than the corpus, and a threshold chosen
+from that is chosen from an artefact. (32, 4) has 87% recall at J = 0.5 and costs 60,355 candidates
+against 240 that verify — banding precision **0.004**, about a second of exact verification. It
+ships for that reason and the config says so. This is Finding E's lesson in a third costume: the
+instrument has to be able to measure the quantity being asked for, and a number that moved in the
+expected direction is not evidence that it moved for the expected reason.
+
+**Decisions made**
+
+| Decision | Rationale |
+|---|---|
+| One-permutation hashing with densification, not k-permutation MinHash | 14× faster per document in pure Python, which is what makes a full-corpus pass affordable at all without a numpy dependency in a deciding stage. Its risk is that it is subtly wrong rather than slow, so unbiasedness is a measurement against exact Jaccard and the jointly-empty-bin match rate is a test. |
+| Jaccard decides removal; containment is reported beside it | A removal decision should rest on a symmetric measure. Containment is what detects an article contained in a larger copy, which is stage 8's problem rather than stage 7's, and it costs nothing to carry. Measured, 11 of 49 cross-source pairs need it. |
+| `document_key` imported from stage 6, not reimplemented | The two stages must agree about which copy of a document is canonical, or the released corpus is one neither module describes. |
+| Clusters are connected components, and the chaining is stated rather than mitigated | Transitivity is what makes a cluster a document rather than a pair, and its failure mode is legible in one number (`largest_cluster`) that the threshold table reports at every setting. Capping component size would be a second, unmeasured threshold. |
+| Stage 7 runs on stage 6's survivors by default | Every exact duplicate is a near duplicate at J = 1.0. Finding J measured what the same mistake costs one stage earlier: 99.6% of the apparent dedup win on Wikipedia was stage 5's length floor counted twice. |
+| Documents below `min_shingles` are kept and counted, never clustered | Stage 7 must not delete what it cannot measure. Below ~8 shingles Jaccard takes a handful of discrete values and a threshold comparison measures granularity, not similarity. |
+| The pass retains every candidate pair with its similarity, so `sweep()` is exact | Session 6's lesson was that a threshold has to be moved by documents. Re-running the corpus per candidate threshold is hours; re-running union-find over the retained pairs is seconds and is exact at any threshold above the retention floor. |
+| `--host-filter` runs ahead of stages 2–5, not after | Finding L's population is 0.154% of the shard. Filtering first means the expensive stages see 2,388 documents instead of 1.5M, which is the difference between a 20-minute answer and a 2-hour one. |
+
+**Fixed during the session**
+
+- **The same pair was counted once per band it collided in.** `candidate_pairs`, `verified_pairs`,
+  the similarity histograms and the sampled pairs were all inflated, and the histograms were
+  additionally *tilted*: a similar pair collides in more bands by construction, so the bias ran
+  toward the high end — the region the threshold is chosen from. Caught by reading the sampled
+  pairs and seeing the same document pair printed twelve times. Now one entry per distinct pair,
+  which also skips the redundant verification.
+- **`--host-filter`'s skip counter accumulated across both of stage 6's passes**, reporting
+  FineWeb2 as 3,188,286 documents — twice its own size. Counted on the first pass only now, like
+  the stage 2–5 logs beside it.
+- **A test asserted the property the measurement overturned.** `candidate_probability(0.3) < 0.01`
+  encoded the assumption that banding should cast a narrow net, which is exactly what the sweep
+  needs it not to do. Rewritten to pin the trade that survives the control.
+
+---
+
+### Session 10 — 2026-08-04
+
+**Done**
+
+1. **Evaluation decontamination — stage 8** (`ravaan/data/decontamination.py`,
+   `configs/data/decontamination.json`, 60 tests). Both halves of §6.3.8, containment as the
+   primary score per Finding M, thresholds per test set. Four properties it is built around.
+   - **The eval sets are held exactly, and the MinHash sketch is not used** — Finding N below. The
+     *shingling* is imported from stage 7 so the two stages agree what a document is made of; the
+     sketch and the banding are not, because they cannot answer this stage's question.
+   - **Containment of the *eval item* decides, and the direction is load-bearing.** Stage 7's
+     `containment_from_jaccard` divides by `min(|A|, |B|)`, which is right for a symmetric question
+     and wrong for a directed one: when the eval item is the larger of the two it silently measures
+     the training document instead and reports a number about the wrong object.
+   - **Removal is always of the training document.** No survivor rule, no lowest-key tie-break —
+     stage 8 is not choosing between two copies, and shrinking a test set to fit the corpus is
+     measuring the thermometer. This also makes the stage order-independent *for free*, which is
+     the property stages 6 and 7 each pay a second corpus pass to obtain.
+   - **What cannot be measured is counted and reported loudly, and the doctrine inverts.** Stage 7's
+     rule is "must not delete what it cannot measure". Stage 8's dual is harsher: an eval item too
+     short to shingle is contamination that *cannot be detected*, so silence would be a false clean
+     bill of health. 30.3% of the Roman-Urdu-Parl test set lands there and is covered by the exact
+     half alone.
+
+2. **`scripts/decontaminate.py`** — stages 2→8 over real sources. It reads **both columns** of a
+   parallel source (`id#roman`, `id#urdu`), because Roman-Urdu-Parl is the transliteration test
+   set's own source and can leak on either side.
+
+3. **`reports/decontamination.md`** — the decision record, in the shape sessions 7 and 9 wrote for
+   stages 5 and 7.
+
+**Finding N — the instrument session 9 specified cannot measure the quantity it was specified to
+measure, and the exact answer is affordable.**
+
+Session 9's handoff said stage 8 "should import `ravaan.data.minhash` rather than grow a second
+estimator with a second threshold nobody swept". Half of that is right and the other half is
+backwards, and the arithmetic is not close.
+
+- An eval item sitting **verbatim** inside a training document — containment 1.000, the exact shape
+  Finding M says stage 8 must catch — has Jaccard |E|/|T|, which *falls as the document grows*. A
+  100-shingle item inside a 1,500-shingle document scores **J = 0.067**, and the shipped (32, 4)
+  banding proposes that pair with probability **0.0006**. The pair has to become a candidate before
+  any containment can be computed from it, and it does not.
+- **Retuning does not rescue it.** (128, 1) reaches 0.9999 recall there and simultaneously makes
+  **12% of all pairs** candidates — ~9 × 10⁸ verifications over a corpus × eval-set cross product.
+  Either the recall collapses or the precision does, because MinHash estimates *Jaccard* and
+  Jaccard between a small item and a large document is low however complete the containment is.
+- **The estimator turns out to be unnecessary, not merely wrong.** MinHash exists to avoid the
+  all-pairs comparison of a corpus against itself. Stage 8 compares a corpus against a *bounded*
+  artifact — §8.2's test sets are ~6K items — so an inverted index over the eval shingles fits in
+  memory and one dict lookup per corpus shingle gives the **true** intersection. Containment and
+  Jaccard both come out exact, with no standard error, no S-curve and no second threshold.
+- **This is Finding E's lesson in a fourth costume:** the instrument has to be able to measure the
+  quantity being asked for. A stage 8 built on the sketch would have run, raised nothing, removed
+  almost nothing, and reported a clean corpus — the silent failure this stage exists to prevent.
+
+**Finding O — stage 8's first run over real text was wrong by 59×, and only reading the hits showed
+it.**
+
+The acceptance test — is Roman-Urdu-Parl's reference split already inside its own train split? —
+first reported **648 contaminated documents of 35,858 (1.81%)**. The number was plausible and it
+matched the prior, since PRD §6.2 warns the source is machine-produced and collapses 6.37M pairs to
+~1.09M unique sentences. It was **59× too high**, and the errors fell into two families that need
+two different fixes.
+
+- **Degenerate fragments — two thirds of every hit.** 918 of 1,389 came from eval items of 8–15
+  character 5-grams: `angrezi blog` genuinely contained in `az rashid Kamraan urdu blog angrezi blog
+  az Shah`, `Pakistani bhai`, `chahiye chahiye`. Real containment, no contamination. **The cause is
+  that `min_shingles = 8` means two different things in the two units** — ~12 *words* in the word
+  unit, ~12 *characters* in the character unit — and nothing in the config said so. The character
+  unit exists precisely because Roman-Urdu-Parl needed it (77.8% of its test rows carry fewer than
+  8 word-5-grams), so the two settings had to be introduced together and were not.
+- **Templates — long, and untouched by any shingle floor.** `qaisrani , September 4 , 2006` against
+  `qaisrani , September 25 , 2006` at containment 0.800; `scan safha number 36 : ( kitaab safha 29 )`
+  against `... 21 : ( ... 14 )` at 0.809. A byline with a different year is not contamination. Only
+  the threshold moves these.
+- **Both fixes are per test set, which is stage 5's shape exactly** — its single Urdu-script floor
+  turned out to delete the whole Roman Urdu population, and the rule became per population.
+  `EvalSetSpec.for_sentences()` moves all three together because they were measured together:
+  character 5-grams, `min_shingles` 8 → **25**, `containment_threshold` 0.80 → **0.90**.
+- After both fixes: **11 documents of 35,858 (0.031%)**. Read one by one, **8 are genuine and 3 are
+  false positives — precision 0.73 — and all three errors are the one named byline-with-date
+  family.** They are left in rather than tuned away: at stage 8 a false positive costs one training
+  row out of millions and a false negative costs the validity of an evaluation number.
+
+**The acceptance test passes, and containment is what makes it pass**
+
+| eval item | training document | containment | Jaccard |
+|---|---|---|---|
+| `parcham sitara o Halal` | `parcham sitara o halal` | 1.000 (exact) | 1.000 |
+| `layibriri ka naya project hona chahiye jis **se** aap...` | `... jis **hum** aap ...` | 0.935 | 0.870 |
+| `bohat si daad qubool kijiyej !` | `is achay intikhab par bohat si daad qubool kijiyej` | 0.923 | **0.500** |
+
+- The second row is the mechanism §6.2 names: the **same sentence re-transliterated by a second
+  crowdworker**, one word apart, split across train and test. Its Urdu column is *identical*.
+- **The third row is the argument for containment inside the primary corpus**, not just on the wiki
+  path Finding M measured. The test row is a verbatim *suffix* of a longer training row —
+  containment 0.923, **Jaccard 0.500**. A Jaccard-thresholded fuzzy match misses it at any sane cut.
+
+**A defect in the reference test set, found on the way.** Nine test rows (`test_set.csv:1:606`
+through `1:614`) are spelling variants of one sentence — `jis se` / `jis say` / `jiss se`, `haasil`
+/ `hasil` — all matching the same training row, with an *identical* Urdu column. That is not a
+contamination finding but an instrument finding: **the reference transliteration split contains
+internal near-duplicates**, so any metric computed on it weights that sentence nine times. It
+belongs beside the chrF number in the report, and it is an independent reason §8.2's human-written
+set exists.
+
+**Finding P — a retention floor carried across the same unit change would have failed the freeze
+pass nine tenths of the way through, and it was caught by watching memory, not by reasoning.**
+
+Finding O's lesson recurred within the same session, on a different parameter, and this one was
+found only because two detached passes were left running and their RSS grew from 320 MB to 565 MB.
+
+- `retain_hits_above = 0.50` is the floor that makes `sweep()` exact. In *word* shingles it is
+  nearly free — unrelated documents measure mean Jaccard 0.00034, so containment ≥ 0.50 between two
+  unrelated documents is genuinely rare. In *character* shingles a 30-shingle test sentence shares
+  half its 5-grams with a long article **constantly**.
+- Measured on Urdu Wikipedia: **11.9 retained hits per document, of which 0.05% are above
+  threshold.** 99.95% noise, held in memory so a sweep could explore a range nobody would sweep.
+- Projected over a full FineWeb2 shard that is **17.7M retained hits against the 20M
+  `max_retained_hits` ceiling — 88% consumed**, i.e. a `MemoryError` hours into the multi-hour pass
+  that writes the frozen corpus, presenting as a stage-8 bug rather than as a floor set for the
+  wrong unit.
+- Fixed in `for_sentences()`, where the other three measured settings already live. Verified on real
+  text: retention falls **151×** (11.91 → 0.08 per document, 17.7M → 0.12M projected) and **every
+  verdict is identical**. `sweep()` now reports the highest *per-set* floor rather than the config's,
+  because one number covering both would be a lie about the half it does not cover.
+
+**Finding Q — one sixth of the reference transliteration split is sitting in Urdu Wikipedia, and
+nothing but containment can see it.**
+
+The largest contamination result in the project, measured on the **complete** Urdu Wikipedia dump
+and a 5% FineWeb2 sample, both at the shipped per-set settings.
+
+| | Urdu Wikipedia (complete) | FineWeb2 `urd_Arab` (5%) |
+|---|---|---|
+| documents checked | 93,606 | 74,489 |
+| training documents removed | **674 (0.72%)** | **214 (0.29%)** |
+| **Urdu-side test items compromised** | **2,729 of 16,241 = 16.8%** | **1,977 = 12.2%** |
+| Roman-side test items compromised | 0 | 0 |
+| **max Jaccard over every hit** | **0.2616** | **0.0749** |
+
+- **The mechanism is legible.** Roman-Urdu-Parl's Urdu side was crawled from the web and Urdu
+  Wikipedia is in that crawl, so §8.2's reference transliteration split overlaps a *training*
+  source it shares no lineage with. §4.5 makes transliteration chrF a Holm-corrected secondary
+  endpoint; a sixth of its Urdu side was in the training data.
+- **A Jaccard-thresholded decontamination finds none of it.** The single highest Jaccard among all
+  2,729 compromised items is **0.26**, against stage 7's removal threshold of 0.80. This is
+  Finding M's requirement demonstrated at corpus scale rather than on 49 sampled pairs.
+- **The hash half found 1 of 899 removals across every population measured**, and zero document-level
+  matches over 168,095 native-corpus documents. Finding L is confirmed as a general property of this
+  corpus rather than a Wikipedia quirk.
+- **Roman-side zero is the control that says the stage is not hallucinating.** Both native sources
+  are Arabic-script Urdu, so only the Urdu column can appear in them.
+- Two caveats on the artifacts, neither affecting the numbers above: `eval_coverage` inside the two
+  native JSONs under-reports (those passes predate the fix recording *every* compromised item, so
+  Wikipedia's field reads 193 where the truth is 2,729) — the counts here are computed from the hit
+  files, which were always complete; and the hit files are committed **filtered to the threshold**,
+  because at the pre-Finding-P floor the Wikipedia one is 890 MB.
+
+**Decisions made**
+
+| Decision | Rationale |
+|---|---|
+| The eval sets are held **exactly**; no sketch, no banding | Finding N. The sketch cannot propose the candidate, and the exact answer costs one dict lookup per corpus shingle because the eval side is bounded by §8.2 rather than by the corpus. Both scores come out exact as a consequence, which is strictly better than the estimate stage 7 has to live with. |
+| The *shingling* is imported from stage 7 even though the sketch is not | Two stages that disagreed about what a document is made of would report overlaps neither of them measured. This is the half of session 9's instruction that survives. |
+| Containment is **directed** at the eval item; `min()` is not reused | A 500-shingle eval item sharing 100 shingles with a 100-shingle training row is 20% contaminated. `min()` calls it 100% and deletes a clean document. |
+| Thresholds live on the **eval set**, not on the stage | Finding O. The same shape as stage 5's per-population thresholds, and arrived at the same way — by a single global number producing a wrong answer on a population it was not measured on. |
+| `retain_hits_above` moves with `for_sentences()`, not globally | Finding P. The floor is nearly free in word shingles and ruinous in character shingles, which is the *third* time in this session a number meant two things in two units. The global default is right for the document-unit sets and would have blown the ceiling on the sentence ones. |
+| The exact half stays, despite firing once in 35,858 documents | Its yield is not the argument. It is the **only** cover for the 30.3% of eval items too short to shingle, and it is the right instrument for a 20-character string, where partial containment is not evidence. |
+| Line-level exact matching, with a 40-character floor | Document hashing structurally cannot see an eval sentence quoted inside a longer training document, which is the shape of every sentence-unit set in §8.2. The floor is because `اہم خبریں` is a true exact match against thousands of documents and evidence of nothing. |
+| Sampling is **honest** at stage 8, uniquely among the cross-document stages | Finding G forbids sampling stages 6 and 7 because a pair statistic sampled at rate *r* is measured at *r*². Stage 8 indexes the eval side **whole** and samples only the corpus, so a contaminated document is found with probability *r*. Same exception Finding G names for the cross-source case. |
+| Stage 5 is **not** run on the eval side; stages 2 and 4 are | A test set is an instrument, not corpus. Quality-filtering it would drop exactly the items stage 8 can least afford to lose, and an item stage 5 would reject is still contamination if it is in the training data. Normalization *must* run, or the comparison measures the normalizer. |
+
+**Fixed during the session**
+
+- **`min_shingles` was one number with two meanings** — see Finding O. Now per eval set, with
+  `for_sentences()` carrying the measured trio, and a test that pins the two units apart.
+- **The first driver defaulted the shingle unit but not its companion thresholds.** Selecting
+  `char` for a sentence source while leaving the floor and the threshold at the document defaults
+  is what produced the 59× over-count; the unit is no longer separable from the numbers it was
+  measured with.
+- **The per-set thresholds were stored in an `array("f")`, and single precision rounds 0.80 *up*.**
+  float32 holds 0.80 as 0.80000001192, so a document containing **exactly** 0.80 of an eval item —
+  20 of 25 shingles, an ordinary value at these sizes — compared as below threshold and was kept.
+  The config said 0.80 and the code meant 0.80000001: silent, boundary-only, and on the *removal*
+  side. 0.90 happens to round the other way, so the bug's direction varied with the value. Caught
+  because a histogram band that could not have changed lost 16 hits between two runs. Now
+  `array("d")` — Python floats are doubles, so the stored value round-trips whatever the config
+  declares — with a parametrized regression test over five thresholds, verified to fail if the
+  `"f"` is restored.
+
+---
+
 ## Open questions for you
 
 1. ~~**Config format.**~~ **Decided in session 4: JSON, for the whole data pipeline.** Three
@@ -1199,53 +1574,103 @@ all 1,547,542 documents:
 
 ## Next session
 
-**Stage 6 is done, all six full passes landed, and every prediction carried into it has been
-answered** — three of them negatively, which is the useful direction. The one number still carrying
-an assumption is the exact post-dedup character volume of Roman-Urdu-Parl (Finding K′), which comes
-free from the two-phase pass at freeze time.
+**Stage 8 is done, its instrument was chosen against the measurement rather than the handoff, and
+its thresholds were moved by reading hits.** Session 9 handed it two instructions; Finding N
+overturned one of them (the sketch cannot propose the candidates stage 8 needs — 0.0006 probability
+on the shape Finding M identified, and no banding fixes it), and Finding O caught a 59× over-count
+in stage 8's own first run before it reached a report. The remaining stage-8 work is **blocked on
+stage 9**, which is the next task.
 
-1. **Stage 7 (MinHash near-dedup)** — and session 8 hands it four things it should not have to
-   rediscover:
-   - **The one population where near-dedup has real work to do**, from Finding L: Urdu Wikipedia
-     articles that also exist inside FineWeb2 as crawled HTML. 2,388 documents in shard 001 come
-     from wiki hosts and **not one** is byte-identical to its counterpart in the `wikimedia`
-     dump — processed wikitext against a rendered page. If stage 7 does not cluster those, it is
-     not doing the job stage 8 needs it to have done. This is the acceptance test that replaces
-     the one Finding I retired.
-   - **A measured acceptance test, written before the code.** Finding I: `urdu-wikipedia:122264`,
-     `:122214`, `:363641`, `:122110` and the geo-stub farm around them top out at Jaccard **0.677**
-     at n=2 and **0.423** at n=5. A stage 7 built at the conventional 0.8 threshold will not touch
-     them, and that is the *expected* result, not a bug to chase. Session 7's note that near-dedup
-     "should not miss" them is superseded.
-   - **A measured expectation of near-inertness on the primary source.** Finding H: FineWeb2
-     already removed 31.02% of `urd_Arab` by MinHash. Stage 7 should be reported as an assertion
-     on FineWeb2 unless it demonstrably is not, and the thing to check is whether it fires on
-     Finding F's cross-publisher republication, which is long, verbatim, and exactly what a
-     near-dedup is for.
-   - **A threshold decision that must be made on measured pairs, not inherited.** Every stage-5
-     threshold that survived the distribution still had to be moved by the 200-sample; the same
-     discipline applies to a similarity threshold. Draw candidate pairs at several thresholds and
-     read them before picking one.
-2. **Stage 8 (eval decontamination) has a requirement now, not a preference.** Finding L: for the
-   most likely contamination path in this project — §8.2's held-out evaluation text drawn from Urdu
-   Wikipedia while the same articles sit in training data as crawled HTML — **hashing returns a
-   confident zero and fuzzy matching is the entire mechanism**. §6.3.8's "hash + fuzzy match" must
-   not be implemented as "hash, and fuzzy match if there is time". A stage 8 reporting zero
-   contamination from hashes alone is reporting the artefact Finding L measured.
+**Both native-source passes completed — see Finding Q, which is the largest contamination result in
+the project and did not exist when the rest of this section was drafted.** The one thing they leave
+open is FineWeb2's *full* shard: it was measured at a 5% sample, which is honest at stage 8 (the
+eval side is indexed whole, so detection is linear in *r*, not *r*²) but scales the absolute count
+by 20×. Re-run it complete when the corpus is being written anyway, **one pass at a time** — three
+concurrent passes managed only ~16% CPU utilisation between them and the 2 GB scan starves
+everything else on disk — and with the current code, whose retention floor makes the hit file
+~500× smaller.
+
+1. **Stage 9 (split creation) — and it is now on the critical path for two stages, not one.**
+   - Finding E's consequence applies directly: splits must select **randomly across the shard**,
+     never a prefix or a contiguous block, or arm A becomes systematically older web text than arm
+     B and the primary endpoint is confounded with crawl date. `stable_unit()` exists for this.
+   - Finding G's lesson applies in the softened form: a split assignment is a per-document property
+     and samples fine, but any *pairwise* check over the splits does not.
+   - Arm A's 25M corpus is a **seeded subsample of** the frozen 100M corpus, per PRD §6.1 — not a
+     separate selection.
+2. **Then the second stage-8 run, which is the one Finding L was really about.** §8.2 draws
+   held-out evaluation text from Urdu Wikipedia while the same articles sit in the training data as
+   crawled FineWeb2 HTML — session 9 measured that population at 633 cross-source clusters where
+   exact dedup found 1, with 11 of 49 sampled pairs below a 0.80 Jaccard cut. Stage 8 at
+   containment ≥ 0.80 is built for exactly that and the number is not yet on the record, because
+   the held-out split does not exist until stage 9 makes it. **This is the most important
+   decontamination run in the project and it has not happened.**
+3. **Run the two deferred stage 7 passes at freeze time**, when the corpus is being written anyway:
+   - **FineWeb2 self-similarity, complete shard.** Finding H predicts near-inertness (31.02%
+     already removed upstream by MinHash) and that prediction is currently untested. Measured cost:
+     stages 2–5 run at ~380 documents/second, so ~68 minutes per pass and ~2.3 hours two-pass.
+     Finding G forbids sampling it — a pair statistic sampled at rate *r* is measured at *r²*.
+   - **Roman-Urdu-Parl, with `shingle_unit="char"`.** Its rows are ~10-word sentences carrying six
+     word-5-grams, below anything the estimator can work with; the config option exists for exactly
+     this and has not been pointed at real text.
 3. **Then stages 9 (splits) and 10 (tokenization + packing)**, plus the PII regex pass and the
    corpus manifest/statistics rollup — the remaining Weeks 3–4 items. Stage 9 inherits Finding G's
    lesson directly: a split assignment is a per-document property and samples fine, but any
    *pairwise* check over the splits does not.
+
+**A cheap halving of every future stage 7 run, measured but not taken.** The driver reads the
+corpus twice because stage 6 is two-phase, and stages 2–5 are 90% of that cost (profiled: stage 5
+53%, stage 3 27%, stage 4 9%). But stage 6 knows its survivors at the end of *phase 1* — that is
+what `--index-only` already claims — so a driver that sketched during phase 1 and applied stage 6's
+verdict from the index would need one pass, not two. It needs a small public accessor on
+`ExactDeduplicator` to avoid reaching into `_best`. Worth taking before the FineWeb2 and
+Roman-Urdu-Parl passes above, which is where it pays for itself.
 
 **Do not start** tokenizer work or modelling. The tokenizer is timeboxed to Week 5.
 
 **A note on running long passes here.** Stage 6 is the first stage that must read a source *whole*
 — Finding G — and tracked background jobs in this environment were killed three times at somewhere
 under 14 minutes. Foreground calls cap at 10 minutes. What worked was `nohup … &` as a detached
-process. Stages 7 and 9 have the same shape, so budget for it.
+process, and session 9 confirms it: four stage 7 passes of 20–40 minutes each ran that way without
+trouble, several of them concurrently (the machine has 16 cores and every stage is
+single-threaded, so parallel passes over *different* questions are close to free). Stage 9 has the
+same shape, so budget for it.
+
+**Session 10 adds a correction to the "close to free" claim.** Three concurrent stage-8 passes on
+this machine ran at roughly a third of the CPU they would have had alone — 820 CPU-seconds over 80
+minutes of wall clock each — so parallel passes are free in *cores* and are not free in wall time
+when they contend on memory bandwidth. Budget stage 8 separately: it runs at ~400 documents/s on
+sentence rows and **~50–70 documents/s on Wikipedia-length articles**, because character shingling
+of a 3,500-character document is ~3,500 hashes and lookups. The complete Urdu Wikipedia dump is
+therefore ~25–30 minutes alone, and noticeably longer beside anything else.
 
 **Carried forward**
 
+- **⚠️⚠️ 16.8% of the reference transliteration split's Urdu side is in Urdu Wikipedia (Finding Q),
+  and Wikipedia is a training source.** §4.5 makes transliteration chrF a Holm-corrected secondary
+  endpoint. Stage 8 removes the contaminated *training* documents, which is the correct action and
+  does **not** repair the metric: the test items remain compromised for any model trained on a
+  corpus assembled before this ran. Two things follow. (a) The freeze must run stage 8 against these
+  eval sets — it is no longer optional hygiene. (b) The report must state the 16.8% and say the
+  reference-set transliteration number is weaker evidence than the human-written set of §8.2, which
+  is now carrying more weight than originally planned.
+- **⚠️ The reference transliteration split contains internal near-duplicates, and that is an
+  instrument defect independent of contamination.** Nine test rows (`test_set.csv:1:606`–`1:614`)
+  are spelling variants of one sentence with an *identical* Urdu column. Any chrF computed on that
+  split weights that sentence nine times. §4.5 makes transliteration chrF a Holm-corrected
+  secondary endpoint, so this belongs in the results section next to the number, and it is an
+  independent argument for §8.2's human-written set. **Not yet measured at the whole-split level** —
+  the obvious check is stage 7 pointed at the test split alone, which is one cheap pass.
+- **Stage 8's precision is 0.73 and its three errors are one named family.** Every false positive
+  in the adjudicated 11 was a byline whose year differs (`Sayeda shagufata , May 17 , 2007` against
+  `... 2009`). Left in deliberately — a false positive costs one training row out of millions, a
+  false negative costs the validity of an evaluation number — but the report must state the
+  precision rather than imply the removals are all genuine. If it is ever worth fixing, the fix is
+  a byline rule in stage 5, not a threshold here.
+- **Two of §8.2's five test sets do not exist yet** — the ~200 human-written transliteration pairs
+  and the ~300 real-OCR lines. Both are sentence/line unit, so `EvalSetSpec.for_sentences()` is the
+  variant they inherit, and **neither has been through stage 8**. The held-out native split is the
+  third, and it is blocked on stage 9.
 - **The 200-sample validation was adjudicated by Claude, not by a native speaker.** This is the
   one place the deliverable does not yet match what §6.3.5 implies. The judgements are real work
   and they found four wrong thresholds, but "200 manually inspected samples" in a report should
@@ -1279,11 +1704,23 @@ process. Stages 7 and 9 have the same shape, so budget for it.
   threshold — the rule counts HTML tags, and lowering it to catch them costs ~8 clean biographies
   per 2 stubs. The fix belongs in Wikipedia-specific preprocessing ahead of stage 5, not in the
   threshold. Two of the shipped filter's four false accepts would remain regardless; the other two
-  were booked as "the stub farm, which is stage 7's" — **and session 8's Finding I retires that
-  booking.** No stub pair reaches Jaccard 0.7 at any shingle size, so all four are residue that
-  survives the whole pipeline. `reports/quality_validation.md`'s error budget needs the sentence
-  corrected the next time it is touched: stage 5's false-accept rate is the filter's, not a debt
-  owed to a later stage.
+  were booked as "the stub farm, which is stage 7's" — **and session 8's Finding I retired that
+  booking, which session 9 has now confirmed against the shipped stage 7.** Run at threshold 0.50
+  with high-recall banding, all four come back `kept=True, cluster_size=1`; the highest pairwise
+  similarity among them is J = 0.258 and four of the six pairs measure 0.000. All four are residue
+  that survives the whole pipeline. `reports/quality_validation.md`'s error budget needs the
+  sentence corrected the next time it is touched: stage 5's false-accept rate is the filter's, not
+  a debt owed to a later stage.
+- **Stage 7's threshold is validated against clusters and pairs, not against read documents.** The
+  0.80 decision rests on the largest-cluster collapse (9,979 documents in one component at 0.30
+  against 23 at 0.80) and on 168 sampled pairs carrying their measured similarity — a stronger
+  footing than stage 5 had before its 200-sample, but not a fluent speaker saying "yes, these two
+  are the same document". `reports/minhash_pairs_*.jsonl` is built to be read that way, and the
+  same native-speaker sitting that owes stage 5 its 29 disagreements could settle this too.
+- **Chaining is bounded by measurement, not by design.** Nothing in stage 7 caps a component's
+  size; the threshold table is the reason to believe it stays small at 0.80 on Wikipedia. A source
+  with heavier templating could behave differently, so `largest_cluster` is the number to watch
+  when FineWeb2 and Roman-Urdu-Parl are run. Capping it would be a second threshold nobody swept.
 - **Paragraph-level dedup is implemented, measured, and deliberately off.** §6.3.6 asks for
   document *and* paragraph level; stage 6 counts the second and rewrites nothing, because dropping
   a line out of a document is a rewrite that invalidates the 400-character floor stage 5 applied

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "acquisition_version": "1.0.0",
   "sources_fingerprint": "54ecc5bd1163",
-  "written_at": "2026-08-03T16:09:52+00:00",
+  "written_at": "2026-08-04T22:22:19+00:00",
   "files": [
     {
       "source": "fineweb2-urd_Arab",
@@ -15,7 +15,20 @@
       "size": 71344862,
       "split": "test",
       "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-2/resolve/af9c13333eb981300149d5ca60a8e9d659b276b9/data/urd_Arab/test/000_00000.parquet",
-      "verified_at": "2026-08-03T16:00:02+00:00"
+      "verified_at": "2026-08-04T21:41:00+00:00"
+    },
+    {
+      "source": "fineweb2-urd_Arab",
+      "repo_id": "HuggingFaceFW/fineweb-2",
+      "revision": "af9c13333eb981300149d5ca60a8e9d659b276b9",
+      "license": "ODC-By-1.0",
+      "path": "data/urd_Arab/train/000_00000.parquet",
+      "local_path": "data\\raw\\fineweb2-urd_Arab\\data\\urd_Arab\\train\\000_00000.parquet",
+      "sha256": "a3e64b92cb606bca9ef522bb82d15828beef4825e8998bb43f6e142cc947338d",
+      "size": 4844148326,
+      "split": "train",
+      "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-2/resolve/af9c13333eb981300149d5ca60a8e9d659b276b9/data/urd_Arab/train/000_00000.parquet",
+      "verified_at": "2026-08-04T22:22:19+00:00"
     },
     {
       "source": "fineweb2-urd_Arab",
@@ -28,7 +41,7 @@
       "size": 2024610997,
       "split": "train",
       "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-2/resolve/af9c13333eb981300149d5ca60a8e9d659b276b9/data/urd_Arab/train/001_00000.parquet",
-      "verified_at": "2026-08-03T15:59:37+00:00"
+      "verified_at": "2026-08-04T21:41:00+00:00"
     },
     {
       "source": "roman-urdu-parl",
@@ -83,7 +96,7 @@
       "verified_at": "2026-08-03T15:48:08+00:00"
     }
   ],
-  "total_bytes": 3456691057,
+  "total_bytes": 8300839383,
   "attribution": [
     "fineweb2-urd_Arab — FineWeb2, HuggingFaceFW (ODC-By-1.0, https://opendatacommons.org/licenses/by/1-0/)",
     "roman-urdu-parl — Roman-Urdu-Parl (Mavkif/Roman-Urdu-Parl-split) (Apache-2.0, https://www.apache.org/licenses/LICENSE-2.0)",

@@ -334,9 +334,6 @@ class SequencePacker:
         self._bytes = 0
         self._documents = 0
         self._separators = 0
-        # Documents that started in an earlier sequence and continue into this one still count as
-        # documents seen, but must not be double-counted as *starting* here.
-        self._carried_document = False
         self.dropped_tokens = 0
         self.dropped_bytes = 0
         # Everything the tokenizer produced, separators included, whether or not it reached a
@@ -353,7 +350,6 @@ class SequencePacker:
             "bytes": self._bytes,
             "documents": self._documents,
             "separators": self._separators,
-            "carried_document": self._carried_document,
             "dropped_tokens": self.dropped_tokens,
             "dropped_bytes": self.dropped_bytes,
             "encoded_tokens": self.encoded_tokens,
@@ -371,7 +367,6 @@ class SequencePacker:
         self._bytes = int(state["bytes"])
         self._documents = int(state["documents"])
         self._separators = int(state["separators"])
-        self._carried_document = bool(state.get("carried_document", False))
         self.dropped_tokens = int(state.get("dropped_tokens", 0))
         self.dropped_bytes = int(state.get("dropped_bytes", 0))
         self.encoded_tokens = int(state.get("encoded_tokens", 0))
@@ -420,7 +415,6 @@ class SequencePacker:
         # It still occupies the next one, so it is counted there too — the per-sequence figure is
         # "documents with text in this sequence", which is what a reader of the manifest wants.
         self._documents = 1 if continues else 0
-        self._carried_document = continues
         return sequence
 
     def _drop_partial(self) -> None:
@@ -433,7 +427,6 @@ class SequencePacker:
         self._bytes = 0
         self._documents = 0
         self._separators = 0
-        self._carried_document = False
 
     def finish(self) -> None:
         """End the stream. The residual partial sequence is dropped and counted, never padded."""

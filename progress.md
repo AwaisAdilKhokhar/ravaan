@@ -78,7 +78,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | What U counts — §6.1 vs §4.3 resolved (Finding R) | §4.3, §6.1 | ✅ answered |
 | **PRD amended to v2.2 for Finding R** | §0.2, §4.3, §6.1, §8.2, §10, §11 | ✅ |
 | Gate G1 checks per-population sufficiency, not just the total (Finding U) | §11 | ✅ |
-| FineWeb2 train shard 000 fetched — the code-switched fix | §6.2 | 🟡 downloading |
+| FineWeb2 train shard 000 fetched + verified — the code-switched fix | §6.2 | ✅ 4.84 GB |
 | Full passes: Urdu Wikipedia (complete); FineWeb2 at 5% | §6.3.9 | ✅ |
 | One unsampled pass over **all** sources together | §6.3.9 | ⬜ deferred to freeze |
 | **Tokenization + packing (stage 10)** | §6.3.10 | ✅ |
@@ -1861,10 +1861,17 @@ which is session 9's Finding I looking back out of the packed corpus. Mean bytes
 
 **Also done**
 
-- **FineWeb2 train shard 000 fetch started** (4.84 GB — the manifest's figure, not the ~2 GB the
-  earlier note implied). This is the code-switched fix, and Finding U raises its urgency: the
-  requirement is 6.18M rather than 5.88M once both held-out sets are counted against the pool, so
-  the shortfall is 8%, not 3%.
+5. **FineWeb2 train shard 000 fetched and verified** — **4.84 GB**, not the ~2 GB the earlier note
+   implied, and ~50 minutes rather than ~25. All three FineWeb2 files now verify against their
+   pinned digests; `data/manifest.json` records 8.30 GB across three files. This is the
+   code-switched fix, and Finding U raised its urgency: the requirement is 6.18M rather than 5.88M
+   once both held-out sets are counted against the pool, so the shortfall is 8%, not 3%.
+
+6. **`scripts/split.py --measure-only`** — phase 1 and stop, printing pool totals per population
+   and writing the plan. Added because the freeze's central operation is "measure once over all
+   sources, then apply that one plan everywhere with `--plan-in`", and running that as a two-phase
+   pass doubles the most expensive read in the project for a phase 2 whose output is discarded.
+   It refuses `--plan-in`, which is its opposite.
 
 **Finding U — Gate G1 returned `pass` on a corpus from which arm B cannot be assembled, and the
 number it printed was 11.7× past the threshold.**

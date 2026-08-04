@@ -150,6 +150,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--plan-out", help="write the solved plan (with its histogram) here")
     parser.add_argument(
+        "--measure-only",
+        action="store_true",
+        help="run phase 1 and stop. The freeze's 'measure once over all sources, then apply that "
+        "one plan everywhere' is exactly this, and running it as a two-phase pass doubles the "
+        "most expensive read in the project for a phase 2 whose output is thrown away",
+    )
+    parser.add_argument(
         "--assignments-out", help="write every assignment here as JSONL, for stage 10"
     )
     parser.add_argument(
@@ -221,6 +228,46 @@ def main(argv: list[str] | None = None) -> int:
             f"  measured {assigner.log.measured:,} documents into {config.buckets:,} buckets",
             file=sys.stderr,
         )
+
+    if args.measure_only:
+        if args.plan_in:
+            raise SystemExit("--measure-only and --plan-in are opposites; pick one")
+        if args.plan_out:
+            plan.to_json_file(args.plan_out)
+            print(f"wrote the plan to {args.plan_out}", file=sys.stderr)
+        # Phase 1 measures per population into the histogram, so the pool totals are available
+        # without assigning anything. This is what the freeze needs to size the corpus and what
+        # Gate G1's mixture check reads; the arm and split counts are phase 2's and are not here.
+        print("\nstage 9 phase 1 — pool totals, before any assignment", file=sys.stderr)
+        for population in config.populations:
+            chars = sum(plan.histogram.get(population, []))
+            scaled = chars * assigner.log.scale
+            tokens = scaled / config.chars_per_token[population]
+            print(
+                f"    {population:<14} {chars:>15,} chars measured  "
+                f"{scaled / 1e6:>10.1f}M scaled  ~{tokens / 1e6:>8.2f}M tokens  "
+                f"unmet_arms={plan.bands[population].unmet_arms or '()'}",
+                file=sys.stderr,
+            )
+        payload = {
+            "measure_only": True,
+            "sources": args.source,
+            "sample_rate": sample_rate,
+            "config_fingerprint": config.fingerprint(),
+            "pool_chars": {
+                p: sum(plan.histogram.get(p, [])) for p in config.populations
+            },
+            "bands": {p: b.to_dict() for p, b in sorted(plan.bands.items())},
+            "stage2_encoding": pipeline.stage2.to_dict(),
+            "stage3_langid": pipeline.stage3.to_dict(),
+            "stage5_quality": {s: q.to_dict() for s, q in sorted(pipeline.stage5.items())},
+        }
+        report = json.dumps(payload, indent=2, ensure_ascii=False)
+        if args.json:
+            Path(args.json).write_text(report + "\n", encoding="utf-8", newline="\n")
+        else:
+            print(report)
+        return 0
 
     print("stage 9 phase 2: assigning", file=sys.stderr)
     heldout_written = 0

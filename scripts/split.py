@@ -331,6 +331,23 @@ def main(argv: list[str] | None = None) -> int:
         f"{gate['threshold'] / 1e6:.0f}M threshold{scaled}",
         file=sys.stderr,
     )
+    # The aggregate is not the whole gate (PRD v2.2 §11): an arm is drawn from the pools at a
+    # fixed mixture, so the binding constraint is usually one population and not the total.
+    print(
+        f"    aggregate: {gate['verdict_aggregate']}   "
+        f"mixture: {gate['verdict_mixture']}   "
+        f"arms fundable at the mixture: {gate['arms_fundable'] or 'none'}",
+        file=sys.stderr,
+    )
+    for population, entry in gate["populations"].items():
+        margin = entry["margin"]
+        flag = "  SHORT" if margin is not None and margin < 1.0 else ""
+        print(
+            f"    {population:<14} ~{entry['supply_tokens'] / 1e6:>8.2f}M supply against "
+            f"{entry['required_tokens'] / 1e6:>7.2f}M for arm {gate['required_for_arm']} "
+            f"+ held-out = {margin:.2f}x{flag}",
+            file=sys.stderr,
+        )
     if payload.get("unmet_heldout"):
         # Printed before the arms because it is the upstream cause when both fire: the held-out
         # bands are solved first, so a pool below §6.1's ~5K sequences starves train and every arm

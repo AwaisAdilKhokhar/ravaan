@@ -13,7 +13,9 @@ first.**
   thresholds are chosen the same way ([`reports/decontamination.md`](reports/decontamination.md)).
   **Session 11 built stage 9 and ran the decontamination pass it was blocking**
   ([`reports/splits.md`](reports/splits.md)) — and found that PRD §6.1 and §4.3 disagree about what
-  U counts, in a direction that would have put arm A 6× short of the crossover (Finding R). Only
+  U counts, in a direction that would have put arm A 6× short of the crossover (Finding R).
+  **Session 12 paid that debt: PRD v2.2 is amended**, and tightening Gate G1 to match it found that
+  the gate reported `pass` on a corpus from which arm B cannot be assembled (Finding U). Only
   stage 10 (tokenization + packing) and the PII pass remain before the freeze.
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
@@ -21,8 +23,9 @@ first.**
   at 25M, 1 at 100M. PRD amended to v2.1; preregistration committed.
 - **Preregistration:** ✅ committed [`reports/preregistration.md`](reports/preregistration.md) —
   4 falsifiable predictions, before any training.
+- **PRD version:** **v2.2** (2026-08-05) — §0.2 amends §6.1, §4.3, §8.2, §10 and §11 for Finding R.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 498 passing (69 normalization · 69 splits · 60 decontamination · 57 encoding ·
+- **Tests:** 501 passing (72 splits · 69 normalization · 60 decontamination · 57 encoding ·
   57 acquisition · 52 minhash · 43 quality · 41 dedup · 32 langid · 18 shards)
 - **Committed** through session 11, on branch `stages-7-and-8` (main is at session 8; fast-forward
   it when convenient). Sessions 6 and 7 are one commit — stage 5, its 200-sample validation and the
@@ -71,7 +74,10 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | Full pass: FineWeb2 complete shard | §6.3.8 | ⬜ deferred to freeze |
 | Second stage-8 run, against the held-out split | §6.3.8 | ✅ 15/6,748 held-out items at 5%; ~4.4% projected |
 | **Split creation (stage 9)** | §6.3.9 | ✅ |
-| What U counts — §6.1 vs §4.3 resolved (Finding R) | §4.3, §6.1 | ✅ answered; **PRD amendment owed** |
+| What U counts — §6.1 vs §4.3 resolved (Finding R) | §4.3, §6.1 | ✅ answered |
+| **PRD amended to v2.2 for Finding R** | §0.2, §4.3, §6.1, §8.2, §10, §11 | ✅ |
+| Gate G1 checks per-population sufficiency, not just the total (Finding U) | §11 | ✅ |
+| FineWeb2 train shard 000 fetched — the code-switched fix | §6.2 | 🟡 downloading |
 | Full passes: Urdu Wikipedia (complete); FineWeb2 at 5% | §6.3.9 | ✅ |
 | One unsampled pass over **all** sources together | §6.3.9 | ⬜ deferred to freeze |
 | Tokenization + packing (stage 10) | §6.3.10 | ⬜ |
@@ -1734,6 +1740,95 @@ Wikipedia documents; the corpus is FineWeb2 at 5%.
   are committed with their histograms stripped (2.9 KB rather than 2.9 MB) because the freeze
   supersedes them, while `plan_wikipedia.json` keeps its histogram as the only complete-source
   measurement and the one the Week 5 re-solve is demonstrated against. Now refuses.
+
+---
+
+### Session 12 — 2026-08-05
+
+**Done**
+
+1. **PRD amended to v2.2 for Finding R** — the documentation debt session 11 named as the first
+   thing owed. §0.2 carries the changelog in the same shape §0.1 used for Finding A, and every
+   correction is marked inline rather than silently applied.
+   - **§4.3** now says what U counts: an arm's *total* unique-token budget across all three
+     populations, which is what its epoch count divides 9.9B by.
+   - **§6.1** is split into two tables — **pool targets** (what to collect: 120M + 40M + 10M ≈
+     170M) and **arm budgets** (what to train on: arm B = 70.59M native + 23.53M Roman + 5.88M
+     code-switched, arm A a quarter of each) — with the mixture, 120 : 40 : 10, stated as the thing
+     held fixed across arms.
+   - **The headroom claim is corrected.** v2.1 said "100M for arm B + ~20% headroom for filtering
+     losses". Arm B's native share is 70.59M, the pools total ~170M against its U of 100M, and the
+     headroom is **1.70× on every component** — it falls out of 170/100 and is identical for all
+     three by construction, which is a better sentence than the one it replaces.
+   - **§8.2 and §10** picked up the two consequential edits session 11 decided and never wrote down:
+     two held-out sets rather than one (G4 reads validation and may cut arm B on it, so §8.2's
+     reported number cannot come from the same set), and the frozen corpus described as a ~170M
+     pool rather than "~120M tokens".
+   - Nothing in the design changed. Stage 9 was built to the corrected reading before the amendment
+     was written, so there is no code change owed *by* the amendment — but writing it produced one.
+
+2. **Gate G1 now checks the mixture, not just the total (PRD v2.2 §11).** `gate_g1()` reports
+   `verdict_aggregate` and `verdict_mixture` separately, takes the more severe, and carries the
+   per-population supply / requirement / margin. `scripts/split.py` prints all of it.
+
+**Finding U — Gate G1 returned `pass` on a corpus from which arm B cannot be assembled, and the
+number it printed was 11.7× past the threshold.**
+
+Writing §11's amendment meant deciding what "clean corpus ≥ 100M tokens" means once §6.1 has three
+pools and a fixed mixture. It does not mean what the code checked.
+
+| | |
+|---|---|
+| aggregate, session 11's projected corpus | **1,167.9M** clean tokens against a 100M threshold → `pass` |
+| `code_switched` supply | **5.70M** |
+| `code_switched` needed for arm B **+ both held-out sets** | **6.18M** |
+| margin | **0.92× — short** |
+| corrected verdict | **`arm_a_only`** |
+
+- **The binding constraint is a population, not the total**, and the two are not close: native Urdu
+  sits at 14.83× while code-switched sits at 0.92×. An aggregate gate cannot see that, and the
+  wrong answer is *plausible* — 1,167.9M against a 100M threshold does not look like a corpus that
+  fails a gate.
+- **This is Finding S one layer up.** There `gate_g1()` read the right quantity in the wrong units;
+  here it read the right number and the wrong *quantity*. Both land on the one output of stage 9
+  that is a project decision rather than a statistic. §11's ladder cuts arm B on this verdict.
+- **The shortfall is 8%, not the 3% session 11 recorded.** 5.88M is arm B's *training* share; the
+  validation and test sets are carved from the same pool at the same mixture and are disjoint from
+  the arms, so the requirement is 5.88M + 2 × 2.56M × 5.88% = **6.18M**. The recommended fix is
+  unchanged and still covers it with room (shard 000 takes the population to ~10.3M), but 0.92× is
+  the number to quote.
+- **It was already visible** as `unmet_arms` in the stage-9 logs. What changed is that it is now a
+  gate verdict rather than a line in a log nobody reads as one — which is the same argument that put
+  `unmet_heldout` in its own field in session 11.
+
+**Decisions made**
+
+| Decision | Rationale |
+|---|---|
+| G1's two conditions are reported **separately** and the verdict is the more severe | "Below 25M" and "no pool can fund an arm" are different projects with different fallbacks. A single merged verdict names neither, and §11's ladder is chosen by the operator reading the cause. Same argument as `unmet_heldout` vs `unmet_arms` |
+| The held-out sets **count against the pool** in G1's requirement | They are carved from the pool at the arm mixture and are disjoint from the arms, so a pool that supplies exactly arm B supplies no validation set. Excluding them would make the gate pass a corpus that cannot produce the instrument the gate exists to protect |
+| The per-population requirement is computed against the **largest** arm | That is what G1's `pass` means. The smaller arms are reported through `arms_fundable`, which is exactly §11's fallback ladder expressed in the units the fallback is taken in |
+| PRD §6.1's headroom is stated as **1.70× on every component** rather than per line | It is 170/100 and is identical for all three by construction. Quoting three numbers would invite the reader to think they were chosen independently — which is the mistake v2.1's "~20% headroom" already made once |
+| The v2.2 amendment does **not** touch §4.3's numbers, §9's budget or §12's risk table | Finding R is a reading, not a redesign. Every arithmetic result in those sections was already computed under the correct reading — arm B's 0.09× of C_crit is the proof, since it is only reproducible that way |
+
+**Fixed during the session**
+
+- **`scripts/crossover.py` crashed on any redirected stdout on Windows.** It prints `≈`, `→` and
+  `×`; Windows picks cp1252 for a pipe, and `reports/splits.md` §1 tells the reader to run exactly
+  this command. Every invocation in this session's own verification died before printing a number.
+  Now reconfigures stdout to UTF-8. This is the fourth platform-default bug in the repo (session 2's
+  `.gitattributes`, session 4's `Path.write_text` CRLF and `.gitignore` re-inclusion) and the first
+  to hit a *reader* rather than the corpus.
+- Its docstring advertised the default invocation as "Ravaan as specified in PRD v2", which has been
+  v2.0's specification since v2.1 landed. Relabelled, and the three current readings are given as
+  examples: arm A, arm B, and Finding R's alternative.
+
+**Verified, not assumed**
+
+All three of Finding R's readings reproduce from the script rather than from the report's table:
+arm A at U = 25M / 396 epochs is **1.79× past** C_crit, the native-only reading at 75M / 132 is
+**6× short** and needs ~802 epochs, and arm B at 100M / 99 is 11× short = **0.09×**, which is
+exactly §4.3's published figure and the reason the total-U reading is the intended one.
 
 ---
 

@@ -430,14 +430,57 @@ def test_a_sufficient_pool_reports_no_unmet_heldout():
     assert assigner.plan.bands["urdu"].unmet_heldout == ()
 
 
+def _stock_pool(log, tokens: float) -> None:
+    """Fill every pool at §6.1's mixture so `tokens` clean tokens are available in proportion."""
+    for population, share in log.config.mixture.items():
+        chars = tokens * share * log.config.chars_per_token[population]
+        log.chars[f"{population}/train"] = int(chars)
+
+
 def test_gate_g1_reports_the_prd_fallback_ladder():
     log = SplitAssigner(SplitConfig()).log
-    log.chars["urdu/train"] = int(120e6 * 3.5)
+    _stock_pool(log, 170e6)
     assert log.gate_g1()["verdict"] == "pass"
-    log.chars["urdu/train"] = int(50e6 * 3.5)
+    _stock_pool(log, 50e6)
     assert log.gate_g1()["verdict"] == "arm_a_only"
-    log.chars["urdu/train"] = int(5e6 * 3.5)
+    _stock_pool(log, 5e6)
     assert log.gate_g1()["verdict"] == "stop"
+
+
+def test_gate_g1_fails_on_one_short_population_with_the_aggregate_far_past_threshold():
+    """PRD v2.2 §11. Session 11 measured native Urdu at 15.6x margin and code_switched at 0.97x.
+
+    An aggregate-only gate says PASS on that corpus, and the shortfall surfaces only as an
+    `unmet_arms` line in a stage-9 log nobody reads as a gate decision.
+    """
+    log = SplitAssigner(SplitConfig()).log
+    _stock_pool(log, 1_000e6)
+    log.chars["code_switched/train"] = int(
+        5.0e6 * log.config.chars_per_token["code_switched"]
+    )  # arm B needs 5.88M + its held-out share
+
+    gate = log.gate_g1()
+    assert gate["clean_tokens_estimated"] > 900e6  # the total is nowhere near the constraint
+    assert gate["verdict_aggregate"] == "pass"
+    assert gate["verdict_mixture"] == "arm_a_only"
+    assert gate["verdict"] == "arm_a_only"
+    assert gate["arms_fundable"] == ["A"]
+    assert gate["populations_short"] == {"B": ["code_switched"]}
+    assert gate["populations"]["code_switched"]["margin"] < 1.0
+    assert gate["populations"]["urdu"]["margin"] > 1.0
+
+
+def test_gate_g1_counts_both_held_out_sets_against_the_pool():
+    """Held-out is carved from the pool and is disjoint from the arms, so it is part of demand."""
+    config = SplitConfig()
+    log = SplitAssigner(config).log
+    _stock_pool(log, 100e6)  # exactly arm B's U, with nothing left for validation or test
+    assert log.gate_g1()["verdict_mixture"] == "arm_a_only"
+
+    # Clear of the boundary rather than exactly on it: _stock_pool truncates to whole characters,
+    # so an exact-equality fixture would be testing int() rather than the gate.
+    _stock_pool(log, 100e6 + 2 * config.heldout_tokens + 1_000)
+    assert log.gate_g1()["verdict_mixture"] == "pass"
 
 
 # ---------------------------------------------------------------------------
@@ -514,7 +557,7 @@ def test_gate_g1_scales_a_sampled_pass_to_the_full_corpus():
     decision rather than a statistic.
     """
     log = SplitAssigner(SplitConfig(), sample_rate=0.05).log
-    log.chars["urdu/train"] = int(52_000_000 * 3.5)  # ~52M tokens measured at 5%
+    _stock_pool(log, 52_000_000)  # ~52M tokens measured at 5%
     gate = log.gate_g1()
     assert gate["clean_tokens_measured"] == pytest.approx(52_000_000, rel=0.01)
     assert gate["clean_tokens_estimated"] == pytest.approx(52_000_000 * 20, rel=0.01)
@@ -524,7 +567,7 @@ def test_gate_g1_scales_a_sampled_pass_to_the_full_corpus():
 
 def test_gate_g1_does_not_scale_an_unsampled_pass():
     log = SplitAssigner(SplitConfig()).log
-    log.chars["urdu/train"] = int(52_000_000 * 3.5)
+    _stock_pool(log, 52_000_000)
     gate = log.gate_g1()
     assert gate["clean_tokens_estimated"] == gate["clean_tokens_measured"]
     assert gate["verdict"] == "arm_a_only"

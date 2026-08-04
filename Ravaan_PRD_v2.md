@@ -1,8 +1,8 @@
 # Ravaan v2: Does Masked Diffusion Pay Off for a Genuinely Low-Resource Language?
 
-**Version:** 2.1
-**Status:** Amended 2026-08-03 after the Week 1 literature review (Gate G0 — passed). See §0.1.
-**Supersedes:** v2.0 (August 3, 2026); v1.1 (August 2, 2026)
+**Version:** 2.2
+**Status:** Amended 2026-08-05 during the Weeks 3–4 corpus build, after stage 9 found §6.1 and §4.3 describing different corpora (Finding R). See §0.2. Previously amended 2026-08-03 after the Week 1 literature review (Gate G0 — passed); see §0.1.
+**Supersedes:** v2.1 (August 3, 2026); v2.0 (August 3, 2026); v1.1 (August 2, 2026)
 **Project type:** Open-source NLP research and portfolio project
 **Development model:** Solo, part-time, rented spot GPUs
 **Hard compute cap:** USD 150
@@ -42,6 +42,23 @@ The Week 1 literature review (`reports/literature_review.md`) passed Gate G0 on 
 | Preregistration | Named in §4.5, unwritten | **Written and committed** — `reports/preregistration.md` | Committed 2026-08-03, before any training |
 
 **Unchanged:** the matched pair (§4.1), task mixture shares (§4.2, but see the open question on infilling share), model specification (§5), tokenizer (§7), evaluation (§8), the $150 cap (§9), and the definition of done (§14).
+
+---
+
+## 0.2 What changed in v2.2, and why
+
+Building stage 9 (split creation) required deciding which documents constitute an arm, and that exposed a contradiction between two sections written at different times: **§6.1 and §4.3 did not describe the same corpus.** Nothing in the experimental design changes — v2.2 is a documentation correction to a load-bearing number, made before the corpus freeze rather than after. The full argument and its arithmetic are in `reports/splits.md` §1.
+
+| Area | v2.1 | v2.2 | Reason |
+|---|---|---|---|
+| What **U** counts | Undefined. §6.1's per-component targets invited "U = the clean native Urdu component"; §4.3 assumed "U = the whole training set" | **U is an arm's total unique-token budget, summed across all three populations** | §4.3's own epoch arithmetic settles it: 396 × 25M = 9.9B and 99 × 100M = 9.9B, so epochs are counted over the whole training set — as they are in Prabhudesai et al.'s fitted law, where U *is* the set the model repeats over. Arm B's stated 0.09× of C_crit is only reproducible under this reading |
+| §6.1's component table | Read as arm budgets | **Pool targets** — how much to collect — with the arm budgets stated separately | Under the other reading arm A is 25M + 40M + 10M = 75M unique tokens for 132 epochs, which is **6× short** of C_crit instead of 1.79× past it. That is Finding A's error a second time, on the arm carrying the primary endpoint. Reproduce both with `scripts/crossover.py` |
+| Arm composition | Unstated | **Fixed population mixture, 120 : 40 : 10** — §6.1's targets in proportion. Arm B = 70.59M native + 23.53M Roman + 5.88M code-switched; arm A is a quarter of each | §4.1 requires the arms to differ in size and nothing else. Once there is more than one population that has no other meaning: scaling only the native component would confound U with source mix, the same failure §6.1 already forbids for crawl date |
+| §6.1 headroom claim | "100M for arm B + ~20% headroom" | Pools total ~170M against arm B's 100M, so **every component carries 1.70× headroom** | Arm B's native share is 70.59M, not 100M. The ~120M native target was never 1.2× of anything |
+| **G1** (§11) | Aggregate clean-token count only | Aggregate **and** per-population sufficiency at the arm mixture | The binding constraint is not the total. Code-switched supply currently measures ~0.97× of arm B's 5.88M while the aggregate sits at 15× margin, so G1 as written could pass on a corpus from which arm B cannot be assembled |
+| Held-out eval (§6.1, §8.2) | One decontaminated split, ~5K sequences | **Two** — validation and test, ~5K sequences each, carved at the arm mixture | G4 (§11) reads arm A's validation curves at mid-W10 and may cut arm B on what it sees. That is a decision taken on validation data, so §8.2's reported held-out number cannot come from the same set. Costs 5K sequences from a pool with 15× margin. Carving both at the arm mixture is required because §8.3 reports validation BPB *by script*: a held-out mixture differing from the training mixture would make aggregate BPB move with the mixture rather than with the model |
+
+**Unchanged:** every number in §4.3, §4.5, §5, §9 and §12. Stage 9 was built to the corrected reading before this amendment was written, so no code changes either — `reports/splits.md` and `ravaan/data/splits.py` already implement it.
 
 ---
 
@@ -124,6 +141,8 @@ Two arms, both processing ~9.9B tokens, differing only in how much unique data t
 | **A** (primary) | 25M | ~396 | 3 | **1.79× past** C_crit = 2.32 × 10¹⁸ FLOPs |
 | **B** (bracket) | 100M | ~99 | 1 | **0.09× of** C_crit = 4.72 × 10¹⁹ FLOPs |
 
+**U is the arm's *total* unique-token budget** — native Urdu, Roman Urdu and code-switched text summed — not any one component. That is what the epoch counts above divide 9.9B by, and it is what U means in the fitted law: the training set the model repeats over. §6.1 gives the composition. *(Stated explicitly in v2.2; see §0.2.)*
+
 Checkpoint at **1, 2, 5, 10, 25, 50, 100% of tokens processed** — identical fractions for both models and both arms, so the curves share a compute x-axis. Evaluate every checkpoint.
 
 This is the primary experiment and it costs one run per model per arm per seed (8 total). Arm A is predicted to *cross*; arm B is predicted *not* to. The paired outcome is the result: it tests the crossover's **location** against the English fit, not merely its sign.
@@ -185,19 +204,35 @@ Exact parameter counts must be computed programmatically and asserted equal with
 
 ### 6.1 Targets
 
-| Component | Target |
+**Pool targets — how much to collect.** These are not arm budgets; see the next table.
+
+| Component | Pool target |
 |---|---|
-| Clean native Urdu | **~120M unique tokens** (100M for arm B + ~20% headroom for filtering losses) |
+| Clean native Urdu | **~120M unique tokens** |
 | Roman Urdu | ~40M tokens |
 | Code-switched | ~10M tokens |
+| **Pool total** | **~170M unique tokens** |
 | Parallel script pairs | ~500K deduplicated pairs |
-| Held-out eval | ~5K sequences, decontaminated |
+| Held-out eval | ~5K sequences each for validation and test, decontaminated |
 
-Arm A's 25M-token corpus is a **deterministic, seeded subsample** of the frozen 100M corpus — not a separate collection — so the two arms differ in size and nothing else. The subsample manifest is checksummed and committed.
+**Arm budgets — how much to train on.** An arm's U (§4.3) is its *total* across the three populations, drawn from the pools at a **fixed mixture: the pool targets in proportion, 120 : 40 : 10.**
 
-**How much clean data could we have collected?** ~5–6B tokens. UrduLM (arXiv:2601.17664, Jan 2026) curated and released 33 GB / ~5–6B tokens of Urdu. **Capping is therefore a deliberate design decision, not a limitation**, and the report must say so in exactly those terms. v2.0 asked this question; v2.1 records the answer.
+| Population | Share | Arm A (U = 25M) | Arm B (U = 100M) | Pool | Headroom |
+|---|---|---|---|---|---|
+| Native Urdu | 70.59% | 17.65M | **70.59M** | ~120M | 1.70× |
+| Roman Urdu | 23.53% | 5.88M | **23.53M** | ~40M | 1.70× |
+| Code-switched | 5.88% | 1.47M | **5.88M** | ~10M | 1.70× |
+| **Total (U)** | 100% | **25M** | **100M** | ~170M | 1.70× |
 
-> **Corrected in v2.1.** Target reduced from ~300M to ~120M. See §0.1 and §4.3 — at U = 300M the primary experiment cannot reach the crossover it exists to measure. This shortens Weeks 3–4.
+Holding the mixture fixed across arms is what §4.1's "differ in size and nothing else" means once there is more than one population. Scaling only the native component would confound U with source mix — the same failure this section already forbids for crawl date.
+
+Arm A's 25M-token corpus is a **deterministic, seeded subsample** of arm B's 100M — not a separate collection. Stage 9 makes this structural rather than maintained: a document's split and arm are one integer, a keyed hash of its id, and arm A is a *prefix* of arm B's bucket range, so the containment cannot be violated by a later pass. The plan is checksummed and committed.
+
+**How much clean data could we have collected?** ~5–6B tokens. UrduLM (arXiv:2601.17664, Jan 2026) curated and released 33 GB / ~5–6B tokens of Urdu. **Capping is therefore a deliberate design decision, not a limitation**, and the report must say so in exactly those terms. v2.0 asked this question; v2.1 records the answer. (Qualification recorded in `configs/data/sources.json`: the 33 GB artifact is not actually public, and of what is described, 5.5 GB is machine-translated English and 19.4 GB is CommonCrawl overlapping our own primary source. The conclusion survives the discount; the report must quote the number with the caveat rather than flat.)
+
+> **Corrected in v2.1.** Native target reduced from ~300M to ~120M. See §0.1 and §4.3 — at U = 300M the primary experiment cannot reach the crossover it exists to measure. This shortens Weeks 3–4.
+
+> **Corrected in v2.2.** v2.1's component table read as arm budgets, and its native line said "100M for arm B + ~20% headroom for filtering losses". Both are wrong. Arm B's native share is **70.59M**, the pools total ~170M against its U of 100M, and the headroom is **1.70×** on every component. Taken at face value, the old wording made arm A a 75M-token / 132-epoch run sitting **6× short** of the crossover it exists to measure, instead of 1.79× past it — Finding A's error a second time, on the arm carrying the primary endpoint. See §0.2 and `reports/splits.md` §1; reproduce with `python scripts/crossover.py --params 70e6 --unique 75e6 --epochs 132`.
 
 ### 6.2 Sources
 
@@ -254,7 +289,7 @@ v1 listed the first two as success metrics at 100%. Locked-token preservation at
 
 | Set | Size | Construction |
 |---|---|---|
-| Held-out native Urdu | 5K sequences | Decontaminated split |
+| Held-out native Urdu | 5K sequences | Decontaminated **test** split — see §6.1. The separate 5K validation split is what G4 and the §8.3 curves read; the number reported here comes only from the test split |
 | Transliteration (reference) | Official split | Roman-Urdu-Parl test |
 | **Transliteration (human)** | ~200 pairs | Hand-written by native speakers — the only set that can support a real transliteration claim |
 | **Real OCR** | ~300 lines | Tesseract Urdu over scanned public-domain Nastaliq, gold hand-corrected (~8 hours of work) |
@@ -300,7 +335,7 @@ Roughly 250–320 person-hours across 16 weeks, or about 16–20 hrs/week.
 | Weeks | Work | Output |
 |---|---|---|
 | 1–2 | Literature review; corpus acquisition; language/script ID | ✅ Lit review + **preregistration** committed W1; raw corpus on disk |
-| 3–4 | Normalization, dedup, quality filter, decontamination | **Frozen corpus v1** (~120M tokens) + seeded 25M subsample + manifest + statistics |
+| 3–4 | Normalization, dedup, quality filter, decontamination | **Frozen corpus v1** (~170M-token pool, §6.1) + arm B's 100M and arm A's seeded 25M + manifest + statistics |
 | 5 | Tokenizer training and benchmark | **Frozen tokenizer** + checksum |
 | 6–7 | Shared backbone, AR head, MDLM objective, tiny-model validation, throughput measurement | **Gate 1** |
 | 8 | Pilot runs at 20M params, all 4 configs, 1 seed | **Gate 2** |
@@ -321,7 +356,7 @@ Every gate below can actually fail. v1's Gate D ("script-aware improves at least
 | Gate | When | Proceed if | Kill / fallback |
 |---|---|---|---|
 | **G0** | End W2 | Literature review confirms the comparison is unpublished | Reframe or stop |
-| **G1** | End W4 | Clean corpus ≥ **100M** tokens (arm B needs 100M; arm A subsamples from it) | 25–100M → run arm A only, report single-arm. Below 25M → stop |
+| **G1** | End W4 | Clean corpus ≥ **100M** tokens **and** every population at or above arm B's share of it (§6.1: 70.59M / 23.53M / 5.88M) | 25–100M → run arm A only, report single-arm. Below 25M → stop. **A population short at the mixture is its own failure** — the aggregate can clear 100M several times over while arm B cannot be assembled |
 | **G2** | End W7 | Measured throughput implies 8 core runs ≤ $90 | Shrink model, never epoch count |
 | **G3** | End W8 | 20M pilot DIFF produces coherent Urdu after 50 epochs; both models resume from checkpoint correctly | Implementation bug — debug, do not scale |
 | **G4** | Mid W10 | Arm A curves are separating or converging in a legible way **by 50% of tokens processed** | No signal by then → complete arm A's 3 seeds, cut arm B, report the flat result as the primary finding per preregistration §7 |

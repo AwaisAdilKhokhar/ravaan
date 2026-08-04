@@ -70,8 +70,10 @@ mix — the same failure §6.1 already forbids for crawl date.
 
 **Two consequences that outlive this session.**
 
-1. **The PRD needs amending at §6.1**, the way §4.3 and §6.1 were amended in v2.1 for Finding A.
-   The component figures should be labelled as pool targets and the arm mixture stated.
+1. ~~**The PRD needs amending at §6.1**~~ — **done in v2.2, 2026-08-05.** §6.1 now separates pool
+   targets from arm budgets and states the mixture; §4.3 says what U counts; §0.2 carries the
+   changelog. The amendment also corrected §6.1's headroom claim (1.70×, not 1.2×) and tightened
+   Gate G1 — see §6.1 below.
 2. **The code-switched shortfall shrinks by 41%.** The carried-forward ⚠️ was written against
    §6.1's 10M figure. Arm B needs **5.88M**, not 10M. §6 measures whether that is reachable.
 
@@ -276,6 +278,55 @@ contribution at ~$0 and ~25 minutes, taking the population to ~10.3M tokens. Tha
 recommended action rather than one of three options — (b) "accept a smaller share and say so" costs
 a stated corpus-composition change and (c) "add a social-media source" costs a new licence-gate
 decision, and neither is warranted for a 3% gap.
+
+### 6.1 The shortfall is 8%, not 3%, and Gate G1 could not see it
+
+*(Added 2026-08-05 with the v2.2 amendment.)*
+
+Two corrections to the table above, in opposite directions, and the second is the reason PRD §11
+changed.
+
+**The held-out sets come out of the same pools.** The 5.88M figure is arm B's *training* share. The
+validation and test sets are carved from the pool at the same mixture and are disjoint from the arms,
+so what `code_switched` actually has to supply for arm B to exist is 5.88M + 2 × 2.56M × 5.88% =
+**6.18M**. Against 5.7M available that is **0.92×, an 8% shortfall rather than 3%.** Recommendation
+(a) is unchanged and still covers it with room — ~10.3M against 6.18M — but the number to quote is
+0.92.
+
+**Gate G1 as written returned `pass` on this corpus.** §11's threshold was a single aggregate:
+
+```
+aggregate  pass  1,167.9M clean tokens against a 100M threshold
+```
+
+That is 11.7× past the gate, and arm B cannot be assembled. The aggregate is simply not the binding
+constraint — an arm is drawn from three pools at a fixed mixture, so the gate has to be evaluated
+per population:
+
+| population | supply | needed for arm B + held-out | margin |
+|---|---|---|---|
+| urdu | 1,100.70M | 74.20M | 14.83× |
+| roman_urdu | 61.50M | 24.73M | 2.49× |
+| code_switched | 5.70M | **6.18M** | **0.92× — short** |
+
+```
+GATE G1: ARM_A_ONLY
+  aggregate: pass   mixture: arm_a_only   arms fundable at the mixture: ['A']
+```
+
+**This is Finding S's defect one layer up.** There the gate read a number in the wrong units; here it
+read the right number and the wrong *quantity*. Both land on the one output of this stage that is a
+project decision rather than a statistic, and both were invisible because the wrong answer was
+plausible: 1,167.9M against a 100M threshold does not look like a corpus that fails.
+
+`gate_g1()` now reports `verdict_aggregate` and `verdict_mixture` separately and takes the more
+severe of the two, because "below 25M" and "no pool can fund an arm" are different projects with
+different fallbacks. The per-population supply, requirement and margin go in the payload — the same
+argument as `unmet_heldout` being reported separately from `unmet_arms`: a verdict whose cause is not
+named is a diagnosis nobody can act on. PRD v2.2 §11 states both conditions.
+
+**The shortfall was already visible as `unmet_arms` in the stage-9 logs.** What changed is that it is
+now a gate verdict rather than a line in a log that nobody reads as one.
 
 ---
 

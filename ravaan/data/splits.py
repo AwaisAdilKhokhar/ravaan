@@ -484,8 +484,34 @@ class SplitLog:
         """Multiplier from what this pass measured to the full corpus it sampled."""
         return 1.0 / self.sample_rate if self.sample_rate else 1.0
 
+    def population_tokens(self) -> dict[str, float]:
+        """Pool supply per budgeted population, scaled to the full corpus."""
+        supply = {p: 0.0 for p in self.config.population_targets}
+        for key, chars in self.chars.items():
+            population = key.split("/", 1)[0]
+            if population in supply:
+                supply[population] += self.tokens(population, chars) * self.scale
+        return supply
+
+    def population_required(self, arm: str) -> dict[str, float]:
+        """What one arm draws from each pool, at §6.1's fixed mixture.
+
+        The two held-out sets are carved from the same pools and are disjoint from the arms, so
+        they are part of what a pool has to supply for that arm to be assemblable.
+        """
+        demand = self.config.arm_tokens[arm] + 2 * self.config.heldout_tokens
+        return {p: demand * share for p, share in self.config.mixture.items()}
+
     def gate_g1(self) -> dict:
         """G1: clean corpus >= 100M tokens, with the fallback ladder §11 actually specifies.
+
+        **Two conditions, reported separately (PRD v2.2 §11).** The aggregate threshold is not
+        sufficient on its own: an arm is drawn from the three pools at §6.1's fixed mixture, so a
+        corpus can clear 100M many times over and still not fund arm B. That is not hypothetical —
+        session 11 measured native Urdu at 15.6x margin while code_switched sat at 0.97x of arm B's
+        5.88M. A gate that reported only the total would have said ``pass`` on a corpus from which
+        the bracketing arm cannot be assembled, and the shortfall would have surfaced as an
+        ``unmet_arms`` line in a stage-9 log nobody was reading as a gate.
 
         **Scaled by the sample rate.** Measured on a 5% FineWeb2 pass, the unscaled figure reads
         52.7M and returns ``arm_a_only`` for a shard that actually holds ~1.05B — a gate verdict
@@ -495,11 +521,44 @@ class SplitLog:
         """
         clean = self.clean_tokens() * self.scale
         if clean >= 100_000_000:
-            verdict = "pass"
+            aggregate = "pass"
         elif clean >= 25_000_000:
-            verdict = "arm_a_only"  # §11: "25-100M -> run arm A only, report single-arm"
+            aggregate = "arm_a_only"  # §11: "25-100M -> run arm A only, report single-arm"
         else:
-            verdict = "stop"  # §11: "Below 25M -> stop"
+            aggregate = "stop"  # §11: "Below 25M -> stop"
+
+        supply = self.population_tokens()
+        arms = self.config.arm_names  # smallest budget first
+        fundable, short = [], {}
+        for arm in arms:
+            required = self.population_required(arm)
+            deficit = {p: r for p, r in required.items() if supply.get(p, 0.0) < r}
+            if deficit:
+                short[arm] = sorted(deficit)
+            else:
+                fundable.append(arm)
+        if arms and arms[-1] in fundable:
+            mixture = "pass"
+        elif fundable:
+            mixture = "arm_a_only"
+        else:
+            mixture = "stop"
+
+        # The verdict is the more severe of the two, and both are reported so the cause is
+        # nameable. "Below 25M" and "no pool can fund an arm" are different projects.
+        severity = ("pass", "arm_a_only", "stop")
+        verdict = max((aggregate, mixture), key=severity.index)
+        largest = arms[-1] if arms else None
+        by_population = {}
+        if largest:
+            required = self.population_required(largest)
+            for p in self.config.populations:
+                have, need = supply.get(p, 0.0), required[p]
+                by_population[p] = {
+                    "supply_tokens": round(have),
+                    "required_tokens": round(need),
+                    "margin": round(have / need, 3) if need else None,
+                }
         return {
             "clean_tokens_estimated": round(clean),
             "clean_tokens_measured": round(self.clean_tokens()),
@@ -507,6 +566,12 @@ class SplitLog:
             "scaled_by": self.scale,
             "threshold": 100_000_000,
             "verdict": verdict,
+            "verdict_aggregate": aggregate,
+            "verdict_mixture": mixture,
+            "arms_fundable": fundable,
+            "populations_short": short,
+            "populations": by_population,
+            "required_for_arm": largest,
             "note": "tokens are estimated from characters; re-solve when §7's tokenizer exists",
         }
 

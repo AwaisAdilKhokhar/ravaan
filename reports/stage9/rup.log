@@ -1,0 +1,40 @@
+reading roman-urdu-parl: plan 1fc469611d80e1e7 over 1 file(s), sampled at 0.05
+stage 9 phase 1: measuring
+  measured 301,389 documents into 100,000 buckets
+stage 9 phase 2: assigning
+
+stage 9: assigned 281,215 documents, 20,174 outside the budgeted populations
+
+  urdu
+    train               0 docs               0 chars  ~    0.00M tokens
+    validation          0 docs               0 chars  ~    0.00M tokens
+    test                0 docs               0 chars  ~    0.00M tokens
+    arm A               0 docs               0 chars  ~    0.00M tokens  (target 0.88M at r=0.05, 17.65M full)   UNMET
+    arm B               0 docs               0 chars  ~    0.00M tokens  (target 3.53M at r=0.05, 70.59M full)   UNMET
+    fertility: 0.00 chars/word measured, solved at 3.5 chars/token = 0.00 tokens/word
+
+  roman_urdu
+    train         278,082 docs      22,423,972 chars  ~    5.34M tokens
+    validation      1,529 docs         125,709 chars  ~    0.03M tokens
+    test            1,604 docs         126,183 chars  ~    0.03M tokens
+    arm A          15,347 docs       1,235,243 chars  ~    0.29M tokens  (target 0.29M at r=0.05, 5.88M full)
+    arm B          61,264 docs       4,941,033 chars  ~    1.18M tokens  (target 1.18M at r=0.05, 23.53M full)
+    fertility: 5.00 chars/word measured, solved at 4.2 chars/token = 1.19 tokens/word
+
+  code_switched
+    train               0 docs               0 chars  ~    0.00M tokens
+    validation          0 docs               0 chars  ~    0.00M tokens
+    test                0 docs               0 chars  ~    0.00M tokens
+    arm A               0 docs               0 chars  ~    0.00M tokens  (target 0.07M at r=0.05, 1.47M full)   UNMET
+    arm B               0 docs               0 chars  ~    0.00M tokens  (target 0.29M at r=0.05, 5.88M full)   UNMET
+    fertility: 0.00 chars/word measured, solved at 3.8 chars/token = 0.00 tokens/word
+
+  arms, totalled across populations — this is §4.3's U
+    arm A:    15,347 docs  ~    0.29M tokens of 25M target
+    arm B:    61,264 docs  ~    1.18M tokens of 100M target
+
+  GATE G1: PASS — ~108.0M clean tokens against a 100M threshold (from 5.4M measured at r=0.05)
+  UNMET HELD-OUT (the pool is smaller than §6.1's ~5K sequences): {'code_switched': ['validation', 'test'], 'urdu': ['validation', 'test']}
+  unmet arms: {'code_switched': ['A', 'B'], 'urdu': ['A', 'B']}
+
+wrote the plan to reports/stage9/plan_roman_urdu_parl_5pct.json

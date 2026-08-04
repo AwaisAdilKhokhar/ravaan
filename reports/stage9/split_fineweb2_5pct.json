@@ -1,0 +1,392 @@
+{
+  "splits_version": "1.0.0",
+  "config_fingerprint": "23df13e0dfc3",
+  "measured": 76940,
+  "assigned": 76940,
+  "unassigned": 0,
+  "sample_rate": 0.05,
+  "unbudgeted_measured": {},
+  "unassigned_labels": {},
+  "populations": {
+    "urdu": {
+      "target_tokens": 120000000,
+      "mixture_share": 0.705882,
+      "chars_per_token": 3.5,
+      "chars_per_word_measured": 4.72,
+      "splits": {
+        "train": {
+          "documents": 76300,
+          "chars": 182966015,
+          "tokens_estimated": 52276004
+        },
+        "validation": {
+          "documents": 151,
+          "chars": 311295,
+          "tokens_estimated": 88941
+        },
+        "test": {
+          "documents": 123,
+          "chars": 313464,
+          "tokens_estimated": 89561
+        }
+      },
+      "arms": {
+        "A": {
+          "documents": 1323,
+          "chars": 2876352,
+          "tokens_estimated": 821815,
+          "target_tokens": 17647059
+        },
+        "B": {
+          "documents": 5164,
+          "chars": 12351582,
+          "tokens_estimated": 3529023,
+          "target_tokens": 70588235
+        }
+      }
+    },
+    "roman_urdu": {
+      "target_tokens": 40000000,
+      "mixture_share": 0.235294,
+      "chars_per_token": 4.2,
+      "chars_per_word_measured": 0.0,
+      "splits": {
+        "train": {
+          "documents": 0,
+          "chars": 0,
+          "tokens_estimated": 0
+        },
+        "validation": {
+          "documents": 0,
+          "chars": 0,
+          "tokens_estimated": 0
+        },
+        "test": {
+          "documents": 0,
+          "chars": 0,
+          "tokens_estimated": 0
+        }
+      },
+      "arms": {
+        "A": {
+          "documents": 0,
+          "chars": 0,
+          "tokens_estimated": 0,
+          "target_tokens": 5882353
+        },
+        "B": {
+          "documents": 0,
+          "chars": 0,
+          "tokens_estimated": 0,
+          "target_tokens": 23529412
+        }
+      }
+    },
+    "code_switched": {
+      "target_tokens": 10000000,
+      "mixture_share": 0.058824,
+      "chars_per_token": 3.8,
+      "chars_per_word_measured": 4.998,
+      "splits": {
+        "train": {
+          "documents": 332,
+          "chars": 813980,
+          "tokens_estimated": 214205
+        },
+        "validation": {
+          "documents": 16,
+          "chars": 27813,
+          "tokens_estimated": 7319
+        },
+        "test": {
+          "documents": 18,
+          "chars": 28591,
+          "tokens_estimated": 7524
+        }
+      },
+      "arms": {
+        "A": {
+          "documents": 105,
+          "chars": 278183,
+          "tokens_estimated": 73206,
+          "target_tokens": 1470588
+        },
+        "B": {
+          "documents": 332,
+          "chars": 813980,
+          "tokens_estimated": 214205,
+          "target_tokens": 5882353
+        }
+      }
+    }
+  },
+  "arms": {
+    "A": {
+      "target_tokens": 25000000,
+      "tokens_estimated": 895021,
+      "documents": 1428
+    },
+    "B": {
+      "target_tokens": 100000000,
+      "tokens_estimated": 3743229,
+      "documents": 5496
+    }
+  },
+  "by_source": {
+    "fineweb2-urd_Arab/test": 141,
+    "fineweb2-urd_Arab/train": 76632,
+    "fineweb2-urd_Arab/validation": 167
+  },
+  "gate_g1": {
+    "clean_tokens_estimated": 52683555,
+    "threshold": 100000000,
+    "verdict": "arm_a_only",
+    "note": "tokens are estimated from characters; re-solve when §7's tokenizer exists"
+  },
+  "bands": {
+    "code_switched": {
+      "population": "code_switched",
+      "buckets": 100000,
+      "test_from": 95424,
+      "validation_from": 91830,
+      "train_to": 91830,
+      "arm_cuts": {
+        "A": 32298,
+        "B": 91830
+      },
+      "total_chars": 870384,
+      "chars_train": 813980,
+      "chars_validation": 27813,
+      "chars_test": 28591,
+      "chars_by_arm": {
+        "A": 278183,
+        "B": 813980
+      },
+      "target_chars_validation": 28611.76470588235,
+      "target_chars_test": 28611.76470588235,
+      "target_chars_by_arm": {
+        "A": 279411.76470588235,
+        "B": 1117647.0588235294
+      },
+      "unmet_arms": [
+        "B"
+      ],
+      "unmet_heldout": []
+    },
+    "roman_urdu": {
+      "population": "roman_urdu",
+      "buckets": 100000,
+      "test_from": 0,
+      "validation_from": 0,
+      "train_to": 0,
+      "arm_cuts": {
+        "A": 0,
+        "B": 0
+      },
+      "total_chars": 0,
+      "chars_train": 0,
+      "chars_validation": 0,
+      "chars_test": 0,
+      "chars_by_arm": {
+        "A": 0,
+        "B": 0
+      },
+      "target_chars_validation": 126494.11764705885,
+      "target_chars_test": 126494.11764705885,
+      "target_chars_by_arm": {
+        "A": 1235294.117647059,
+        "B": 4941176.470588236
+      },
+      "unmet_arms": [
+        "A",
+        "B"
+      ],
+      "unmet_heldout": [
+        "validation",
+        "test"
+      ]
+    },
+    "urdu": {
+      "population": "urdu",
+      "buckets": 100000,
+      "test_from": 99836,
+      "validation_from": 99626,
+      "train_to": 99626,
+      "arm_cuts": {
+        "A": 1684,
+        "B": 6711
+      },
+      "total_chars": 183590774,
+      "chars_train": 182966015,
+      "chars_validation": 311295,
+      "chars_test": 313464,
+      "chars_by_arm": {
+        "A": 2876352,
+        "B": 12351582
+      },
+      "target_chars_validation": 316235.2941176471,
+      "target_chars_test": 316235.2941176471,
+      "target_chars_by_arm": {
+        "A": 3088235.294117647,
+        "B": 12352941.176470589
+      },
+      "unmet_arms": [],
+      "unmet_heldout": []
+    }
+  },
+  "unmet_arms": {
+    "code_switched": [
+      "B"
+    ],
+    "roman_urdu": [
+      "A",
+      "B"
+    ]
+  },
+  "unmet_heldout": {
+    "roman_urdu": [
+      "validation",
+      "test"
+    ]
+  },
+  "sources": [
+    "fineweb2-urd_Arab=0.05"
+  ],
+  "limit": 0,
+  "seed": 0,
+  "quality_filtered": true,
+  "plan_in": null,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 79760,
+    "documents_accepted": 79745,
+    "documents_rejected": 15,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.999812,
+    "bytes_in": 328357771,
+    "chars_out": 185308510,
+    "replacement_chars": 118,
+    "mojibake_chars": 4,
+    "control_chars": 0,
+    "verdicts": {
+      "ok": 79745,
+      "replacement_heavy": 15
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 79745,
+    "documents_kept": 79745,
+    "keep_rate": 1.0,
+    "documents_by_prior": 0,
+    "prior_rate": 0.0,
+    "mixed_documents": 2380,
+    "letters": 141216554,
+    "labels": {
+      "code_switched": 412,
+      "urdu": 79333
+    },
+    "letters_by_label": {
+      "code_switched": 685713,
+      "urdu": 140530841
+    },
+    "segment_letters": {
+      "arabic": 5558,
+      "code_switched": 75354,
+      "english": 471449,
+      "hindi": 7207,
+      "other": 145716,
+      "persian": 1996,
+      "roman_urdu": 22776,
+      "urdu": 2738060
+    }
+  },
+  "stage5_quality": {
+    "fineweb2-urd_Arab": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "53d04d3fd079",
+      "config": {
+        "min_chars": 400,
+        "min_words": 40,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 0.5,
+        "max_top_ngram_ratio": {
+          "3": 0.26,
+          "4": 0.22
+        },
+        "max_dup_ngram_ratio": {
+          "5": 0.6,
+          "6": 0.58,
+          "7": 0.56,
+          "8": 0.54,
+          "9": 0.52,
+          "10": 0.5
+        },
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 79745,
+      "documents_kept": 76940,
+      "documents_rejected": 2805,
+      "keep_rate": 0.964825,
+      "chars_in": 185423860,
+      "chars_kept": 184461158,
+      "char_keep_rate": 0.994808,
+      "rejections": {
+        "script_ratio": 43,
+        "too_short": 2771
+      },
+      "families": {
+        "script_ratio": 43,
+        "too_short": 2771
+      },
+      "sole_rejections": {
+        "script_ratio": 34,
+        "too_short": 2762
+      },
+      "by_label": {
+        "code_switched": 412,
+        "urdu": 79333
+      },
+      "kept_by_label": {
+        "code_switched": 366,
+        "urdu": 76574
+      },
+      "chars_kept_by_label": {
+        "code_switched": 870384,
+        "urdu": 183590774
+      },
+      "truncated_documents": 0
+    }
+  }
+}

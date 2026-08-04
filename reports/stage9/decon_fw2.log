@@ -1,0 +1,48 @@
+stage 8: indexing eval sets
+  heldout-wiki                            6,748 items, word shingles
+  6,748 items total, 2,553,769 distinct shingles, 43,214 indexed lines, 0 below min_shingles (exact-only)
+reading fineweb2-urd_Arab: plan 346085bcc6aeade8 over 2 file(s), sampled at 0.05
+stage 8: checking the corpus
+
+stage 8: kept 76,925/76,940 = 99.9805% of documents, 99.9460% of characters
+  15 contaminated documents removed (0.0195% of what was checked)
+
+  which half of §6.3.8 fired
+    contaminated                  2
+    exact_line                   13
+
+  eval coverage — the share of each TEST SET found in the training corpus
+    heldout-wiki                               15/6,748    = 0.2223%
+
+  by training source
+    fineweb2-urd_Arab                  15/76,940     = 0.0195% removed
+
+  containment of retained hits (jaccard beside it — Finding M's gap)
+    1.00  containment        13   jaccard         0
+    0.90-1.00  containment         4   jaccard         0
+    0.80-0.90  containment         2   jaccard         3
+    0.70-0.80  containment         5   jaccard         3
+    0.50-0.60  containment         1   jaccard         3
+
+  strongest hits
+    heldout-wiki/urdu-wikipedia:181449 in fineweb2-urd_Arab:<urn:uuid:8d4417be-fa45-4691-845f-5e69d77dd932>
+      containment 1.000  jaccard 0.000  shingles 281/281 of eval, 0 in doc  [line]
+    heldout-wiki/urdu-wikipedia:238205 in fineweb2-urd_Arab:<urn:uuid:439d86f7-9def-4734-acf9-35e9ce002d12>
+      containment 1.000  jaccard 0.000  shingles 707/707 of eval, 0 in doc  [line]
+    heldout-wiki/urdu-wikipedia:31884 in fineweb2-urd_Arab:<urn:uuid:6f172205-5a91-4b70-939a-c1d9a622824a>
+      containment 1.000  jaccard 0.000  shingles 293/293 of eval, 0 in doc  [line]
+    heldout-wiki/urdu-wikipedia:336846 in fineweb2-urd_Arab:<urn:uuid:a3d74317-76d9-45ef-a4a5-8f36ba950e68>
+      containment 1.000  jaccard 0.000  shingles 964/964 of eval, 0 in doc  [line]
+    heldout-wiki/urdu-wikipedia:373661 in fineweb2-urd_Arab:<urn:uuid:b58c6ea5-9347-4063-a643-011fc095ebdd>
+      containment 1.000  jaccard 0.000  shingles 127/127 of eval, 0 in doc  [line]
+    heldout-wiki/urdu-wikipedia:4843 in fineweb2-urd_Arab:<urn:uuid:c5a6acbe-6748-41cb-b602-d9a9998ea691>
+      containment 1.000  jaccard 0.000  shingles 480/480 of eval, 0 in doc  [line]
+    heldout-wiki/urdu-wikipedia:557714 in fineweb2-urd_Arab:<urn:uuid:ce2a4cd3-70db-43aa-b4dc-464737f4ea5d>
+      containment 1.000  jaccard 0.000  shingles 932/932 of eval, 0 in doc  [line]
+    heldout-wiki/urdu-wikipedia:61963 in fineweb2-urd_Arab:<urn:uuid:94ad7524-6453-40a6-9085-02296ba3ab2a>
+      containment 1.000  jaccard 0.000  shingles 220/220 of eval, 0 in doc  [line]
+    heldout-wiki/urdu-wikipedia:6491 in fineweb2-urd_Arab:<urn:uuid:84175e5e-9937-4ffd-88e2-2f5e91a682b7>
+      containment 1.000  jaccard 0.000  shingles 2510/2510 of eval, 0 in doc  [line]
+    heldout-wiki/urdu-wikipedia:65156 in fineweb2-urd_Arab:<urn:uuid:9284bb8c-3620-40c3-be95-170a630233ef>
+      containment 1.000  jaccard 0.000  shingles 788/788 of eval, 0 in doc  [line]
+wrote 25 measured hits to reports/stage9/hits_heldout_vs_fineweb2.jsonl

@@ -1,0 +1,514 @@
+{
+  "decontamination_version": "1.0.0",
+  "config": {
+    "containment_threshold": 0.8,
+    "retain_hits_above": 0.5,
+    "min_shingles": 8,
+    "exact_document_match": true,
+    "exact_line_match": true,
+    "min_line_chars": 40,
+    "max_index_shingles": 40000000,
+    "max_retained_hits": 20000000
+  },
+  "config_fingerprint": "de84efb88b8d",
+  "eval_sets": {
+    "heldout-wiki": 6748
+  },
+  "eval_items": 6748,
+  "eval_items_unmeasurable": 0,
+  "eval_shingles": 2553769,
+  "eval_lines": 43214,
+  "checked": 76940,
+  "kept": 76925,
+  "removed": 15,
+  "keep_rate": 0.999805,
+  "contamination_rate": 0.000195,
+  "chars_in": 184461158,
+  "chars_kept": 184361614,
+  "char_keep_rate": 0.99946,
+  "removed_by_reason": {
+    "contaminated": 2,
+    "exact_line": 13
+  },
+  "removed_by_eval_set": {
+    "heldout-wiki": 15
+  },
+  "removed_by_source": {
+    "fineweb2-urd_Arab": 15
+  },
+  "by_source": {
+    "fineweb2-urd_Arab": 76940
+  },
+  "eval_coverage": {
+    "heldout-wiki": {
+      "items": 6748,
+      "items_found_in_corpus": 15,
+      "share": 0.002223
+    }
+  },
+  "hits_retained": 25,
+  "containment_histogram": {
+    "0.50-0.60": 1,
+    "0.70-0.80": 5,
+    "0.80-0.90": 2,
+    "0.90-1.00": 4,
+    "1.00": 13
+  },
+  "jaccard_histogram": {
+    "0.00-0.10": 13,
+    "0.20-0.30": 1,
+    "0.40-0.50": 1,
+    "0.50-0.60": 3,
+    "0.60-0.70": 1,
+    "0.70-0.80": 3,
+    "0.80-0.90": 3
+  },
+  "eval_specs": [
+    {
+      "name": "heldout-wiki",
+      "shingle_size": 5,
+      "shingle_unit": "word",
+      "min_shingles": null,
+      "containment_threshold": null,
+      "retain_hits_above": null
+    }
+  ],
+  "shinglings": [
+    {
+      "shingle_size": 5,
+      "shingle_unit": "word",
+      "distinct_shingles": 2553769
+    }
+  ],
+  "top_hits": [
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:181449",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8d4417be-fa45-4691-845f-5e69d77dd932>",
+      "containment": 1.0,
+      "jaccard": 0.0,
+      "intersection": 281,
+      "eval_shingles": 281,
+      "doc_shingles": 0,
+      "exact": "line"
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:238205",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:439d86f7-9def-4734-acf9-35e9ce002d12>",
+      "containment": 1.0,
+      "jaccard": 0.0,
+      "intersection": 707,
+      "eval_shingles": 707,
+      "doc_shingles": 0,
+      "exact": "line"
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:31884",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6f172205-5a91-4b70-939a-c1d9a622824a>",
+      "containment": 1.0,
+      "jaccard": 0.0,
+      "intersection": 293,
+      "eval_shingles": 293,
+      "doc_shingles": 0,
+      "exact": "line"
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:336846",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:a3d74317-76d9-45ef-a4a5-8f36ba950e68>",
+      "containment": 1.0,
+      "jaccard": 0.0,
+      "intersection": 964,
+      "eval_shingles": 964,
+      "doc_shingles": 0,
+      "exact": "line"
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:373661",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:b58c6ea5-9347-4063-a643-011fc095ebdd>",
+      "containment": 1.0,
+      "jaccard": 0.0,
+      "intersection": 127,
+      "eval_shingles": 127,
+      "doc_shingles": 0,
+      "exact": "line"
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:4843",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:c5a6acbe-6748-41cb-b602-d9a9998ea691>",
+      "containment": 1.0,
+      "jaccard": 0.0,
+      "intersection": 480,
+      "eval_shingles": 480,
+      "doc_shingles": 0,
+      "exact": "line"
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:557714",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:ce2a4cd3-70db-43aa-b4dc-464737f4ea5d>",
+      "containment": 1.0,
+      "jaccard": 0.0,
+      "intersection": 932,
+      "eval_shingles": 932,
+      "doc_shingles": 0,
+      "exact": "line"
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:61963",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:94ad7524-6453-40a6-9085-02296ba3ab2a>",
+      "containment": 1.0,
+      "jaccard": 0.0,
+      "intersection": 220,
+      "eval_shingles": 220,
+      "doc_shingles": 0,
+      "exact": "line"
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:6491",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:84175e5e-9937-4ffd-88e2-2f5e91a682b7>",
+      "containment": 1.0,
+      "jaccard": 0.0,
+      "intersection": 2510,
+      "eval_shingles": 2510,
+      "doc_shingles": 0,
+      "exact": "line"
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:65156",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:9284bb8c-3620-40c3-be95-170a630233ef>",
+      "containment": 1.0,
+      "jaccard": 0.0,
+      "intersection": 788,
+      "eval_shingles": 788,
+      "doc_shingles": 0,
+      "exact": "line"
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:691009",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:cfb34b90-10c6-4cc6-b6a7-aadaed244094>",
+      "containment": 1.0,
+      "jaccard": 0.0,
+      "intersection": 1209,
+      "eval_shingles": 1209,
+      "doc_shingles": 0,
+      "exact": "line"
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:808733",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:02dc10bb-8789-4260-af7b-ced3ca4c5f49>",
+      "containment": 1.0,
+      "jaccard": 0.0,
+      "intersection": 360,
+      "eval_shingles": 360,
+      "doc_shingles": 0,
+      "exact": "line"
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:815834",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:86182386-759e-4633-8940-3ea96ddfc1bb>",
+      "containment": 1.0,
+      "jaccard": 0.0,
+      "intersection": 461,
+      "eval_shingles": 461,
+      "doc_shingles": 0,
+      "exact": "line"
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:336846",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:a3d74317-76d9-45ef-a4a5-8f36ba950e68>",
+      "containment": 0.9388,
+      "jaccard": 0.8829,
+      "intersection": 905,
+      "eval_shingles": 964,
+      "doc_shingles": 966,
+      "exact": ""
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:969246",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:396d1d9d-c94e-4218-a219-c25db688cc38>",
+      "containment": 0.9204,
+      "jaccard": 0.8321,
+      "intersection": 347,
+      "eval_shingles": 377,
+      "doc_shingles": 387,
+      "exact": ""
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:691009",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:cfb34b90-10c6-4cc6-b6a7-aadaed244094>",
+      "containment": 0.9016,
+      "jaccard": 0.8665,
+      "intersection": 1090,
+      "eval_shingles": 1209,
+      "doc_shingles": 1139,
+      "exact": ""
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:328109",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:ba4cbbf7-36d6-438c-9f0e-deba546247cc>",
+      "containment": 0.9,
+      "jaccard": 0.725,
+      "intersection": 369,
+      "eval_shingles": 410,
+      "doc_shingles": 468,
+      "exact": ""
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:31884",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:6f172205-5a91-4b70-939a-c1d9a622824a>",
+      "containment": 0.8669,
+      "jaccard": 0.7449,
+      "intersection": 254,
+      "eval_shingles": 293,
+      "doc_shingles": 302,
+      "exact": ""
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:815834",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:86182386-759e-4633-8940-3ea96ddfc1bb>",
+      "containment": 0.8612,
+      "jaccard": 0.7815,
+      "intersection": 397,
+      "eval_shingles": 461,
+      "doc_shingles": 444,
+      "exact": ""
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:24165",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:264c2c97-df09-436e-a68c-70387ffe8aa4>",
+      "containment": 0.7879,
+      "jaccard": 0.2994,
+      "intersection": 156,
+      "eval_shingles": 198,
+      "doc_shingles": 479,
+      "exact": ""
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:61963",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:94ad7524-6453-40a6-9085-02296ba3ab2a>",
+      "containment": 0.7682,
+      "jaccard": 0.5993,
+      "intersection": 169,
+      "eval_shingles": 220,
+      "doc_shingles": 231,
+      "exact": ""
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:181449",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:8d4417be-fa45-4691-845f-5e69d77dd932>",
+      "containment": 0.7651,
+      "jaccard": 0.6456,
+      "intersection": 215,
+      "eval_shingles": 281,
+      "doc_shingles": 267,
+      "exact": ""
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:919113",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:f7e50f21-3efd-4472-a9bf-7e8d9bf0f83e>",
+      "containment": 0.7146,
+      "jaccard": 0.5939,
+      "intersection": 313,
+      "eval_shingles": 438,
+      "doc_shingles": 402,
+      "exact": ""
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:974105",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:0d82472e-aedc-4f52-b7f9-f677c3275f10>",
+      "containment": 0.7,
+      "jaccard": 0.4812,
+      "intersection": 294,
+      "eval_shingles": 420,
+      "doc_shingles": 485,
+      "exact": ""
+    },
+    {
+      "eval_set": "heldout-wiki",
+      "eval_id": "urdu-wikipedia:557714",
+      "doc_id": "fineweb2-urd_Arab:<urn:uuid:ce2a4cd3-70db-43aa-b4dc-464737f4ea5d>",
+      "containment": 0.5547,
+      "jaccard": 0.5155,
+      "intersection": 517,
+      "eval_shingles": 932,
+      "doc_shingles": 588,
+      "exact": ""
+    }
+  ],
+  "eval_sets_loaded": {
+    "heldout-wiki": {
+      "source": "data\\splits\\heldout_wikipedia.jsonl",
+      "split": "file",
+      "items": 6748,
+      "shingle_size": 5,
+      "shingle_unit": "word",
+      "min_shingles": null,
+      "containment_threshold": null,
+      "retain_hits_above": null
+    }
+  },
+  "sources": [
+    "fineweb2-urd_Arab=0.05"
+  ],
+  "limit": 0,
+  "sample_rate": null,
+  "seed": 0,
+  "columns": "text",
+  "quality_filtered": true,
+  "exact_deduplicated": false,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 79760,
+    "documents_accepted": 79745,
+    "documents_rejected": 15,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.999812,
+    "bytes_in": 328357771,
+    "chars_out": 185308510,
+    "replacement_chars": 118,
+    "mojibake_chars": 4,
+    "control_chars": 0,
+    "verdicts": {
+      "ok": 79745,
+      "replacement_heavy": 15
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 79745,
+    "documents_kept": 79745,
+    "keep_rate": 1.0,
+    "documents_by_prior": 0,
+    "prior_rate": 0.0,
+    "mixed_documents": 2380,
+    "letters": 141216554,
+    "labels": {
+      "code_switched": 412,
+      "urdu": 79333
+    },
+    "letters_by_label": {
+      "code_switched": 685713,
+      "urdu": 140530841
+    },
+    "segment_letters": {
+      "arabic": 5558,
+      "code_switched": 75354,
+      "english": 471449,
+      "hindi": 7207,
+      "other": 145716,
+      "persian": 1996,
+      "roman_urdu": 22776,
+      "urdu": 2738060
+    }
+  },
+  "stage5_quality": {
+    "fineweb2-urd_Arab": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "53d04d3fd079",
+      "config": {
+        "min_chars": 400,
+        "min_words": 40,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 0.5,
+        "max_top_ngram_ratio": {
+          "3": 0.26,
+          "4": 0.22
+        },
+        "max_dup_ngram_ratio": {
+          "5": 0.6,
+          "6": 0.58,
+          "7": 0.56,
+          "8": 0.54,
+          "9": 0.52,
+          "10": 0.5
+        },
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 79745,
+      "documents_kept": 76940,
+      "documents_rejected": 2805,
+      "keep_rate": 0.964825,
+      "chars_in": 185423860,
+      "chars_kept": 184461158,
+      "char_keep_rate": 0.994808,
+      "rejections": {
+        "script_ratio": 43,
+        "too_short": 2771
+      },
+      "families": {
+        "script_ratio": 43,
+        "too_short": 2771
+      },
+      "sole_rejections": {
+        "script_ratio": 34,
+        "too_short": 2762
+      },
+      "by_label": {
+        "code_switched": 412,
+        "urdu": 79333
+      },
+      "kept_by_label": {
+        "code_switched": 366,
+        "urdu": 76574
+      },
+      "chars_kept_by_label": {
+        "code_switched": 870384,
+        "urdu": 183590774
+      },
+      "truncated_documents": 0
+    }
+  }
+}

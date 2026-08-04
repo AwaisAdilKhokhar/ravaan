@@ -1,0 +1,123 @@
+{
+  "splits_version": "1.0.0",
+  "config": {
+    "splits_version": "1.0.0",
+    "arm_tokens": {
+      "A": 25000000,
+      "B": 100000000
+    },
+    "population_targets": {
+      "urdu": 120000000,
+      "roman_urdu": 40000000,
+      "code_switched": 10000000
+    },
+    "chars_per_token": {
+      "urdu": 3.5,
+      "roman_urdu": 4.2,
+      "code_switched": 3.8
+    },
+    "heldout_sequences": 5000,
+    "sequence_length": 512,
+    "buckets": 100000,
+    "salt": "ravaan/split/v1",
+    "pair_separator": "#"
+  },
+  "config_fingerprint": "23df13e0dfc3",
+  "sample_rate": 0.05,
+  "bands": {
+    "code_switched": {
+      "population": "code_switched",
+      "buckets": 100000,
+      "test_from": 0,
+      "validation_from": 0,
+      "train_to": 0,
+      "arm_cuts": {
+        "A": 0,
+        "B": 0
+      },
+      "total_chars": 0,
+      "chars_train": 0,
+      "chars_validation": 0,
+      "chars_test": 0,
+      "chars_by_arm": {
+        "A": 0,
+        "B": 0
+      },
+      "target_chars_validation": 28611.76470588235,
+      "target_chars_test": 28611.76470588235,
+      "target_chars_by_arm": {
+        "A": 279411.76470588235,
+        "B": 1117647.0588235294
+      },
+      "unmet_arms": [
+        "A",
+        "B"
+      ],
+      "unmet_heldout": [
+        "validation",
+        "test"
+      ]
+    },
+    "roman_urdu": {
+      "population": "roman_urdu",
+      "buckets": 100000,
+      "test_from": 99442,
+      "validation_from": 98888,
+      "train_to": 98888,
+      "arm_cuts": {
+        "A": 5490,
+        "B": 21697
+      },
+      "total_chars": 22675864,
+      "chars_train": 22423972,
+      "chars_validation": 125709,
+      "chars_test": 126183,
+      "chars_by_arm": {
+        "A": 1235243,
+        "B": 4941033
+      },
+      "target_chars_validation": 126494.11764705885,
+      "target_chars_test": 126494.11764705885,
+      "target_chars_by_arm": {
+        "A": 1235294.117647059,
+        "B": 4941176.470588236
+      },
+      "unmet_arms": [],
+      "unmet_heldout": []
+    },
+    "urdu": {
+      "population": "urdu",
+      "buckets": 100000,
+      "test_from": 0,
+      "validation_from": 0,
+      "train_to": 0,
+      "arm_cuts": {
+        "A": 0,
+        "B": 0
+      },
+      "total_chars": 0,
+      "chars_train": 0,
+      "chars_validation": 0,
+      "chars_test": 0,
+      "chars_by_arm": {
+        "A": 0,
+        "B": 0
+      },
+      "target_chars_validation": 316235.2941176471,
+      "target_chars_test": 316235.2941176471,
+      "target_chars_by_arm": {
+        "A": 3088235.294117647,
+        "B": 12352941.176470589
+      },
+      "unmet_arms": [
+        "A",
+        "B"
+      ],
+      "unmet_heldout": [
+        "validation",
+        "test"
+      ]
+    }
+  },
+  "_note": "histogram stripped: this is a 5% sample plan, superseded by the freeze's single unsampled pass. plan_wikipedia.json keeps its histogram — it is the only complete-source measurement and the Week 5 re-solve is demonstrated against it."
+}

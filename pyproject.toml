@@ -34,6 +34,7 @@ ravaan-langid = "ravaan.data.langid:main"
 ravaan-minhash = "ravaan.data.minhash:main"
 ravaan-normalize = "ravaan.data.normalization:main"
 ravaan-quality = "ravaan.data.quality:main"
+ravaan-splits = "ravaan.data.splits:main"
 ravaan-shards = "ravaan.data.shards:main"
 
 [project.optional-dependencies]

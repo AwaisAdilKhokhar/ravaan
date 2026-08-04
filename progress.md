@@ -5,15 +5,16 @@ Spec is the PRD; this file is the state of play. **Read the "Next session" secti
 first.**
 
 - **Started:** 2026-08-03 (Week 1 of 16)
-- **Current phase:** Weeks 1–2 complete → Weeks 3–4, corpus freeze. Pipeline stages 1–8 are built
+- **Current phase:** Weeks 1–2 complete → Weeks 3–4, corpus freeze. Pipeline stages 1–9 are built
   and validated on real text; stage 5's 200-sample validation is adjudicated, scored and written up
   ([`reports/quality_validation.md`](reports/quality_validation.md)), stage 6 has run **complete
   passes over every source**, stage 7's threshold is chosen from measured pairs and written up
   ([`reports/neardedup_threshold.md`](reports/neardedup_threshold.md)), and stage 8's instrument and
   thresholds are chosen the same way ([`reports/decontamination.md`](reports/decontamination.md)).
-  **Session 9's Finding M is acted on and session 10 overturned the other half of its handoff**: the
-  MinHash sketch cannot answer stage 8's question at all, and the exact answer is affordable — see
-  Finding N. Next is stage 9 (splits), which stage 8 must then be run against a second time.
+  **Session 11 built stage 9 and ran the decontamination pass it was blocking**
+  ([`reports/splits.md`](reports/splits.md)) — and found that PRD §6.1 and §4.3 disagree about what
+  U counts, in a direction that would have put arm A 6× short of the crossover (Finding R). Only
+  stage 10 (tokenization + packing) and the PII pass remain before the freeze.
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
 - **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds
@@ -21,11 +22,12 @@ first.**
 - **Preregistration:** ✅ committed [`reports/preregistration.md`](reports/preregistration.md) —
   4 falsifiable predictions, before any training.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 429 passing (69 normalization · 60 decontamination · 57 encoding · 57 acquisition ·
-  52 minhash · 43 quality · 41 dedup · 32 langid · 18 shards)
-- **Committed** through session 10, on branch `stages-7-and-8` (main is at session 8; fast-forward
+- **Tests:** 498 passing (69 normalization · 69 splits · 60 decontamination · 57 encoding ·
+  57 acquisition · 52 minhash · 43 quality · 41 dedup · 32 langid · 18 shards)
+- **Committed** through session 11, on branch `stages-7-and-8` (main is at session 8; fast-forward
   it when convenient). Sessions 6 and 7 are one commit — stage 5, its 200-sample validation and the
-  write-up are one deliverable. Sessions 9 and 10 are one commit each, stage 7 and stage 8.
+  write-up are one deliverable. Sessions 9, 10 and 11 are one commit each: stage 7, stage 8, and
+  stage 9 with the second stage-8 run.
 
 ---
 
@@ -67,8 +69,11 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | Acceptance test: Roman-Urdu-Parl test-in-train, both columns | §6.2, §6.3.8 | ✅ |
 | Full passes: Urdu Wikipedia (complete); FineWeb2 at 5% | §6.3.8 | ✅ |
 | Full pass: FineWeb2 complete shard | §6.3.8 | ⬜ deferred to freeze |
-| Second stage-8 run, against the held-out split | §6.3.8 | ⬜ blocked on stage 9 |
-| Split creation (stage 9) | §6.3.9 | ⬜ |
+| Second stage-8 run, against the held-out split | §6.3.8 | ✅ 15/6,748 held-out items at 5%; ~4.4% projected |
+| **Split creation (stage 9)** | §6.3.9 | ✅ |
+| What U counts — §6.1 vs §4.3 resolved (Finding R) | §4.3, §6.1 | ✅ answered; **PRD amendment owed** |
+| Full passes: Urdu Wikipedia (complete); FineWeb2 at 5% | §6.3.9 | ✅ |
+| One unsampled pass over **all** sources together | §6.3.9 | ⬜ deferred to freeze |
 | Tokenization + packing (stage 10) | §6.3.10 | ⬜ |
 | PII regex pass (phones, emails) | §6.3 | ⬜ |
 | Corpus manifest + statistics | §6.3 | 🟡 acquisition manifest done; stage stats pending |
@@ -1536,6 +1541,202 @@ and a 5% FineWeb2 sample, both at the shipped per-set settings.
 
 ---
 
+### Session 11 — 2026-08-04/05
+
+**Done**
+
+1. **Split creation — stage 9** (`ravaan/data/splits.py`, `configs/data/splits.json`, 69 tests) and
+   **`scripts/split.py`**, the fifth driver (stages 2→5 → 9). Written up in
+   [`reports/splits.md`](reports/splits.md). Stage 9 has no threshold to validate against read
+   documents the way stages 5, 7 and 8 did; what it has instead are guarantees the PRD states in
+   prose, so they are built into the construction rather than checked afterwards.
+   - **A document's entire fate is one integer.** `bucket_of(doc_id)` hashes the id into
+     `[0, 100000)` and every split and arm is a *range of buckets*. Arm A is a **prefix** of arm B,
+     so §6.1's "deterministic, seeded subsample of the frozen 100M corpus — not a separate
+     collection" is not a property this stage maintains, it is one it cannot violate.
+   - **Membership is a per-document function, never "take documents until the budget is full".**
+     The fill rule makes membership depend on read order, which is Finding E's defect exactly. A
+     bucket range is order-independent and resumable — and it is what lets Finding G's softened form
+     apply, so a sampled phase 1 estimates the band quantiles honestly.
+   - **Both arms share one held-out set**, carved from the top of the same number line. Per-arm
+     held-out sets would make §4.3's primary endpoint a comparison of two BPB numbers computed on
+     different data. Bands grow down from the top and arms grow up from zero, so re-sizing §6.1's
+     ~5K sequences cannot move a document between the arms.
+   - **Every boundary is an integer.** Session 10 lost a stage-8 removal to `array("f")` holding
+     0.80 as 0.80000001; `bucket < cut` between two ints has no boundary behaviour to get wrong.
+   - **Both columns of a parallel row hash to the same bucket.** `pair_key()` strips stage 8's
+     `#roman` / `#urdu` suffix first — hashing them independently would put a sentence's Roman side
+     in train and its Urdu side in test about half the time, **the splitter manufacturing the
+     contamination stage 8 exists to remove**.
+
+2. **The tokenizer-ordering problem is defused rather than worked around.** §7's tokenizer is Week 5
+   and the freeze is Weeks 3–4, so stage 9 cannot count the tokens its budgets are written in. It
+   measures **characters** and converts at *solve* time, and the plan carries its histogram — so a
+   corrected fertility re-solves every boundary with no corpus pass. Measured on the real Wikipedia
+   plan: **0.32 s**, against the ~20 minutes the pass that produced it took. Every run also prints
+   the characters-per-word it measured beside the ratio it solved with (urdu 4.89 → 1.40
+   tokens/word), so the assumption is auditable in units a reader has intuition for.
+
+3. **`scripts/decontaminate.py` grew `--eval-file`** — a test set from JSONL rather than from the
+   acquisition manifest. Three of §8.2's five test sets are not manifest sources and never will be:
+   the held-out split is *produced* by stage 9, and the ~200 human transliteration pairs and ~300
+   real-OCR lines are hand-built. This is what unblocked item 2 below.
+
+**Finding R — PRD §6.1 and §4.3 do not describe the same corpus, and the reading §6.1 invites is
+fatal to the primary endpoint.**
+
+This is the session's largest result and it is a design correction, not a measurement.
+
+- §6.1 lists per-component targets (~120M native "100M for arm B + ~20% headroom", ~40M Roman Urdu,
+  ~10M code-switched). §4.3 fixes U ∈ {25M, 100M}. **Assembling an arm by taking each population's
+  target gives arm A 25M + 40M + 10M = 75M unique tokens, not 25M.** Both cannot be right.
+- **§4.3's own arithmetic settles it.** 396 × 25M = 9.9B and 99 × 100M = 9.9B, so epochs are counted
+  over the *whole training set* — and so is the U the reference paper's law takes as its independent
+  variable.
+- **The cost of the other reading is Finding A's error again, on the arm carrying the primary
+  endpoint.** At 70M params and the same 9.9B tokens processed, arm A at a true U = 75M sits **6×
+  short** of C_crit instead of 1.79× past it. Reproduce with
+  `python scripts/crossover.py --params 70e6 --unique 75e6 --epochs 132`.
+- Arm B is the check that this is the *intended* reading and not a convenient one: at U = 100M total
+  and 99 epochs the arithmetic gives 0.09× of C_crit, **exactly** the figure §4.3's table already
+  states. The table is only reproducible under the total-U reading.
+- **So U is the total unique-token budget of an arm**, §6.1's component figures are *pool* targets,
+  and the arms are assembled at a fixed mixture (§6.1's targets in proportion, 120 : 40 : 10). Arm
+  B is 70.59M native + 23.53M Roman + 5.88M code-switched; arm A is a quarter of each. Holding the
+  mixture fixed is what "differ in size and nothing else" means once there is more than one
+  population.
+- **Two consequences.** (a) **The PRD needs amending at §6.1**, the way §4.3 and §6.1 were amended
+  in v2.1 for Finding A — the component figures labelled as pool targets and the arm mixture stated.
+  (b) **The code-switched shortfall more than halves**: arm B needs 5.88M, not §6.1's 10M.
+
+**Measured — a complete pass over the Urdu Wikipedia dump, and FineWeb2 at 5%**
+
+93,606 documents reach stage 9 from Wikipedia (200,148 read; stage 5 keeps 46.8%, matching session
+6's 46.72%); 416 fall outside the budgeted populations and are counted rather than dropped silently.
+
+| | urdu train | urdu validation | urdu test | code_switched train |
+|---|---|---|---|---|
+| documents | 83,488 | 3,080 | 2,754 | 2,954 |
+| characters | 167,932,053 | 6,321,365 | 6,322,883 | 3,252,802 |
+| ~tokens | 47.98M | 1.81M | 1.81M | 0.86M |
+
+- **The band solve is accurate to five decimal places on real text.** Arm A's native budget targeted
+  61,764,706 characters and realized **61,764,222** — an undershoot of **484 characters, 0.00078%**.
+  Held-out bands land within 0.05%. The undershoot is **always** an undershoot by construction: an
+  arm's budget *is* §4.3's U, so a boundary that rounded upward would quietly buy fewer epochs than
+  the design specifies.
+- **Both structural guarantees were checked against the 93,606 real assignments, not only in
+  tests**: arm A ⊂ arm B strictly (33,557 of 86,442), and **0** held-out documents carry an arm.
+- **Projected corpus** (Wikipedia complete + FineWeb2 shard 001 ×20). The freeze must re-measure
+  this in one unsampled pass, but only one line is close to the boundary:
+
+| population | total chars | ~tokens | arm B needs | margin |
+|---|---|---|---|---|
+| urdu | 3,852.4M | **1,100.7M** | 70.59M | **15.6×** |
+| roman_urdu | 453.6M pre-dedup | **61.5M** post-dedup | 23.53M | **2.6×** |
+| code_switched | 21.8M | **5.7M** | 5.88M | **0.97×** |
+
+- **Roman-Urdu-Parl supplies the whole roman_urdu population and the two estimates agree.** A 5%
+  pass assigns 281,215 of 301,389 rows (the remainder is 14,210 `empty`, 5,669 `other`, 295
+  `english` — session 5's unit mismatch). Its Roman column projects to 453.5M characters *before*
+  stage 6; Finding K′ measured 258M *after*, a 43% collapse matching §6.2's warning that the source
+  is machine-produced.
+- **The band precision tracks document size**, which is the honest way to state it: arm A's error is
+  −0.0041% on Roman-Urdu-Parl's ~74-character sentences, −0.0008% on Wikipedia's ~2,000-character
+  articles, and **−6.86% on FineWeb2**, whose long tail reaches 240K characters. Same mechanism, and
+  FineWeb2's own arm B — four times the budget, same lump — is −0.0110%. The bound is **the largest
+  document at the cut divided by the budget**, not a bucket and not a fixed percentage.
+
+**Finding S — a sampled pass reported Gate G1 twenty times too low, and the two wrong numbers
+agreed with each other.**
+
+Findings O and P a third time — one number meaning two things depending on how it was produced —
+arriving at the one number in this stage that is a **project decision** rather than a statistic.
+
+- `gate_g1()` read the measured character total without scaling by the sample rate. The FineWeb2 5%
+  pass therefore printed `ARM_A_ONLY — 52.7M clean tokens` for a shard that holds **~1.05B**.
+- **The complete Wikipedia pass independently printed 52.8M.** Two figures that mean entirely
+  different things, agreeing to within 0.2% by coincidence — which is exactly the shape that reads
+  as corroboration rather than as a bug. G1's ladder cuts arm B at 25–100M and stops the project
+  below 25M.
+- Fixed: the gate scales by the sample rate and reports the measured figure beside the scaled one;
+  arm targets print at the rate they were solved against. `PASS — 1,053.7M (from 52.7M measured at
+  r=0.05)`. Two regression tests pin the sampled and unsampled cases apart.
+
+**A correction to how stage 9's precision should be described, from the same pass.** Wikipedia's
+0.00078% is not the general case. On FineWeb2 arm A undershot by 211,883 characters, and the bucket
+at the cut held a **single 238,787-character document**. With 76,940 documents in 100,000 buckets
+most buckets hold at most one document, so **the undershoot is bounded by the largest single
+document at the cut, not by an average bucket** — and raising `buckets` cannot reduce it below one
+document. At full-scale budgets that is ~0.2%, which is fine; quoting five decimals would not be.
+
+**Finding T — the second stage-8 run, and Finding L is refined rather than confirmed.**
+
+Session 10 left this as "the most important decontamination run in the project and it has not
+happened", blocked because the held-out split did not exist. The eval set is the 6,748 held-out
+Wikipedia documents; the corpus is FineWeb2 at 5%.
+
+| | |
+|---|---|
+| training documents removed | **15 of 76,940 = 0.0195%** |
+| **held-out items compromised** | **15 of 6,748 = 0.222%** (~4.4% projected to the full shard) |
+| by `exact_line` / containment / `exact_document` | 13 / 2 / **0** |
+
+- **Finding L still holds for *document*-level hashing — 0 of 15 — and does not hold for
+  *line*-level.** Line matching was added in session 10 on a structural argument with no measurement
+  behind it, and it carries **13 of 15** here. Re-running the fuzzy half alone over the same
+  documents: **9 of 15 survive without the exact half, 2 of 15 survive without the fuzzy half.**
+  Both halves are load-bearing on this path and neither subsumes the other.
+- **The two containment-only catches are Finding M's cleanest demonstration yet.** Both are
+  `ur.wikipedia.org` crawls sharing **zero** whole lines with the held-out article — HTML rendering
+  re-flows the line breaks — while 92% and 90% of the word 5-grams are present. Document hashing
+  cannot see them, line hashing cannot see them, and Jaccard would not have proposed them.
+- **The hits were read, not assumed.** 9 of 15 removed documents are crawled `ur.wikipedia.org` /
+  `ur.m.wikipedia.org` pages — Finding L's mechanism, at corpus scale for the first time. One is
+  `top.hatnote.com/ur/`, Wikipedia's own top-articles aggregator. Three are Urdu news and religious
+  sites sharing a specific sentence verbatim.
+- **Precision ≈ 13/15 ≈ 0.87** (0.73 on session 10's Roman-Urdu-Parl path), and the two errors are
+  one *new* nameable family: **the 40-character line floor admits shared quotations — a line of a
+  well-known ghazal, and the genre formula "he was a prolific poet and author; among his collections
+  the following are important" — which are common third-source text rather than evidence that one
+  document contains the other.** Left in, on the standing argument that a false positive costs one
+  training row and a false negative costs the validity of an evaluation number.
+
+**Decisions made**
+
+| Decision | Rationale |
+|---|---|
+| **U is the total unique-token budget of an arm**, not its native component | Finding R. §4.3's epoch arithmetic is only self-consistent under this reading, and the alternative puts arm A 6× short of the crossover — Finding A's error a second time, on the arm carrying the primary endpoint. |
+| The arms hold a **fixed population mixture**, §6.1's targets in proportion | "Differ in size and nothing else" (§4.1) has no other meaning once there is more than one population. Scaling only the native component would confound U with source mix, the same failure §6.1 already forbids for crawl date. |
+| Splits and arms are **bucket ranges over one hashed integer**, not float thresholds or fill rules | A fill rule makes membership depend on read order (Finding E); a float threshold has boundary behaviour (session 10's `array("f")`). A bucket range has neither, and makes arm A a prefix of arm B for free. |
+| Held-out is carved **at the same mixture as the arms** | §8.3 reports validation BPB *by script*. If the held-out mixture differed from the training mixture, aggregate BPB would move with the mixture rather than with the model. |
+| **Two** held-out sets (validation and test), not §8.2's one | Gate G4 at mid-W10 *reads the arm A curves* and may cut arm B on what it sees. That is a decision taken on validation data, so §8.2's reported number cannot come from the same set. Costs 5K sequences from a pool with 15.6× margin. |
+| An unmet budget is **reported, not raised** | §11's G1 ladder has documented fallbacks ("25–100M → run arm A only"). A stage that raised here would remove the operator's choice; one that truncated silently would hide it. |
+| The held-out bands report `unmet_heldout` **separately** from `unmet_arms` | Found on a 2,482-document smoke run: bands are solved from the top, so a pool below §6.1's ~5K sequences eats the train pool and *every* arm then reports unmet for a reason that is not its own. The upstream cause has to be named or the diagnosis is wrong. |
+| Stage 9 does **not** normalize `--eval-file` text by default | Stage 9 emits post-stage-4 text. Normalizing twice is harmless, but claiming a pass that did not happen is not, so the hand-built sets opt in explicitly. |
+
+**Fixed during the session**
+
+- **`gate_g1()` did not scale a sampled pass** — Finding S. Two regression tests pin the sampled and
+  unsampled cases apart.
+- **The unmet-arm check used an average-bucket tolerance.** Buckets vary by more than an order of
+  magnitude, so a cut stopped by one heavy bucket looked identical to an exhausted pool and a
+  *sufficient* corpus was reported as failing G1. The correct signal costs nothing and is exact:
+  whether the bucket *range* ran out rather than the budget.
+- **`unbudgeted_measured` and `unassigned_labels` were one counter**, incremented in both phases, so
+  a full run double-counted and a plan applied by a later stage under-counted. Split in two.
+- **`unmet_arms` came back from JSON as a list**, so a round-tripped plan compared unequal to the one
+  that produced it — which is how a freeze ends up unable to prove the plan it applied is the plan
+  it measured.
+- **`SplitPlan.resolve()` silently re-solved a plan written without its histogram**, returning a
+  complete and entirely plausible plan with **every band at zero**. Caught while trimming the
+  committed artifacts, which is exactly the path that produces such a plan: the two 5% sample plans
+  are committed with their histograms stripped (2.9 KB rather than 2.9 MB) because the freeze
+  supersedes them, while `plan_wikipedia.json` keeps its histogram as the only complete-source
+  measurement and the one the Week 5 re-solve is demonstrated against. Now refuses.
+
+---
+
 ## Open questions for you
 
 1. ~~**Config format.**~~ **Decided in session 4: JSON, for the whole data pipeline.** Three
@@ -1575,49 +1776,58 @@ and a 5% FineWeb2 sample, both at the shipped per-set settings.
 
 ## Next session
 
-**Stage 8 is done, its instrument was chosen against the measurement rather than the handoff, and
-its thresholds were moved by reading hits.** Session 9 handed it two instructions; Finding N
-overturned one of them (the sketch cannot propose the candidates stage 8 needs — 0.0006 probability
-on the shape Finding M identified, and no banding fixes it), and Finding O caught a 59× over-count
-in stage 8's own first run before it reached a report. The remaining stage-8 work is **blocked on
-stage 9**, which is the next task.
+**Stage 9 is done, the decontamination run it was blocking has happened, and the largest result of
+the session is a PRD contradiction rather than a measurement.** Finding R: §6.1 and §4.3 do not
+describe the same corpus, and the reading §6.1 invites puts arm A **6× short** of the crossover
+instead of 1.79× past it — Finding A's error a second time, on the arm carrying the primary
+endpoint. §4.3's epoch arithmetic settles it and stage 9 is built to the correct reading, but
+**the PRD has not been amended and that is the first thing owed.**
 
-**Both native-source passes completed — see Finding Q, which is the largest contamination result in
-the project and did not exist when the rest of this section was drafted.** The one thing they leave
-open is FineWeb2's *full* shard: it was measured at a 5% sample, which is honest at stage 8 (the
-eval side is indexed whole, so detection is linear in *r*, not *r*²) but scales the absolute count
-by 20×. Re-run it complete when the corpus is being written anyway, **one pass at a time** — three
-concurrent passes managed only ~16% CPU utilisation between them and the 2 GB scan starves
-everything else on disk — and with the current code, whose retention floor makes the hit file
-~500× smaller.
+1. **Amend the PRD for Finding R — this is a documentation debt on a load-bearing number.**
+   v2.1 amended §4.3 and §6.1 for Finding A with an inline changelog; the same is owed here.
+   - §6.1's component figures are **pool** targets (how much to collect), not arm budgets. Say so.
+   - State the arm mixture: arm B is 70.59M native + 23.53M Roman + 5.88M code-switched; arm A is a
+     quarter of each. Say that U is the *total* unique-token budget, which is what §4.3's epoch
+     count divides 9.9B by.
+   - §6.1's "100M for arm B + ~20% headroom" is the sentence that misleads. Arm B's native share is
+     70.59M, so the ~120M native target carries 1.7× headroom, not 1.2×.
+   - Nothing in the *design* changes — stage 9 already implements the correct reading, and
+     `reports/splits.md` §1 has the argument and the arithmetic ready to lift.
 
-1. **Stage 9 (split creation) — and it is now on the critical path for two stages, not one.**
-   - Finding E's consequence applies directly: splits must select **randomly across the shard**,
-     never a prefix or a contiguous block, or arm A becomes systematically older web text than arm
-     B and the primary endpoint is confounded with crawl date. `stable_unit()` exists for this.
-   - Finding G's lesson applies in the softened form: a split assignment is a per-document property
-     and samples fine, but any *pairwise* check over the splits does not.
-   - Arm A's 25M corpus is a **seeded subsample of** the frozen 100M corpus, per PRD §6.1 — not a
-     separate selection.
-2. **Then the second stage-8 run, which is the one Finding L was really about.** §8.2 draws
-   held-out evaluation text from Urdu Wikipedia while the same articles sit in the training data as
-   crawled FineWeb2 HTML — session 9 measured that population at 633 cross-source clusters where
-   exact dedup found 1, with 11 of 49 sampled pairs below a 0.80 Jaccard cut. Stage 8 at
-   containment ≥ 0.80 is built for exactly that and the number is not yet on the record, because
-   the held-out split does not exist until stage 9 makes it. **This is the most important
-   decontamination run in the project and it has not happened.**
-3. **Run the two deferred stage 7 passes at freeze time**, when the corpus is being written anyway:
-   - **FineWeb2 self-similarity, complete shard.** Finding H predicts near-inertness (31.02%
-     already removed upstream by MinHash) and that prediction is currently untested. Measured cost:
-     stages 2–5 run at ~380 documents/second, so ~68 minutes per pass and ~2.3 hours two-pass.
-     Finding G forbids sampling it — a pair statistic sampled at rate *r* is measured at *r²*.
-   - **Roman-Urdu-Parl, with `shingle_unit="char"`.** Its rows are ~10-word sentences carrying six
-     word-5-grams, below anything the estimator can work with; the config option exists for exactly
-     this and has not been pointed at real text.
-3. **Then stages 9 (splits) and 10 (tokenization + packing)**, plus the PII regex pass and the
-   corpus manifest/statistics rollup — the remaining Weeks 3–4 items. Stage 9 inherits Finding G's
-   lesson directly: a split assignment is a per-document property and samples fine, but any
-   *pairwise* check over the splits does not.
+2. **Then stage 10 (tokenization + packing) is the last pipeline stage**, and it is the one that
+   turns stage 9's estimated token counts into counted ones. `SplitPlan.resolve()` exists precisely
+   for this: re-solve every band from the saved histogram against the measured fertility, in
+   ~0.3 s, with no corpus pass. **Do this before the corpus is written, not after** — the arm cuts
+   move when the ratio does.
+   - The tokenizer itself is **Week 5 and timeboxed**; stage 10's packing code can be built against
+     the estimate and re-solved when §7 lands.
+
+3. **The freeze needs one unsampled stage-9 phase 1 over all sources together.** The three passes
+   here are per source, so each set of bands is calibrated to that source's totals rather than to
+   the corpus — which gives each source its own held-out share instead of the corpus's. Measure
+   once over everything, then apply that single plan everywhere with `--plan-in` (phase 2 needs
+   nothing from phase 1 but a few integers, so every later stage can carry the same plan).
+   - **The freeze order must be 6 → 7 → 9 → 8.** Stage 9 ran *before* dedup in these passes, so the
+     held-out split can still contain near-duplicates of training documents from within Wikipedia —
+     the geo-stub farms session 9 measured at 10.7% of the dump. Stage 8 catches the cross-source
+     case and structurally cannot catch that one. **The held-out split's integrity depends on stage
+     7 having run first.**
+
+4. **Fetch FineWeb2 train shard 000.** This is now a recommendation rather than one of three
+   options: the code-switched population projects to **5.7M tokens against arm B's 5.88M** — 3%
+   short — and shard 000 roughly doubles the FineWeb2 contribution at ~$0 and ~25 minutes, taking it
+   to ~10.3M. The alternatives cost a stated corpus-composition change or a new licence-gate
+   decision, neither of which is warranted for a 3% gap. Note Finding R already shrank this problem
+   from 43% short to 3% short.
+
+5. **Deferred to freeze time, unchanged from session 10:**
+   - **Stage 8 over FineWeb2's complete shard**, both for the Roman-Urdu-Parl eval sets and for the
+     held-out split. The held-out number here (15 of 6,748 = 0.22%) is at a 5% sample and projects
+     to **~4.4%**; that is the figure §8.2 needs and it should be measured, not projected.
+   - **Stage 7: FineWeb2 self-similarity (complete shard) and Roman-Urdu-Parl with
+     `shingle_unit="char"`.** ~2.3 hours two-pass. Finding G forbids sampling either.
+   - **The PII regex pass (§6.3)**, which is still not built and belongs before the corpus is
+     written.
 
 **A cheap halving of every future stage 7 run, measured but not taken.** The driver reads the
 corpus twice because stage 6 is two-phase, and stages 2–5 are 90% of that cost (profiled: stage 5
@@ -1625,28 +1835,37 @@ corpus twice because stage 6 is two-phase, and stages 2–5 are 90% of that cost
 what `--index-only` already claims — so a driver that sketched during phase 1 and applied stage 6's
 verdict from the index would need one pass, not two. It needs a small public accessor on
 `ExactDeduplicator` to avoid reaching into `_best`. Worth taking before the FineWeb2 and
-Roman-Urdu-Parl passes above, which is where it pays for itself.
+Roman-Urdu-Parl passes above, which is where it pays for itself. **Stage 9 does not need it** —
+its phase 2 can be skipped entirely by carrying the plan.
 
-**Do not start** tokenizer work or modelling. The tokenizer is timeboxed to Week 5.
+**Do not start** tokenizer training or modelling. The tokenizer is timeboxed to Week 5.
 
-**A note on running long passes here.** Stage 6 is the first stage that must read a source *whole*
-— Finding G — and tracked background jobs in this environment were killed three times at somewhere
-under 14 minutes. Foreground calls cap at 10 minutes. What worked was `nohup … &` as a detached
-process, and session 9 confirms it: four stage 7 passes of 20–40 minutes each ran that way without
-trouble, several of them concurrently (the machine has 16 cores and every stage is
-single-threaded, so parallel passes over *different* questions are close to free). Stage 9 has the
-same shape, so budget for it.
-
-**Session 10 adds a correction to the "close to free" claim.** Three concurrent stage-8 passes on
-this machine ran at roughly a third of the CPU they would have had alone — 820 CPU-seconds over 80
-minutes of wall clock each — so parallel passes are free in *cores* and are not free in wall time
-when they contend on memory bandwidth. Budget stage 8 separately: it runs at ~400 documents/s on
-sentence rows and **~50–70 documents/s on Wikipedia-length articles**, because character shingling
-of a 3,500-character document is ~3,500 hashes and lookups. The complete Urdu Wikipedia dump is
-therefore ~25–30 minutes alone, and noticeably longer beside anything else.
+**A note on running long passes here.** Tracked background jobs in this environment were killed
+three times at somewhere under 14 minutes, and foreground calls cap at 10 minutes. What works is
+`nohup … &` as a detached process; sessions 9, 10 and 11 all confirm it. Session 11 adds a
+measurement to session 10's contention correction: **two** concurrent passes over the *same* 2 GB
+parquet file (a stage-9 two-phase run and a stage-8 run, both on FineWeb2 at 5%) took ~50 minutes
+where either alone is ~20. Parallel passes are free in cores and are not free when they contend on
+one file. Complete-Wikipedia stage 9 is ~20 minutes two-phase, alone.
 
 **Carried forward**
 
+- **⚠️ The PRD has not been amended for Finding R.** Stage 9 implements the correct reading of U and
+  `reports/splits.md` §1 carries the argument, but §6.1 still reads as though arm B's 100M is its
+  native-Urdu component. That is the sentence which, taken at face value, puts arm A 6× short of the
+  crossover. v2.1 amended the PRD inline for Finding A; the same is owed here, and it is the first
+  item in "Next session".
+- **⚠️ ~4.4% of the held-out split is likely inside FineWeb2 (Finding T), and the measured figure is
+  0.22% at a 5% sample.** The projection assumes an eval item with one crawled copy is found with
+  probability *r*. §8.2's held-out native set is the primary endpoint's own instrument, so the
+  freeze must run this pass **complete**, not sampled, and the report must state the number.
+- **Stage 8's line-level half now has a measured false-positive family of its own.** Session 10's
+  was bylines-with-a-different-year on the Roman-Urdu-Parl path; session 11's is **shared
+  quotations** — a ghazal line at exactly the 40-character floor, and a biographical genre formula.
+  Precision 0.87 on this path against 0.73 on that one. Both are left in deliberately, and both
+  belong in the report as stated precision rather than implied correctness. If the floor is ever
+  revisited, the discriminator is whether the shared line is *quoted* material, which is closer to
+  stage 3's lowercase-running-text test than to a length.
 - **⚠️⚠️ 16.8% of the reference transliteration split's Urdu side is in Urdu Wikipedia (Finding Q),
   and Wikipedia is a training source.** §4.5 makes transliteration chrF a Holm-corrected secondary
   endpoint. Stage 8 removes the contaminated *training* documents, which is the correct action and
@@ -1758,15 +1977,18 @@ therefore ~25–30 minutes alone, and noticeably longer beside anything else.
   set went through stage 4, 14.6% of FineWeb2 documents changed (against 13.7% over 20,000 in
   session 4), the Urdu-specific rules are the ones that fire, and no rule misfired on any of the
   200.
-- **⚠️ The code-switched budget may not be reachable from these sources.** PRD §6.1 asks for ~10M
-  code-switched tokens. Measured share by letters: **0.54% of FineWeb2** and **2.6% of Urdu
-  Wikipedia**. Extrapolated over shard 001 (~3.5G characters) plus the full Wikipedia dump
-  (~324M), that is roughly **27M characters ≈ 7M tokens** — the right order of magnitude but
-  *below* target and with no margin. Three ways out, in preference order: (a) fetch FineWeb2 train
-  shard 000 as well, which roughly doubles it at ~$0 and ~25 minutes; (b) accept a smaller
-  code-switched share and say so; (c) add a social-media source, which means a new licence-gate
-  decision. **Decide before the freeze, not after.** Note this is the one population where more
-  data is genuinely scarce — Finding B's "Urdu is not data-constrained" holds for *native* Urdu.
+- **⚠️ The code-switched budget is 3% short, and session 11 shrank the problem from 43% short.**
+  The original worry measured this population against §6.1's ~10M-token figure and projected ~7M
+  available. **Finding R establishes that 10M is a *pool* target and arm B's actual requirement is
+  5.88M**, and session 11's two stage-9 passes measure the supply directly rather than by
+  extrapolating a letter share: Wikipedia 4.4M characters (complete dump) + FineWeb2 17.4M
+  (5% sample ×20) = 21.8M characters ≈ **5.7M tokens against 5.88M needed — 0.97×**.
+  **Option (a) is now the recommendation rather than one of three**: fetch FineWeb2 train shard 000,
+  which roughly doubles the FineWeb2 share at ~$0 and ~25 minutes and takes the population to
+  ~10.3M. (b) "accept a smaller share and say so" costs a stated corpus-composition change and (c)
+  "add a social-media source" costs a new licence-gate decision; neither is warranted for a 3% gap.
+  **Do it before the freeze.** This is still the one population where more data is genuinely
+  scarce — Finding B's "Urdu is not data-constrained" holds for *native* Urdu.
 - ~~**Roman Urdu's 40M-token target is unverified after dedup.**~~ **Settled in session 8, and the
   worry was unfounded** — see Finding K′. The estimate that raised it applied the *Urdu*-column
   unique count to the *Roman* population and assumed 45 characters a sentence; measured, the Roman

@@ -56,6 +56,18 @@ from ravaan.data.quality import (
     check,
     measure,
 )
+from ravaan.data.splits import (
+    SPLITS_VERSION,
+    PopulationBands,
+    SplitAssigner,
+    SplitAssignment,
+    SplitConfig,
+    SplitLog,
+    SplitPlan,
+    assign_splits,
+    bucket_of,
+    pair_key,
+)
 
 __all__ = [
     "DECONTAMINATION_VERSION",
@@ -64,6 +76,7 @@ __all__ = [
     "MINHASH_VERSION",
     "NORMALIZER_VERSION",
     "QUALITY_VERSION",
+    "SPLITS_VERSION",
     "ContaminationHit",
     "DecontaminationConfig",
     "DecontaminationLog",
@@ -84,10 +97,18 @@ __all__ = [
     "NormalizationConfig",
     "NormalizationLog",
     "NormalizationResult",
+    "PopulationBands",
     "QualityConfig",
     "QualityLog",
     "QualityMetrics",
     "QualityResult",
+    "SplitAssigner",
+    "SplitAssignment",
+    "SplitConfig",
+    "SplitLog",
+    "SplitPlan",
+    "assign_splits",
+    "bucket_of",
     "check",
     "classify",
     "decontaminate",
@@ -96,5 +117,6 @@ __all__ = [
     "near_deduplicate",
     "normalize",
     "normalize_text",
+    "pair_key",
     "script_ratios",
 ]

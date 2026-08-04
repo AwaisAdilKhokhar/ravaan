@@ -1,0 +1,452 @@
+{
+  "splits_version": "1.0.0",
+  "config_fingerprint": "23df13e0dfc3",
+  "measured": 93606,
+  "assigned": 93190,
+  "unassigned": 416,
+  "sample_rate": null,
+  "unbudgeted_measured": {
+    "other": 222,
+    "english": 184,
+    "arabic": 10
+  },
+  "unassigned_labels": {
+    "other": 222,
+    "english": 184,
+    "arabic": 10
+  },
+  "populations": {
+    "urdu": {
+      "target_tokens": 120000000,
+      "mixture_share": 0.705882,
+      "chars_per_token": 3.5,
+      "chars_per_word_measured": 4.894,
+      "splits": {
+        "train": {
+          "documents": 83488,
+          "chars": 167932053,
+          "tokens_estimated": 47980587
+        },
+        "validation": {
+          "documents": 3080,
+          "chars": 6321365,
+          "tokens_estimated": 1806104
+        },
+        "test": {
+          "documents": 2754,
+          "chars": 6322883,
+          "tokens_estimated": 1806538
+        }
+      },
+      "arms": {
+        "A": {
+          "documents": 30603,
+          "chars": 61764222,
+          "tokens_estimated": 17646921,
+          "target_tokens": 17647059
+        },
+        "B": {
+          "documents": 83488,
+          "chars": 167932053,
+          "tokens_estimated": 47980587,
+          "target_tokens": 70588235
+        }
+      }
+    },
+    "roman_urdu": {
+      "target_tokens": 40000000,
+      "mixture_share": 0.235294,
+      "chars_per_token": 4.2,
+      "chars_per_word_measured": 5.497,
+      "splits": {
+        "train": {
+          "documents": 0,
+          "chars": 0,
+          "tokens_estimated": 0
+        },
+        "validation": {
+          "documents": 0,
+          "chars": 0,
+          "tokens_estimated": 0
+        },
+        "test": {
+          "documents": 2,
+          "chars": 70969,
+          "tokens_estimated": 16897
+        }
+      },
+      "arms": {
+        "A": {
+          "documents": 0,
+          "chars": 0,
+          "tokens_estimated": 0,
+          "target_tokens": 5882353
+        },
+        "B": {
+          "documents": 0,
+          "chars": 0,
+          "tokens_estimated": 0,
+          "target_tokens": 23529412
+        }
+      }
+    },
+    "code_switched": {
+      "target_tokens": 10000000,
+      "mixture_share": 0.058824,
+      "chars_per_token": 3.8,
+      "chars_per_word_measured": 5.71,
+      "splits": {
+        "train": {
+          "documents": 2954,
+          "chars": 3252802,
+          "tokens_estimated": 856001
+        },
+        "validation": {
+          "documents": 492,
+          "chars": 571938,
+          "tokens_estimated": 150510
+        },
+        "test": {
+          "documents": 420,
+          "chars": 566391,
+          "tokens_estimated": 149050
+        }
+      },
+      "arms": {
+        "A": {
+          "documents": 2954,
+          "chars": 3252802,
+          "tokens_estimated": 856001,
+          "target_tokens": 1470588
+        },
+        "B": {
+          "documents": 2954,
+          "chars": 3252802,
+          "tokens_estimated": 856001,
+          "target_tokens": 5882353
+        }
+      }
+    }
+  },
+  "arms": {
+    "A": {
+      "target_tokens": 25000000,
+      "tokens_estimated": 18502921,
+      "documents": 33557
+    },
+    "B": {
+      "target_tokens": 100000000,
+      "tokens_estimated": 48836587,
+      "documents": 86442
+    }
+  },
+  "by_source": {
+    "urdu-wikipedia/test": 3176,
+    "urdu-wikipedia/train": 86442,
+    "urdu-wikipedia/validation": 3572
+  },
+  "gate_g1": {
+    "clean_tokens_estimated": 52765687,
+    "threshold": 100000000,
+    "verdict": "arm_a_only",
+    "note": "tokens are estimated from characters; re-solve when §7's tokenizer exists"
+  },
+  "bands": {
+    "code_switched": {
+      "population": "code_switched",
+      "buckets": 100000,
+      "test_from": 90359,
+      "validation_from": 76500,
+      "train_to": 76500,
+      "arm_cuts": {
+        "A": 76500,
+        "B": 76500
+      },
+      "total_chars": 4391131,
+      "chars_train": 3252802,
+      "chars_validation": 571938,
+      "chars_test": 566391,
+      "chars_by_arm": {
+        "A": 3252802,
+        "B": 3252802
+      },
+      "target_chars_validation": 572235.294117647,
+      "target_chars_test": 572235.294117647,
+      "target_chars_by_arm": {
+        "A": 5588235.294117646,
+        "B": 22352941.176470585
+      },
+      "unmet_arms": [
+        "A",
+        "B"
+      ],
+      "unmet_heldout": []
+    },
+    "roman_urdu": {
+      "population": "roman_urdu",
+      "buckets": 100000,
+      "test_from": 0,
+      "validation_from": 0,
+      "train_to": 0,
+      "arm_cuts": {
+        "A": 0,
+        "B": 0
+      },
+      "total_chars": 70969,
+      "chars_train": 0,
+      "chars_validation": 0,
+      "chars_test": 70969,
+      "chars_by_arm": {
+        "A": 0,
+        "B": 0
+      },
+      "target_chars_validation": 2529882.352941177,
+      "target_chars_test": 2529882.352941177,
+      "target_chars_by_arm": {
+        "A": 24705882.352941178,
+        "B": 98823529.41176471
+      },
+      "unmet_arms": [
+        "A",
+        "B"
+      ],
+      "unmet_heldout": [
+        "validation",
+        "test"
+      ]
+    },
+    "urdu": {
+      "population": "urdu",
+      "buckets": 100000,
+      "test_from": 96893,
+      "validation_from": 93470,
+      "train_to": 93470,
+      "arm_cuts": {
+        "A": 34161,
+        "B": 93470
+      },
+      "total_chars": 180576301,
+      "chars_train": 167932053,
+      "chars_validation": 6321365,
+      "chars_test": 6322883,
+      "chars_by_arm": {
+        "A": 61764222,
+        "B": 167932053
+      },
+      "target_chars_validation": 6324705.882352942,
+      "target_chars_test": 6324705.882352942,
+      "target_chars_by_arm": {
+        "A": 61764705.88235294,
+        "B": 247058823.52941176
+      },
+      "unmet_arms": [
+        "B"
+      ],
+      "unmet_heldout": []
+    }
+  },
+  "unmet_arms": {
+    "code_switched": [
+      "A",
+      "B"
+    ],
+    "roman_urdu": [
+      "A",
+      "B"
+    ],
+    "urdu": [
+      "B"
+    ]
+  },
+  "unmet_heldout": {
+    "roman_urdu": [
+      "validation",
+      "test"
+    ]
+  },
+  "sources": [
+    "urdu-wikipedia"
+  ],
+  "limit": 0,
+  "seed": 0,
+  "quality_filtered": true,
+  "plan_in": null,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 200154,
+    "documents_accepted": 200148,
+    "documents_rejected": 6,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.99997,
+    "bytes_in": 377121649,
+    "chars_out": 217835598,
+    "replacement_chars": 150,
+    "mojibake_chars": 12,
+    "control_chars": 12,
+    "verdicts": {
+      "control_heavy": 1,
+      "mojibake": 1,
+      "ok": 200148,
+      "replacement_heavy": 4
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 200148,
+    "documents_kept": 198671,
+    "keep_rate": 0.99262,
+    "documents_by_prior": 377,
+    "prior_rate": 0.001884,
+    "mixed_documents": 63930,
+    "letters": 162843197,
+    "labels": {
+      "arabic": 122,
+      "code_switched": 10919,
+      "empty": 205,
+      "english": 792,
+      "other": 353,
+      "persian": 5,
+      "roman_urdu": 4,
+      "urdu": 187748
+    },
+    "letters_by_label": {
+      "arabic": 33333,
+      "code_switched": 4758659,
+      "empty": 2573,
+      "english": 518537,
+      "other": 692796,
+      "persian": 572,
+      "roman_urdu": 52427,
+      "urdu": 156784300
+    },
+    "segment_letters": {
+      "arabic": 63617,
+      "code_switched": 1202926,
+      "english": 3029080,
+      "hindi": 3888,
+      "other": 971113,
+      "persian": 20721,
+      "roman_urdu": 32268,
+      "urdu": 16443911
+    }
+  },
+  "stage5_quality": {
+    "urdu-wikipedia": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "53d04d3fd079",
+      "config": {
+        "min_chars": 400,
+        "min_words": 40,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 0.5,
+        "max_top_ngram_ratio": {
+          "3": 0.26,
+          "4": 0.22
+        },
+        "max_dup_ngram_ratio": {
+          "5": 0.6,
+          "6": 0.58,
+          "7": 0.56,
+          "8": 0.54,
+          "9": 0.52,
+          "10": 0.5
+        },
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 200148,
+      "documents_kept": 93606,
+      "documents_rejected": 106542,
+      "keep_rate": 0.467684,
+      "chars_in": 216321099,
+      "chars_kept": 186567597,
+      "char_keep_rate": 0.862457,
+      "rejections": {
+        "html_residue": 104,
+        "repetition:dup_10gram": 85,
+        "repetition:dup_5gram": 121,
+        "repetition:dup_6gram": 104,
+        "repetition:dup_7gram": 103,
+        "repetition:dup_8gram": 80,
+        "repetition:dup_9gram": 80,
+        "repetition:dup_lines": 90,
+        "repetition:top_3gram": 2162,
+        "repetition:top_4gram": 1303,
+        "script_ratio": 625,
+        "too_short": 105635,
+        "url_density": 56
+      },
+      "families": {
+        "html_residue": 104,
+        "repetition": 3385,
+        "script_ratio": 625,
+        "too_short": 105635,
+        "url_density": 56
+      },
+      "sole_rejections": {
+        "html_residue": 23,
+        "repetition": 546,
+        "script_ratio": 286,
+        "too_short": 102400,
+        "url_density": 27
+      },
+      "by_label": {
+        "arabic": 122,
+        "code_switched": 10919,
+        "empty": 205,
+        "english": 792,
+        "other": 353,
+        "persian": 5,
+        "roman_urdu": 4,
+        "urdu": 187748
+      },
+      "kept_by_label": {
+        "arabic": 10,
+        "code_switched": 3866,
+        "english": 184,
+        "other": 222,
+        "roman_urdu": 2,
+        "urdu": 89322
+      },
+      "chars_kept_by_label": {
+        "arabic": 33802,
+        "code_switched": 4391131,
+        "english": 586008,
+        "other": 909386,
+        "roman_urdu": 70969,
+        "urdu": 180576301
+      },
+      "truncated_documents": 0
+    }
+  }
+}

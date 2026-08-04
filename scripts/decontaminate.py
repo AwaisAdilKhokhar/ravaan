@@ -175,6 +175,80 @@ def _spec_for(name: str, source: str, unit: str) -> EvalSetSpec:
     return spec
 
 
+def _parse_eval_file(spec: str) -> tuple[Path, str, str]:
+    """``"data/heldout.jsonl:heldout-wiki:word"`` -> ``(path, name, unit)``.
+
+    A Windows drive letter is a colon too, so the split is from the right and bounded.
+    """
+    parts = spec.rsplit(":", 2)
+    if len(parts) == 3 and parts[2] in ("word", "char", "sentences"):
+        path, name, unit = parts[0], parts[1], parts[2]
+    elif len(parts) >= 2 and parts[-1] in ("word", "char", "sentences"):
+        path, name, unit = ":".join(parts[:-1]), "", parts[-1]
+    elif len(parts) >= 2 and parts[-1] and not Path(spec).exists():
+        path, name, unit = ":".join(parts[:-1]), parts[-1], ""
+    else:
+        path, name, unit = spec, "", ""
+    resolved = Path(path)
+    if not resolved.exists():
+        raise SystemExit(f"--eval-file {spec}: no such file {resolved}")
+    return resolved, name or resolved.stem, unit
+
+
+def load_eval_files(
+    index: Decontaminator, specs: list[str], *, limit: int | None, normalize: bool = False
+) -> dict:
+    """Index test sets that live in a file rather than in the acquisition manifest.
+
+    Three of §8.2's five test sets are not manifest sources and never will be: the held-out native
+    split is *produced* by stage 9, and the ~200 human-written transliteration pairs and ~300
+    real-OCR lines are hand-built artifacts. Reading them here is what unblocks the second
+    decontamination run — the one Finding L was actually about, where §8.2 draws held-out text from
+    Urdu Wikipedia while the same articles sit in the training data as crawled FineWeb2 HTML.
+
+    The text is taken as written. Stage 9 already emitted it post-stage-4, and normalizing twice
+    would be harmless but claiming a pass that did not happen would not be, so
+    ``--eval-file-normalize`` is explicit for the hand-built sets that have not been through it.
+    """
+    loaded: dict[str, dict] = {}
+    encoding_config = EncodingConfig()
+    normalization_config = NormalizationConfig()
+
+    for spec in specs:
+        path, name, unit = _parse_eval_file(spec)
+        eval_spec = EvalSetSpec(name=name)
+        if unit == "sentences":
+            eval_spec = eval_spec.for_sentences()
+        elif unit:
+            eval_spec = replace(eval_spec, shingle_unit=unit)
+        index.add_eval_set(eval_spec)
+        loaded[name] = {
+            "source": str(path),
+            "split": "file",
+            "items": 0,
+            **{k: v for k, v in eval_spec.to_dict().items() if k != "name"},
+        }
+
+        with path.open(encoding="utf-8") as handle:
+            for line_number, line in enumerate(handle):
+                if limit is not None and loaded[name]["items"] >= limit:
+                    break
+                if not line.strip():
+                    continue
+                record = json.loads(line)
+                text = record.get("text") or ""
+                if not text:
+                    continue
+                if normalize:
+                    checked = validate_text(text, encoding_config)
+                    if not checked.accepted:
+                        continue
+                    text = normalize_text(checked.text or "", normalization_config)
+                index.add_eval_item(name, record.get("doc_id") or f"{name}:{line_number}", text)
+                loaded[name]["items"] += 1
+    return loaded
+
+
 def load_eval_sets(
     index: Decontaminator,
     specs: list[str],
@@ -197,9 +271,7 @@ def load_eval_sets(
 
     for spec in specs:
         source, split, unit = _parse_eval(spec)
-        reader = ShardReader.from_manifest(
-            source, manifest_path=manifest, split=split, limit=limit
-        )
+        reader = ShardReader.from_manifest(source, manifest_path=manifest, split=split, limit=limit)
         layout = LAYOUTS.get(source)
         parallel = both_columns and layout is not None and URDU_COLUMN in layout.meta_columns
 
@@ -239,9 +311,24 @@ def load_eval_sets(
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument(
+        "--eval-file",
+        action="append",
+        default=[],
+        metavar="PATH[:NAME][:UNIT]",
+        help="test set from a JSONL file with a `text` field, e.g. stage 9's held-out split. UNIT "
+        "is word (default), char, or `sentences` for the measured sentence trio of EvalSetSpec."
+        "for_sentences(). This is how §8.2's three non-manifest test sets are indexed",
+    )
+    parser.add_argument(
+        "--eval-file-normalize",
+        action="store_true",
+        help="run stages 2 and 4 over --eval-file text. Off by default because stage 9 emits "
+        "already-normalized text; needed for the hand-built sets that have not been through it",
+    )
+    parser.add_argument(
         "--eval",
         action="append",
-        required=True,
+        default=[],
         metavar="SOURCE[:SPLIT[:UNIT]]",
         help="test set to decontaminate against, e.g. `roman-urdu-parl:test:char`. SPLIT defaults "
         "to 'test'; UNIT defaults to 'char' for sentence-unit sources and 'word' otherwise",
@@ -341,6 +428,9 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit("--both-columns and --urdu-side are mutually exclusive")
     columns = "both" if args.both_columns else ("urdu" if args.urdu_side else "text")
 
+    if not args.eval and not args.eval_file:
+        raise SystemExit("at least one of --eval or --eval-file is required")
+
     index = Decontaminator(config)
     print("stage 8: indexing eval sets", file=sys.stderr)
     loaded = load_eval_sets(
@@ -349,6 +439,14 @@ def main(argv: list[str] | None = None) -> int:
         manifest=args.manifest,
         limit=args.eval_limit or None,
         both_columns=args.both_columns or args.urdu_side,
+    )
+    loaded.update(
+        load_eval_files(
+            index,
+            args.eval_file,
+            limit=args.eval_limit or None,
+            normalize=args.eval_file_normalize,
+        )
     )
     index.seal()
     for name, record in sorted(loaded.items()):
@@ -455,8 +553,10 @@ def main(argv: list[str] | None = None) -> int:
             )
 
     if log.containment_histogram:
-        print("\n  containment of retained hits (jaccard beside it — Finding M's gap)",
-              file=sys.stderr)
+        print(
+            "\n  containment of retained hits (jaccard beside it — Finding M's gap)",
+            file=sys.stderr,
+        )
         for band in sorted(log.containment_histogram, reverse=True):
             print(
                 f"    {band}  containment {log.containment_histogram[band]:>9,}"
@@ -478,8 +578,10 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.sweep:
         payload["sweep"] = index.sweep(args.sweep)
-        print("\n  containment sweep (exact, from the retained hits of this one pass)",
-              file=sys.stderr)
+        print(
+            "\n  containment sweep (exact, from the retained hits of this one pass)",
+            file=sys.stderr,
+        )
         for row in payload["sweep"]:
             if "note" in row:
                 print(f"    {row['threshold']:>5.2f} {row['note']}", file=sys.stderr)

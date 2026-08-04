@@ -1,0 +1,42 @@
+reading urdu-wikipedia: plan 8743e78c000775aa over 1 file(s)
+stage 9 phase 1: measuring
+  measured 93,606 documents into 100,000 buckets
+stage 9 phase 2: assigning
+
+stage 9: assigned 93,190 documents, 416 outside the budgeted populations
+
+  urdu
+    train          83,488 docs     167,932,053 chars  ~   47.98M tokens
+    validation      3,080 docs       6,321,365 chars  ~    1.81M tokens
+    test            2,754 docs       6,322,883 chars  ~    1.81M tokens
+    arm A          30,603 docs      61,764,222 chars  ~   17.65M tokens  (target 17.65M)
+    arm B          83,488 docs     167,932,053 chars  ~   47.98M tokens  (target 70.59M)   UNMET
+    fertility: 4.89 chars/word measured, solved at 3.5 chars/token = 1.40 tokens/word
+
+  roman_urdu
+    train               0 docs               0 chars  ~    0.00M tokens
+    validation          0 docs               0 chars  ~    0.00M tokens
+    test                2 docs          70,969 chars  ~    0.02M tokens
+    arm A               0 docs               0 chars  ~    0.00M tokens  (target 5.88M)   UNMET
+    arm B               0 docs               0 chars  ~    0.00M tokens  (target 23.53M)   UNMET
+    fertility: 5.50 chars/word measured, solved at 4.2 chars/token = 1.31 tokens/word
+
+  code_switched
+    train           2,954 docs       3,252,802 chars  ~    0.86M tokens
+    validation        492 docs         571,938 chars  ~    0.15M tokens
+    test              420 docs         566,391 chars  ~    0.15M tokens
+    arm A           2,954 docs       3,252,802 chars  ~    0.86M tokens  (target 1.47M)   UNMET
+    arm B           2,954 docs       3,252,802 chars  ~    0.86M tokens  (target 5.88M)   UNMET
+    fertility: 5.71 chars/word measured, solved at 3.8 chars/token = 1.50 tokens/word
+
+  arms, totalled across populations — this is §4.3's U
+    arm A:    33,557 docs  ~   18.50M tokens of 25M target
+    arm B:    86,442 docs  ~   48.84M tokens of 100M target
+
+  GATE G1: ARM_A_ONLY — ~52.8M clean tokens against a 100M threshold
+  UNMET HELD-OUT (the pool is smaller than §6.1's ~5K sequences): {'roman_urdu': ['validation', 'test']}
+  unmet arms: {'code_switched': ['A', 'B'], 'roman_urdu': ['A', 'B'], 'urdu': ['B']}
+
+wrote the plan to reports/stage9/plan_wikipedia.json
+wrote 93,606 assignments to data/splits/assignments_wikipedia.jsonl
+wrote 6,748 held-out documents to data/splits/heldout_wikipedia.jsonl

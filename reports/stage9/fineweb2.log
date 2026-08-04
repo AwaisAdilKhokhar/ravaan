@@ -1,0 +1,40 @@
+reading fineweb2-urd_Arab: plan 346085bcc6aeade8 over 2 file(s), sampled at 0.05
+stage 9 phase 1: measuring
+  measured 76,940 documents into 100,000 buckets
+stage 9 phase 2: assigning
+
+stage 9: assigned 76,940 documents, 0 outside the budgeted populations
+
+  urdu
+    train          76,300 docs     182,966,015 chars  ~   52.28M tokens
+    validation        151 docs         311,295 chars  ~    0.09M tokens
+    test              123 docs         313,464 chars  ~    0.09M tokens
+    arm A           1,323 docs       2,876,352 chars  ~    0.82M tokens  (target 17.65M)
+    arm B           5,164 docs      12,351,582 chars  ~    3.53M tokens  (target 70.59M)
+    fertility: 4.72 chars/word measured, solved at 3.5 chars/token = 1.35 tokens/word
+
+  roman_urdu
+    train               0 docs               0 chars  ~    0.00M tokens
+    validation          0 docs               0 chars  ~    0.00M tokens
+    test                0 docs               0 chars  ~    0.00M tokens
+    arm A               0 docs               0 chars  ~    0.00M tokens  (target 5.88M)   UNMET
+    arm B               0 docs               0 chars  ~    0.00M tokens  (target 23.53M)   UNMET
+    fertility: 0.00 chars/word measured, solved at 4.2 chars/token = 0.00 tokens/word
+
+  code_switched
+    train             332 docs         813,980 chars  ~    0.21M tokens
+    validation         16 docs          27,813 chars  ~    0.01M tokens
+    test               18 docs          28,591 chars  ~    0.01M tokens
+    arm A             105 docs         278,183 chars  ~    0.07M tokens  (target 1.47M)
+    arm B             332 docs         813,980 chars  ~    0.21M tokens  (target 5.88M)   UNMET
+    fertility: 5.00 chars/word measured, solved at 3.8 chars/token = 1.32 tokens/word
+
+  arms, totalled across populations — this is §4.3's U
+    arm A:     1,428 docs  ~    0.90M tokens of 25M target
+    arm B:     5,496 docs  ~    3.74M tokens of 100M target
+
+  GATE G1: ARM_A_ONLY — ~52.7M clean tokens against a 100M threshold
+  UNMET HELD-OUT (the pool is smaller than §6.1's ~5K sequences): {'roman_urdu': ['validation', 'test']}
+  unmet arms: {'code_switched': ['B'], 'roman_urdu': ['A', 'B']}
+
+wrote the plan to reports/stage9/plan_fineweb2_5pct.json

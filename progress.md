@@ -23,8 +23,9 @@ first.**
 - **Spend to date:** $0.00 of $150 hard cap
 - **Tests:** 429 passing (69 normalization · 60 decontamination · 57 encoding · 57 acquisition ·
   52 minhash · 43 quality · 41 dedup · 32 langid · 18 shards)
-- **Committed** through session 8. Sessions 6 and 7 are one commit — stage 5, its 200-sample
-  validation and the write-up are one deliverable. Sessions 9 and 10 are uncommitted.
+- **Committed** through session 10, on branch `stages-7-and-8` (main is at session 8; fast-forward
+  it when convenient). Sessions 6 and 7 are one commit — stage 5, its 200-sample validation and the
+  write-up are one deliverable. Sessions 9 and 10 are one commit each, stage 7 and stage 8.
 
 ---
 

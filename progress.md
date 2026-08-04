@@ -16,8 +16,10 @@ first.**
   U counts, in a direction that would have put arm A 6× short of the crossover (Finding R).
   **Session 12 paid that debt: PRD v2.2 is amended**, and tightening Gate G1 to match it found that
   the gate reported `pass` on a corpus from which arm B cannot be assembled (Finding U). It also
-  **built stage 10, the last pipeline stage** ([`reports/packing.md`](reports/packing.md)) — so
-  every stage now exists, and only the PII pass and the freeze runs themselves remain.
+  **built stage 10, the last pipeline stage** ([`reports/packing.md`](reports/packing.md)), fetched
+  FineWeb2 shard 000, and measured the corpus that resulted: **Gate G1 now returns `PASS` on both
+  the aggregate and the mixture, with both arms fundable.** Every §6.3 stage exists; only the PII
+  pass and the freeze runs themselves remain.
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
 - **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds
@@ -79,6 +81,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | **PRD amended to v2.2 for Finding R** | §0.2, §4.3, §6.1, §8.2, §10, §11 | ✅ |
 | Gate G1 checks per-population sufficiency, not just the total (Finding U) | §11 | ✅ |
 | FineWeb2 train shard 000 fetched + verified — the code-switched fix | §6.2 | ✅ 4.84 GB |
+| **Gate G1 measured over both FineWeb2 shards** | §11 | ✅ **PASS**, both arms fundable |
 | Full passes: Urdu Wikipedia (complete); FineWeb2 at 5% | §6.3.9 | ✅ |
 | One unsampled pass over **all** sources together | §6.3.9 | ⬜ deferred to freeze |
 | **Tokenization + packing (stage 10)** | §6.3.10 | ✅ |
@@ -1873,6 +1876,31 @@ which is session 9's Finding I looking back out of the packed corpus. Mean bytes
    pass doubles the most expensive read in the project for a phase 2 whose output is discarded.
    It refuses `--plan-in`, which is its opposite.
 
+7. **Measured the corpus shard 000 was fetched to fix — and Gate G1 passes.** Phase 1 over **both**
+   FineWeb2 train shards at 5%, 231,825 documents reaching stage 9
+   (`reports/stage9/measure_fineweb2_both_5pct.json`, ~35 minutes, one pass not two).
+
+   | population | supply | needed for arm B + held-out | margin |
+   |---|---|---|---|
+   | urdu | 3,461.94M | 74.20M | **46.66×** |
+   | roman_urdu | 61.43M | 24.73M | **2.48×** |
+   | code_switched | **14.52M** | 6.18M | **2.35×** |
+
+   ```
+   GATE G1: PASS   (aggregate pass, mixture pass)
+     arms fundable at the mixture: ['A', 'B']   short: none
+   ```
+   - **The projection was checked rather than inherited, and it was wrong in a helpful direction.**
+     It said ~10.3M on the assumption that shard 000 ≈ shard 001. Shard 000 is **2.4× the size**
+     and contributes 33.4M code-switched characters against shard 001's 17.4M — a factor of
+     **1.92**, marginally *less* dense than shard 001 (native Urdu scales at 2.25×) while being far
+     more material. **A better answer than projected, from a projection that had the reason wrong**
+     — worth checking precisely because this quantity's estimate had already moved three times.
+   - **What the fetch actually bought is margin against stage 7.** FineWeb2's exact-duplicate rate
+     is nil (Finding H: 31% removed upstream by MinHash) but its *self-similarity* has never been
+     measured, and stages 6/7/8 have not run on this sample. At 2.35× the code-switched population
+     survives a 50% stage-7 loss; at 0.92× it would not have.
+
 **Finding U — Gate G1 returned `pass` on a corpus from which arm B cannot be assembled, and the
 number it printed was 11.7× past the threshold.**
 
@@ -1979,37 +2007,35 @@ exactly §4.3's published figure and the reason the total-U reading is the inten
 
 ## Next session
 
-**Every §6.3 pipeline stage now exists.** Session 12 paid the PRD debt (v2.2) and built stage 10,
-so what remains before the freeze is the PII pass and the freeze runs themselves — no new stage.
-The two things to know going in: **Gate G1 currently returns `ARM_A_ONLY`, not `PASS`** (Finding U —
-code-switched at 0.92× while the aggregate sits at 11.7× past threshold), and **the fertility
-estimate moves arm A's document set by a factor of two**, so the Week 5 re-solve has to land before
-the corpus is written.
+**Every §6.3 pipeline stage now exists, and Gate G1 passes.** Session 12 paid the PRD debt (v2.2),
+built stage 10, fetched shard 000 and measured the result: G1 returns **`PASS` on both the aggregate
+and the mixture, both arms fundable**, every population above 2×. What remains before the freeze is
+the PII pass and the freeze runs themselves — no new stage.
 
-1. **Finish the FineWeb2 shard 000 fetch and re-measure the code-switched population.** The
-   download was started in session 12 and was at 69% of 4.84 GB when it ended;
-   `python scripts/acquire.py --source fineweb2-urd_Arab --max-bytes 8e9 fetch` resumes it via HTTP
-   Range and re-verifies. Then re-run stage 9 over both shards and read the G1 mixture verdict — the
-   requirement is **6.18M**, not 5.88M, once both held-out sets are counted against the pool, and
-   the projection says shard 000 takes supply to ~10.3M. **This is the one number standing between
-   the project and a G1 `PASS`.**
+Two things to carry in. **The G1 margins have not been through stages 6/7/8** — code-switched at
+2.35× survives a 50% stage-7 loss, but FineWeb2's self-similarity has never been measured. And
+**the fertility estimate moves arm A's document set by a factor of two**, so the Week 5 re-solve
+has to land before the corpus is written.
 
-2. **The PII regex pass (§6.3)** — the last unbuilt thing in the pipeline, and it belongs before the
+1. **The PII regex pass (§6.3)** — the last unbuilt thing in the pipeline, and it belongs before the
    corpus is written. One regex pass for phone numbers and emails; §6.3 says explicitly not to build
    a PII system.
 
-3. **The freeze needs one unsampled stage-9 phase 1 over all sources together.** The passes so far
+2. **The freeze needs one unsampled stage-9 phase 1 over all sources together.** The passes so far
    are per source, so each set of bands is calibrated to that source's totals rather than to the
    corpus — which gives each source its own held-out share instead of the corpus's. Measure once
    over everything, then apply that single plan everywhere with `--plan-in` (phase 2 needs nothing
    from phase 1 but a few integers, so every later stage can carry the same plan).
+   - **`--measure-only` is the flag for it** (added session 12) — one pass, not two. The both-shard
+     5% run took ~35 minutes that way; unsampled over 8.3 GB is the freeze's longest single read
+     and doing it two-phase would have doubled it for nothing.
    - **The freeze order must be 6 → 7 → 9 → 8 → 10.** Stage 9 ran *before* dedup in the passes so
      far, so the held-out split can still contain near-duplicates of training documents from within
      Wikipedia — the geo-stub farms session 9 measured at 10.7% of the dump. Stage 8 catches the
      cross-source case and structurally cannot catch that one. **The held-out split's integrity
      depends on stage 7 having run first.**
 
-4. **Week 5, and it is stage 10's outstanding half.** Train §7's tokenizer, then:
+3. **Week 5, and it is stage 10's outstanding half.** Train §7's tokenizer, then:
    ```
    python scripts/pack.py --source … --measure-only --tokenizer <model> --resolve-plan <plan.json>
    ravaan-splits <plan.json> --chars-per-token urdu=… roman_urdu=… code_switched=…
@@ -2019,7 +2045,7 @@ the corpus is written.
    session 12, because measuring with a 32k model and quoting it for a 16k one is the same class of
    error as quoting the placeholder's 0.573.
 
-5. **Deferred to freeze time, unchanged from session 10:**
+4. **Deferred to freeze time, unchanged from session 10:**
    - **Stage 8 over FineWeb2's complete shard**, both for the Roman-Urdu-Parl eval sets and for the
      held-out split. The held-out number here (15 of 6,748 = 0.22%) is at a 5% sample and projects
      to **~4.4%**; that is the figure §8.2 needs and it should be measured, not projected.
@@ -2053,13 +2079,15 @@ one file. Complete-Wikipedia stage 9 is ~20 minutes two-phase, alone.
 - ~~**⚠️ The PRD has not been amended for Finding R.**~~ **Done in session 12 — PRD v2.2.** §0.2
   carries the changelog, §6.1 separates pool targets from arm budgets and states the mixture, §4.3
   says what U counts, and §8.2/§10/§11 pick up the consequences.
-- **⚠️ Gate G1 currently reads `ARM_A_ONLY`, not `PASS` (Finding U).** On the projected corpus the
-  aggregate is 1,167.9M against a 100M threshold — 11.7× past — while `code_switched` supplies
-  5.70M against the **6.18M** arm B plus both held-out sets require: **0.92×**. §11's ladder cuts
-  arm B on this verdict, which would drop the bracketing arm and with it the ability to test the
-  crossover's *location* rather than only its sign. **FineWeb2 shard 000 is the fix and it is
-  three-quarters downloaded** — see "Next session" item 1. Do not read the 1,167.9M as reassurance;
-  that is exactly the number that made the defect invisible.
+- ~~**⚠️ Gate G1 reads `ARM_A_ONLY`, not `PASS` (Finding U).**~~ **Resolved in session 12 by the
+  shard 000 fetch, and measured rather than projected.** Phase 1 over both FineWeb2 train shards at
+  5% gives `code_switched` **14.52M against 6.18M = 2.35×**, and G1 now returns
+  **`PASS` on both the aggregate and the mixture, with both arms fundable.** Every population sits
+  above 2×: urdu 46.66×, roman_urdu 2.48×, code_switched 2.35×.
+  **Still to close at the freeze:** this is a 5% sample and stages 6/7/8 have not run on it.
+  FineWeb2's exact-duplicate rate is nil (Finding H) but its *self-similarity* has never been
+  measured, so the margin has to survive stage 7. At 2.35× it survives a 50% loss; at 0.92× it
+  would not have, which is what the fetch actually bought.
 - **⚠️ ~4.4% of the held-out split is likely inside FineWeb2 (Finding T), and the measured figure is
   0.22% at a 5% sample.** The projection assumes an eval item with one crawled copy is found with
   probability *r*. §8.2's held-out native set is the primary endpoint's own instrument, so the
@@ -2182,11 +2210,21 @@ one file. Complete-Wikipedia stage 9 is ~20 minutes two-phase, alone.
   set went through stage 4, 14.6% of FineWeb2 documents changed (against 13.7% over 20,000 in
   session 4), the Urdu-specific rules are the ones that fire, and no rule misfired on any of the
   200.
-- **⚠️ The code-switched budget is 8% short — session 11 said 3%, and Finding U corrected it.**
-  The 5.88M figure is arm B's *training* share; the validation and test sets are carved from the
-  same pool at the same mixture and are disjoint from the arms, so the pool has to supply
-  5.88M + 2 × 2.56M × 5.88% = **6.18M** against 5.70M available = **0.92×**. The fix and its
-  preference order are unchanged and still cover it with room. Original note follows.
+- ~~**⚠️ The code-switched budget is short.**~~ **Settled in session 12: 2.35×, measured.** The
+  quantity moved four times and three of the moves were corrections to the *requirement* rather
+  than new data — which is the honest summary of how much of this was arithmetic:
+
+  | | available | required | |
+  |---|---|---|---|
+  | Session 10, against §6.1's ~10M figure | 7.00M | 10.00M | 0.70× |
+  | Session 11, after Finding R corrected what U counts | 5.70M | 5.88M | 0.97× |
+  | Session 12, after Finding U counted the held-out sets | 5.70M | 6.18M | 0.92× |
+  | **Session 12, measured over both FineWeb2 shards** | **14.52M** | 6.18M | **2.35×** |
+
+  Shard 000 beat its projection (~10.3M) for a reason the projection had wrong: it is **2.4× the
+  size** of shard 001, not equal to it, and contributes 33.4M code-switched characters against
+  17.4M — a factor of 1.92, marginally *less* dense than shard 001 while being far more material.
+  A better answer than projected, from a projection that was wrong. Original note follows.
   The original worry measured this population against §6.1's ~10M-token figure and projected ~7M
   available. **Finding R establishes that 10M is a *pool* target and arm B's actual requirement is
   5.88M**, and session 11's two stage-9 passes measure the supply directly rather than by

@@ -319,6 +319,48 @@ read the right number and the wrong *quantity*. Both land on the one output of t
 project decision rather than a statistic, and both were invisible because the wrong answer was
 plausible: 1,167.9M against a 100M threshold does not look like a corpus that fails.
 
+### 6.2 Measured with FineWeb2 shard 000, and G1 passes
+
+*(Added 2026-08-05. `reports/stage9/measure_fineweb2_both_5pct.json` — phase 1 over **both**
+FineWeb2 train shards at 5%, 231,825 documents reaching stage 9.)*
+
+Shard 000 was fetched on the strength of a projection, so the projection was checked rather than
+inherited — this population's estimate had already moved three times.
+
+| population | supply | needed for arm B + held-out | margin |
+|---|---|---|---|
+| urdu | 3,461.94M | 74.20M | **46.66×** |
+| roman_urdu | 61.43M | 24.73M | **2.48×** |
+| code_switched | **14.52M** | 6.18M | **2.35×** |
+
+```
+GATE G1: PASS   (aggregate pass, mixture pass)
+  arms fundable at the mixture: ['A', 'B']   short: none
+```
+
+**The code-switched population, across four estimates of the same quantity:**
+
+| | available | required | |
+|---|---|---|---|
+| Session 10, against §6.1's ~10M figure | 7.00M | 10.00M | 0.70× |
+| Session 11, after Finding R corrected what U counts | 5.70M | 5.88M | 0.97× |
+| Session 12, after Finding U counted the held-out sets | 5.70M | 6.18M | 0.92× |
+| **Session 12, measured over both shards** | **14.52M** | 6.18M | **2.35×** |
+
+Three of those four moves were corrections to the *requirement* rather than new data, which is the
+honest summary of how much of this problem was arithmetic. The fourth is the fetch.
+
+**Shard 000 was slightly better than projected, for a reason worth stating.** The projection said
+~10.3M on the assumption that shard 000 ≈ shard 001; it is **2.4× the size**, and contributes 33.4M
+code-switched characters against shard 001's 17.4M — a factor of **1.92**, marginally *less* dense
+than shard 001 (native Urdu scales at 2.25×) but far more material. Getting a better answer than
+projected for a reason the projection had wrong is not the same as the projection being right.
+
+**Two caveats the freeze must close.** This is a 5% sample, and stages 6, 7 and 8 have not run on
+it — FineWeb2's exact-duplicate rate is nil (Finding H: 31% removed upstream) but its
+self-similarity has never been measured. At 2.35× the code-switched margin survives a 50% stage-7
+loss; at 0.92× it would not have. That is the difference the fetch bought.
+
 `gate_g1()` now reports `verdict_aggregate` and `verdict_mixture` separately and takes the more
 severe of the two, because "below 25M" and "no pool can fund an arm" are different projects with
 different fallbacks. The per-population supply, requirement and margin go in the payload — the same

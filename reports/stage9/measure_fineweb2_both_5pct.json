@@ -1,0 +1,246 @@
+{
+  "measure_only": true,
+  "sources": [
+    "fineweb2-urd_Arab=0.05"
+  ],
+  "sample_rate": 0.05,
+  "config_fingerprint": "23df13e0dfc3",
+  "pool_chars": {
+    "urdu": 596810349,
+    "roman_urdu": 0,
+    "code_switched": 2539864
+  },
+  "bands": {
+    "code_switched": {
+      "population": "code_switched",
+      "buckets": 100000,
+      "test_from": 98577,
+      "validation_from": 97883,
+      "train_to": 97883,
+      "arm_cuts": {
+        "A": 12404,
+        "B": 39685
+      },
+      "total_chars": 2539864,
+      "chars_train": 2490630,
+      "chars_validation": 27842,
+      "chars_test": 21392,
+      "chars_by_arm": {
+        "A": 274592,
+        "B": 1117205
+      },
+      "target_chars_validation": 28611.76470588235,
+      "target_chars_test": 28611.76470588235,
+      "target_chars_by_arm": {
+        "A": 279411.76470588235,
+        "B": 1117647.0588235294
+      },
+      "unmet_arms": [],
+      "unmet_heldout": []
+    },
+    "roman_urdu": {
+      "population": "roman_urdu",
+      "buckets": 100000,
+      "test_from": 0,
+      "validation_from": 0,
+      "train_to": 0,
+      "arm_cuts": {
+        "A": 0,
+        "B": 0
+      },
+      "total_chars": 0,
+      "chars_train": 0,
+      "chars_validation": 0,
+      "chars_test": 0,
+      "chars_by_arm": {
+        "A": 0,
+        "B": 0
+      },
+      "target_chars_validation": 126494.11764705885,
+      "target_chars_test": 126494.11764705885,
+      "target_chars_by_arm": {
+        "A": 1235294.117647059,
+        "B": 4941176.470588236
+      },
+      "unmet_arms": [
+        "A",
+        "B"
+      ],
+      "unmet_heldout": [
+        "validation",
+        "test"
+      ]
+    },
+    "urdu": {
+      "population": "urdu",
+      "buckets": 100000,
+      "test_from": 99954,
+      "validation_from": 99905,
+      "train_to": 99905,
+      "arm_cuts": {
+        "A": 521,
+        "B": 2112
+      },
+      "total_chars": 596810349,
+      "chars_train": 596191004,
+      "chars_validation": 307137,
+      "chars_test": 312208,
+      "chars_by_arm": {
+        "A": 3078257,
+        "B": 12347069
+      },
+      "target_chars_validation": 316235.2941176471,
+      "target_chars_test": 316235.2941176471,
+      "target_chars_by_arm": {
+        "A": 3088235.294117647,
+        "B": 12352941.176470589
+      },
+      "unmet_arms": [],
+      "unmet_heldout": []
+    }
+  },
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 239800,
+    "documents_accepted": 239772,
+    "documents_rejected": 28,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.999883,
+    "bytes_in": 1066556034,
+    "chars_out": 601677596,
+    "replacement_chars": 377,
+    "mojibake_chars": 10,
+    "control_chars": 0,
+    "verdicts": {
+      "ok": 239772,
+      "replacement_heavy": 28
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 239772,
+    "documents_kept": 239771,
+    "keep_rate": 0.999996,
+    "documents_by_prior": 0,
+    "prior_rate": 0.0,
+    "mixed_documents": 6527,
+    "letters": 458014453,
+    "labels": {
+      "code_switched": 1078,
+      "other": 1,
+      "urdu": 238693
+    },
+    "letters_by_label": {
+      "code_switched": 1989247,
+      "other": 300,
+      "urdu": 456024906
+    },
+    "segment_letters": {
+      "arabic": 18529,
+      "code_switched": 264826,
+      "english": 1350833,
+      "hindi": 17025,
+      "other": 419202,
+      "persian": 3722,
+      "roman_urdu": 79577,
+      "urdu": 7968638
+    }
+  },
+  "stage5_quality": {
+    "fineweb2-urd_Arab": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "53d04d3fd079",
+      "config": {
+        "min_chars": 400,
+        "min_words": 40,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 0.5,
+        "max_top_ngram_ratio": {
+          "3": 0.26,
+          "4": 0.22
+        },
+        "max_dup_ngram_ratio": {
+          "5": 0.6,
+          "6": 0.58,
+          "7": 0.56,
+          "8": 0.54,
+          "9": 0.52,
+          "10": 0.5
+        },
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 239772,
+      "documents_kept": 231825,
+      "documents_rejected": 7947,
+      "keep_rate": 0.966856,
+      "chars_in": 602167226,
+      "chars_kept": 599350213,
+      "char_keep_rate": 0.995322,
+      "rejections": {
+        "repetition:dup_10gram": 1,
+        "repetition:dup_5gram": 1,
+        "repetition:dup_6gram": 1,
+        "repetition:dup_7gram": 1,
+        "repetition:dup_8gram": 1,
+        "repetition:dup_9gram": 1,
+        "script_ratio": 108,
+        "too_short": 7850
+      },
+      "families": {
+        "repetition": 1,
+        "script_ratio": 108,
+        "too_short": 7850
+      },
+      "sole_rejections": {
+        "repetition": 1,
+        "script_ratio": 96,
+        "too_short": 7838
+      },
+      "by_label": {
+        "code_switched": 1078,
+        "other": 1,
+        "urdu": 238693
+      },
+      "kept_by_label": {
+        "code_switched": 973,
+        "urdu": 230852
+      },
+      "chars_kept_by_label": {
+        "code_switched": 2539864,
+        "urdu": 596810349
+      },
+      "truncated_documents": 0
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "minhash_version": "1.0.0",
+  "num_bins": 128,
+  "bands": 32,
+  "rows": 4,
+  "shingle_size": 5,
+  "shingle_unit": "word",
+  "min_shingles": 8,
+  "similarity_threshold": 0.8,
+  "retain_pairs_above": 0.5,
+  "max_index_entries": 8000000,
+  "max_retained_pairs": 40000000,
+  "max_candidate_pairs": 20000000,
+  "seed": 0
+}

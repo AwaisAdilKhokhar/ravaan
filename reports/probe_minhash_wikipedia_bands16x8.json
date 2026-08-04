@@ -1,0 +1,2062 @@
+{
+  "minhash_version": "1.0.0",
+  "config_fingerprint": "efd43a2a750e",
+  "config": {
+    "num_bins": 128,
+    "bands": 16,
+    "rows": 8,
+    "shingle_size": 5,
+    "shingle_unit": "word",
+    "min_shingles": 8,
+    "similarity_threshold": 0.8,
+    "retain_pairs_above": 0.5,
+    "max_index_entries": 8000000,
+    "max_retained_pairs": 40000000,
+    "seed": 0
+  },
+  "band_threshold": 0.7071,
+  "candidate_probability_at_threshold": 0.947049,
+  "indexed": 93597,
+  "eligible": 93597,
+  "skipped_short": 0,
+  "shingles_total": 37069320,
+  "mean_shingles": 396.05,
+  "candidate_pairs": 5085,
+  "verified_pairs": 995,
+  "retained_pairs": 4054,
+  "band_precision": 0.195674,
+  "clusters": 118,
+  "duplicate_documents": 178,
+  "duplicate_rate": 0.001902,
+  "largest_cluster": 23,
+  "cross_source_clusters": 0,
+  "cross_source_pairs": {},
+  "documents_kept": 93419,
+  "documents_removed": 178,
+  "keep_rate": 0.998098,
+  "chars_in": 186555861,
+  "chars_kept": 186184293,
+  "char_keep_rate": 0.998008,
+  "by_source": {
+    "urdu-wikipedia": 93597
+  },
+  "kept_by_source": {
+    "urdu-wikipedia": 93419
+  },
+  "removed_by_source": {
+    "urdu-wikipedia": 178
+  },
+  "removed_cross_source_by_source": {},
+  "similarity_histogram": {
+    "0.50-0.55": 551,
+    "0.55-0.60": 577,
+    "0.60-0.65": 692,
+    "0.65-0.70": 547,
+    "0.70-0.75": 368,
+    "0.75-0.80": 324,
+    "0.80-0.85": 286,
+    "0.85-0.90": 288,
+    "0.90-0.95": 187,
+    "0.95-1.00": 234
+  },
+  "containment_histogram": {
+    "0.65-0.70": 212,
+    "0.70-0.75": 676,
+    "0.75-0.80": 935,
+    "0.80-0.85": 692,
+    "0.85-0.90": 504,
+    "0.90-0.95": 486,
+    "0.95-1.00": 549
+  },
+  "distinct_documents": 93419,
+  "top_clusters": [
+    {
+      "cluster": 0,
+      "size": 23,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:265619",
+      "duplicates": [
+        "urdu-wikipedia:265572",
+        "urdu-wikipedia:265576",
+        "urdu-wikipedia:265580",
+        "urdu-wikipedia:265618"
+      ]
+    },
+    {
+      "cluster": 1,
+      "size": 7,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:1099751",
+      "duplicates": [
+        "urdu-wikipedia:1099133",
+        "urdu-wikipedia:1099157",
+        "urdu-wikipedia:1099256",
+        "urdu-wikipedia:1099653"
+      ]
+    },
+    {
+      "cluster": 2,
+      "size": 6,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:104850",
+      "duplicates": [
+        "urdu-wikipedia:104868",
+        "urdu-wikipedia:104855",
+        "urdu-wikipedia:104857",
+        "urdu-wikipedia:104858"
+      ]
+    },
+    {
+      "cluster": 3,
+      "size": 5,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:673825",
+      "duplicates": [
+        "urdu-wikipedia:673827",
+        "urdu-wikipedia:673823",
+        "urdu-wikipedia:673826",
+        "urdu-wikipedia:673824"
+      ]
+    },
+    {
+      "cluster": 4,
+      "size": 5,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:673818",
+      "duplicates": [
+        "urdu-wikipedia:673817",
+        "urdu-wikipedia:673815",
+        "urdu-wikipedia:673816",
+        "urdu-wikipedia:673813"
+      ]
+    },
+    {
+      "cluster": 5,
+      "size": 5,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:104673",
+      "duplicates": [
+        "urdu-wikipedia:104669",
+        "urdu-wikipedia:104668",
+        "urdu-wikipedia:104672",
+        "urdu-wikipedia:104671"
+      ]
+    },
+    {
+      "cluster": 6,
+      "size": 4,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:1059504",
+      "duplicates": [
+        "urdu-wikipedia:1059514",
+        "urdu-wikipedia:1059640",
+        "urdu-wikipedia:1059642"
+      ]
+    },
+    {
+      "cluster": 7,
+      "size": 4,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:673848",
+      "duplicates": [
+        "urdu-wikipedia:673849",
+        "urdu-wikipedia:673846",
+        "urdu-wikipedia:673847"
+      ]
+    },
+    {
+      "cluster": 8,
+      "size": 4,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:673859",
+      "duplicates": [
+        "urdu-wikipedia:673856",
+        "urdu-wikipedia:673858",
+        "urdu-wikipedia:673857"
+      ]
+    },
+    {
+      "cluster": 9,
+      "size": 4,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:1097775",
+      "duplicates": [
+        "urdu-wikipedia:1097777",
+        "urdu-wikipedia:1097783",
+        "urdu-wikipedia:1097773"
+      ]
+    },
+    {
+      "cluster": 10,
+      "size": 3,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:186742",
+      "duplicates": [
+        "urdu-wikipedia:373405",
+        "urdu-wikipedia:373431"
+      ]
+    },
+    {
+      "cluster": 11,
+      "size": 3,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:917598",
+      "duplicates": [
+        "urdu-wikipedia:825171",
+        "urdu-wikipedia:917597"
+      ]
+    },
+    {
+      "cluster": 12,
+      "size": 3,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:673800",
+      "duplicates": [
+        "urdu-wikipedia:673803",
+        "urdu-wikipedia:673801"
+      ]
+    },
+    {
+      "cluster": 13,
+      "size": 3,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:673843",
+      "duplicates": [
+        "urdu-wikipedia:673836",
+        "urdu-wikipedia:673835"
+      ]
+    },
+    {
+      "cluster": 14,
+      "size": 3,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:673829",
+      "duplicates": [
+        "urdu-wikipedia:673830",
+        "urdu-wikipedia:673833"
+      ]
+    },
+    {
+      "cluster": 15,
+      "size": 3,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:1037596",
+      "duplicates": [
+        "urdu-wikipedia:1037597",
+        "urdu-wikipedia:1037600"
+      ]
+    },
+    {
+      "cluster": 16,
+      "size": 3,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:942072",
+      "duplicates": [
+        "urdu-wikipedia:942123",
+        "urdu-wikipedia:942262"
+      ]
+    },
+    {
+      "cluster": 17,
+      "size": 3,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:99571",
+      "duplicates": [
+        "urdu-wikipedia:99566",
+        "urdu-wikipedia:99559"
+      ]
+    },
+    {
+      "cluster": 18,
+      "size": 3,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:104829",
+      "duplicates": [
+        "urdu-wikipedia:104826",
+        "urdu-wikipedia:104827"
+      ]
+    },
+    {
+      "cluster": 19,
+      "size": 3,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:104767",
+      "duplicates": [
+        "urdu-wikipedia:104747",
+        "urdu-wikipedia:104768"
+      ]
+    }
+  ],
+  "pair_examples": [
+    {
+      "left": "urdu-wikipedia:883158",
+      "right": "urdu-wikipedia:883157",
+      "similarity": 0.9688,
+      "containment": 0.9901,
+      "left_shingles": 83,
+      "right_shingles": 82,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:883158",
+      "right": "urdu-wikipedia:883157",
+      "similarity": 0.9688,
+      "containment": 0.9901,
+      "left_shingles": 83,
+      "right_shingles": 82,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:883158",
+      "right": "urdu-wikipedia:883157",
+      "similarity": 0.9688,
+      "containment": 0.9901,
+      "left_shingles": 83,
+      "right_shingles": 82,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:883158",
+      "right": "urdu-wikipedia:883157",
+      "similarity": 0.9688,
+      "containment": 0.9901,
+      "left_shingles": 83,
+      "right_shingles": 82,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:883158",
+      "right": "urdu-wikipedia:883157",
+      "similarity": 0.9688,
+      "containment": 0.9901,
+      "left_shingles": 83,
+      "right_shingles": 82,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:883158",
+      "right": "urdu-wikipedia:883157",
+      "similarity": 0.9688,
+      "containment": 0.9901,
+      "left_shingles": 83,
+      "right_shingles": 82,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:883158",
+      "right": "urdu-wikipedia:883157",
+      "similarity": 0.9688,
+      "containment": 0.9901,
+      "left_shingles": 83,
+      "right_shingles": 82,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:883158",
+      "right": "urdu-wikipedia:883157",
+      "similarity": 0.9688,
+      "containment": 0.9901,
+      "left_shingles": 83,
+      "right_shingles": 82,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:883158",
+      "right": "urdu-wikipedia:883157",
+      "similarity": 0.9688,
+      "containment": 0.9901,
+      "left_shingles": 83,
+      "right_shingles": 82,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:883158",
+      "right": "urdu-wikipedia:883157",
+      "similarity": 0.9688,
+      "containment": 0.9901,
+      "left_shingles": 83,
+      "right_shingles": 82,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:883158",
+      "right": "urdu-wikipedia:883157",
+      "similarity": 0.9688,
+      "containment": 0.9901,
+      "left_shingles": 83,
+      "right_shingles": 82,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:883158",
+      "right": "urdu-wikipedia:883157",
+      "similarity": 0.9688,
+      "containment": 0.9901,
+      "left_shingles": 83,
+      "right_shingles": 82,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:580556",
+      "right": "urdu-wikipedia:580557",
+      "similarity": 0.9062,
+      "containment": 0.9508,
+      "left_shingles": 144,
+      "right_shingles": 144,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:580556",
+      "right": "urdu-wikipedia:580557",
+      "similarity": 0.9062,
+      "containment": 0.9508,
+      "left_shingles": 144,
+      "right_shingles": 144,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:580556",
+      "right": "urdu-wikipedia:580557",
+      "similarity": 0.9062,
+      "containment": 0.9508,
+      "left_shingles": 144,
+      "right_shingles": 144,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:580556",
+      "right": "urdu-wikipedia:580557",
+      "similarity": 0.9062,
+      "containment": 0.9508,
+      "left_shingles": 144,
+      "right_shingles": 144,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:580556",
+      "right": "urdu-wikipedia:580557",
+      "similarity": 0.9062,
+      "containment": 0.9508,
+      "left_shingles": 144,
+      "right_shingles": 144,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:580556",
+      "right": "urdu-wikipedia:580557",
+      "similarity": 0.9062,
+      "containment": 0.9508,
+      "left_shingles": 144,
+      "right_shingles": 144,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:265577",
+      "right": "urdu-wikipedia:265575",
+      "similarity": 0.9141,
+      "containment": 0.9614,
+      "left_shingles": 77,
+      "right_shingles": 76,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:265577",
+      "right": "urdu-wikipedia:265575",
+      "similarity": 0.9141,
+      "containment": 0.9614,
+      "left_shingles": 77,
+      "right_shingles": 76,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:265577",
+      "right": "urdu-wikipedia:265575",
+      "similarity": 0.9141,
+      "containment": 0.9614,
+      "left_shingles": 77,
+      "right_shingles": 76,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:265577",
+      "right": "urdu-wikipedia:265575",
+      "similarity": 0.9141,
+      "containment": 0.9614,
+      "left_shingles": 77,
+      "right_shingles": 76,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:265577",
+      "right": "urdu-wikipedia:265575",
+      "similarity": 0.9141,
+      "containment": 0.9614,
+      "left_shingles": 77,
+      "right_shingles": 76,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:265577",
+      "right": "urdu-wikipedia:265575",
+      "similarity": 0.9141,
+      "containment": 0.9614,
+      "left_shingles": 77,
+      "right_shingles": 76,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:977199",
+      "right": "urdu-wikipedia:879606",
+      "similarity": 0.875,
+      "containment": 1.0,
+      "left_shingles": 848,
+      "right_shingles": 742,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:977199",
+      "right": "urdu-wikipedia:879606",
+      "similarity": 0.875,
+      "containment": 1.0,
+      "left_shingles": 848,
+      "right_shingles": 742,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:977199",
+      "right": "urdu-wikipedia:879606",
+      "similarity": 0.875,
+      "containment": 1.0,
+      "left_shingles": 848,
+      "right_shingles": 742,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:977199",
+      "right": "urdu-wikipedia:879606",
+      "similarity": 0.875,
+      "containment": 1.0,
+      "left_shingles": 848,
+      "right_shingles": 742,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:977199",
+      "right": "urdu-wikipedia:879606",
+      "similarity": 0.875,
+      "containment": 1.0,
+      "left_shingles": 848,
+      "right_shingles": 742,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:1078534",
+      "right": "urdu-wikipedia:1078521",
+      "similarity": 0.8516,
+      "containment": 0.9331,
+      "left_shingles": 856,
+      "right_shingles": 832,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:1078534",
+      "right": "urdu-wikipedia:1078521",
+      "similarity": 0.8516,
+      "containment": 0.9331,
+      "left_shingles": 856,
+      "right_shingles": 832,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:1078534",
+      "right": "urdu-wikipedia:1078521",
+      "similarity": 0.8516,
+      "containment": 0.9331,
+      "left_shingles": 856,
+      "right_shingles": 832,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:99571",
+      "right": "urdu-wikipedia:99559",
+      "similarity": 0.8594,
+      "containment": 0.9244,
+      "left_shingles": 242,
+      "right_shingles": 242,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:99571",
+      "right": "urdu-wikipedia:99559",
+      "similarity": 0.8594,
+      "containment": 0.9244,
+      "left_shingles": 242,
+      "right_shingles": 242,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:99571",
+      "right": "urdu-wikipedia:99559",
+      "similarity": 0.8594,
+      "containment": 0.9244,
+      "left_shingles": 242,
+      "right_shingles": 242,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:99571",
+      "right": "urdu-wikipedia:99559",
+      "similarity": 0.8594,
+      "containment": 0.9244,
+      "left_shingles": 242,
+      "right_shingles": 242,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754393",
+      "right": "urdu-wikipedia:754396",
+      "similarity": 0.8359,
+      "containment": 0.9179,
+      "left_shingles": 63,
+      "right_shingles": 64,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754393",
+      "right": "urdu-wikipedia:754396",
+      "similarity": 0.8359,
+      "containment": 0.9179,
+      "left_shingles": 63,
+      "right_shingles": 64,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754393",
+      "right": "urdu-wikipedia:754396",
+      "similarity": 0.8359,
+      "containment": 0.9179,
+      "left_shingles": 63,
+      "right_shingles": 64,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754393",
+      "right": "urdu-wikipedia:754396",
+      "similarity": 0.8359,
+      "containment": 0.9179,
+      "left_shingles": 63,
+      "right_shingles": 64,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:265631",
+      "right": "urdu-wikipedia:265632",
+      "similarity": 0.8203,
+      "containment": 0.9837,
+      "left_shingles": 82,
+      "right_shingles": 97,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:265631",
+      "right": "urdu-wikipedia:265632",
+      "similarity": 0.8203,
+      "containment": 0.9837,
+      "left_shingles": 82,
+      "right_shingles": 97,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:1099751",
+      "right": "urdu-wikipedia:1099157",
+      "similarity": 0.8125,
+      "containment": 0.9018,
+      "left_shingles": 87,
+      "right_shingles": 86,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:1099751",
+      "right": "urdu-wikipedia:1099157",
+      "similarity": 0.8125,
+      "containment": 0.9018,
+      "left_shingles": 87,
+      "right_shingles": 86,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:1099751",
+      "right": "urdu-wikipedia:1099157",
+      "similarity": 0.8125,
+      "containment": 0.9018,
+      "left_shingles": 87,
+      "right_shingles": 86,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:1099751",
+      "right": "urdu-wikipedia:1099157",
+      "similarity": 0.8125,
+      "containment": 0.9018,
+      "left_shingles": 87,
+      "right_shingles": 86,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:1099751",
+      "right": "urdu-wikipedia:1099157",
+      "similarity": 0.8125,
+      "containment": 0.9018,
+      "left_shingles": 87,
+      "right_shingles": 86,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:104868",
+      "right": "urdu-wikipedia:104857",
+      "similarity": 0.8359,
+      "containment": 0.9162,
+      "left_shingles": 82,
+      "right_shingles": 83,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754265",
+      "right": "urdu-wikipedia:754805",
+      "similarity": 0.75,
+      "containment": 0.8571,
+      "left_shingles": 68,
+      "right_shingles": 68,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754505",
+      "right": "urdu-wikipedia:754207",
+      "similarity": 0.75,
+      "containment": 0.8571,
+      "left_shingles": 63,
+      "right_shingles": 63,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754781",
+      "right": "urdu-wikipedia:754212",
+      "similarity": 0.7578,
+      "containment": 0.8691,
+      "left_shingles": 64,
+      "right_shingles": 63,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:1059514",
+      "right": "urdu-wikipedia:1059500",
+      "similarity": 0.75,
+      "containment": 0.8916,
+      "left_shingles": 174,
+      "right_shingles": 188,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754614",
+      "right": "urdu-wikipedia:754606",
+      "similarity": 0.75,
+      "containment": 0.8639,
+      "left_shingles": 64,
+      "right_shingles": 63,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754614",
+      "right": "urdu-wikipedia:754606",
+      "similarity": 0.75,
+      "containment": 0.8639,
+      "left_shingles": 64,
+      "right_shingles": 63,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:104766",
+      "right": "urdu-wikipedia:104747",
+      "similarity": 0.7891,
+      "containment": 0.8942,
+      "left_shingles": 73,
+      "right_shingles": 75,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:104850",
+      "right": "urdu-wikipedia:104869",
+      "similarity": 0.7891,
+      "containment": 0.893,
+      "left_shingles": 83,
+      "right_shingles": 81,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:1099621",
+      "right": "urdu-wikipedia:1099271",
+      "similarity": 0.7734,
+      "containment": 0.8842,
+      "left_shingles": 75,
+      "right_shingles": 73,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:186742",
+      "right": "urdu-wikipedia:373356",
+      "similarity": 0.7734,
+      "containment": 0.9145,
+      "left_shingles": 93,
+      "right_shingles": 102,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:186742",
+      "right": "urdu-wikipedia:373356",
+      "similarity": 0.7734,
+      "containment": 0.9145,
+      "left_shingles": 93,
+      "right_shingles": 102,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:186742",
+      "right": "urdu-wikipedia:373356",
+      "similarity": 0.7734,
+      "containment": 0.9145,
+      "left_shingles": 93,
+      "right_shingles": 102,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:756358",
+      "right": "urdu-wikipedia:756288",
+      "similarity": 0.7422,
+      "containment": 0.858,
+      "left_shingles": 71,
+      "right_shingles": 72,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:1008830",
+      "right": "urdu-wikipedia:1009216",
+      "similarity": 0.7031,
+      "containment": 0.8366,
+      "left_shingles": 340,
+      "right_shingles": 349,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:1008830",
+      "right": "urdu-wikipedia:1009216",
+      "similarity": 0.7031,
+      "containment": 0.8366,
+      "left_shingles": 340,
+      "right_shingles": 349,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:104749",
+      "right": "urdu-wikipedia:104752",
+      "similarity": 0.7031,
+      "containment": 0.831,
+      "left_shingles": 77,
+      "right_shingles": 78,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:105043",
+      "right": "urdu-wikipedia:105040",
+      "similarity": 0.7188,
+      "containment": 0.8416,
+      "left_shingles": 81,
+      "right_shingles": 80,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:265619",
+      "right": "urdu-wikipedia:265578",
+      "similarity": 0.7422,
+      "containment": 0.862,
+      "left_shingles": 87,
+      "right_shingles": 85,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:265619",
+      "right": "urdu-wikipedia:265578",
+      "similarity": 0.7422,
+      "containment": 0.862,
+      "left_shingles": 87,
+      "right_shingles": 85,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:265619",
+      "right": "urdu-wikipedia:265578",
+      "similarity": 0.7422,
+      "containment": 0.862,
+      "left_shingles": 87,
+      "right_shingles": 85,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:760840",
+      "right": "urdu-wikipedia:760855",
+      "similarity": 0.7031,
+      "containment": 0.8552,
+      "left_shingles": 75,
+      "right_shingles": 70,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754324",
+      "right": "urdu-wikipedia:754840",
+      "similarity": 0.7344,
+      "containment": 0.8468,
+      "left_shingles": 63,
+      "right_shingles": 63,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754916",
+      "right": "urdu-wikipedia:755344",
+      "similarity": 0.7031,
+      "containment": 0.8257,
+      "left_shingles": 70,
+      "right_shingles": 70,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:387166",
+      "right": "urdu-wikipedia:387185",
+      "similarity": 0.7109,
+      "containment": 0.8311,
+      "left_shingles": 68,
+      "right_shingles": 68,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:10593",
+      "right": "urdu-wikipedia:47598",
+      "similarity": 0.6641,
+      "containment": 0.8595,
+      "left_shingles": 1378,
+      "right_shingles": 1590,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754304",
+      "right": "urdu-wikipedia:754359",
+      "similarity": 0.6562,
+      "containment": 0.8274,
+      "left_shingles": 74,
+      "right_shingles": 68,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:387225",
+      "right": "urdu-wikipedia:387244",
+      "similarity": 0.6875,
+      "containment": 0.8148,
+      "left_shingles": 67,
+      "right_shingles": 67,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:353079",
+      "right": "urdu-wikipedia:353060",
+      "similarity": 0.6875,
+      "containment": 0.8488,
+      "left_shingles": 96,
+      "right_shingles": 104,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:353079",
+      "right": "urdu-wikipedia:353060",
+      "similarity": 0.6875,
+      "containment": 0.8488,
+      "left_shingles": 96,
+      "right_shingles": 104,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:796470",
+      "right": "urdu-wikipedia:796475",
+      "similarity": 0.6641,
+      "containment": 0.8279,
+      "left_shingles": 144,
+      "right_shingles": 134,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:796470",
+      "right": "urdu-wikipedia:796475",
+      "similarity": 0.6641,
+      "containment": 0.8279,
+      "left_shingles": 144,
+      "right_shingles": 134,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754854",
+      "right": "urdu-wikipedia:754553",
+      "similarity": 0.6719,
+      "containment": 0.8037,
+      "left_shingles": 63,
+      "right_shingles": 63,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754136",
+      "right": "urdu-wikipedia:754656",
+      "similarity": 0.6953,
+      "containment": 0.8203,
+      "left_shingles": 63,
+      "right_shingles": 63,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:436589",
+      "right": "urdu-wikipedia:429447",
+      "similarity": 0.6562,
+      "containment": 0.7979,
+      "left_shingles": 73,
+      "right_shingles": 74,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754100",
+      "right": "urdu-wikipedia:754293",
+      "similarity": 0.6719,
+      "containment": 0.8101,
+      "left_shingles": 63,
+      "right_shingles": 64,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:396372",
+      "right": "urdu-wikipedia:396366",
+      "similarity": 0.6875,
+      "containment": 0.8148,
+      "left_shingles": 68,
+      "right_shingles": 68,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:105043",
+      "right": "urdu-wikipedia:105048",
+      "similarity": 0.6172,
+      "containment": 0.7884,
+      "left_shingles": 81,
+      "right_shingles": 76,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:251256",
+      "right": "urdu-wikipedia:248409",
+      "similarity": 0.6484,
+      "containment": 0.7867,
+      "left_shingles": 142,
+      "right_shingles": 142,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:757681",
+      "right": "urdu-wikipedia:759064",
+      "similarity": 0.6406,
+      "containment": 0.781,
+      "left_shingles": 79,
+      "right_shingles": 79,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:1007919",
+      "right": "urdu-wikipedia:1007934",
+      "similarity": 0.6484,
+      "containment": 0.8048,
+      "left_shingles": 87,
+      "right_shingles": 91,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:251510",
+      "right": "urdu-wikipedia:251284",
+      "similarity": 0.6016,
+      "containment": 0.7512,
+      "left_shingles": 71,
+      "right_shingles": 71,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:757028",
+      "right": "urdu-wikipedia:757229",
+      "similarity": 0.6094,
+      "containment": 0.7573,
+      "left_shingles": 78,
+      "right_shingles": 78,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:658823",
+      "right": "urdu-wikipedia:627333",
+      "similarity": 0.6406,
+      "containment": 0.781,
+      "left_shingles": 66,
+      "right_shingles": 66,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:758589",
+      "right": "urdu-wikipedia:758794",
+      "similarity": 0.625,
+      "containment": 0.779,
+      "left_shingles": 81,
+      "right_shingles": 79,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:386431",
+      "right": "urdu-wikipedia:386443",
+      "similarity": 0.625,
+      "containment": 0.7692,
+      "left_shingles": 62,
+      "right_shingles": 62,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:250143",
+      "right": "urdu-wikipedia:251305",
+      "similarity": 0.6172,
+      "containment": 0.7884,
+      "left_shingles": 81,
+      "right_shingles": 76,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:104812",
+      "right": "urdu-wikipedia:104692",
+      "similarity": 0.6328,
+      "containment": 0.7797,
+      "left_shingles": 84,
+      "right_shingles": 85,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:387361",
+      "right": "urdu-wikipedia:389517",
+      "similarity": 0.6016,
+      "containment": 0.7815,
+      "left_shingles": 62,
+      "right_shingles": 67,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:758808",
+      "right": "urdu-wikipedia:758602",
+      "similarity": 0.5938,
+      "containment": 0.7451,
+      "left_shingles": 77,
+      "right_shingles": 77,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:396511",
+      "right": "urdu-wikipedia:396487",
+      "similarity": 0.5781,
+      "containment": 0.7947,
+      "left_shingles": 76,
+      "right_shingles": 65,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:660313",
+      "right": "urdu-wikipedia:662303",
+      "similarity": 0.5859,
+      "containment": 0.7389,
+      "left_shingles": 71,
+      "right_shingles": 71,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:248465",
+      "right": "urdu-wikipedia:250595",
+      "similarity": 0.5547,
+      "containment": 0.7183,
+      "left_shingles": 76,
+      "right_shingles": 75,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:369903",
+      "right": "urdu-wikipedia:417616",
+      "similarity": 0.5703,
+      "containment": 0.7264,
+      "left_shingles": 65,
+      "right_shingles": 65,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:251523",
+      "right": "urdu-wikipedia:236777",
+      "similarity": 0.5625,
+      "containment": 0.7434,
+      "left_shingles": 82,
+      "right_shingles": 77,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:759026",
+      "right": "urdu-wikipedia:758751",
+      "similarity": 0.5547,
+      "containment": 0.7433,
+      "left_shingles": 72,
+      "right_shingles": 78,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:105083",
+      "right": "urdu-wikipedia:105089",
+      "similarity": 0.5703,
+      "containment": 0.7386,
+      "left_shingles": 89,
+      "right_shingles": 92,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:1008830",
+      "right": "urdu-wikipedia:1008653",
+      "similarity": 0.5625,
+      "containment": 0.7804,
+      "left_shingles": 340,
+      "right_shingles": 397,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:755672",
+      "right": "urdu-wikipedia:755632",
+      "similarity": 0.5938,
+      "containment": 0.7451,
+      "left_shingles": 77,
+      "right_shingles": 77,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:755837",
+      "right": "urdu-wikipedia:755544",
+      "similarity": 0.5859,
+      "containment": 0.7389,
+      "left_shingles": 71,
+      "right_shingles": 71,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:757564",
+      "right": "urdu-wikipedia:757388",
+      "similarity": 0.5938,
+      "containment": 0.7451,
+      "left_shingles": 78,
+      "right_shingles": 78,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:386566",
+      "right": "urdu-wikipedia:391073",
+      "similarity": 0.5469,
+      "containment": 0.7071,
+      "left_shingles": 67,
+      "right_shingles": 67,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:386850",
+      "right": "urdu-wikipedia:389693",
+      "similarity": 0.5,
+      "containment": 0.6667,
+      "left_shingles": 67,
+      "right_shingles": 67,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:755058",
+      "right": "urdu-wikipedia:755377",
+      "similarity": 0.5156,
+      "containment": 0.7123,
+      "left_shingles": 64,
+      "right_shingles": 70,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:250143",
+      "right": "urdu-wikipedia:250275",
+      "similarity": 0.5312,
+      "containment": 0.6939,
+      "left_shingles": 81,
+      "right_shingles": 81,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:250134",
+      "right": "urdu-wikipedia:251306",
+      "similarity": 0.5469,
+      "containment": 0.7207,
+      "left_shingles": 81,
+      "right_shingles": 78,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:413320",
+      "right": "urdu-wikipedia:413293",
+      "similarity": 0.5469,
+      "containment": 0.7071,
+      "left_shingles": 67,
+      "right_shingles": 67,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:757108",
+      "right": "urdu-wikipedia:757012",
+      "similarity": 0.5234,
+      "containment": 0.6872,
+      "left_shingles": 78,
+      "right_shingles": 78,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:389704",
+      "right": "urdu-wikipedia:389654",
+      "similarity": 0.5234,
+      "containment": 0.6872,
+      "left_shingles": 73,
+      "right_shingles": 73,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:754063",
+      "right": "urdu-wikipedia:754375",
+      "similarity": 0.5391,
+      "containment": 0.7005,
+      "left_shingles": 63,
+      "right_shingles": 63,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:104757",
+      "right": "urdu-wikipedia:104961",
+      "similarity": 0.5312,
+      "containment": 0.7271,
+      "left_shingles": 80,
+      "right_shingles": 73,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:671084",
+      "right": "urdu-wikipedia:436600",
+      "similarity": 0.5234,
+      "containment": 0.6872,
+      "left_shingles": 66,
+      "right_shingles": 66,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    },
+    {
+      "left": "urdu-wikipedia:352928",
+      "right": "urdu-wikipedia:352919",
+      "similarity": 0.5234,
+      "containment": 0.7082,
+      "left_shingles": 104,
+      "right_shingles": 98,
+      "left_source": "urdu-wikipedia",
+      "right_source": "urdu-wikipedia",
+      "cross_source": false
+    }
+  ],
+  "sources": [
+    "urdu-wikipedia"
+  ],
+  "limit": 0,
+  "sample_rate": null,
+  "host_filters": {},
+  "host_filtered_out": {},
+  "seed": 0,
+  "quality_filtered": true,
+  "exact_deduplicated": true,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 200154,
+    "documents_accepted": 200148,
+    "documents_rejected": 6,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.99997,
+    "bytes_in": 377121649,
+    "chars_out": 217835598,
+    "replacement_chars": 150,
+    "mojibake_chars": 12,
+    "control_chars": 12,
+    "verdicts": {
+      "control_heavy": 1,
+      "mojibake": 1,
+      "ok": 200148,
+      "replacement_heavy": 4
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 200148,
+    "documents_kept": 198671,
+    "keep_rate": 0.99262,
+    "documents_by_prior": 377,
+    "prior_rate": 0.001884,
+    "mixed_documents": 63930,
+    "letters": 162843197,
+    "labels": {
+      "arabic": 122,
+      "code_switched": 10919,
+      "empty": 205,
+      "english": 792,
+      "other": 353,
+      "persian": 5,
+      "roman_urdu": 4,
+      "urdu": 187748
+    },
+    "letters_by_label": {
+      "arabic": 33333,
+      "code_switched": 4758659,
+      "empty": 2573,
+      "english": 518537,
+      "other": 692796,
+      "persian": 572,
+      "roman_urdu": 52427,
+      "urdu": 156784300
+    },
+    "segment_letters": {
+      "arabic": 63617,
+      "code_switched": 1202926,
+      "english": 3029080,
+      "hindi": 3888,
+      "other": 971113,
+      "persian": 20721,
+      "roman_urdu": 32268,
+      "urdu": 16443911
+    }
+  },
+  "stage5_quality": {
+    "urdu-wikipedia": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "53d04d3fd079",
+      "config": {
+        "min_chars": 400,
+        "min_words": 40,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 0.5,
+        "max_top_ngram_ratio": {
+          "3": 0.26,
+          "4": 0.22
+        },
+        "max_dup_ngram_ratio": {
+          "5": 0.6,
+          "6": 0.58,
+          "7": 0.56,
+          "8": 0.54,
+          "9": 0.52,
+          "10": 0.5
+        },
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 200148,
+      "documents_kept": 93606,
+      "documents_rejected": 106542,
+      "keep_rate": 0.467684,
+      "chars_in": 216321099,
+      "chars_kept": 186567597,
+      "char_keep_rate": 0.862457,
+      "rejections": {
+        "html_residue": 104,
+        "repetition:dup_10gram": 85,
+        "repetition:dup_5gram": 121,
+        "repetition:dup_6gram": 104,
+        "repetition:dup_7gram": 103,
+        "repetition:dup_8gram": 80,
+        "repetition:dup_9gram": 80,
+        "repetition:dup_lines": 90,
+        "repetition:top_3gram": 2162,
+        "repetition:top_4gram": 1303,
+        "script_ratio": 625,
+        "too_short": 105635,
+        "url_density": 56
+      },
+      "families": {
+        "html_residue": 104,
+        "repetition": 3385,
+        "script_ratio": 625,
+        "too_short": 105635,
+        "url_density": 56
+      },
+      "sole_rejections": {
+        "html_residue": 23,
+        "repetition": 546,
+        "script_ratio": 286,
+        "too_short": 102400,
+        "url_density": 27
+      },
+      "by_label": {
+        "arabic": 122,
+        "code_switched": 10919,
+        "empty": 205,
+        "english": 792,
+        "other": 353,
+        "persian": 5,
+        "roman_urdu": 4,
+        "urdu": 187748
+      },
+      "kept_by_label": {
+        "arabic": 10,
+        "code_switched": 3866,
+        "english": 184,
+        "other": 222,
+        "roman_urdu": 2,
+        "urdu": 89322
+      },
+      "chars_kept_by_label": {
+        "arabic": 33802,
+        "code_switched": 4391131,
+        "english": 586008,
+        "other": 909386,
+        "roman_urdu": 70969,
+        "urdu": 180576301
+      },
+      "truncated_documents": 0
+    }
+  },
+  "stage6_exact": {
+    "dedup_version": "1.0.0",
+    "config_fingerprint": "ba02bfe0afd5",
+    "config": {
+      "hash_bits": 128,
+      "collapse_whitespace": true,
+      "casefold": true,
+      "variant": "normalized",
+      "measure_alternate": true,
+      "paragraph_mode": "off",
+      "min_paragraph_chars": 60,
+      "paragraph_min_documents": 2,
+      "max_index_entries": 40000000
+    },
+    "indexed": 93606,
+    "duplicate_groups": 9,
+    "duplicate_documents": 9,
+    "duplicate_rate": 9.6e-05,
+    "largest_group": 2,
+    "variant": "normalized",
+    "alternate_variant": "raw",
+    "alternate_duplicate_documents": 9,
+    "cross_source_groups": 0,
+    "cross_source_pairs": {},
+    "documents": 93606,
+    "documents_kept": 93597,
+    "documents_removed": 9,
+    "keep_rate": 0.999904,
+    "chars_in": 186567597,
+    "chars_kept": 186555861,
+    "char_keep_rate": 0.999937,
+    "by_source": {
+      "urdu-wikipedia": 93606
+    },
+    "kept_by_source": {
+      "urdu-wikipedia": 93597
+    },
+    "removed_by_source": {
+      "urdu-wikipedia": 9
+    },
+    "removed_cross_source_by_source": {},
+    "paragraph_mode": "off",
+    "paragraph_units": 0,
+    "paragraph_distinct": 0,
+    "paragraph_duplicate_units": 0,
+    "paragraph_chars": 0,
+    "paragraph_chars_duplicated": 0,
+    "paragraph_chars_removable": 0,
+    "paragraph_removable_share": 0.0,
+    "paragraph_documents_changed": 0,
+    "paragraphs_removed": 0,
+    "paragraph_chars_removed": 0,
+    "paragraph_documents_emptied": 0,
+    "distinct_documents": 93597,
+    "top_groups": [
+      {
+        "group": "44fa956ebdf53b3a",
+        "size": 2,
+        "sources": [
+          "urdu-wikipedia"
+        ],
+        "kept": "urdu-wikipedia:1100210",
+        "duplicates": [
+          "urdu-wikipedia:1008215"
+        ]
+      },
+      {
+        "group": "5023c57a8ba1a9eb",
+        "size": 2,
+        "sources": [
+          "urdu-wikipedia"
+        ],
+        "kept": "urdu-wikipedia:1100339",
+        "duplicates": [
+          "urdu-wikipedia:1100323"
+        ]
+      },
+      {
+        "group": "56c98744c68ed59b",
+        "size": 2,
+        "sources": [
+          "urdu-wikipedia"
+        ],
+        "kept": "urdu-wikipedia:1100338",
+        "duplicates": [
+          "urdu-wikipedia:1100327"
+        ]
+      },
+      {
+        "group": "65092e1357b2bb29",
+        "size": 2,
+        "sources": [
+          "urdu-wikipedia"
+        ],
+        "kept": "urdu-wikipedia:1083157",
+        "duplicates": [
+          "urdu-wikipedia:1083159"
+        ]
+      },
+      {
+        "group": "91b886aafde9d0f2",
+        "size": 2,
+        "sources": [
+          "urdu-wikipedia"
+        ],
+        "kept": "urdu-wikipedia:994219",
+        "duplicates": [
+          "urdu-wikipedia:994222"
+        ]
+      },
+      {
+        "group": "949314bb1275344f",
+        "size": 2,
+        "sources": [
+          "urdu-wikipedia"
+        ],
+        "kept": "urdu-wikipedia:1073651",
+        "duplicates": [
+          "urdu-wikipedia:1073650"
+        ]
+      },
+      {
+        "group": "99e0f8e800c0dac7",
+        "size": 2,
+        "sources": [
+          "urdu-wikipedia"
+        ],
+        "kept": "urdu-wikipedia:1097775",
+        "duplicates": [
+          "urdu-wikipedia:1097770"
+        ]
+      },
+      {
+        "group": "d0c9d75054e191a2",
+        "size": 2,
+        "sources": [
+          "urdu-wikipedia"
+        ],
+        "kept": "urdu-wikipedia:1080603",
+        "duplicates": [
+          "urdu-wikipedia:1080602"
+        ]
+      },
+      {
+        "group": "dfe7a8f698fbde38",
+        "size": 2,
+        "sources": [
+          "urdu-wikipedia"
+        ],
+        "kept": "urdu-wikipedia:1100322",
+        "duplicates": [
+          "urdu-wikipedia:1100341"
+        ]
+      }
+    ]
+  },
+  "sweep": [
+    {
+      "threshold": 0.5,
+      "verified_pairs": 4054,
+      "clusters": 1000,
+      "duplicate_documents": 2455,
+      "largest_cluster": 156,
+      "keep_rate": 0.973771
+    },
+    {
+      "threshold": 0.6,
+      "verified_pairs": 2926,
+      "clusters": 725,
+      "duplicate_documents": 1451,
+      "largest_cluster": 44,
+      "keep_rate": 0.984497
+    },
+    {
+      "threshold": 0.7,
+      "verified_pairs": 1687,
+      "clusters": 302,
+      "duplicate_documents": 538,
+      "largest_cluster": 25,
+      "keep_rate": 0.994252
+    },
+    {
+      "threshold": 0.75,
+      "verified_pairs": 1319,
+      "clusters": 190,
+      "duplicate_documents": 322,
+      "largest_cluster": 25,
+      "keep_rate": 0.99656
+    },
+    {
+      "threshold": 0.8,
+      "verified_pairs": 995,
+      "clusters": 118,
+      "duplicate_documents": 178,
+      "largest_cluster": 23,
+      "keep_rate": 0.998098
+    },
+    {
+      "threshold": 0.85,
+      "verified_pairs": 709,
+      "clusters": 72,
+      "duplicate_documents": 101,
+      "largest_cluster": 20,
+      "keep_rate": 0.998921
+    },
+    {
+      "threshold": 0.9,
+      "verified_pairs": 421,
+      "clusters": 38,
+      "duplicate_documents": 46,
+      "largest_cluster": 5,
+      "keep_rate": 0.999509
+    },
+    {
+      "threshold": 0.95,
+      "verified_pairs": 234,
+      "clusters": 18,
+      "duplicate_documents": 20,
+      "largest_cluster": 3,
+      "keep_rate": 0.999786
+    }
+  ]
+}

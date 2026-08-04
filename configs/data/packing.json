@@ -1,0 +1,10 @@
+{
+  "packing_version": "1",
+  "_comment": "Stage 10, tokenization and sequence packing (PRD §6.3.10). sequence_length and vocab_size are §5's model specification and are not tuning knobs — both models, both arms and every seed share them, and a corpus packed at a different length is a different experiment. cross_document is true because Roman-Urdu-Parl documents are single sentences (~18 tokens) and one-document-per-sequence would be 97% padding; sequences never cross a *population* boundary regardless, because §8.3 reports BPB by script and a mixed-script sequence has none. There is no pad token: §4.3's epoch arithmetic counts tokens processed as data, and the residual partial sequence of each stream is dropped and counted instead.",
+  "sequence_length": 512,
+  "vocab_size": 16384,
+  "dtype": "uint16",
+  "cross_document": true,
+  "shard_sequences": 20000,
+  "salt": "ravaan/pack/v1"
+}

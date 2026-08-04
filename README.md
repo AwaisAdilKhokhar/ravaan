@@ -44,8 +44,9 @@ lives in [`progress.md`](progress.md).
 
 ## Status
 
-Pre-alpha. Week 1 of 16. Nothing has been trained. Gate G0 (novelty) passed; the corpus pipeline
-has stages 1, 2 and 4 built and the raw corpus on disk. See `progress.md`.
+Pre-alpha. Weeks 3–4 of 16. Nothing has been trained. Gate G0 (novelty) passed; the corpus
+pipeline has stages 1–6 built and validated against real text, and the raw corpus is on disk.
+See `progress.md`.
 
 ## Layout
 
@@ -71,11 +72,11 @@ python -m pip install -e ".[dev]"
 # add extras as the pipeline needs them: .[data] .[tokenizer] .[train]
 ```
 
-The core package has no runtime dependencies. The corpus pipeline's load-bearing stages —
-acquisition, encoding validation, normalization — are standard-library-only on purpose: they
-decide which bytes the project is built on and what every later stage reads, so they stay
-auditable. Heavy dependencies are opt-in extras, starting at the stage where parquet must be
-parsed.
+The core package has no runtime dependencies. Every stage that *decides* something — acquisition,
+encoding validation, language ID, normalization, quality filtering, exact dedup — is
+standard-library-only on purpose: they choose which bytes the project is built on and what every
+later stage reads, so they stay auditable. Heavy dependencies are opt-in extras, and `[data]` is
+needed only to *read* the corpus, where parquet must be parsed.
 
 ## Test
 
@@ -91,8 +92,19 @@ python scripts/acquire.py fetch --max-bytes 3e9       # download, verify, record
 python scripts/acquire.py verify                      # re-check what is on disk
 python scripts/validate_encoding.py shard.jsonl --jsonl -o clean.jsonl
 python scripts/normalize.py raw.txt -o clean.txt --log stats.json
-python scripts/corpus_probe.py <shard>.parquet --limit 20000   # what the stages actually did
+
+# what the stages actually do on real text — every threshold gets one of these before the freeze
+python scripts/probe.py --source fineweb2-urd_Arab --limit 20000 --sample-rate 0.02   # stages 2-5
+python scripts/dedup.py --source urdu-wikipedia --limit 250000                        # stage 6
+
+# the 200-sample manual validation PRD §6.3.5 requires
+python scripts/quality_sample.py draw --out reports/quality_sample.md
 ```
+
+Fixture tests prove a rule does what it says; only real text shows whether it fires on the right
+things. Session 4 found a mojibake detector that passed 57 unit tests and would have deleted 3% of
+a clean corpus, so every threshold in stages 2, 3, 5 and 6 is pointed at the actual sources before
+the corpus is frozen, and the output is committed under `reports/probe_*.json`.
 
 Sources are declared in [`configs/data/sources.json`](configs/data/sources.json): every source
 pinned to a commit SHA, every file carrying its SHA-256 before download, and every licence checked

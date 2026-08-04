@@ -1,0 +1,359 @@
+{
+  "dedup_version": "1.0.0",
+  "config_fingerprint": "3fcb63e334a9",
+  "config": {
+    "hash_bits": 128,
+    "collapse_whitespace": true,
+    "casefold": true,
+    "variant": "normalized",
+    "measure_alternate": true,
+    "paragraph_mode": "measure",
+    "min_paragraph_chars": 60,
+    "paragraph_min_documents": 2,
+    "max_index_entries": 40000000
+  },
+  "indexed": 6032599,
+  "duplicate_groups": 804635,
+  "duplicate_documents": 2553829,
+  "duplicate_rate": 0.423338,
+  "largest_group": 124,
+  "variant": "normalized",
+  "alternate_variant": "raw",
+  "alternate_duplicate_documents": 2553829,
+  "cross_source_groups": 0,
+  "cross_source_pairs": {},
+  "paragraph_mode": "measure",
+  "distinct_documents": 3478770,
+  "top_groups": [
+    {
+      "group": "698b82fefd15e45d",
+      "size": 124,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "f89661452bdb64d3",
+      "size": 94,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "ad46a1f9989108d3",
+      "size": 61,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "d38c5cca6e37ec7f",
+      "size": 55,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "8804b7ad36ca54e6",
+      "size": 52,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "cf71afb8cbc38263",
+      "size": 51,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "fb00d0dc580ba3d2",
+      "size": 50,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "db1770c3e21b1a1e",
+      "size": 48,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "102c6330fb9fc93e",
+      "size": 42,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "328a2a156630b03e",
+      "size": 42,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "61130f76ffa22a61",
+      "size": 42,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "ef2c4f6f0786e241",
+      "size": 42,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "08cfab1e4244dc57",
+      "size": 41,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "c79c80111f1baee9",
+      "size": 41,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "5c0ce3966c2dd732",
+      "size": 40,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "d5437c0848d632bb",
+      "size": 40,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "fa4553c82a599eab",
+      "size": 40,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "4376147fd5886d8f",
+      "size": 39,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "5b66699ecfecc80b",
+      "size": 39,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "6493ccf5c2bdb572",
+      "size": 39,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    }
+  ],
+  "phase2_skipped": true,
+  "sources": [
+    "roman-urdu-parl"
+  ],
+  "limit": 7000000,
+  "sample_rate": null,
+  "seed": 0,
+  "quality_filtered": true,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 6333215,
+    "documents_accepted": 6333215,
+    "documents_rejected": 0,
+    "documents_repaired": 0,
+    "acceptance_rate": 1.0,
+    "bytes_in": 469746930,
+    "chars_out": 469746930,
+    "replacement_chars": 0,
+    "mojibake_chars": 0,
+    "control_chars": 0,
+    "verdicts": {
+      "ok": 6333215
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 6333215,
+    "documents_kept": 5629213,
+    "keep_rate": 0.88884,
+    "documents_by_prior": 114793,
+    "prior_rate": 0.018126,
+    "mixed_documents": 0,
+    "letters": 378352698,
+    "labels": {
+      "empty": 582783,
+      "english": 6426,
+      "other": 114793,
+      "roman_urdu": 5629213
+    },
+    "letters_by_label": {
+      "empty": 8407044,
+      "english": 204564,
+      "other": 4170552,
+      "roman_urdu": 365570538
+    },
+    "segment_letters": {}
+  },
+  "stage5_quality": {
+    "roman-urdu-parl": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "31a5a2d4805b",
+      "config": {
+        "min_chars": 20,
+        "min_words": 3,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 1.0,
+        "max_top_ngram_ratio": {
+          "2": 1.0
+        },
+        "max_dup_ngram_ratio": {},
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 6333215,
+      "documents_kept": 6032599,
+      "documents_rejected": 300616,
+      "keep_rate": 0.952533,
+      "chars_in": 469746930,
+      "chars_kept": 465304250,
+      "char_keep_rate": 0.990542,
+      "rejections": {
+        "too_short": 300616
+      },
+      "families": {
+        "too_short": 300616
+      },
+      "sole_rejections": {
+        "too_short": 300616
+      },
+      "by_label": {
+        "empty": 582783,
+        "english": 6426,
+        "other": 114793,
+        "roman_urdu": 5629213
+      },
+      "kept_by_label": {
+        "empty": 282222,
+        "english": 6426,
+        "other": 114739,
+        "roman_urdu": 5629212
+      },
+      "chars_kept_by_label": {
+        "empty": 6531420,
+        "english": 260732,
+        "other": 5386690,
+        "roman_urdu": 453125408
+      },
+      "truncated_documents": 0
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "dedup_version": "1.0.0",
+  "hash_bits": 128,
+  "collapse_whitespace": true,
+  "casefold": true,
+  "variant": "normalized",
+  "measure_alternate": true,
+  "paragraph_mode": "measure",
+  "min_paragraph_chars": 60,
+  "paragraph_min_documents": 2,
+  "max_index_entries": 40000000
+}

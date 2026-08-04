@@ -1,0 +1,388 @@
+{
+  "dedup_version": "1.0.0",
+  "config_fingerprint": "ba02bfe0afd5",
+  "config": {
+    "hash_bits": 128,
+    "collapse_whitespace": true,
+    "casefold": true,
+    "variant": "normalized",
+    "measure_alternate": true,
+    "paragraph_mode": "off",
+    "min_paragraph_chars": 60,
+    "paragraph_min_documents": 2,
+    "max_index_entries": 40000000
+  },
+  "indexed": 466485,
+  "duplicate_groups": 10,
+  "duplicate_documents": 10,
+  "duplicate_rate": 2.1e-05,
+  "largest_group": 2,
+  "variant": "normalized",
+  "alternate_variant": "raw",
+  "alternate_duplicate_documents": 9,
+  "cross_source_groups": 0,
+  "cross_source_pairs": {},
+  "paragraph_mode": "off",
+  "distinct_documents": 466475,
+  "top_groups": [
+    {
+      "group": "44fa956ebdf53b3a",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "5023c57a8ba1a9eb",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "56c98744c68ed59b",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "65092e1357b2bb29",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "91b886aafde9d0f2",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "949314bb1275344f",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "99e0f8e800c0dac7",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "b769ef3393a7baa6",
+      "size": 2,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "d0c9d75054e191a2",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "dfe7a8f698fbde38",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    }
+  ],
+  "phase2_skipped": true,
+  "sources": [
+    "urdu-wikipedia",
+    "fineweb2-urd_Arab=0.25"
+  ],
+  "limit": 1600000,
+  "sample_rate": null,
+  "seed": 0,
+  "quality_filtered": true,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 586865,
+    "documents_accepted": 586805,
+    "documents_rejected": 60,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.999898,
+    "bytes_in": 1953428295,
+    "chars_out": 1107567480,
+    "replacement_chars": 671,
+    "mojibake_chars": 33,
+    "control_chars": 12,
+    "verdicts": {
+      "control_heavy": 1,
+      "mojibake": 3,
+      "ok": 586805,
+      "replacement_heavy": 56
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 586805,
+    "documents_kept": 585326,
+    "keep_rate": 0.99748,
+    "documents_by_prior": 377,
+    "prior_rate": 0.000642,
+    "mixed_documents": 75715,
+    "letters": 840990585,
+    "labels": {
+      "arabic": 122,
+      "code_switched": 12932,
+      "empty": 205,
+      "english": 792,
+      "other": 355,
+      "persian": 5,
+      "roman_urdu": 4,
+      "urdu": 572390
+    },
+    "letters_by_label": {
+      "arabic": 33333,
+      "code_switched": 8159542,
+      "empty": 2573,
+      "english": 518537,
+      "other": 696373,
+      "persian": 572,
+      "roman_urdu": 52427,
+      "urdu": 831527228
+    },
+    "segment_letters": {
+      "arabic": 102167,
+      "code_switched": 1610945,
+      "english": 5374614,
+      "hindi": 34491,
+      "other": 1742066,
+      "persian": 26643,
+      "roman_urdu": 172253,
+      "urdu": 30565296
+    }
+  },
+  "stage5_quality": {
+    "fineweb2-urd_Arab": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "53d04d3fd079",
+      "config": {
+        "min_chars": 400,
+        "min_words": 40,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 0.5,
+        "max_top_ngram_ratio": {
+          "3": 0.26,
+          "4": 0.22
+        },
+        "max_dup_ngram_ratio": {
+          "5": 0.6,
+          "6": 0.58,
+          "7": 0.56,
+          "8": 0.54,
+          "9": 0.52,
+          "10": 0.5
+        },
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 386657,
+      "documents_kept": 372879,
+      "documents_rejected": 13778,
+      "keep_rate": 0.964366,
+      "chars_in": 890290927,
+      "chars_kept": 885560801,
+      "char_keep_rate": 0.994687,
+      "rejections": {
+        "html_residue": 1,
+        "repetition:dup_10gram": 2,
+        "repetition:dup_6gram": 1,
+        "repetition:dup_7gram": 1,
+        "repetition:dup_9gram": 2,
+        "script_ratio": 172,
+        "too_short": 13632
+      },
+      "families": {
+        "html_residue": 1,
+        "repetition": 3,
+        "script_ratio": 172,
+        "too_short": 13632
+      },
+      "sole_rejections": {
+        "html_residue": 1,
+        "repetition": 2,
+        "script_ratio": 143,
+        "too_short": 13602
+      },
+      "by_label": {
+        "code_switched": 2013,
+        "other": 2,
+        "urdu": 384642
+      },
+      "kept_by_label": {
+        "code_switched": 1822,
+        "other": 2,
+        "urdu": 371055
+      },
+      "chars_kept_by_label": {
+        "code_switched": 4335254,
+        "other": 4558,
+        "urdu": 881220989
+      },
+      "truncated_documents": 0
+    },
+    "urdu-wikipedia": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "53d04d3fd079",
+      "config": {
+        "min_chars": 400,
+        "min_words": 40,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 0.5,
+        "max_top_ngram_ratio": {
+          "3": 0.26,
+          "4": 0.22
+        },
+        "max_dup_ngram_ratio": {
+          "5": 0.6,
+          "6": 0.58,
+          "7": 0.56,
+          "8": 0.54,
+          "9": 0.52,
+          "10": 0.5
+        },
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 200148,
+      "documents_kept": 93606,
+      "documents_rejected": 106542,
+      "keep_rate": 0.467684,
+      "chars_in": 216321099,
+      "chars_kept": 186567597,
+      "char_keep_rate": 0.862457,
+      "rejections": {
+        "html_residue": 104,
+        "repetition:dup_10gram": 85,
+        "repetition:dup_5gram": 121,
+        "repetition:dup_6gram": 104,
+        "repetition:dup_7gram": 103,
+        "repetition:dup_8gram": 80,
+        "repetition:dup_9gram": 80,
+        "repetition:dup_lines": 90,
+        "repetition:top_3gram": 2162,
+        "repetition:top_4gram": 1303,
+        "script_ratio": 625,
+        "too_short": 105635,
+        "url_density": 56
+      },
+      "families": {
+        "html_residue": 104,
+        "repetition": 3385,
+        "script_ratio": 625,
+        "too_short": 105635,
+        "url_density": 56
+      },
+      "sole_rejections": {
+        "html_residue": 23,
+        "repetition": 546,
+        "script_ratio": 286,
+        "too_short": 102400,
+        "url_density": 27
+      },
+      "by_label": {
+        "arabic": 122,
+        "code_switched": 10919,
+        "empty": 205,
+        "english": 792,
+        "other": 353,
+        "persian": 5,
+        "roman_urdu": 4,
+        "urdu": 187748
+      },
+      "kept_by_label": {
+        "arabic": 10,
+        "code_switched": 3866,
+        "english": 184,
+        "other": 222,
+        "roman_urdu": 2,
+        "urdu": 89322
+      },
+      "chars_kept_by_label": {
+        "arabic": 33802,
+        "code_switched": 4391131,
+        "english": 586008,
+        "other": 909386,
+        "roman_urdu": 70969,
+        "urdu": 180576301
+      },
+      "truncated_documents": 0
+    }
+  }
+}

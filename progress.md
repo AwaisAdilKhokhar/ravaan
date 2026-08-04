@@ -5,10 +5,13 @@ Spec is the PRD; this file is the state of play. **Read the "Next session" secti
 first.**
 
 - **Started:** 2026-08-03 (Week 1 of 16)
-- **Current phase:** Weeks 1–2 complete → Weeks 3–4, corpus freeze. Pipeline stages 1–5 are built
-  and validated on real text, and stage 5's 200-sample validation is adjudicated, scored and
-  written up ([`reports/quality_validation.md`](reports/quality_validation.md)). Next is stage 6
-  (exact dedup).
+- **Current phase:** Weeks 1–2 complete → Weeks 3–4, corpus freeze. Pipeline stages 1–6 are built
+  and validated on real text; stage 5's 200-sample validation is adjudicated, scored and written up
+  ([`reports/quality_validation.md`](reports/quality_validation.md)), and stage 6 has run **complete
+  passes over every source** — Urdu Wikipedia, both columns of Roman-Urdu-Parl, and FineWeb2 against
+  Wikipedia. Next is stage 7 (MinHash near-dedup), which session 8 hands a measured acceptance test,
+  a measured expectation of near-inertness on the primary source, and the one population where it
+  demonstrably has real work to do.
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
 - **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds
@@ -16,10 +19,10 @@ first.**
 - **Preregistration:** ✅ committed [`reports/preregistration.md`](reports/preregistration.md) —
   4 falsifiable predictions, before any training.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 276 passing (69 normalization · 57 encoding · 57 acquisition · 43 quality · 32 langid
-  · 18 shards)
-- **Committed.** Sessions 6 and 7 are in git as one commit — stage 5, its 200-sample validation and
-  the write-up are one deliverable.
+- **Tests:** 317 passing (69 normalization · 57 encoding · 57 acquisition · 43 quality · 41 dedup
+  · 32 langid · 18 shards)
+- **Committed** through session 7. Sessions 6 and 7 are one commit — stage 5, its 200-sample
+  validation and the write-up are one deliverable.
 
 ---
 
@@ -50,7 +53,8 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | Arabic-variant spelling is site-correlated (Finding F) | §6.3.4 | ✅ answered |
 | Quality filtering (stage 5) | §6.3.5 | ✅ |
 | 200-sample validation — drawn, adjudicated, scored, written up | §6.3.5 | 🟡 native-speaker pass outstanding |
-| Exact dedup (stage 6) | §6.3.6 | ⬜ |
+| **Exact dedup (stage 6)** | §6.3.6 | ✅ |
+| Full passes: Wikipedia, Roman-Urdu-Parl (both columns), FineWeb2 ∩ Wikipedia | §6.3.6 | ✅ |
 | MinHash near-dedup (stage 7) | §6.3.7 | ⬜ |
 | Eval decontamination (stage 8) | §6.3.8 | ⬜ |
 | Split creation (stage 9) | §6.3.9 | ⬜ |
@@ -846,6 +850,316 @@ and `scripts/stage3_probe.py`, and edits to `pyproject.toml`, `ravaan/data/__ini
 
 ---
 
+### Session 8 — 2026-08-04
+
+**Done**
+
+1. **Exact deduplication — stage 6** (`ravaan/data/dedup.py`, `configs/data/dedup.json`, 41 tests).
+   Document and paragraph level, raw and normalized hashes, per §6.3.6. Four properties it is
+   built around.
+   - **Which copy survives does not depend on the order the corpus was read in.** This is the
+     property that costs a second pass over the corpus, and it is the reason the module is
+     two-phase. PRD §6.3 releases code, manifest and checksums and **no raw text**, so re-running
+     this pipeline is the only way anyone — including us in week 15 — ever reconstructs the frozen
+     corpus. "Keep the first copy you see" makes that reconstruction depend on read order, and
+     `shards.py` deliberately reads in a *seeded shuffle*: a different seed would then produce a
+     different corpus from identical inputs and identical code. So the survivor of a duplicate
+     group is the document whose **id hashes lowest**, which is a property of the group rather
+     than of the pass. It is `stable_unit`'s argument one stage on — shuffling decides what you
+     look at first, hashing decides what belongs to what — except that here conflating the two
+     changes the corpus rather than a measurement of it.
+   - **Normalized text decides, raw text is counted beside it, on the same pass.** §6.3.6 asks for
+     both hashes and Finding F made it a prediction. Reporting the counterfactual as a measured
+     number is what turns "stage 4 before stage 6" from an argument into a result.
+   - **Canonicalization is whitespace collapse and case folding, and stops there.** Every further
+     "harmless" fold — punctuation, harakat, sorted lines — makes this a near-dedup with an
+     unstated similarity threshold, which is stage 7's job and which stage 7 does with a
+     measurable one. Four parametrized tests pin the boundary: one changed character, one removed
+     comma, one harakat, one bari-ye must all leave *both* documents standing.
+   - **The output is a decision, not a corpus** — a list of removed ids plus a statistics block,
+     which is exactly what the release policy can ship and what lets someone who cannot be given
+     the text still check the corpus.
+
+2. **`scripts/dedup.py`** — stages 2→6 over real sources, two passes, several sources at once so
+   cross-source duplication can be measured at all. Dedup yield is measured on **stage 5's
+   survivors** by default (`--no-quality` for the other way), because half of Urdu Wikipedia is a
+   template stub farm stage 5 already removes on length and measuring dedup on raw text counts
+   that win twice.
+
+**Finding G — a duplicate rate cannot be measured on a sample, and my first run was wrong.**
+
+The first FineWeb2 run reused the probe's habit of `--limit 20000 --sample-rate 0.02` and reported
+zero duplicates. That number was meaningless, and not by a little.
+
+- Every statistic before this stage has been **per document**, and a uniform sample estimates those
+  honestly. A duplicate is a property of a **pair**, and a sample of rate *r* retains a given pair
+  with probability *r²* — so a 2% sample under-reports duplicate pairs by **2,500×**.
+- Worse, the subset problem does not go away when the sampling does: reading *n* of *N* documents
+  finds a given pair with probability ≈ (*n*/*N*)², so the unsampled 20,000-document window still
+  under-reports by ~80×. **There is no window size that fixes this; only a full pass measures it.**
+- **Demonstrated rather than argued.** The complete Urdu Wikipedia dump contains exactly 9 duplicate
+  groups. Re-run at `--source urdu-wikipedia=0.05`, the same pass over the same dump finds **0** —
+  which is what 9 × 0.05² = 0.02 expected groups predicts.
+- This is Finding E's shape a second time — the sampling that is correct for one class of
+  statistic is silently invalid for another — and it is the reason every stage-6 run below is a
+  complete pass over its source rather than a probe.
+- **The exception is worth stating, because it makes the expensive measurement cheap.** The *r²*
+  penalty applies when both members of a pair are subject to sampling. For **cross-source** overlap
+  it need not be: index one source *completely* and sample the other at rate *r*, and a shared
+  document is detected with probability *r*, not *r²* — an unbiased estimate scaled by a known
+  constant. So "how much of Urdu Wikipedia is inside FineWeb2" does not need a full FineWeb2 pass;
+  it needs all of Wikipedia (93,606 documents, minutes) against a fraction of FineWeb2. This is why
+  `--source NAME=RATE` takes a per-source rate rather than one rate for the run.
+
+**Finding H — FineWeb2 removed 31% of `urd_Arab` as near-duplicates before we ever saw it, and the
+shard says so.**
+
+The shard carries FineWeb2's own `minhash_cluster_size` column. Read over **all 1,547,542
+documents** (`reports/probe_fineweb2_minhash.json`):
+
+- **73.08%** of retained documents were singletons; **26.92%** were the representative of a
+  near-duplicate cluster. Largest cluster **266**.
+- Summing cluster sizes gives an implied pre-dedup population of **2,243,346**, so **695,804
+  documents — 31.02% — were removed upstream**.
+- **The reading is verified, not assumed.** If FineWeb2 had retained every cluster member and
+  merely annotated it, the number of documents labelled *k* would be an exact multiple of *k*. On
+  the full population none of them are (262,101 at *k*=2, 32,901 at *k*=4, 6,916 at *k*=6). One
+  representative is kept and the rest are dropped. The same test on a row-group *sample* was
+  inconclusive, which is why it was re-run over the whole column.
+- **This is the fourth stage in a row whose honest report on FineWeb2 is "already clean in this
+  dimension"** — encoding (stage 2), language (stage 3), quality (stage 5) and now dedup — and the
+  four together are a real finding about what FineWeb2 is, worth a paragraph of the technical
+  report rather than four separate apologies.
+- **It also sets stage 7's expectation before stage 7 is written.** Near-dedup has little left to
+  find on the primary source; its real target is Finding F's cross-publisher republication.
+
+**Finding I — the four documents session 7 named will not be caught by stage 6 *or* stage 7.**
+
+Session 7 sharpened stage 5's error budget into a test with named documents: the four surviving
+false accepts (`urdu-wikipedia:122264`, `:122214`, `:363641`, `:122110` — Fortune-1000 company and
+geo stubs at 411–602 characters) "are exactly what a length rule cannot see and a dedup pass should
+not miss." Measured, the prediction is wrong, and it is wrong in a way that matters.
+
+- **Exact dedup cannot catch them, and the full pass confirms it.** All four come back
+  `kept=True, group_size=1` — each is its own group of one. Read side by side, `:122264`
+  (Washington Mutual) and `:122214` (Alaska Air Group) share their template sentences verbatim,
+  but the differing city and CEO names sit *inside* those sentences, so neither the documents nor
+  their lines are exact duplicates. The short footers that *are* identical ("مزید دیکھیے",
+  "حوالہ جات") sit below any sane paragraph floor, and are legitimate section headings besides.
+  The prediction was measured before the pipeline ran and the pipeline agrees with it.
+- **Near-dedup will not catch them either, at any shingle size.** Over 82 US-geography stubs drawn
+  from the dump (3,321 pairs), word-shingle Jaccard runs: n=2 median 0.371 / max **0.677**; n=3
+  median 0.268 / max 0.574; n=5 median 0.157 / max 0.423; n=8 median 0.067 / max 0.271. **Not one
+  pair reaches 0.7 at any n**, against the 0.8 that RefinedWeb and FineWeb use. The stubs average
+  91.7 words and the variable parts — place name, county, area, population, elevation, category
+  footer — are a large share of them, so a shingle spanning any changed word is destroyed.
+- **The consequence is a correction to stage 5's error budget, not to stage 7's design.** The four
+  false accepts survive the whole pipeline. `quality_validation.md`'s error budget says two of the
+  four are the stub farm and "that is stage 7's"; measured, it is nobody's. The instrument that
+  actually removes the stub farm is the one that already did — stage 5's 400-character floor, which
+  removes 53% of Urdu Wikipedia — and the residue it leaves is residue.
+- **This is worth more as a stage 7 acceptance test than as a stage 6 result.** It is a measured,
+  named, negative expectation recorded *before* the near-dedup is written, which is the only time
+  such a thing is credible.
+
+**Measured — stage 6 on Urdu Wikipedia, complete dump (`reports/probe_dedup_wikipedia.json`)**
+
+| | Urdu Wikipedia |
+|---|---|
+| documents reaching stage 6 (after stages 2–5) | 93,606 of 200,148 |
+| distinct | 93,597 |
+| **duplicate groups** | **9**, every one of size 2 |
+| documents kept | **99.99%** (99.99% of characters) |
+| hashing raw instead of normalized would remove | **9** — identical |
+| line occurrences / distinct | 480,481 / 471,453 |
+| line characters repeating another document's line | **0.89%** |
+
+- **The nine are one bot's duplicate output.** They are stub biographies of Punjab Assembly members
+  at consecutive ids — `1100322`, `1100323`, `1100327`, `1100338`, `1100341` — plus a handful of
+  others. One batch job wrote several articles twice. That is the entire exact-duplicate content of
+  the Urdu Wikipedia dump, and it is the right shape for an encyclopedia: redirects are not separate
+  articles.
+- **Normalized and raw remove the same 9, and that is the correct null rather than a
+  disappointment.** Finding F is about *cross-publisher* orthography; both copies of a Wikipedia
+  duplicate come from the same publisher on the same keyboard, so stage 4 has nothing to unify. The
+  place that comparison can bite is the joint FineWeb2 run, where Arabic-keyboard religious
+  publishers meet Wikipedia.
+- **Paragraph level is not where the win is either.** 0.89% of line characters are a repeat of
+  another surviving document's line. Stage 6 measures it and removes nothing, and this number is
+  the argument for leaving it that way: rewriting documents to reclaim 0.89% is a bad trade against
+  invalidating stage 5's length floor.
+- Stage 5's full-dump rate lands at **46.77% of documents / 86.25% of characters**, against the
+  46.72% / 87.38% session 6 measured on a 20,000-document sample. The full-population figures
+  supersede those; the agreement is also the cross-check that `scripts/dedup.py`'s reimplementation
+  of the stage 2→5 chain matches `scripts/probe.py`'s.
+
+**What is and is not known about FineWeb2 at stage 6.** `reports/probe_dedup_fineweb2.json` is a
+19,256-document *window* and it found zero duplicates. Per Finding G that is a statement about a
+window and **not** about the shard — it under-reports by ~80× — and it is kept, labelled, rather
+than deleted, for the same reason session 7 kept `probe_stage3_*.json` after retiring the tool that
+made it: a measurement does not become wrong because it is easy to misread. The authoritative
+FineWeb2 result is Finding H, which is stronger evidence from a completely different instrument:
+the source arrived with 31.02% of its population already removed by MinHash, and zero exact
+duplicates in a window is exactly what that predicts. The full-shard exact count is a deferred
+run, not an unknown quantity — see "Next session".
+
+**Finding J — 99.6% of the apparent dedup win on Wikipedia is stage 5's length floor, counted twice.**
+
+Session 7 carried a warning that dedup yield must be measured *after* stage 5 "or the win will be
+double-counted". Run both ways over the complete dump, the warning was right by two orders of
+magnitude:
+
+| Urdu Wikipedia | documents | distinct | duplicate groups | duplicates | largest group |
+|---|---|---|---|---|---|
+| dedup **after** stage 5 | 93,606 | 93,597 | 9 | **9** | 2 |
+| dedup **before** stage 5 (`--no-quality`) | 200,148 | 197,744 | 190 | **2,404** | **177** |
+
+**2,395 of the 2,404 are documents stage 5 had already removed** — and the group-size distribution
+says what they are: 177, 91, 81, 77, 70, 63, 59, 59, 59, 58. Those are not articles, they are
+near-empty category shells and navigation stubs, byte-identical in their hundreds, dying on the
+400-character floor long before a hash sees them. After stage 5 the largest group in the entire
+dump is **2**. A stage-6 result quoted on raw text would credit dedup with almost the whole
+length-floor win; the ordering is not a preference, it is the difference between 0.01% and 1.2%.
+
+One extra datum falls out of the same run, and it is Finding F pointing the right way for the first
+time in this stage: on the pre-filter population, deciding on normalized text removes **2,404** and
+deciding on raw removes **2,403**. Normalizing before hashing found exactly one duplicate pair that
+raw bytes missed. The effect is real and, on Wikipedia, negligible — which is what Finding F
+predicts, since it is a claim about publishers and Wikipedia is one publisher.
+`reports/probe_dedup_wikipedia_noquality.json`.
+
+**Finding K — Roman-Urdu-Parl collapses harder than PRD §6.2's own warning, and this is the first
+stage-6 result that removes anything.**
+
+Full pass over the train split's **Urdu** column, 6,333,218 rows
+(`reports/probe_dedup_roman.json`):
+
+| | |
+|---|---|
+| sentences reaching stage 6 | 5,856,384 |
+| **distinct** | **889,292** |
+| removed | **4,967,092 = 84.8%** |
+| duplicate groups | 845,060 — **95.0% of distinct sentences appear more than once** |
+| largest group | **228** |
+| hashing raw instead of normalized would remove | 4,966,392 — **700 fewer** |
+
+- **PRD §6.2 predicted ~1.09M unique Urdu sentences. Measured: 889,292 — 18.4% *below* the
+  warning.** §6.2 was written as a caution and turns out to have been optimistic. This is the only
+  source where stage 6 does real work, and it does a great deal of it.
+- **Finding F finally fires, on the source where it should.** Deciding on normalized text removes
+  **700 more** sentences than deciding on raw bytes: 700 pairs that are the same Urdu sentence typed
+  on an Arabic keyboard and an Urdu one. Wikipedia's equivalent number was 1, because Wikipedia is
+  one publisher. Roman-Urdu-Parl was built by crawling Urdu sentences from the open web, so it
+  inherits exactly the publisher-level orthographic spread Finding F measured — and stage 4 before
+  stage 6 is what collapses it. Small in absolute terms, correct in direction, and measured rather
+  than argued, which was the whole point of hashing both variants on one pass.
+- **The Urdu side is not the side §6.1's budget turns on**, and running both columns is what makes
+  that visible (`reports/probe_dedup_roman_latin.json`):
+
+| | Urdu column | Roman column |
+|---|---|---|
+| indexed | 5,856,384 | 6,032,599 |
+| **distinct** | **889,292** | **3,478,770** |
+| removed | 84.8% | **42.3%** |
+| largest group | 228 | 124 |
+| mean sentence length | 62.9 chars | **74.2 chars** |
+| normalized vs raw removals | 4,967,092 / 4,966,392 | 2,553,829 / **2,553,829 — identical** |
+
+  The Roman column holds **3.91× more distinct strings** than the Urdu column, which is precisely
+  what the corpus was built to contain: §6.2 records that crowdsourcing was added *for spelling
+  variation*, so one Urdu sentence maps to several Roman spellings. And the Latin side shows
+  **exactly zero** difference between normalized and raw hashing — the correct null, since stage 4's
+  folds are Arabic-script and the only transform touching Latin is case folding, which the
+  canonicalizer applies to both variants. The two columns together are a clean internal check that
+  the variant comparison isolates stage 4 and nothing else.
+
+**Finding K′ — §6.1's 40M-token Roman Urdu budget survives, and the carried-forward estimate that
+said otherwise was wrong twice in the same direction.**
+
+progress.md has carried "Roman Urdu's 40M-token target is unverified after dedup… ~1.09M unique
+sentences at ~45 characters is ~49M characters ≈ 12M tokens, well under the ~40M target." Measured,
+both inputs were wrong:
+
+- It used the **Urdu**-column unique count (1.09M, itself now 889,292) to size a budget for the
+  **Roman** population. The right figure is 3,478,770.
+- It assumed **45 characters** per sentence. Measured, the Roman column averages **74.2**.
+
+Corrected: 3,478,770 × 74.2 ≈ **258M characters**, which at the 4.1 chars/token the old estimate
+itself used is ~63M tokens, and even at a pessimistic 5 chars/token is ~52M. **Either way it clears
+§6.1's ~40M target rather than falling to a third of it.** The exact post-dedup character count
+needs a two-phase run (`--index-only` reports group structure, not characters) and is the one number
+here still carrying an assumption — but the direction is not in doubt, and the corpus-freeze
+decision this was blocking can be made. The native-Urdu side contributes 889,292 × 62.9 ≈ 56M
+characters to the native pool, already deduplicated as §6.2 concern (a) requires.
+
+**Finding L — Wikipedia *is* inside FineWeb2, exact hashing finds none of it, and that is a
+requirement for stage 8 rather than a curiosity.**
+
+The cross-source run indexed Urdu Wikipedia whole (93,606 documents) against FineWeb2 at 25%
+(372,879 documents), using Finding G's linear-detection design
+(`reports/probe_dedup_joint.json`):
+
+| | |
+|---|---|
+| indexed | 466,485 |
+| **cross-source groups** | **0** |
+| duplicate groups found at all | 10, every one within a single source |
+
+Zero is the wrong answer to believe, so it was checked against the shard's own `url` column, over
+all 1,547,542 documents:
+
+| host | documents |
+|---|---|
+| `ur.wikipedia.org` | 1,700 |
+| `ur.m.wikipedia.org` | 636 |
+| other wiki\* hosts | 52 |
+| **total** | **2,388 = 0.154% of the shard** |
+
+- **So Urdu Wikipedia is unambiguously present in FineWeb2 — roughly 1.2% of the dump's articles —
+  and exact dedup detects none of it.** The reason is legible once stated: the `wikimedia/wikipedia`
+  dump is *processed wikitext*, clean article prose, while FineWeb2's copy is an HTML-to-text
+  extraction of the **rendered page**, carrying navigation chrome, edit links, rendered infoboxes
+  and category footers. Same content, different rendering, never byte-identical. Nothing is wrong
+  with either the hash or the sources.
+- **The consequence lands on stage 8, and it is the reason to record this now.** PRD §6.3.8
+  specifies decontamination by "hash + fuzzy match against all test sets". This measurement says
+  the two halves are not co-equal: for the *most likely* contamination path in this project —
+  §8.2's held-out evaluation text is drawn from Urdu Wikipedia, and the same articles sit in the
+  training data as crawled HTML — **the hash half returns a confident zero and the fuzzy half is
+  the entire mechanism.** A stage 8 that reports "0 contaminated documents" from hashing alone
+  would be reporting the artefact measured here.
+- **It also re-frames stage 7.** Cross-rendering duplication is a near-duplicate problem, and this
+  is the one population in the corpus where a near-dedup has something substantial to find that
+  exact dedup cannot — unlike the Wikipedia stub farm (Finding I), where it will find nothing.
+- The sampled design bounds the claim honestly: at 25% detection, observing zero puts the number of
+  byte-identical cross-source pairs below ~10 with 95% confidence. It does **not** bound the number
+  of *same-article* pairs, which the URL census puts at ~2,388.
+
+**Decisions made**
+
+| Decision | Rationale |
+|---|---|
+| The survivor of a duplicate group is the **lowest-hashing id**, not the first one read — and the cost is a second pass over the corpus | §6.3 ships code, manifest and checksums and no text, so re-running the pipeline is the *only* way the frozen corpus is ever reconstructed, and `shards.py` reads in a seeded shuffle. Keep-first would make the released corpus a function of a seed that is not part of the release. Twelve shuffles of the same input are asserted to give byte-identical survivors. |
+| 128-bit hashes, not 64 | A collision here does not mis-file a document, it **deletes** one, with no trace in any log — the single failure this stage cannot detect after the fact. At 64 bits over the ~12M line hashes a full shard produces the birthday bound is ~1e-5; at 128 it is ~1e-24. The difference is one machine word per distinct unit. |
+| Canonicalization stops at whitespace and case folding | Anything further — punctuation, harakat, sorted lines — is a near-dedup with an unstated threshold. Stage 7 has a threshold and can report it. Four parametrized tests pin the boundary so a later tidy-up cannot quietly widen it. |
+| Paragraph level **measures and removes nothing**; `strip()` exists, is a third pass, and is off | Dropping a line from the middle of a document is a rewrite, which is what stage 5's reject-do-not-repair doctrine forbids, and it silently invalidates the 400-character floor stage 5 applied one stage earlier. Measured, the whole prize is 0.89% of line characters — not a trade worth making. |
+| Per-group side tables are **not** sized by the number of groups | Sources are stored only for groups that genuinely span sources, and example ids only for the largest 200, picked in `seal()` once sizes are final. On FineWeb2 the naive version is harmless; on Roman-Urdu-Parl, where PRD §6.2 predicts nearly every group repeats, it is ~1 GB of Python objects to describe a corpus that indexes in a fraction of that. |
+| Which groups get an example *snippet* is chosen after sizes are known, not by arrival | Capping snippet capture by arrival order shows whichever groups the read order reached first rather than the largest — on the first Roman-Urdu-Parl run every top group printed an empty string, which is how this was found. |
+| `--index-only` is a supported mode, and it deletes the phase-2 fields from its own output | The entire group structure — duplicate counts, largest groups, the raw-vs-normalized comparison, all cross-source overlap — is known when indexing finishes; phase 2 only adds per-document verdicts and character accounting. It halves a full-shard pass. Emitting a character count of zero from a run that never counted characters would be worse than not running it. |
+| `decide()` on a document phase 1 never saw is a `KeyError`, not a drop | A phase 2 reading a different set than phase 1 — changed sample rate, a limit, a checkpoint from another plan — would silently shorten the corpus, and nothing downstream could detect it. |
+| `strip()` refuses until `finish_paragraphs()` has been called with no `decide()` after it | Stripping against half-built line counts keeps every line whose second copy has not been read yet, i.e. a corpus that depends on where the pass got to. It is the two-phase argument one level down, so it gets the same enforcement. |
+
+**Fixed during the session**
+
+- **The first FineWeb2 run was measured with `--sample-rate 0.02` and its answer was meaningless.**
+  Finding G. Every stage-6 run is now a complete pass over its source, and the driver's help text
+  says why.
+- **`README.md` still pointed at `scripts/corpus_probe.py`**, deleted in session 6, and described
+  the pipeline as "stages 1, 2 and 4". Updated, along with the standard-library-only claim, which
+  now correctly covers every deciding stage through 6.
+
+---
+
 ## Open questions for you
 
 1. ~~**Config format.**~~ **Decided in session 4: JSON, for the whole data pipeline.** Three
@@ -885,24 +1199,50 @@ and `scripts/stage3_probe.py`, and edits to `pyproject.toml`, `ravaan/data/__ini
 
 ## Next session
 
-Session 6's two leftovers are **done** — the write-up exists and everything is committed. The
-next task is stage 6.
+**Stage 6 is done, all six full passes landed, and every prediction carried into it has been
+answered** — three of them negatively, which is the useful direction. The one number still carrying
+an assumption is the exact post-dedup character volume of Roman-Urdu-Parl (Finding K′), which comes
+free from the two-phase pass at freeze time.
 
-1. **Stage 6 (exact dedup).** It is cheap, and Finding F says it will be interesting:
-   religious publishers republish the same texts across domains, so normalizing before hashing
-   should surface cross-publisher duplicates that raw hashing would miss. Worth measuring both
-   ways once, since the claim is now a prediction rather than an assumption. Session 6 adds a
-   second prediction: Urdu Wikipedia's template stub farm ("X ایران کا ایک گاؤں جو Y میں واقع
-   ہے۔") should dominate the near-duplicate clusters, and stage 5 already removes about half of it
-   on length alone — so measure dedup yield **after** stage 5, not on raw text, or the win will be
-   double-counted.
-   - Session 7 sharpens the second prediction into a test with **named documents**: the four
-     surviving false accepts (`urdu-wikipedia:122264`, `:122214`, `:363641`, `:122110` — Fortune-1000
-     company and geo stubs at 411–602 characters) are exactly what a length rule cannot see and a
-     dedup pass should not miss. If stage 6/7 does not cluster those four, the near-dedup is not
-     doing the job stage 5's error budget is counting on it to do.
+1. **Stage 7 (MinHash near-dedup)** — and session 8 hands it four things it should not have to
+   rediscover:
+   - **The one population where near-dedup has real work to do**, from Finding L: Urdu Wikipedia
+     articles that also exist inside FineWeb2 as crawled HTML. 2,388 documents in shard 001 come
+     from wiki hosts and **not one** is byte-identical to its counterpart in the `wikimedia`
+     dump — processed wikitext against a rendered page. If stage 7 does not cluster those, it is
+     not doing the job stage 8 needs it to have done. This is the acceptance test that replaces
+     the one Finding I retired.
+   - **A measured acceptance test, written before the code.** Finding I: `urdu-wikipedia:122264`,
+     `:122214`, `:363641`, `:122110` and the geo-stub farm around them top out at Jaccard **0.677**
+     at n=2 and **0.423** at n=5. A stage 7 built at the conventional 0.8 threshold will not touch
+     them, and that is the *expected* result, not a bug to chase. Session 7's note that near-dedup
+     "should not miss" them is superseded.
+   - **A measured expectation of near-inertness on the primary source.** Finding H: FineWeb2
+     already removed 31.02% of `urd_Arab` by MinHash. Stage 7 should be reported as an assertion
+     on FineWeb2 unless it demonstrably is not, and the thing to check is whether it fires on
+     Finding F's cross-publisher republication, which is long, verbatim, and exactly what a
+     near-dedup is for.
+   - **A threshold decision that must be made on measured pairs, not inherited.** Every stage-5
+     threshold that survived the distribution still had to be moved by the 200-sample; the same
+     discipline applies to a similarity threshold. Draw candidate pairs at several thresholds and
+     read them before picking one.
+2. **Stage 8 (eval decontamination) has a requirement now, not a preference.** Finding L: for the
+   most likely contamination path in this project — §8.2's held-out evaluation text drawn from Urdu
+   Wikipedia while the same articles sit in training data as crawled HTML — **hashing returns a
+   confident zero and fuzzy matching is the entire mechanism**. §6.3.8's "hash + fuzzy match" must
+   not be implemented as "hash, and fuzzy match if there is time". A stage 8 reporting zero
+   contamination from hashes alone is reporting the artefact Finding L measured.
+3. **Then stages 9 (splits) and 10 (tokenization + packing)**, plus the PII regex pass and the
+   corpus manifest/statistics rollup — the remaining Weeks 3–4 items. Stage 9 inherits Finding G's
+   lesson directly: a split assignment is a per-document property and samples fine, but any
+   *pairwise* check over the splits does not.
 
 **Do not start** tokenizer work or modelling. The tokenizer is timeboxed to Week 5.
+
+**A note on running long passes here.** Stage 6 is the first stage that must read a source *whole*
+— Finding G — and tracked background jobs in this environment were killed three times at somewhere
+under 14 minutes. Foreground calls cap at 10 minutes. What worked was `nohup … &` as a detached
+process. Stages 7 and 9 have the same shape, so budget for it.
 
 **Carried forward**
 
@@ -927,14 +1267,30 @@ next task is stage 6.
 - **The duplicate-n-gram rules are near-inert and it is on the record.** 4 documents in 19,999 on
   Wikipedia, 0 on FineWeb2, 0 on the 200-sample beyond what the top-n-gram rules already catch.
   Keep them as a backstop with that stated, or drop them — but they must not be described as the
-  corpus's repetition control. Revisit once stage 6/7 has measured what cross-document repetition
-  actually looks like here, since that is the comparison that decides whether a within-document
-  backstop is worth keeping at all.
+  corpus's repetition control. **Session 8 answers the comparison this was waiting on, and the
+  answer is a wording change rather than a code change.** Cross-document *exact* repetition on the
+  two native sources is essentially nil after stage 5 (9 groups in the whole Urdu Wikipedia dump;
+  FineWeb2 zero) — but only because it was already dealt with: FineWeb2 removed 31.02% of
+  `urd_Arab` by MinHash upstream (Finding H). So the honest sentence for the report is not "this
+  corpus has little cross-document repetition", it is "**this corpus had a great deal of it and
+  FineWeb2 removed it before we saw the data**", which is a statement about the source rather than
+  about Urdu. The within-document rules stay as a backstop, described as one.
 - **Wiki markup is not HTML.** `{{Infobox}}` template dumps clear `max_html_ratio` at any usable
   threshold — the rule counts HTML tags, and lowering it to catch them costs ~8 clean biographies
   per 2 stubs. The fix belongs in Wikipedia-specific preprocessing ahead of stage 5, not in the
   threshold. Two of the shipped filter's four false accepts would remain regardless; the other two
-  are the stub farm, which is stage 7's.
+  were booked as "the stub farm, which is stage 7's" — **and session 8's Finding I retires that
+  booking.** No stub pair reaches Jaccard 0.7 at any shingle size, so all four are residue that
+  survives the whole pipeline. `reports/quality_validation.md`'s error budget needs the sentence
+  corrected the next time it is touched: stage 5's false-accept rate is the filter's, not a debt
+  owed to a later stage.
+- **Paragraph-level dedup is implemented, measured, and deliberately off.** §6.3.6 asks for
+  document *and* paragraph level; stage 6 counts the second and rewrites nothing, because dropping
+  a line out of a document is a rewrite that invalidates the 400-character floor stage 5 applied
+  one stage earlier. The number that justifies leaving it off is **0.89%** of line characters on
+  Urdu Wikipedia (1.34% on a FineWeb2 window). `ExactDeduplicator.strip()` will do it, in a third
+  pass, and a caller that uses it owes the corpus a second stage-5 pass. Revisit only if stage 7
+  shows the boilerplate matters; the report should state the number and the choice either way.
 - **The infilling share is unresolved.** PRD §4.2 sets 10%; reported FIM practice is 50–90% with no
   left-to-right degradation (review §6). If 10% leaves Ravaan-AR genuinely bad at infilling, A2
   loses its meaning — the *fair* baseline would also be undertrained, and §4.1's whole fairness
@@ -951,7 +1307,12 @@ next task is stage 6.
   stage 5 and the distribution pass alone moved three thresholds before a human saw a document. The
   practice is load-bearing, and session 6 adds a corollary: **the distribution tells you where the
   documents are, not which of them are good.** Every stage-5 threshold that survived the
-  distribution still had to be moved by the sample.
+  distribution still had to be moved by the sample. Session 8 adds a second corollary, from Finding
+  G: **check that the instrument you are sampling with can measure the quantity you are asking
+  for.** Every earlier stage measures a property of one document, which a sample estimates
+  honestly; stage 6 measures a property of a *pair*, which a sample at rate *r* estimates at *r²*.
+  The habit that had been right five stages running was silently wrong on the sixth, and it was
+  caught by an implausible answer (zero duplicates) rather than by an error.
 - ~~**`scripts/corpus_probe.py` is redundant with `scripts/stage3_probe.py`.**~~ **Resolved in
   session 6** — both deleted, replaced by `scripts/probe.py` covering stages 2→5. The consolidation
   is verified by reproducing Finding F's numbers exactly.
@@ -968,11 +1329,14 @@ next task is stage 6.
   code-switched share and say so; (c) add a social-media source, which means a new licence-gate
   decision. **Decide before the freeze, not after.** Note this is the one population where more
   data is genuinely scarce — Finding B's "Urdu is not data-constrained" holds for *native* Urdu.
-- **Roman Urdu's 40M-token target is unverified after dedup.** PRD §6.2 already warns that
-  Roman-Urdu-Parl's 6.37M pairs collapse to ~1.09M unique Urdu sentences. At ~45 characters a
-  sentence that is ~49M characters ≈ 12M tokens, well under the ~40M target. Stage 6 will settle
-  it; if it holds, §6.1's Roman Urdu figure needs the same treatment §6.1's native figure got in
-  v2.1.
+- ~~**Roman Urdu's 40M-token target is unverified after dedup.**~~ **Settled in session 8, and the
+  worry was unfounded** — see Finding K′. The estimate that raised it applied the *Urdu*-column
+  unique count to the *Roman* population and assumed 45 characters a sentence; measured, the Roman
+  column has **3,478,770** distinct sentences averaging **74.2** characters ≈ 258M characters ≈
+  52–63M tokens, comfortably over §6.1's ~40M. §6.1's Roman Urdu figure does **not** need the
+  treatment the native figure got in v2.1. One number is still an estimate: the exact post-dedup
+  character count needs a two-phase run rather than `--index-only`. Worth taking at freeze time,
+  when it is a byproduct of the pass that writes the corpus anyway.
 
 **Retry when convenient:** OpenReview `W5Ht05jF4c` — still behind the browser-verification wall as
 of 2026-08-03 (both API v1 and v2 return `ChallengeRequiredError`). Lower stakes now that both arms

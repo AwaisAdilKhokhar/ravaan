@@ -1,0 +1,384 @@
+{
+  "dedup_version": "1.0.0",
+  "config_fingerprint": "3fcb63e334a9",
+  "config": {
+    "hash_bits": 128,
+    "collapse_whitespace": true,
+    "casefold": true,
+    "variant": "normalized",
+    "measure_alternate": true,
+    "paragraph_mode": "measure",
+    "min_paragraph_chars": 60,
+    "paragraph_min_documents": 2,
+    "max_index_entries": 40000000
+  },
+  "indexed": 93606,
+  "duplicate_groups": 9,
+  "duplicate_documents": 9,
+  "duplicate_rate": 9.6e-05,
+  "largest_group": 2,
+  "variant": "normalized",
+  "alternate_variant": "raw",
+  "alternate_duplicate_documents": 9,
+  "cross_source_groups": 0,
+  "cross_source_pairs": {},
+  "documents": 93606,
+  "documents_kept": 93597,
+  "documents_removed": 9,
+  "keep_rate": 0.999904,
+  "chars_in": 186567597,
+  "chars_kept": 186555861,
+  "char_keep_rate": 0.999937,
+  "by_source": {
+    "urdu-wikipedia": 93606
+  },
+  "kept_by_source": {
+    "urdu-wikipedia": 93597
+  },
+  "removed_by_source": {
+    "urdu-wikipedia": 9
+  },
+  "removed_cross_source_by_source": {},
+  "paragraph_mode": "measure",
+  "paragraph_units": 480481,
+  "paragraph_distinct": 471453,
+  "paragraph_duplicate_units": 14166,
+  "paragraph_chars": 152957080,
+  "paragraph_chars_duplicated": 2360353,
+  "paragraph_chars_removable": 1361833,
+  "paragraph_removable_share": 0.008903,
+  "paragraph_documents_changed": 0,
+  "paragraphs_removed": 0,
+  "paragraph_chars_removed": 0,
+  "paragraph_documents_emptied": 0,
+  "distinct_documents": 93597,
+  "top_groups": [
+    {
+      "group": "44fa956ebdf53b3a",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:1100210",
+      "duplicates": [
+        "urdu-wikipedia:1008215"
+      ],
+      "text": "حیدر حسن خان ٹونکی (1864–1942ء) ایک ہندوستانی دیوبندی عالم دین اور مصنف تھے۔ ان کو دار العلوم ندوہ العلماء کے حدود میں \"شیخ صاحب\" کہا جاتا تھا، وہ دار العلوم ندوہ العلماء کے مہتمم و اولین شیخ الحدیث تھے، ٹونکی ممتاز محدث ہونے کے ساتھ ساتھ امداد اللہ مہاجر مکی سے بیعت تھے اور انھیں کے خلیفہ و مجاز بھ"
+    },
+    {
+      "group": "5023c57a8ba1a9eb",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:1100339",
+      "duplicates": [
+        "urdu-wikipedia:1100323"
+      ],
+      "text": "چوہدری رفاقت حسین گجر، ایک پاکستانی سیاست دان ہیں جو مئی 2013 سے مئی 2018 تک پنجاب کی صوبائی اسمبلی کے رکن رہے۔ ان کے بڑے بھائی حاجی عبدالغفور یونین کونسل کے چیئرمین رہے۔\n\nابتدائی زندگی اور تعلیم\nچوہدری رفاقت حسین گجر یکم مئی 1975 کو نوشہرہ ورکاں، ضلع گوجرانوالہ میں پیدا ہوئے ۔ ان کے پاس بیچلر آف آر"
+    },
+    {
+      "group": "56c98744c68ed59b",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:1100338",
+      "duplicates": [
+        "urdu-wikipedia:1100327"
+      ],
+      "text": "چوہدری محمد حنیف جٹ، ایک پاکستانی سیاست دان ہیں جو مئی 2013 سے مئی 2018 تک پنجاب کی صوبائی اسمبلی کے رکن رہے۔\n\nابتدائی زندگی اور تعلیم\nچوہدری محمد حنیف 9 نومبر 1963 کو چیچہ وطنی میں پیدا ہوئے۔ انہوں نے 1986 میں پنجاب یونیورسٹی سے گریجویشن کیا۔\n\nسیاسی کیریئر\nچوہدری محمد حنیف 2013 کے پاکستانی عام انتخ"
+    },
+    {
+      "group": "65092e1357b2bb29",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:1083157",
+      "duplicates": [
+        "urdu-wikipedia:1083159"
+      ],
+      "text": "نثار احمد چیمہ ایک پاکستانی سیاست دان ہیں جو اگست 2018 سے پاکستان کی قومی اسمبلی کے رکن ہیں۔\n\nابتدائی اور ذاتی زندگی\nوہ وزیر آباد میں پیدا ہوئے۔\n\nانہوں نے بطور ڈائریکٹر جنرل ہیلتھ سروسز پنجاب خدمات انجام دیں\n\nوہ افتخار چیمہ اور ذوالفقار احمد چیمہ کے بھائی ہیں۔\n\nسیاسی کیریئر\nوہ 2018 کے پاکستانی عام ا"
+    },
+    {
+      "group": "91b886aafde9d0f2",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:994219",
+      "duplicates": [
+        "urdu-wikipedia:994222"
+      ],
+      "text": "تاریخ\n\nاستعمال\nلتیم بیٹریاں کئی اہم ڈیوائسز میں استعمال ہوتی ہیں جیسے میڈیکل انڈسٹری میں پیس میکر اور دیگر الیکٹرانک ڈیوائسز۔ یہ آلات 15 سال سے زیادہ کام کرنے کے لیے بنائے گئے ہیں۔ کم اہم آلات جیسے بچوں کے کھلونے کے دیگر معاملات میں جہاں استحکام اہم نہیں ہے۔ ایسے معاملات میں ، ایک مہنگی لتیم بیٹری ل"
+    },
+    {
+      "group": "949314bb1275344f",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:1073651",
+      "duplicates": [
+        "urdu-wikipedia:1073650"
+      ],
+      "text": "عبدالمنان (7 اکتوبر 1929ء - 5 اپریل 2005ء) بنگلہ دیش عوامی لیگ کے سیاست دان اور اپریل 1972ء سے مارچ 1973ء تک آزاد بنگلہ دیش کے پہلے وزیر داخلہ رہے\n\nابتدائی زندگی\nوہ 7 اکتوبر 1929 ءکو کٹولی، تنگیل میں پیدا ہوئے۔ 1944 ءمیں انہوں نے بندوباسنی گورنمنٹ بوائز ہائی اسکول سے گریجویشن کیا۔ انہوں نے کراتیا سا"
+    },
+    {
+      "group": "99e0f8e800c0dac7",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:1097775",
+      "duplicates": [
+        "urdu-wikipedia:1097770"
+      ],
+      "text": "ماسکو کیئوسکی ریلوے اسٹیشن () (, Kievskiy vokzal)،\nماسکو ریلوے کا ایک ریلوے ٹرمینل ہے۔\n\nحوالہ جات\n\nبیرونی روابط\n\nOfficial Belorussky station website\nРоссийские Железные Дороги — Russian Railways\nAeroexpress\nБеларуская Чыгунка — Belarusian Railways\nLietuvos Geležinkeliai — Lithuanian Railways\nPolskie"
+    },
+    {
+      "group": "d0c9d75054e191a2",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:1080603",
+      "duplicates": [
+        "urdu-wikipedia:1080602"
+      ],
+      "text": "ایستھر مارگریٹا ویلار (پیدائش ایستھر مارگریٹا کاٹزن ، 16 ستمبر 1935) ایک ارجنٹائن- جرمن مصنف ہے۔ اس نے خود کو ایک مصنف کے طور پر قائم کرنے سے پہلے ایک میڈیکل ڈاکٹر کے طور پر تربیت اور مشق کی۔ وہ اپنی 1971 کی کتاب The Manipulated Man اور اس کے مختلف فالو اپس کے لیے مشہور ہیں، جو یہ استدلال کرتی ہیں ک"
+    },
+    {
+      "group": "dfe7a8f698fbde38",
+      "size": 2,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "urdu-wikipedia:1100322",
+      "duplicates": [
+        "urdu-wikipedia:1100341"
+      ],
+      "text": "چوہدری گلزار احمد گجر، ایک پاکستانی سیاست دان ہیں جو مئی 2013 سے مئی 2018 تک پنجاب کی صوبائی اسمبلی کے رکن رہے۔\n\nابتدائی زندگی اور تعلیم\nچوہدری گلزار احمد گجر 19 نومبر 1965 کو لاہور میں پیدا ہوئے۔ انہوں نے 1986 میں پنجاب یونیورسٹی سے گریجویشن کیا۔\n\nسیاسی کیریئر\nچوہدری گلزار احمد گجر 2013 کے پاکستانی"
+    }
+  ],
+  "sources": [
+    "urdu-wikipedia"
+  ],
+  "limit": 250000,
+  "sample_rate": null,
+  "seed": 0,
+  "quality_filtered": true,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 200154,
+    "documents_accepted": 200148,
+    "documents_rejected": 6,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.99997,
+    "bytes_in": 377121649,
+    "chars_out": 217835598,
+    "replacement_chars": 150,
+    "mojibake_chars": 12,
+    "control_chars": 12,
+    "verdicts": {
+      "control_heavy": 1,
+      "mojibake": 1,
+      "ok": 200148,
+      "replacement_heavy": 4
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 200148,
+    "documents_kept": 198671,
+    "keep_rate": 0.99262,
+    "documents_by_prior": 377,
+    "prior_rate": 0.001884,
+    "mixed_documents": 63930,
+    "letters": 162843197,
+    "labels": {
+      "arabic": 122,
+      "code_switched": 10919,
+      "empty": 205,
+      "english": 792,
+      "other": 353,
+      "persian": 5,
+      "roman_urdu": 4,
+      "urdu": 187748
+    },
+    "letters_by_label": {
+      "arabic": 33333,
+      "code_switched": 4758659,
+      "empty": 2573,
+      "english": 518537,
+      "other": 692796,
+      "persian": 572,
+      "roman_urdu": 52427,
+      "urdu": 156784300
+    },
+    "segment_letters": {
+      "arabic": 63617,
+      "code_switched": 1202926,
+      "english": 3029080,
+      "hindi": 3888,
+      "other": 971113,
+      "persian": 20721,
+      "roman_urdu": 32268,
+      "urdu": 16443911
+    }
+  },
+  "stage5_quality": {
+    "urdu-wikipedia": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "53d04d3fd079",
+      "config": {
+        "min_chars": 400,
+        "min_words": 40,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 0.5,
+        "max_top_ngram_ratio": {
+          "3": 0.26,
+          "4": 0.22
+        },
+        "max_dup_ngram_ratio": {
+          "5": 0.6,
+          "6": 0.58,
+          "7": 0.56,
+          "8": 0.54,
+          "9": 0.52,
+          "10": 0.5
+        },
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 200148,
+      "documents_kept": 93606,
+      "documents_rejected": 106542,
+      "keep_rate": 0.467684,
+      "chars_in": 216321099,
+      "chars_kept": 186567597,
+      "char_keep_rate": 0.862457,
+      "rejections": {
+        "html_residue": 104,
+        "repetition:dup_10gram": 85,
+        "repetition:dup_5gram": 121,
+        "repetition:dup_6gram": 104,
+        "repetition:dup_7gram": 103,
+        "repetition:dup_8gram": 80,
+        "repetition:dup_9gram": 80,
+        "repetition:dup_lines": 90,
+        "repetition:top_3gram": 2162,
+        "repetition:top_4gram": 1303,
+        "script_ratio": 625,
+        "too_short": 105635,
+        "url_density": 56
+      },
+      "families": {
+        "html_residue": 104,
+        "repetition": 3385,
+        "script_ratio": 625,
+        "too_short": 105635,
+        "url_density": 56
+      },
+      "sole_rejections": {
+        "html_residue": 23,
+        "repetition": 546,
+        "script_ratio": 286,
+        "too_short": 102400,
+        "url_density": 27
+      },
+      "by_label": {
+        "arabic": 122,
+        "code_switched": 10919,
+        "empty": 205,
+        "english": 792,
+        "other": 353,
+        "persian": 5,
+        "roman_urdu": 4,
+        "urdu": 187748
+      },
+      "kept_by_label": {
+        "arabic": 10,
+        "code_switched": 3866,
+        "english": 184,
+        "other": 222,
+        "roman_urdu": 2,
+        "urdu": 89322
+      },
+      "chars_kept_by_label": {
+        "arabic": 33802,
+        "code_switched": 4391131,
+        "english": 586008,
+        "other": 909386,
+        "roman_urdu": 70969,
+        "urdu": 180576301
+      },
+      "truncated_documents": 0
+    }
+  },
+  "checked_ids": {
+    "urdu-wikipedia:122214": {
+      "doc_id": "urdu-wikipedia:122214",
+      "kept": true,
+      "group": "28f8c33e26301159",
+      "group_size": 1,
+      "reason": "",
+      "chars": 418
+    },
+    "urdu-wikipedia:122264": {
+      "doc_id": "urdu-wikipedia:122264",
+      "kept": true,
+      "group": "07c4796abafd3625",
+      "group_size": 1,
+      "reason": "",
+      "chars": 602
+    },
+    "urdu-wikipedia:122110": {
+      "doc_id": "urdu-wikipedia:122110",
+      "kept": true,
+      "group": "d34c2a3a40f3e4da",
+      "group_size": 1,
+      "reason": "",
+      "chars": 411
+    },
+    "urdu-wikipedia:363641": {
+      "doc_id": "urdu-wikipedia:363641",
+      "kept": true,
+      "group": "160914471672ec5a",
+      "group_size": 1,
+      "reason": "",
+      "chars": 415
+    }
+  }
+}

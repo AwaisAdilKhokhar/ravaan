@@ -5,6 +5,14 @@ pulls in parquet support from the `[data]` extra, and the stages that decide wha
 contains should stay importable without it.
 """
 
+from ravaan.data.dedup import (
+    DEDUP_VERSION,
+    DedupConfig,
+    DedupLog,
+    DedupVerdict,
+    ExactDeduplicator,
+    deduplicate,
+)
 from ravaan.data.langid import (
     LANGID_VERSION,
     LangIDConfig,
@@ -32,9 +40,14 @@ from ravaan.data.quality import (
 )
 
 __all__ = [
+    "DEDUP_VERSION",
     "LANGID_VERSION",
     "NORMALIZER_VERSION",
     "QUALITY_VERSION",
+    "DedupConfig",
+    "DedupLog",
+    "DedupVerdict",
+    "ExactDeduplicator",
     "LangIDConfig",
     "LangIDLog",
     "LangIDResult",
@@ -47,6 +60,7 @@ __all__ = [
     "QualityResult",
     "check",
     "classify",
+    "deduplicate",
     "measure",
     "normalize",
     "normalize_text",

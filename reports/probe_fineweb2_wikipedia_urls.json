@@ -1,0 +1,24 @@
+{
+  "source": "fineweb2-urd_Arab train shard 001",
+  "documents": 1547542,
+  "wiki_host_documents": 2388,
+  "share": 0.001543,
+  "hosts": {
+    "ur.wikipedia.org": 1700,
+    "ur.m.wikipedia.org": 636,
+    "incubator.wikimedia.org": 20,
+    "meta.wikimedia.org": 11,
+    "meta.m.wikimedia.org": 4,
+    "pnb.wikipedia.org": 3,
+    "incubator.m.wikimedia.org": 3,
+    "ur.gowikipedia.org": 3,
+    "sd.wikipedia.org": 2,
+    "commons.m.wikimedia.org": 1,
+    "en.wikipedia.org": 1,
+    "pnb.m.wikipedia.org": 1,
+    "wikimania.wikimedia.org": 1,
+    "ur.oldwikipedia.org": 1,
+    "commons.wikimedia.org": 1
+  },
+  "note": "Wikipedia is present in FineWeb2 but exact dedup finds 0 cross-source duplicates against the wikimedia/wikipedia dump: the dump is processed wikitext, FineWeb2 is HTML-to-text of the rendered page. See Finding L."
+}

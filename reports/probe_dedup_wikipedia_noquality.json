@@ -1,0 +1,323 @@
+{
+  "dedup_version": "1.0.0",
+  "config_fingerprint": "3fcb63e334a9",
+  "config": {
+    "hash_bits": 128,
+    "collapse_whitespace": true,
+    "casefold": true,
+    "variant": "normalized",
+    "measure_alternate": true,
+    "paragraph_mode": "measure",
+    "min_paragraph_chars": 60,
+    "paragraph_min_documents": 2,
+    "max_index_entries": 40000000
+  },
+  "indexed": 200148,
+  "duplicate_groups": 190,
+  "duplicate_documents": 2404,
+  "duplicate_rate": 0.012011,
+  "largest_group": 177,
+  "variant": "normalized",
+  "alternate_variant": "raw",
+  "alternate_duplicate_documents": 2403,
+  "cross_source_groups": 0,
+  "cross_source_pairs": {},
+  "paragraph_mode": "measure",
+  "distinct_documents": 197744,
+  "top_groups": [
+    {
+      "group": "46fb8fc7a90452c8",
+      "size": 177,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "e976292f4a65c6f1",
+      "size": 91,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "98ec8808dff8f1fe",
+      "size": 81,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "904f4daeddd8d84f",
+      "size": 77,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "542f5fcf3ee29392",
+      "size": 70,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "7158d0da506eebb1",
+      "size": 63,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "9f3e81ca7d8ed0af",
+      "size": 59,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "f88dd50622f8c66a",
+      "size": 59,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "fdfcdb8bb86976fa",
+      "size": 59,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "5cb0b58a5f4d2c86",
+      "size": 58,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "3f0acd117c9e15cf",
+      "size": 57,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "421a5d201709e6f1",
+      "size": 57,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "2536fb08128d74f2",
+      "size": 56,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "88a8c9d84b86e288",
+      "size": 56,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "a26bac67e0781201",
+      "size": 55,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "3aff9cae127bd76c",
+      "size": 53,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "9af12f6f7235e44e",
+      "size": 52,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "f295b700f3f6b82b",
+      "size": 52,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "316b66f0e848fec9",
+      "size": 49,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    },
+    {
+      "group": "c7752c02648b676b",
+      "size": 47,
+      "sources": [
+        "urdu-wikipedia"
+      ],
+      "kept": "",
+      "duplicates": [],
+      "text": ""
+    }
+  ],
+  "phase2_skipped": true,
+  "sources": [
+    "urdu-wikipedia"
+  ],
+  "limit": 250000,
+  "sample_rate": null,
+  "seed": 0,
+  "quality_filtered": false,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 200154,
+    "documents_accepted": 200148,
+    "documents_rejected": 6,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.99997,
+    "bytes_in": 377121649,
+    "chars_out": 217835598,
+    "replacement_chars": 150,
+    "mojibake_chars": 12,
+    "control_chars": 12,
+    "verdicts": {
+      "control_heavy": 1,
+      "mojibake": 1,
+      "ok": 200148,
+      "replacement_heavy": 4
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 200148,
+    "documents_kept": 198671,
+    "keep_rate": 0.99262,
+    "documents_by_prior": 377,
+    "prior_rate": 0.001884,
+    "mixed_documents": 63930,
+    "letters": 162843197,
+    "labels": {
+      "arabic": 122,
+      "code_switched": 10919,
+      "empty": 205,
+      "english": 792,
+      "other": 353,
+      "persian": 5,
+      "roman_urdu": 4,
+      "urdu": 187748
+    },
+    "letters_by_label": {
+      "arabic": 33333,
+      "code_switched": 4758659,
+      "empty": 2573,
+      "english": 518537,
+      "other": 692796,
+      "persian": 572,
+      "roman_urdu": 52427,
+      "urdu": 156784300
+    },
+    "segment_letters": {
+      "arabic": 63617,
+      "code_switched": 1202926,
+      "english": 3029080,
+      "hindi": 3888,
+      "other": 971113,
+      "persian": 20721,
+      "roman_urdu": 32268,
+      "urdu": 16443911
+    }
+  },
+  "stage5_quality": {}
+}

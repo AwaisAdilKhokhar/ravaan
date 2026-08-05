@@ -34,14 +34,16 @@ first.**
   4 falsifiable predictions, before any training.
 - **PRD version:** **v2.2** (2026-08-05) — §0.2 amends §6.1, §4.3, §8.2, §10 and §11 for Finding R.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 641 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · 57 encoding ·
-  57 acquisition · 52 minhash · 51 packing · 43 quality · 41 dedup · 32 langid · **19 exclusions**
-  · 18 shards). The exclusion file carries the first driver-level tests in the suite.
+- **Tests:** 650 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · **57 minhash**
+  · 57 encoding · 57 acquisition · 51 packing · **44 dedup** · 43 quality · 32 langid ·
+  **20 exclusions** · 18 shards). The exclusion file carries the first driver-level tests in the
+  suite.
 - **Committed** through session 14, on branch `stages-7-and-8` (main is at session 8; fast-forward
   it when convenient). Sessions 6 and 7 are one commit — stage 5, its 200-sample validation and the
   write-up are one deliverable. Sessions 9–14 are one commit each: stage 7, stage 8, stage 9 with
-  the second stage-8 run, stage 10 with the PRD v2.2 amendment, the PII pass, and the exclusion
-  chain.
+  the second stage-8 run, stage 10 with the PRD v2.2 amendment, and the PII pass. Session 14 is
+  five: the exclusion chain, its write-up, the eval-side redaction, the header guard, and the
+  single-pass driver.
 
 ---
 
@@ -103,7 +105,10 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | **Stages 9 and 10 could not read a removal list (Finding W)** | §6.3 | ✅ `--exclude`, 17 tests |
 | Removal lists carry the read plan they were computed over | §6.3 | ✅ refuses a mismatch |
 | cp1252 hole closed as a class — `ravaan/console.py`, all 12 entry points | — | ✅ |
-| **Freeze run: stage 6+7, complete Urdu Wikipedia** | §6.3.6, §6.3.7 | 🟡 running |
+| **Freeze run: stage 6+7, complete Urdu Wikipedia** | §6.3.6, §6.3.7 | ✅ 188 ids, 118 clusters |
+| PII pass did not move stage 6 or 7 on Wikipedia — measured, not assumed | §6.3 | ✅ 9 groups, 118 clusters |
+| Single-pass stage 6+7 (`--single-pass`) — one corpus read, not two | §6.3.7 | ✅ 12 tests |
+| Freeze runs: stage 6+7 over FineWeb2 and Roman-Urdu-Parl | §6.3.7 | ⬜ next, ~2.3 h+ each |
 | Corpus manifest + statistics | §6.3 | 🟡 acquisition manifest done; stage stats pending |
 
 ### Weeks 5–16
@@ -2197,18 +2202,70 @@ This is a number the freeze plan should have carried and did not.
 | `neardedup.py` writes stages 6 **and** 7 as one list, labelled `6+7` | They are one pass and one decision about the corpus. Two files would be two chances to pass only one of them |
 | The cp1252 guard went to one module rather than three copy-pastes | Closing three instances of a twelve-member class is how the same bug comes back in session 17 |
 
-**Deferred, deliberately: the single-pass stage 6+7 driver**
+**The first freeze run — stage 6+7 over the complete Urdu Wikipedia dump**
 
-Session 13's "cheap halving" is still worth taking and was not taken here. The reason is sequencing
-rather than doubt: it needs `MinHashDeduplicator` to drop already-sketched documents at build time,
-which touches banding, clustering and six log counters in a 1,154-line module — and the freeze's
-first pass wanted to run against code whose corpus behaviour had not just been rewritten. It is
-worth ~6 hours of a ~30-hour freeze and it pays for itself on the FineWeb2 and Roman-Urdu-Parl
-passes, neither of which has started. **Take it next, before those two.** The design is settled:
-sketch during stage 6's phase 1, then drop stage 6's removals from the index before `build()` —
-the sketches are provably safe to drop because identical texts have identical neighbourhoods, so
-the components restricted to stage-6 survivors are the same either way, and each component's
-lowest-key member is always itself a stage-6 survivor.
+`reports/freeze/removals_67_wikipedia.txt`, 188 ids, header carrying
+`plan 8743e78c000775aa limit null rate null`. The first genuine freeze artifact.
+
+| | |
+|---|---|
+| reaching stage 6 | 93,606 documents |
+| distinct | 93,597 — **9 exact duplicate groups** |
+| stage 7 sketched | 93,597 (0 below `min_shingles`) |
+| kept | **93,418 / 93,597 = 99.81%** of documents, 99.80% of characters |
+| clusters | **118**, largest 23, 179 documents removed |
+| candidate → verified → retained pairs | 60,355 → 240 → 12,976 |
+
+**Both headline numbers reproduce sessions 8 and 9 exactly — and that is the finding, not the
+formality.** Session 8 measured 9 exact duplicate groups on the whole dump; session 9 measured 118
+clusters at threshold 0.80 ("118 either way" across the band sweep). **Session 13 inserted the PII
+pass between stage 5 and stage 6**, which changes the text every subsequent stage hashes, and
+nothing had ever checked what that did downstream — session 13 measured redaction in isolation.
+It does nothing here, which is the right answer for a source where redaction touched 3 documents in
+19,999, and it is now measured rather than assumed. **The first FineWeb2 pass is where this stops
+being safe to assume**: 1.01% of documents redacted there, at 40× Wikipedia's rate per character.
+
+The run also demonstrates the `--removals` bug in the size it would have had: stage 7 removed 179
+and stage 6 removed 9, and the file holds **188**. Before this session it would have held 179, and
+those 9 would have gone back into stage 9's pool.
+
+**Also taken: the single-pass stage 6+7 driver** — session 13's "cheap halving", deferred earlier in
+this session and then taken once the Wikipedia pass was running against committed code (the running
+process had its modules loaded; editing cannot reach it).
+
+`--single-pass` sketches during stage 6's phase 1 and calls `MinHashDeduplicator.drop()` afterwards.
+**The equivalence is by construction, not by argument**: `drop` runs before `build`, and both
+`_band` and `_cluster` iterate `_eligible`, which `drop` has already left — so a dropped document is
+never banded, never a candidate, never in a component, never a keeper. Eleven counters are asserted
+identical against a two-pass index over the survivors.
+
+**Session 13's note had the accessor wrong, and it is worth recording why.** It said the work needed
+"a small public accessor on `ExactDeduplicator` to avoid reaching into `_best`". `is_kept()` already
+is that accessor — and it takes the **text**, which a single-pass driver has thrown away by the time
+phase 1 seals. The text-free form is `wins_group(doc_id)`: `_best`'s values are exactly the set of
+winning keys, a key identifies one document, and that document belongs to one group in which it is
+the minimum, so *"my key is a winning key"* and *"I win my group"* are the same statement. The real
+work was on the other side — `MinHashDeduplicator` had no way to un-index anything.
+
+**Opt-in, because it costs two real things and both are per source.** Peak memory rises by the
+source's exact-duplicate rate: nil on FineWeb2 (Finding H), but ~2× on Roman-Urdu-Parl's Roman
+column, whose 6.37M rows collapse toward 3.48M distinct — and that is the one source this machine
+cannot afford it on. And **stage 6's phase-2 counters are not measured at all**, because `decide()`
+never runs; the payload says `phase2_measured: false` rather than emitting a block of zeros a reader
+would take for "stage 6 removed nothing".
+
+Session 13's "cheap halving" was taken after all — see above. The reasoning that deferred it
+stands as written and is why it landed *after* the Wikipedia pass rather than before: a freeze pass
+should not run against corpus behaviour that has just been rewritten. What changed is that the
+Wikipedia pass turned out to be long enough to build it underneath.
+
+**Still not taken, and the next thing to weigh:** the freeze is four to five full corpus reads
+(6+7, then 9, then 8, then 10), and `--single-pass` removes one of the five. A driver that ran
+stages 2–5 **once** and spilled the surviving normalized text to a compact intermediate would remove
+three of the five — but the spill is ~19 GB of UTF-8 for FineWeb2 alone against 29 GB of free disk,
+so it needs compression to be viable at all on this machine. **Not recommended before the freeze**;
+recorded because it is the shape the freeze wants and the reason it is not being taken is a disk
+measurement rather than a preference.
 
 ---
 

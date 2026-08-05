@@ -473,3 +473,46 @@ def test_is_kept_agrees_with_decide_and_leaves_the_log_alone():
     predicted = {doc_id: index.is_kept(doc_id, text) for doc_id, text in records}
     assert index.log.documents == 0
     assert predicted == {doc_id: index.decide(doc_id, text).kept for doc_id, text in records}
+
+
+# --- wins_group(): the text-free survivor test ------------------------------
+
+
+def test_wins_group_agrees_with_is_kept_without_the_text() -> None:
+    """The accessor a single-pass driver needs. `is_kept` asks the same question and wants the
+    document back, which is useless to a caller that has already thrown the corpus away."""
+    index = ExactDeduplicator()
+    docs = {"d1": "same text", "d2": "same text", "d3": "other text", "d4": "third text"}
+    for doc_id, text in docs.items():
+        index.index(doc_id, text)
+    index.seal()
+
+    for doc_id, text in docs.items():
+        assert index.wins_group(doc_id) == index.is_kept(doc_id, text), doc_id
+
+    # Exactly one of the duplicate pair wins, and it is the lower-keyed one either way.
+    assert index.wins_group("d1") != index.wins_group("d2")
+    assert index.wins_group("d3") and index.wins_group("d4")
+
+
+def test_wins_group_matches_decide_over_a_whole_corpus() -> None:
+    """The property the driver actually depends on: the same surviving set, from ids alone."""
+    index = ExactDeduplicator()
+    docs = {f"doc{i}": f"body number {i % 7}" for i in range(40)}
+    for doc_id, text in docs.items():
+        index.index(doc_id, text)
+    index.seal()
+
+    by_key = {doc_id for doc_id in docs if index.wins_group(doc_id)}
+    by_decide = {doc_id for doc_id, text in docs.items() if index.decide(doc_id, text).kept}
+    assert by_key == by_decide
+    assert len(by_key) == 7  # one survivor per distinct body
+
+
+def test_wins_group_cannot_tell_removed_from_never_indexed() -> None:
+    """Stated because it is a real limitation, and because the intended caller cannot hit it: it
+    iterates its own index of the same pass, so every id it asks about was indexed."""
+    index = ExactDeduplicator()
+    index.index("d1", "text")
+    index.seal()
+    assert not index.wins_group("never-indexed")

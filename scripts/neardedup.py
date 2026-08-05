@@ -242,6 +242,17 @@ def build_parser() -> argparse.ArgumentParser:
         help="index everything stage 3 kept, not only stage 5's survivors",
     )
     parser.add_argument(
+        "--single-pass",
+        action="store_true",
+        help="sketch during stage 6's phase 1 and drop its removals afterwards, reading the corpus "
+        "**once** instead of twice. Stages 2-5 are ~90%% of a pass's cost, so this halves the run; "
+        "the clusters are identical, because dropping happens before any banding. Two costs, both "
+        "real: peak memory rises by the source's exact-duplicate rate (nil on FineWeb2 per Finding "
+        "H, ~2x on Roman-Urdu-Parl's collapsing rows), and **stage 6's phase-2 counters are not "
+        "measured** — `decide()` never runs, so its kept/removed character and per-source totals "
+        "are absent rather than zero. Opt-in for exactly those reasons",
+    )
+    parser.add_argument(
         "--no-exact-dedup",
         action="store_true",
         help="skip stage 6 — near-dedup then re-counts every exact duplicate as a near one, which "
@@ -334,21 +345,40 @@ def main(argv: list[str] | None = None) -> int:
         # than in a third: the survivors are known there, and sketching is the expensive half.
         exact = ExactDeduplicator(DedupConfig.from_dict({**DedupConfig().to_dict(),
                                                          "paragraph_mode": "off"}))
-        print("stage 6 phase 1: indexing", file=sys.stderr)
+        print("stage 6 phase 1: indexing" + (" + stage 7 sketching" if args.single_pass else ""),
+              file=sys.stderr)
         for doc_id, normalized, raw, source in pipeline:
             exact.index(doc_id, normalized, raw=raw, source=source)
+            if args.single_pass:
+                index.index(doc_id, normalized, source=source)
         exact.seal()
         print(
             f"  {exact.log.indexed:,} documents, {exact.distinct_documents:,} distinct, "
             f"{exact.log.duplicate_groups:,} exact duplicate groups",
             file=sys.stderr,
         )
-        print("stage 6 phase 2 + stage 7 sketching", file=sys.stderr)
-        for doc_id, normalized, raw, source in pipeline:
-            if exact.decide(doc_id, normalized, raw=raw, source=source).kept:
-                index.index(doc_id, normalized, source=source)
-            else:
-                exact_removed.append(doc_id)
+        if args.single_pass:
+            # The whole saving, and it is two lines. Stage 6's verdict is only knowable now — but
+            # stage 7 did not have to wait for it, because `drop` un-indexes *before* any banding,
+            # so the set that gets banded is exactly the set a second pass would have sketched.
+            # `wins_group` answers from the id alone, which is what makes the second read
+            # unnecessary: the ids are already here, in stage 7's own index.
+            exact_removed = [
+                doc_id for doc_id in index.indexed_ids() if not exact.wins_group(doc_id)
+            ]
+            dropped = index.drop(exact_removed)
+            print(
+                f"stage 6: dropped {dropped:,} exact duplicates from stage 7's index "
+                f"(stage 6's phase-2 counters are not measured in this mode)",
+                file=sys.stderr,
+            )
+        else:
+            print("stage 6 phase 2 + stage 7 sketching", file=sys.stderr)
+            for doc_id, normalized, raw, source in pipeline:
+                if exact.decide(doc_id, normalized, raw=raw, source=source).kept:
+                    index.index(doc_id, normalized, source=source)
+                else:
+                    exact_removed.append(doc_id)
 
     print(
         f"stage 7: sketching done — {index.log.indexed:,} documents "
@@ -370,8 +400,15 @@ def main(argv: list[str] | None = None) -> int:
     payload["stage3_langid"] = pipeline.stage3.to_dict()
     payload["stage5_quality"] = {s: log.to_dict() for s, log in sorted(pipeline.stage5.items())}
     payload["pii"] = pipeline.pii.to_dict()
+    payload["single_pass"] = args.single_pass
     if exact is not None:
         payload["stage6_exact"] = exact.to_dict()
+        # Named rather than left to be inferred from zeros. `decide()` never ran in single-pass
+        # mode, so every phase-2 counter in that block — documents, chars_kept, the per-source
+        # tables — is absent, and a reader who took them at face value would conclude stage 6
+        # removed nothing. `removed` is the number that survives the mode, so it is stated here.
+        payload["stage6_exact"]["phase2_measured"] = not args.single_pass
+        payload["stage6_exact"]["removed"] = len(exact_removed)
 
     log = index.log
     print(

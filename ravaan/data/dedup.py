@@ -483,6 +483,8 @@ class ExactDeduplicator:
 
         self._sealed = False
         self._paragraphs_final = False
+        # Built lazily by wins_group(); the two-pass driver never needs it.
+        self._winning_keys: frozenset[int] | None = None
 
     # --- phase 1 -----------------------------------------------------------
 
@@ -724,6 +726,33 @@ class ExactDeduplicator:
         if self.config.variant == "raw":
             return raw, text
         return text, raw
+
+    def wins_group(self, doc_id: str) -> bool:
+        """Whether this document is its group's survivor — **from the id alone, no text**.
+
+        :meth:`is_kept` answers the same question and needs the document back, which is fine for a
+        caller re-reading the corpus and useless for one that is not. A single-pass driver has
+        thrown the text away by the time phase 1 seals, and re-reading 8 GB of parquet to recover a
+        boolean per document is the second corpus pass this exists to avoid.
+
+        The identity that makes it work: :attr:`_best` maps each distinct content to the *lowest*
+        document key in its group, so its values are exactly the set of winning keys. A key
+        identifies one document (a 128-bit hash of the id), that document belongs to exactly one
+        group, and a key is present only as that group's minimum — so "my key is a winning key" and
+        "I win my group" are the same statement.
+
+        **It cannot distinguish a removed document from one that was never indexed**, because both
+        are simply keys that are not in the set. Ask it only about documents phase 1 saw; a caller
+        that iterates its own index of the same pass, which is the intended use, cannot get this
+        wrong. :meth:`decide` keeps the loud version for callers that do have the text.
+        """
+        self.seal()
+        if self._winning_keys is None:
+            # Built here rather than in seal(): it is one set of ~n_distinct ints (~130 MB on a
+            # 4.6M-document FineWeb2 pass, sharing the int objects `_best` already holds), and the
+            # two-pass driver never asks for it.
+            self._winning_keys = frozenset(self._best.values())
+        return document_key(doc_id, bits=self._bits) in self._winning_keys
 
     def is_kept(self, doc_id: str, text: str, *, raw: str | None = None) -> bool:
         """Whether this document is its group's survivor. Read-only; does not touch the log."""

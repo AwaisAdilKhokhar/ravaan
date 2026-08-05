@@ -662,3 +662,102 @@ def test_empty_documents_are_skipped_rather_than_collapsed():
     verdicts, index = near_deduplicate([("a", ""), ("b", "   "), ("c", "\n\n")])
     assert all(verdict.kept for verdict in verdicts)
     assert index.log.skipped_short == 3
+
+
+# --- drop(): the single-pass driver's half ----------------------------------
+# Stage 6 cannot decide until it has seen the corpus, so stage 7 used to sketch during stage 6's
+# *second* pass — paying stages 2-5 twice, which is ~90% of the cost. `drop` lets a driver sketch
+# everything in phase 1 and un-index stage 6's removals afterwards. The property that makes it safe
+# is that dropping happens before banding, so a dropped document is never compared to anything.
+
+
+def _sketch_all(texts: dict[str, str], **kwargs) -> MinHashDeduplicator:
+    index = MinHashDeduplicator(MinHashConfig(**kwargs) if kwargs else None)
+    for doc_id, text in texts.items():
+        index.index(doc_id, text, source="test")
+    return index
+
+
+def _corpus() -> dict[str, str]:
+    """Three near-duplicate families, one singleton, and exact copies of two of them."""
+    base = {
+        f"a{i}": "the quick brown fox jumps over the lazy dog in the park " * 3 + f"tail {i}"
+        for i in range(4)
+    }
+    base.update(
+        {f"b{i}": "a wholly different document about ships and harbours and salt " * 3 + f"end {i}"
+         for i in range(3)}
+    )
+    base["solo"] = "nothing here resembles anything else in this small corpus whatsoever " * 3
+    # Exact duplicates, which is what stage 6 would remove.
+    base["a0copy"] = base["a0"]
+    base["solocopy"] = base["solo"]
+    return base
+
+
+def test_dropping_before_build_equals_never_indexing() -> None:
+    """The equivalence the single-pass driver rests on, asserted rather than argued.
+
+    Sketch everything and drop the exact duplicates, against sketching only the survivors: the same
+    clusters, the same survivors, the same counters. True by construction — `_band` and `_cluster`
+    both iterate `_eligible`, which `drop` has already left — and this is the test that keeps it so.
+    """
+    corpus = _corpus()
+    removed = ["a0copy", "solocopy"]
+    survivors = {k: v for k, v in corpus.items() if k not in removed}
+
+    one_pass = _sketch_all(corpus)
+    one_pass.drop(removed)
+    one_pass.build()
+
+    two_pass = _sketch_all(survivors)
+    two_pass.build()
+
+    assert one_pass.removed_ids() == two_pass.removed_ids()
+    assert one_pass.log.indexed == two_pass.log.indexed
+    assert one_pass.log.eligible == two_pass.log.eligible
+    assert one_pass.log.chars_in == two_pass.log.chars_in
+    assert one_pass.log.clusters == two_pass.log.clusters
+    assert one_pass.log.documents_kept == two_pass.log.documents_kept
+    assert one_pass.log.chars_kept == two_pass.log.chars_kept
+    assert one_pass.log.largest_cluster == two_pass.log.largest_cluster
+    assert one_pass.log.by_source == two_pass.log.by_source
+    assert one_pass.log.kept_by_source == two_pass.log.kept_by_source
+    assert one_pass.log.shingles_total == two_pass.log.shingles_total
+
+
+def test_a_dropped_document_is_not_reported_as_kept() -> None:
+    """`kept=True` would be a true statement about stage 7 and a false one about the corpus."""
+    index = _sketch_all(_corpus())
+    index.drop(["a0copy"])
+    index.build()
+
+    verdict = index.verdict("a0copy")
+    assert not verdict.kept
+    assert verdict.reason == "removed_before_stage_7"
+    assert "a0copy" not in index.removed_ids()  # stage 7 did not remove it; stage 6 did
+
+
+def test_drop_frees_the_signature_and_counts_itself() -> None:
+    index = _sketch_all(_corpus())
+    before = index.log.indexed
+    assert index.drop(["a0copy", "solocopy"]) == 2
+    assert index.log.dropped_before_build == 2
+    assert index.log.indexed == before - 2
+    assert index._sigs[index._position["a0copy"]] == b""
+    assert index.drop(["a0copy"]) == 0  # idempotent
+
+
+def test_drop_refuses_an_unindexed_id() -> None:
+    """A removal list naming documents this pass never saw was computed over a different corpus."""
+    index = _sketch_all(_corpus())
+    with pytest.raises(KeyError, match="was not indexed"):
+        index.drop(["never-seen"])
+
+
+def test_drop_after_build_is_refused() -> None:
+    """By then it has been banded, clustered, and may be a cluster's named survivor."""
+    index = _sketch_all(_corpus())
+    index.build()
+    with pytest.raises(RuntimeError, match=r"build\(\) has already run"):
+        index.drop(["a0copy"])

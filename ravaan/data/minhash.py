@@ -402,6 +402,9 @@ class MinHashLog:
     eligible: int = 0
     skipped_short: int = 0  # below min_shingles: kept, never compared, counted
     shingles_total: int = 0
+    # Sketched, then un-indexed by drop() because an earlier stage had removed them. Reported so
+    # `indexed` — which drop() decrements — can be reconciled against the documents the pass read.
+    dropped_before_build: int = 0
 
     # --- what banding proposed and verification kept ---
     candidate_pairs: int = 0
@@ -464,6 +467,7 @@ class MinHashLog:
             "indexed": self.indexed,
             "eligible": self.eligible,
             "skipped_short": self.skipped_short,
+            "dropped_before_build": self.dropped_before_build,
             "shingles_total": self.shingles_total,
             "mean_shingles": (
                 round(self.shingles_total / self.eligible, 2) if self.eligible else 0.0
@@ -550,6 +554,8 @@ class MinHashDeduplicator:
         self._cluster_of: dict[int, int] = {}
         self._cluster_size: dict[int, int] = {}
         self._removed: set[int] = set()
+        # Positions un-indexed by drop(); see its docstring. Never banded, never clustered.
+        self._dropped: set[int] = set()
         self._cluster_sources: dict[int, set[str]] = {}
         self._cluster_members: dict[int, list[int]] = {}
         self._cluster_keeper: dict[int, str] = {}
@@ -610,6 +616,70 @@ class MinHashDeduplicator:
         self._eligible.append(position)
         self.log.eligible += 1
         self.log.shingles_total += len(hashes)
+
+    def drop(self, doc_ids: Iterable[str]) -> int:
+        """Un-index documents an earlier stage removed. Before :meth:`build`; returns the count.
+
+        This exists so a driver can read the corpus **once** instead of twice. Stage 6 is two-phase
+        by construction — its verdict is a property of a duplicate *group*, so nothing is decided
+        until the whole corpus has been indexed — and the obvious consequence was that stage 7 had
+        to sketch during stage 6's second pass. But stages 2–5 are ~90% of a pass's cost (profiled:
+        stage 5 53%, stage 3 27%, stage 4 9%), so paying them twice to learn nothing new is most of
+        the price of a stage-7 run. A driver that sketches everything during phase 1 and then drops
+        stage 6's removals here reads the corpus once.
+
+        **The result is identical, by construction rather than by argument.** Dropping happens
+        before :meth:`build`, and both :meth:`_band` and :meth:`_cluster` iterate ``_eligible`` —
+        so a dropped document is never banded, never proposed as a candidate, never in a component
+        and never a keeper. The banding sees exactly the set the two-pass driver would have indexed.
+        (Had this dropped *after* clustering it would need a real argument, and the argument would
+        have been that identical texts have identical neighbourhoods. It does not, so it does not.)
+
+        What it is not free of is **peak memory**: the sketches of the dropped documents existed
+        before they were dropped, at ~512 bytes each. On a source whose exact-duplicate rate is nil
+        that costs nothing (FineWeb2 — Finding H: 31% was removed upstream by MinHash before we saw
+        it), and on Roman-Urdu-Parl, whose 6.37M rows collapse toward ~3.48M distinct, it is close
+        to double. That is a per-source decision and belongs to the caller, which is why nothing
+        here does it automatically.
+        """
+        if self._built:
+            raise RuntimeError(
+                "build() has already run — dropping now would leave a document that was banded, "
+                "clustered and possibly named as a cluster's survivor, which is a corpus whose "
+                "keeper is a document no later stage will emit"
+            )
+        dropped = 0
+        for doc_id in doc_ids:
+            position = self._position.get(doc_id)
+            if position is None:
+                raise KeyError(
+                    f"{doc_id!r} was not indexed — dropping a document stage 7 never sketched "
+                    "means this removal list was computed over a different document set, and the "
+                    "quiet answer would be a corpus short by however many ids missed"
+                )
+            if position in self._dropped:
+                continue
+            self._dropped.add(position)
+            dropped += 1
+
+            log = self.log
+            log.indexed -= 1
+            log.chars_in -= self._chars[position]
+            if self._sources[position]:
+                log.by_source[self._sources[position]] -= 1
+            if self._sigs[position]:
+                log.eligible -= 1
+                log.shingles_total -= self._sizes[position]
+                # Freeing the signature is the point at which the memory actually comes back, and
+                # on a source with a high duplicate rate it is the difference between this mode
+                # fitting and not. Cleared after the counters, which read it.
+                self._sigs[position] = b""
+            else:
+                log.skipped_short -= 1
+
+        self._eligible = [p for p in self._eligible if p not in self._dropped]
+        self.log.dropped_before_build += dropped
+        return dropped
 
     def _sketch(self, hashes: set[int]) -> bytes:
         """One-permutation hashing with densification — the K-value signature, packed.
@@ -860,6 +930,8 @@ class MinHashDeduplicator:
                     log.cross_source_pairs[f"{left}|{right}"] += 1
 
         for position in range(len(self._ids)):
+            if position in self._dropped:
+                continue  # an earlier stage removed it; it is not stage 7's to keep or count
             source = self._sources[position]
             if position in self._removed:
                 if source:
@@ -889,6 +961,10 @@ class MinHashDeduplicator:
                 f"{doc_id!r} was not indexed — stage 7 is being asked about a document it never "
                 "sketched, which means this is a different document set than the one clustered"
             )
+        if position in self._dropped:
+            # Not "kept": an earlier stage removed it, and answering `kept=True` here would be a
+            # true statement about stage 7 that reads as a false one about the corpus.
+            return NearDuplicateVerdict(doc_id, False, reason="removed_before_stage_7")
         if not self._sigs[position]:
             return NearDuplicateVerdict(doc_id, True, reason="too_few_shingles")
         cluster = self._cluster_of.get(position, -1)
@@ -901,6 +977,15 @@ class MinHashDeduplicator:
         self.build()
         for doc_id in self._ids:
             yield self.verdict(doc_id)
+
+    def indexed_ids(self) -> Iterator[str]:
+        """Every id sketched, in index order — including any later handed to :meth:`drop`.
+
+        Exists so a single-pass driver can ask an earlier stage about each document without having
+        kept the corpus: the ids are already here, which is the fact that makes the second read
+        unnecessary. Read-only, and safe before :meth:`build`.
+        """
+        yield from self._ids
 
     def removed_ids(self) -> list[str]:
         self.build()

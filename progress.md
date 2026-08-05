@@ -20,8 +20,12 @@ first.**
   FineWeb2 shard 000, and measured the corpus that resulted: **Gate G1 now returns `PASS` on both
   the aggregate and the mixture, with both arms fundable.** **Session 13 built the PII pass**
   ([`reports/pii.md`](reports/pii.md)) — the last unbuilt thing in §6.3 — and reading its matches
-  found that 11 of its first 13 phone hits on Wikipedia were ISBNs (Finding V). **Every §6.3 stage
-  now exists and every one has been pointed at real text; only the freeze runs themselves remain.**
+  found that 11 of its first 13 phone hits on Wikipedia were ISBNs (Finding V). **Session 14 went
+  to start the freeze and found the freeze order was not runnable** (Finding W): every driver runs
+  stages 2–5 and then its own stage, and none of them chains — stages 6, 7 and 8 each *wrote* a
+  removal list and stages 9 and 10 could not *read* one. Stage 10 would have packed a corpus that
+  had been through no dedup and no decontamination. `ravaan/data/exclusions.py` is the missing hand;
+  the first freeze run is under way.
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
 - **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds
@@ -30,13 +34,14 @@ first.**
   4 falsifiable predictions, before any training.
 - **PRD version:** **v2.2** (2026-08-05) — §0.2 amends §6.1, §4.3, §8.2, §10 and §11 for Finding R.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 622 passing (72 splits · **70 pii** · 69 normalization · 60 decontamination ·
-  57 encoding · 57 acquisition · 52 minhash · 51 packing · 43 quality · 41 dedup · 32 langid ·
-  18 shards)
-- **Committed** through session 12, on branch `stages-7-and-8` (main is at session 8; fast-forward
+- **Tests:** 639 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · 57 encoding ·
+  57 acquisition · 52 minhash · 51 packing · 43 quality · 41 dedup · 32 langid · 18 shards ·
+  **17 exclusions**)
+- **Committed** through session 14, on branch `stages-7-and-8` (main is at session 8; fast-forward
   it when convenient). Sessions 6 and 7 are one commit — stage 5, its 200-sample validation and the
-  write-up are one deliverable. Sessions 9, 10, 11, 12 and 13 are one commit each: stage 7, stage 8,
-  stage 9 with the second stage-8 run, stage 10 with the PRD v2.2 amendment, and the PII pass.
+  write-up are one deliverable. Sessions 9–14 are one commit each: stage 7, stage 8, stage 9 with
+  the second stage-8 run, stage 10 with the PRD v2.2 amendment, the PII pass, and the exclusion
+  chain.
 
 ---
 
@@ -95,6 +100,10 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | Real passes: Wikipedia, FineWeb2, Roman-Urdu-Parl → `reports/pii.md` | §6.3 | ✅ 56,214 documents |
 | 11 of 13 first Wikipedia phone matches were ISBNs (Finding V) | §6.3 | ✅ fixed, re-measured |
 | Eval sets must go through the same redaction before stage 8 | §6.3.8 | ⬜ freeze |
+| **Stages 9 and 10 could not read a removal list (Finding W)** | §6.3 | ✅ `--exclude`, 17 tests |
+| Removal lists carry the read plan they were computed over | §6.3 | ✅ refuses a mismatch |
+| cp1252 hole closed as a class — `ravaan/console.py`, all 12 entry points | — | ✅ |
+| **Freeze run: stage 6+7, complete Urdu Wikipedia** | §6.3.6, §6.3.7 | 🟡 running |
 | Corpus manifest + statistics | §6.3 | 🟡 acquisition manifest done; stage stats pending |
 
 ### Weeks 5–16
@@ -2052,6 +2061,134 @@ pattern deletes bibliography entries and nothing is left in the corpus to notice
 
 ---
 
+### Session 14 — 2026-08-05
+
+The session began by trying to start the freeze and got as far as reading the drivers.
+
+**Finding W — the freeze order is not runnable. Stages 9 and 10 cannot see stages 6, 7 and 8.**
+
+Session 13 signed off with "**Nothing in §6.3 is unbuilt** … every remaining item is a freeze run,
+not a new component." Both halves of that are true about the *stages*. Neither is true about the
+pipeline, because there is no pipeline — there are six drivers, each of which runs stages 2→5 and
+then its own stage, and **none of them chains**.
+
+| driver | stages it runs | 6 | 7 | 8 | 9 | 10 |
+|---|---|---|---|---|---|---|
+| `probe.py` | 2–5 | | | | | |
+| `dedup.py` | 2–6 | ✅ | | | | |
+| `neardedup.py` | 2–7 | ✅ | ✅ | | | |
+| `decontaminate.py` | 2–5, 8 | opt | | ✅ | | |
+| `split.py` | 2–5, **9** | ❌ | ❌ | | ✅ | |
+| `pack.py` | 2–5, **9, 10** | ❌ | ❌ | ❌ | ✅ | ✅ |
+
+`dedup.py`, `neardedup.py` and `decontaminate.py` each *write* `--removals`. **Nothing could read
+one.** So the freeze order 6 → 7 → 9 → 8 → 10 was a sequence of passes with no way to hand anything
+between them, and running it as written would have produced:
+
+- **a stage-9 pool measured over undeduplicated text** — overstated, and Gate G1 read off it;
+- **a held-out split carved from that pool**, containing near-duplicates of training documents.
+  This is the exact failure the 6 → 7 → 9 ordering was introduced to prevent, one layer below where
+  it was being prevented: the *order* was right and the *mechanism* was missing;
+- **a packed corpus that had been through no dedup and no decontamination** — and the packed shards
+  are byte-identical in shape either way, so nothing downstream could tell.
+
+It is Finding S and Finding U's family again: the quantity was right, the plumbing that carries it
+was not, and the wrong answer is the plausible-looking one.
+
+**What was built — `ravaan/data/exclusions.py`, 17 tests**
+
+The ids are the easy half. The hard half is that **a list of ids carries no evidence of the corpus
+it was computed over**, and every way of getting that wrong is silent:
+
+- a list from a 5% pass removes a twentieth of what it should, and **every id in it matches**, so
+  no count anywhere is out of place;
+- a list from `--limit 20000` is **fingerprint-identical** to one over the whole corpus, because
+  `plan_fingerprint()` deliberately does not cover the limit — a limit does not change *which
+  documents in what order*, which is precisely what the fingerprint is a hash of;
+- a source with **no** list is the freeze order not having been run for it, and looks exactly like
+  a source that had nothing to remove.
+
+So the file carries a header naming the read plan of every source it covers, the consuming pass
+checks its own readers against it, and refuses on a mismatch. Verified against real text — the two
+fingerprints in the refusal below are **the same string**, which is the whole point:
+
+```
+exclusions for 'urdu-wikipedia' were computed over a different read:
+  plan 8743e78c000775aa limit 4,000 rate 1.0
+  against this pass's plan 8743e78c000775aa limit all rate 1.0
+```
+
+A source with no coverage is *reported*, not refused — it legitimately has none until its own stage
+6/7 pass has run — and a pass given no list at all prints one line rather than one per source,
+because a measurement run without exclusions is correct and should not drown in warnings.
+
+**Two bugs the wiring found, both of which would have reached the corpus**
+
+- **`neardedup.py --removals` wrote only stage 7's half.** Stage 6's removals were computed, used,
+  and dropped on the floor. A stage-9 run handed that list would have put **every exact duplicate**
+  back into the pool it was measuring. On the 4,000-document Wikipedia smoke run this is the
+  difference between 1 removal and 0 — the whole file, because stage 7 removed nothing there.
+- **`decontaminate.py --removals` wrote `id#roman` / `id#urdu` variant ids.** Stage 8 reads a
+  parallel row as two documents because contamination arrives on one side or the other; every later
+  stage reads it as one. Those ids match nothing downstream, so the list would have removed
+  *nothing* while the pass reported a removal count. Now written as row ids through `pair_key` —
+  the same function stage 9 splits on, which is the function that already owns this rule.
+
+**Also closed: the cp1252 hole, as a class rather than as its three named instances**
+
+Session 12 diagnosed `ravaan-splits`, `ravaan-shards` and `ravaan-normalize` as one character from
+raising, and prescribed "a copy-paste into each". There are **twelve** console entry points and two
+of them had the guard. `ravaan/console.py` now holds it and all twelve call it. This is the fifth
+Windows text default this repo has been bitten by, after `.gitattributes` (session 2),
+`Path.write_text`'s `os.linesep` and `.gitignore` re-inclusion (session 4) and `crossover.py`
+dying on a redirected stdout (session 12).
+
+**Measured — the machine, which no freeze estimate had ever checked**
+
+Every pass so far was 5% or Wikipedia-only, so nothing in the log says whether the freeze *fits*.
+
+| | |
+|---|---|
+| RAM | **16.0 GB total, ~2.0 GB free**, 48 GB pagefile on `D:` |
+| disk | **29 GB free of 377 GB — 93% used** |
+| cores | 16 |
+
+Stage 7's index is ~700 bytes per document at K=128. FineWeb2's two train shards hold ~5.26M
+documents, so **the stage-7 freeze pass projects to ~3.2 GB of sketches plus ~1.3 GB of stage 6's
+index**, and Roman-Urdu-Parl's Roman column at 6.37M rows projects similarly. That is survivable on
+this machine only with the browser and editor closed, and it will page rather than fail if not —
+the pagefile is on a different drive, so the failure mode is a pass that takes four times as long
+rather than one that stops. **`max_index_entries` is 8,000,000, so the guard does not fire first.**
+This is a number the freeze plan should have carried and did not.
+
+**Decisions made**
+
+| Decision | Rationale |
+|---|---|
+| The removal list keeps its plain-text format — ids, one per line — and the header is a `#` comment | These files get read by hand and `grep -v '^#'` is still the whole format. It is also what lets `reports/dedup_removals_wikipedia.txt`, written before headers existed, still load — against a stated warning rather than a crash |
+| A mismatched read plan **raises**; an uncovered source is **reported** | They are different mistakes. Applying a list from the wrong read silently removes the wrong documents and nothing downstream can tell. A source with no list is the normal state until its own pass has run, and refusing it would make the first freeze run impossible to start |
+| The header records `limit` separately from `plan_fingerprint()` | The fingerprint deliberately excludes it, and that is correct — but it means a smoke-test list and a corpus list are the same string. This is the one field that separates them, and the test that locks it asserts the fingerprints are equal |
+| Exclusions are applied **ahead of stage 2**, not after stage 5 | They cost nothing there, and — the part that matters — they never enter this pass's stage 2/3/5 logs, which should describe the corpus that survives rather than the one that was read |
+| The post-condition is `applied == len(list)`, and a shortfall is printed | Exclusions are applied before stage 2, so on a matching read every id is a document the reader still emits. This catches the *limit* mistake from the other side. It cannot catch the *sample-rate* mistake, where the list is a subset and every id fires — only the header catches that one, which is why both exist |
+| Stage 8's list is written as **row** ids | A parallel pair whose halves land in different splits is not a pair (§6.1's "~500K deduplicated pairs"). Removing one column and keeping the other is how a pair stops being one |
+| `neardedup.py` writes stages 6 **and** 7 as one list, labelled `6+7` | They are one pass and one decision about the corpus. Two files would be two chances to pass only one of them |
+| The cp1252 guard went to one module rather than three copy-pastes | Closing three instances of a twelve-member class is how the same bug comes back in session 17 |
+
+**Deferred, deliberately: the single-pass stage 6+7 driver**
+
+Session 13's "cheap halving" is still worth taking and was not taken here. The reason is sequencing
+rather than doubt: it needs `MinHashDeduplicator` to drop already-sketched documents at build time,
+which touches banding, clustering and six log counters in a 1,154-line module — and the freeze's
+first pass wanted to run against code whose corpus behaviour had not just been rewritten. It is
+worth ~6 hours of a ~30-hour freeze and it pays for itself on the FineWeb2 and Roman-Urdu-Parl
+passes, neither of which has started. **Take it next, before those two.** The design is settled:
+sketch during stage 6's phase 1, then drop stage 6's removals from the index before `build()` —
+the sketches are provably safe to drop because identical texts have identical neighbourhoods, so
+the components restricted to stage-6 survivors are the same either way, and each component's
+lowest-key member is always itself a stage-6 survivor.
+
+---
+
 ## Open questions for you
 
 1. ~~**Config format.**~~ **Decided in session 4: JSON, for the whole data pipeline.** Three
@@ -2091,29 +2228,52 @@ pattern deletes bibliography entries and nothing is left in the corpus to notice
 
 ## Next session
 
-**Nothing in §6.3 is unbuilt.** Session 12 paid the PRD debt (v2.2), built stage 10 and measured
-G1 to `PASS` on both the aggregate and the mixture; session 13 built the PII pass, the last
-missing piece, and re-measured it after Finding V. **Every remaining item is a freeze run, not a
-new component.**
+**The freeze is running.** Session 14 found the order was not executable (Finding W) and built the
+missing piece; `--exclude` now carries stages 6/7/8's removals into stages 9 and 10, and refuses a
+list computed over a different read. **Every remaining item is now genuinely a freeze run.**
 
-Two things to carry in. **The G1 margins have not been through stages 6/7/8** — code-switched at
-2.35× survives a 50% stage-7 loss, but FineWeb2's self-similarity has never been measured. And
-**the fertility estimate moves arm A's document set by a factor of two**, so the Week 5 re-solve
-has to land before the corpus is written.
+Three things to carry in. **The G1 margins have not been through stages 6/7/8** — code-switched at
+2.35× survives a 50% stage-7 loss, but FineWeb2's self-similarity has never been measured.
+**The fertility estimate moves arm A's document set by a factor of two**, so the Week 5 re-solve
+has to land before the corpus is written. And **this machine has ~2 GB of free RAM and 29 GB of free
+disk**, against a stage-7 FineWeb2 index that projects to ~4.5 GB — close the browser before
+starting it, and expect paging rather than failure if you do not.
 
-1. **The freeze needs one unsampled stage-9 phase 1 over all sources together.** The passes so far
-   are per source, so each set of bands is calibrated to that source's totals rather than to the
-   corpus — which gives each source its own held-out share instead of the corpus's. Measure once
-   over everything, then apply that single plan everywhere with `--plan-in` (phase 2 needs nothing
-   from phase 1 but a few integers, so every later stage can carry the same plan).
-   - **`--measure-only` is the flag for it** (added session 12) — one pass, not two. The both-shard
-     5% run took ~35 minutes that way; unsampled over 8.3 GB is the freeze's longest single read
-     and doing it two-phase would have doubled it for nothing.
-   - **The freeze order must be 6 → 7 → 9 → 8 → 10.** Stage 9 ran *before* dedup in the passes so
-     far, so the held-out split can still contain near-duplicates of training documents from within
-     Wikipedia — the geo-stub farms session 9 measured at 10.7% of the dump. Stage 8 catches the
-     cross-source case and structurally cannot catch that one. **The held-out split's integrity
-     depends on stage 7 having run first.**
+**The freeze order, and what each step now needs:**
+
+```
+6+7  neardedup.py --source S --limit 0 --removals reports/freeze/removals_67_S.txt
+9    split.py --source ALL --limit 0 --measure-only --exclude <each 6+7 list> --plan-out plan.json
+                                                     --heldout-out data/freeze/heldout.jsonl
+8    decontaminate.py --source ALL --limit 0 --exclude <each 6+7 list> --removals removals_8.txt
+10   pack.py --source ALL --limit 0 --plan-in plan_resolved.json
+                           --exclude <each 6+7 list> --exclude removals_8.txt --out data/packed
+```
+
+1. **Stage 6+7, per source, unsampled.** Finding G forbids sampling either — a pair statistic
+   sampled at rate *r* is measured at *r²*. Wikipedia is running now; FineWeb2 (self-similarity,
+   both shards) and Roman-Urdu-Parl (`--shingle-unit char`) are the two long ones, ~2.3 h+ each
+   two-pass, and **the single-pass halving below should land before them.**
+
+2. **Stage 9, one unsampled phase 1 over all sources together.** The passes so far are per source,
+   so each set of bands is calibrated to that source's totals rather than to the corpus — which
+   gives each source its own held-out share instead of the corpus's. Measure once over everything,
+   then apply that one plan everywhere with `--plan-in`.
+   - **`--measure-only` is the flag for it** (session 12) — one pass, not two. The both-shard 5%
+     run took ~35 minutes that way; unsampled over 8.3 GB is the freeze's longest single read.
+   - **Stage 9 must come after 7.** Stage 9 ran *before* dedup in every pass so far, so the
+     held-out split can still contain near-duplicates of training documents from within Wikipedia —
+     the geo-stub farms session 9 measured at 10.7% of the dump. Stage 8 catches the cross-source
+     case and structurally cannot catch that one. **The held-out split's integrity depends on stage
+     7 having run first**, and now depends on `--exclude` actually being passed.
+
+3. **Take the single-pass stage 6+7 halving before the FineWeb2 and Roman-Urdu-Parl passes.** It is
+   ~6 hours of a ~30-hour freeze and this is where it pays for itself. Design settled in session
+   14's entry above; it needs `MinHashDeduplicator` to drop already-sketched documents before
+   `build()`, and the correctness argument is that identical texts have identical neighbourhoods.
+   **Make it opt-in** (`--single-pass`): it sketches the exact duplicates before dropping them, so
+   peak memory rises by the duplicate rate — nil on FineWeb2 (Finding H) but ~2× on
+   Roman-Urdu-Parl's Roman column, which is the one source where this machine cannot afford it.
 
 2. **Week 5, and it is stage 10's outstanding half.** Train §7's tokenizer, then:
    ```
@@ -2135,14 +2295,24 @@ has to land before the corpus is written.
      against them, so redacting one side and not the other makes a phone-number-only overlap
      disappear and leaves the training document in. Same function, called on both sides.
 
-**A cheap halving of every future stage 7 run, measured but not taken.** The driver reads the
+**Still not taken, and now sequenced — see item 3 above and session 14's entry for the settled
+design.** The driver reads the
 corpus twice because stage 6 is two-phase, and stages 2–5 are 90% of that cost (profiled: stage 5
 53%, stage 3 27%, stage 4 9%). But stage 6 knows its survivors at the end of *phase 1* — that is
 what `--index-only` already claims — so a driver that sketched during phase 1 and applied stage 6's
-verdict from the index would need one pass, not two. It needs a small public accessor on
-`ExactDeduplicator` to avoid reaching into `_best`. Worth taking before the FineWeb2 and
+verdict from the index would need one pass, not two. Worth taking before the FineWeb2 and
 Roman-Urdu-Parl passes above, which is where it pays for itself. **Stage 9 does not need it** —
 its phase 2 can be skipped entirely by carrying the plan.
+
+**Correction to the sentence this note used to end on**, which said the work "needs a small public
+accessor on `ExactDeduplicator` to avoid reaching into `_best`". `is_kept()` is already that
+accessor and it is not enough: it takes the *text*, and a single-pass driver has thrown the text
+away by the time stage 6 has sealed. The text-free form is a key-membership test —
+`document_key(doc_id) in {winning keys}`, which is sound because a winning key belongs to exactly
+one document and that document is its own group's winner. **The harder half is on the other side:**
+`MinHashDeduplicator` has no way to un-index a document, and the removals have to leave its
+`_eligible` list, its six log counters and `_cluster`'s final accounting loop. That is where the
+work actually is.
 
 **Do not start** tokenizer training or modelling. The tokenizer is timeboxed to Week 5, and stage
 10 is deliberately built so that waiting costs one command rather than a rewrite.
@@ -2178,10 +2348,12 @@ one file. Complete-Wikipedia stage 9 is ~20 minutes two-phase, alone.
   dot-separated numbers and `[at]` obfuscation are all measured in the FineWeb2 sample and all
   uncaught, because catching bare ten-digit runs is precisely what Finding V removed.
   `reports/pii.md` §6 is the list, and the report must carry it.
-- **⚠️ Three installed console scripts still have the cp1252 hole** — `ravaan-splits`,
-  `ravaan-shards` and `ravaan-normalize` print non-ASCII from `main()` and survive only because an
-  em-dash *is* in cp1252 while `≈` is not. Diagnosed in session 12, and session 13's `ravaan-pii`
-  ships with the three-line guard, so the fix is a copy-paste into each. Still open.
+- ~~**⚠️ Three installed console scripts still have the cp1252 hole.**~~ **Closed in session 14, as
+  a class rather than as three instances.** The diagnosis named `ravaan-splits`, `ravaan-shards` and
+  `ravaan-normalize` and prescribed a copy-paste; there are **twelve** console entry points and two
+  of them had the guard. `ravaan/console.py` holds it now and all twelve call it. Fifth Windows text
+  default in this repo, and the note it replaces is the reason to fix the class: a prescription that
+  names three of twelve members is the same bug returning in session 17.
 - **⚠️ ~4.4% of the held-out split is likely inside FineWeb2 (Finding T), and the measured figure is
   0.22% at a 5% sample.** The projection assumes an eval item with one crawled copy is found with
   probability *r*. §8.2's held-out native set is the primary endpoint's own instrument, so the

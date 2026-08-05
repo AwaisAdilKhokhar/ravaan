@@ -103,6 +103,15 @@ python scripts/decontaminate.py --eval roman-urdu-parl:test \
 python scripts/split.py --source urdu-wikipedia --limit 0 --measure-only                # stage 9
 python scripts/pack.py --source urdu-wikipedia --limit 0 --measure-only                 # stage 10
 
+# the freeze order is 6 -> 7 -> 9 -> 8 -> 10, and the stages hand ids forward rather than chaining
+# in one process. `--removals` writes a list; `--exclude` applies it, and refuses one computed over
+# a different read of the corpus — a list from a sampled or limited pass is otherwise
+# indistinguishable from one over the whole thing.
+python scripts/neardedup.py --source urdu-wikipedia --limit 0 \
+    --removals reports/freeze/removals_67_wikipedia.txt
+python scripts/split.py --source urdu-wikipedia --limit 0 --measure-only \
+    --exclude reports/freeze/removals_67_wikipedia.txt --plan-out plan.json
+
 # the 200-sample manual validation PRD §6.3.5 requires
 python scripts/quality_sample.py draw --out reports/quality_sample.md
 ```

@@ -252,10 +252,12 @@ class ExclusionSet:
             if theirs is None:
                 uncovered.append(mine.source)
                 continue
-            if (
-                theirs.plan_fingerprint != mine.plan_fingerprint
-                or bool(theirs.limit) != bool(mine.limit)
-                or (theirs.limit or 0) != (mine.limit or 0)
+            # Two conditions, not three: `sample_rate` is already inside the fingerprint, and
+            # `limit` is deliberately outside it. A third clause on `sample_rate` would look like
+            # belt-and-braces and would actually be a second place to keep in step with
+            # `plan_fingerprint`'s payload.
+            if theirs.plan_fingerprint != mine.plan_fingerprint or (theirs.limit or 0) != (
+                mine.limit or 0
             ):
                 raise ValueError(
                     f"exclusions for {mine.source!r} were computed over a different read: "
@@ -338,6 +340,12 @@ def write_exclusions(
     """
     ordered = list(ids)
     recorded = tuple(plans) or tuple(ReadPlan.of(reader) for reader in readers)
+    if not recorded:
+        raise ValueError(
+            "an exclusion list needs the read plan it was computed over — pass `readers=` or "
+            "`plans=`. A header claiming provenance and carrying none is worse than no header: "
+            "the consumer would report every source as uncovered and remove the ids anyway"
+        )
     header = ExclusionHeader(stage=stage, plans=recorded, count=len(ordered))
     body = "".join(f"{doc_id}\n" for doc_id in ordered)
     text = _HEADER_PREFIX + json.dumps(header.to_dict(), sort_keys=True) + "\n" + body

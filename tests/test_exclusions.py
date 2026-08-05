@@ -338,3 +338,10 @@ def test_redacting_one_side_only_destroys_the_match(tmp_path: Path) -> None:
     index.seal()
 
     assert index.check("d1", RAW).kept, "one side redacted and the other not: the hit disappears"
+
+
+def test_a_list_written_without_a_read_plan_is_refused(tmp_path: Path) -> None:
+    """A header claiming provenance and carrying none is worse than no header at all: the consumer
+    reports every source as uncovered and removes the ids regardless."""
+    with pytest.raises(ValueError, match="needs the read plan"):
+        write_exclusions(tmp_path / "removals.txt", ["alpha:d1"], stage="7")

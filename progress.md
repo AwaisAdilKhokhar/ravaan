@@ -34,9 +34,9 @@ first.**
   4 falsifiable predictions, before any training.
 - **PRD version:** **v2.2** (2026-08-05) — §0.2 amends §6.1, §4.3, §8.2, §10 and §11 for Finding R.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 639 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · 57 encoding ·
-  57 acquisition · 52 minhash · 51 packing · 43 quality · 41 dedup · 32 langid · 18 shards ·
-  **17 exclusions**)
+- **Tests:** 641 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · 57 encoding ·
+  57 acquisition · 52 minhash · 51 packing · 43 quality · 41 dedup · 32 langid · **19 exclusions**
+  · 18 shards). The exclusion file carries the first driver-level tests in the suite.
 - **Committed** through session 14, on branch `stages-7-and-8` (main is at session 8; fast-forward
   it when convenient). Sessions 6 and 7 are one commit — stage 5, its 200-sample validation and the
   write-up are one deliverable. Sessions 9–14 are one commit each: stage 7, stage 8, stage 9 with
@@ -99,7 +99,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | Wired into all five drivers, between stage 5 and stage 6 | §6.3 | ✅ |
 | Real passes: Wikipedia, FineWeb2, Roman-Urdu-Parl → `reports/pii.md` | §6.3 | ✅ 56,214 documents |
 | 11 of 13 first Wikipedia phone matches were ISBNs (Finding V) | §6.3 | ✅ fixed, re-measured |
-| Eval sets must go through the same redaction before stage 8 | §6.3.8 | ⬜ freeze |
+| Eval sets must go through the same redaction before stage 8 | §6.3.8 | ✅ both loaders, measured |
 | **Stages 9 and 10 could not read a removal list (Finding W)** | §6.3 | ✅ `--exclude`, 17 tests |
 | Removal lists carry the read plan they were computed over | §6.3 | ✅ refuses a mismatch |
 | cp1252 hole closed as a class — `ravaan/console.py`, all 12 entry points | — | ✅ |
@@ -2134,6 +2134,29 @@ because a measurement run without exclusions is correct and should not drown in 
   *nothing* while the pass reported a removal count. Now written as row ids through `pair_key` —
   the same function stage 9 splits on, which is the function that already owns this rule.
 
+**Also closed: session 13's eval-side redaction, and it is bigger than "hygiene"**
+
+Stage 8 compares the corpus against the eval sets. The corpus side is redacted in every driver's
+`Pipeline` before anything hashes it; **neither eval loader redacted at all.** Measured on a
+28-word document with one phone number and one email:
+
+| eval side | corpus side | stage 8's verdict |
+|---|---|---|
+| redacted | redacted | **removed** — `eval_set=probe` |
+| **not** redacted | redacted | **kept** |
+
+Two redactions move containment below the threshold, because each placeholder sits inside five
+word-shingles. So the document was not merely scored lower — it was **kept, and the pass reported a
+clean corpus.** The test asserts `kept` on the broken configuration deliberately: this is the one
+stage whose failure leaves nothing behind to notice it by.
+
+Unconditional, with no flag — there is no configuration in which redacting one side and not the
+other is correct. Safe to apply twice because the placeholders carry no digits and no letters
+precisely so that redaction is idempotent (session 13's decision, now load-bearing for a reason it
+was not chosen for). Verified idempotent on Finding V's negatives too: ISBN, `surah:ayah` and bare
+years all survive both passes untouched. These are also **the first driver-level tests in the
+suite** — `scripts/` is ~2,900 lines with no coverage, and this property was worth starting on.
+
 **Also closed: the cp1252 hole, as a class rather than as its three named instances**
 
 Session 12 diagnosed `ravaan-splits`, `ravaan-shards` and `ravaan-normalize` as one character from
@@ -2291,9 +2314,8 @@ starting it, and expect paging rather than failure if you do not.
      to **~4.4%**; that is the figure §8.2 needs and it should be measured, not projected.
    - **Stage 7: FineWeb2 self-similarity (complete shard) and Roman-Urdu-Parl with
      `shingle_unit="char"`.** ~2.3 hours two-pass. Finding G forbids sampling either.
-   - **Redact the eval sets before stage 8 runs** (session 13). Stage 8 compares training text
-     against them, so redacting one side and not the other makes a phone-number-only overlap
-     disappear and leaves the training document in. Same function, called on both sides.
+   - ~~Redact the eval sets before stage 8 runs.~~ **Done in session 14**, unconditionally in
+     both loaders, and measured: one-sided redaction moves stage 8 from `removed` to `kept`.
 
 **Still not taken, and now sequenced — see item 3 above and session 14's entry for the settled
 design.** The driver reads the
@@ -2365,6 +2387,17 @@ one file. Complete-Wikipedia stage 9 is ~20 minutes two-phase, alone.
   belong in the report as stated precision rather than implied correctness. If the floor is ever
   revisited, the discriminator is whether the shared line is *quoted* material, which is closer to
   stage 3's lowercase-running-text test than to a length.
+- **⚠️ `scripts/` has ~2,900 lines and almost no test coverage, and Finding W lived there.** Every
+  stage's *library* is tested to the point of pinning literal hash values; the six drivers that
+  compose them into a pipeline had nothing, which is exactly why "stages 9 and 10 cannot read a
+  removal list" survived thirteen sessions of careful work on the stages themselves. Session 14
+  adds the first two driver tests. The properties still uncovered and worth having are the ones
+  where a driver *composes* stages rather than calls one: that `neardedup.py` writes stage 6's
+  removals as well as stage 7's (found by hand this session), that `decontaminate.py`'s removals
+  are row ids rather than column variants (same), and that every driver's `Pipeline` applies stage
+  4 before stage 5 before PII before whatever it owns. **The lesson is not "write more tests" but
+  the specific one Finding W is an instance of: the stage boundaries are where this project's bugs
+  live, and nothing was looking at them.**
 - **⚠️⚠️ 16.8% of the reference transliteration split's Urdu side is in Urdu Wikipedia (Finding Q),
   and Wikipedia is a training source.** §4.5 makes transliteration chrF a Holm-corrected secondary
   endpoint. Stage 8 removes the contaminated *training* documents, which is the correct action and

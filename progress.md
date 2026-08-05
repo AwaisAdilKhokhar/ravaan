@@ -108,7 +108,9 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | **Freeze run: stage 6+7, complete Urdu Wikipedia** | §6.3.6, §6.3.7 | ✅ 188 ids, 118 clusters |
 | PII pass did not move stage 6 or 7 on Wikipedia — measured, not assumed | §6.3 | ✅ 9 groups, 118 clusters |
 | Single-pass stage 6+7 (`--single-pass`) — one corpus read, not two | §6.3.7 | ✅ 12 tests |
-| Freeze runs: stage 6+7 over FineWeb2 and Roman-Urdu-Parl | §6.3.7 | ⬜ next, ~2.3 h+ each |
+| Single-pass verified against the two-pass run on the complete dump | §6.3.7 | ✅ 47/48 fields identical |
+| **Freeze run: stage 6+7, FineWeb2 both train shards** | §6.3.7 | 🟡 running, ~5.4 GB projected |
+| Freeze run: stage 6+7, Roman-Urdu-Parl (`--shingle-unit char`) | §6.3.7 | ⬜ next |
 | Corpus manifest + statistics | §6.3 | 🟡 acquisition manifest done; stage stats pending |
 
 ### Weeks 5–16
@@ -2239,6 +2241,21 @@ process had its modules loaded; editing cannot reach it).
 never banded, never a candidate, never in a component, never a keeper. Eleven counters are asserted
 identical against a two-pass index over the survivors.
 
+**And then checked against real text at full scale, which is the part that matters.** The same
+complete Wikipedia dump, single-pass, compared field by field against the two-pass freeze run:
+
+| | |
+|---|---|
+| top-level report fields compared | **48** |
+| differing | **1** — `dropped_before_build` (9 against 0), the field that exists to record the mode |
+| removed ids | **188 in both, byte-identical** |
+| identical | `clusters`, `largest_cluster`, `documents_kept`, `chars_kept`, `candidate_pairs`, `verified_pairs`, `retained_pairs`, `shingles_total`, `similarity_histogram`, `top_clusters`, `pair_examples`, every per-source table |
+
+A unit test asserting eleven counters on nine synthetic documents is not evidence that a mode is
+safe to spend six hours on; this is. It is the same practice as every threshold in this project —
+Finding D's lesson, which by now has cost the repo seven findings: **fixture tests prove a rule does
+what it says, and only real text shows whether it does it to the right documents.**
+
 **Session 13's note had the accessor wrong, and it is worth recording why.** It said the work needed
 "a small public accessor on `ExactDeduplicator` to avoid reaching into `_best`". `is_kept()` already
 is that accessor — and it takes the **text**, which a single-pass driver has thrown away by the time
@@ -2343,8 +2360,14 @@ starting it, and expect paging rather than failure if you do not.
    - **`--single-pass` on FineWeb2, not on Roman-Urdu-Parl.** It halves the read, and its cost is
      peak memory proportional to the exact-duplicate rate — nil on FineWeb2 (Finding H), ~2× on
      Roman-Urdu-Parl's collapsing rows, which this machine has no headroom for.
-   - **Close the browser and the editor before the FineWeb2 run.** ~4.5 GB of index against ~2 GB
-     free, on a machine whose pagefile is on `D:`.
+   - **Close the browser and the editor before the FineWeb2 run.** Projected from Wikipedia's
+     measured ratios (0.645 candidate pairs and 0.139 retained pairs per document) at 5.26M
+     documents: sketches and ids **3.68 GB**, stage 6's index **1.47 GB**, the `seen_pairs` set
+     **0.24 GB**, retained-pair arrays 0.01 GB — **~5.4 GB**, against ~2 GB free on a 16 GB machine
+     whose pagefile is on `D:`. Neither `max_candidate_pairs` (20M) nor `max_retained_pairs` (40M)
+     is close at the projected 3.4M and 0.7M, so the ceilings will not fire first — memory will.
+     FineWeb2 should sit *below* Wikipedia's pair ratios, since Finding H says 31% was already
+     MinHash-removed upstream; if it comes out above them, that is the number to report.
    - **Watch `largest_cluster` on both.** Nothing caps a component's size; the reason to believe it
      stays small at 0.80 is a measurement on Wikipedia (23 here), and a source with heavier
      templating can chain.

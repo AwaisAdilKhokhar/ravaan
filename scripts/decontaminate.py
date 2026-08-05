@@ -246,10 +246,13 @@ def load_eval_files(
     The text is taken as written. Stage 9 already emitted it post-stage-4, and normalizing twice
     would be harmless but claiming a pass that did not happen would not be, so
     ``--eval-file-normalize`` is explicit for the hand-built sets that have not been through it.
+
+    **Redaction is not optional and is not behind that flag.** See :func:`load_eval_sets`.
     """
     loaded: dict[str, dict] = {}
     encoding_config = EncodingConfig()
     normalization_config = NormalizationConfig()
+    pii_config = PIIConfig()
 
     for spec in specs:
         path, name, unit = _parse_eval_file(spec)
@@ -281,6 +284,7 @@ def load_eval_files(
                     if not checked.accepted:
                         continue
                     text = normalize_text(checked.text or "", normalization_config)
+                text = redact_text(text, pii_config)
                 index.add_eval_item(name, record.get("doc_id") or f"{name}:{line_number}", text)
                 loaded[name]["items"] += 1
     return loaded
@@ -301,9 +305,18 @@ def load_eval_sets(
     an eval item that stage 5 would have rejected is still contamination if it is in the training
     data. Stages 2 and 4 do run, because the eval sets must be normalized by the same pass as the
     corpus or the comparison measures the normalizer rather than the overlap.
+
+    **The PII pass runs on this side too, and it is not optional.** Same argument one stage on: the
+    corpus side is redacted before it is ever hashed, so a training document whose only overlap with
+    an eval item is a phone number matches nothing — the hit disappears and the document stays in.
+    There is no configuration in which redacting one side and not the other is correct, so there is
+    no flag for it. Running it twice is free: §6.3's placeholders carry no digits and no letters
+    precisely so that redaction is idempotent, which is what lets this be unconditional even for
+    stage 9's held-out split, which arrives already redacted.
     """
     encoding_config = EncodingConfig()
     normalization_config = NormalizationConfig()
+    pii_config = PIIConfig()
     loaded: dict[str, dict] = {}
 
     for spec in specs:
@@ -339,7 +352,9 @@ def load_eval_sets(
                 checked = validate_text(text, encoding_config)
                 if not checked.accepted:
                     continue
-                normalized = normalize_text(checked.text or "", normalization_config)
+                normalized = redact_text(
+                    normalize_text(checked.text or "", normalization_config), pii_config
+                )
                 index.add_eval_item(name, doc.doc_id, normalized)
                 loaded[name]["items"] += 1
     return loaded

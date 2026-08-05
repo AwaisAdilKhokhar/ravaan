@@ -19,6 +19,7 @@ Two of them are the whole reason the header exists:
 from __future__ import annotations
 
 import csv
+import json
 from pathlib import Path
 
 import pytest
@@ -259,3 +260,81 @@ def test_to_dict_reports_what_the_manifest_needs() -> None:
     assert payload["ids"] == 2
     assert payload["applied"] == 1
     assert payload["unapplied"] == 1
+
+
+# --- the eval side of stage 8 ----------------------------------------------
+# Driver code is otherwise untested in this suite. This one property is here because it is
+# freeze-critical and silent: stage 8 compares the corpus against the eval sets, the corpus side is
+# redacted before it is ever hashed, and an eval side that is *not* redacted makes every
+# phone-number-only overlap vanish — leaving the contaminated training document in, with the pass
+# reporting a clean corpus. Session 13 named it; session 14 wired it.
+
+
+RAW = (
+    "the contact for this office is 0300-1234567 and the address for correspondence "
+    "is info@example.com, quoted here so both sides have something to redact"
+)
+REDACTED = (
+    "the contact for this office is [#] and the address for correspondence "
+    "is [@], quoted here so both sides have something to redact"
+)
+
+
+def _decontaminate_module():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "_decontaminate", Path(__file__).resolve().parents[1] / "scripts" / "decontaminate.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_eval_sets_are_redacted_before_stage_8_indexes_them(tmp_path: Path) -> None:
+    """The eval item arrives with a live phone number; the corpus side always arrives redacted.
+
+    So the match can only be found if the loader redacted the eval side too. Asserted as a *hit*
+    rather than by inspecting the index, because the hit is the thing stage 8 exists to produce.
+    """
+    from ravaan.data.decontamination import Decontaminator
+
+    driver = _decontaminate_module()
+    path = tmp_path / "eval.jsonl"
+    path.write_text(
+        json.dumps({"doc_id": "e1", "text": RAW}) + "\n", encoding="utf-8", newline="\n"
+    )
+
+    index = Decontaminator()
+    driver.load_eval_files(index, [f"{path}:probe"], limit=None)
+    index.seal()
+
+    verdict = index.check("d1", REDACTED)
+    assert not verdict.kept, "a redacted training document must still match the eval item"
+    assert verdict.eval_set == "probe"
+
+
+def test_redacting_one_side_only_destroys_the_match(tmp_path: Path) -> None:
+    """The negative control, and the measurement behind session 13's warning.
+
+    Same eval item, same document, differing only in whether *one* side was redacted — and stage 8
+    goes from removing the document to clearing it. Two redactions in a 28-word document move
+    containment below the threshold, because the placeholders sit inside five word-shingles each.
+
+    This is the state stage 8 was in before session 14: corpus redacted, eval sets not. A training
+    document whose only overlap with a test item is a phone number was not merely *scored* lower —
+    it was **kept**, and the pass reported a clean corpus.
+    """
+    from ravaan.data.decontamination import Decontaminator
+
+    driver = _decontaminate_module()
+    path = tmp_path / "eval.jsonl"
+    path.write_text(
+        json.dumps({"doc_id": "e1", "text": RAW}) + "\n", encoding="utf-8", newline="\n"
+    )
+
+    index = Decontaminator()
+    driver.load_eval_files(index, [f"{path}:probe"], limit=None)
+    index.seal()
+
+    assert index.check("d1", RAW).kept, "one side redacted and the other not: the hit disappears"

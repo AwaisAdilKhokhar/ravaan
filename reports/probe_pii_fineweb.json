@@ -1,0 +1,770 @@
+{
+  "source": "fineweb2-urd_Arab",
+  "split": "train",
+  "limit": 20000,
+  "sample_rate": 0.02,
+  "seed": 0,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 20000,
+    "documents_accepted": 19997,
+    "documents_rejected": 3,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.99985,
+    "bytes_in": 89850281,
+    "chars_out": 50666280,
+    "replacement_chars": 33,
+    "mojibake_chars": 0,
+    "control_chars": 0,
+    "verdicts": {
+      "ok": 19997,
+      "replacement_heavy": 3
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 19997,
+    "documents_kept": 19997,
+    "keep_rate": 1.0,
+    "documents_by_prior": 0,
+    "prior_rate": 0.0,
+    "mixed_documents": 509,
+    "letters": 38569663,
+    "labels": {
+      "code_switched": 78,
+      "urdu": 19919
+    },
+    "letters_by_label": {
+      "code_switched": 127997,
+      "urdu": 38441666
+    },
+    "segment_letters": {
+      "arabic": 3636,
+      "code_switched": 20284,
+      "english": 95446,
+      "hindi": 1545,
+      "other": 39295,
+      "persian": 88,
+      "roman_urdu": 7684,
+      "urdu": 571319
+    }
+  },
+  "stage4_normalization": {
+    "normalizer_version": "1.0.0",
+    "config_fingerprint": "afc7afac420e",
+    "config": {
+      "expand_presentation_forms": true,
+      "unify_yeh": true,
+      "unify_kaf": true,
+      "unify_heh": true,
+      "map_teh_marbuta": true,
+      "unify_alef": true,
+      "remove_tatweel": true,
+      "remove_zero_width": true,
+      "remove_zwnj": true,
+      "remove_bidi_marks": true,
+      "remove_harakat": false,
+      "digits": "ascii",
+      "normalize_whitespace": true,
+      "max_consecutive_newlines": 2
+    },
+    "documents": 19997,
+    "documents_changed": 3421,
+    "chars_in": 50666280,
+    "chars_out": 50708430,
+    "chars_removed": -42150,
+    "counts": {
+      "alef": 5540,
+      "digits": 17514,
+      "heh": 19079,
+      "kaf": 10969,
+      "presentation_forms": 6701,
+      "tatweel": 2649,
+      "teh_marbuta": 6303,
+      "whitespace": 555,
+      "yeh": 33214,
+      "zero_width": 119
+    }
+  },
+  "stage5_quality": {
+    "quality_version": "1.0.0",
+    "config_fingerprint": "53d04d3fd079",
+    "config": {
+      "min_chars": 400,
+      "min_words": 40,
+      "min_urdu_script_ratio": 0.6,
+      "min_roman_script_ratio": 0.6,
+      "min_mixed_script_ratio": 0.9,
+      "max_dup_line_ratio": 0.5,
+      "max_top_ngram_ratio": {
+        "3": 0.26,
+        "4": 0.22
+      },
+      "max_dup_ngram_ratio": {
+        "5": 0.6,
+        "6": 0.58,
+        "7": 0.56,
+        "8": 0.54,
+        "9": 0.52,
+        "10": 0.5
+      },
+      "max_repetition_words": 100000,
+      "max_url_ratio": 0.3,
+      "max_html_ratio": 0.1,
+      "max_replacement_rate": 0.001
+    },
+    "documents": 19997,
+    "documents_kept": 19325,
+    "documents_rejected": 672,
+    "keep_rate": 0.966395,
+    "chars_in": 50708430,
+    "chars_kept": 50458273,
+    "char_keep_rate": 0.995067,
+    "rejections": {
+      "script_ratio": 13,
+      "too_short": 660
+    },
+    "families": {
+      "script_ratio": 13,
+      "too_short": 660
+    },
+    "sole_rejections": {
+      "script_ratio": 12,
+      "too_short": 659
+    },
+    "by_label": {
+      "code_switched": 78,
+      "urdu": 19919
+    },
+    "kept_by_label": {
+      "code_switched": 70,
+      "urdu": 19255
+    },
+    "chars_kept_by_label": {
+      "code_switched": 162909,
+      "urdu": 50295364
+    },
+    "truncated_documents": 0
+  },
+  "stage5_distributions": {
+    "chars": {
+      "p1": 306.0,
+      "p5": 453.0,
+      "p25": 850.0,
+      "p50": 1432.0,
+      "p75": 2772.0,
+      "p90": 5662.0,
+      "p95": 7505.0,
+      "p99": 15768.0,
+      "max": 178231.0,
+      "mean": 2535.80187
+    },
+    "dup_line_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.08707,
+      "max": 0.19897,
+      "mean": 0.00218
+    },
+    "html_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.0,
+      "max": 0.06631,
+      "mean": 0.0
+    },
+    "max_dup_ngram": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.03687,
+      "p75": 0.09163,
+      "p90": 0.15789,
+      "p95": 0.19803,
+      "p99": 0.26354,
+      "max": 0.44236,
+      "mean": 0.05796
+    },
+    "max_top_ngram": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.01649,
+      "p50": 0.02916,
+      "p75": 0.04581,
+      "p90": 0.06442,
+      "p95": 0.07656,
+      "p99": 0.09903,
+      "max": 0.15314,
+      "mean": 0.03305
+    },
+    "script_ratio": {
+      "p1": 0.82319,
+      "p5": 0.95312,
+      "p25": 0.99832,
+      "p50": 1.0,
+      "p75": 1.0,
+      "p90": 1.0,
+      "p95": 1.0,
+      "p99": 1.0,
+      "max": 1.0,
+      "mean": 0.9909
+    },
+    "url_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.00485,
+      "max": 0.14437,
+      "mean": 0.00025
+    },
+    "words": {
+      "p1": 62.0,
+      "p5": 93.0,
+      "p25": 176.0,
+      "p50": 298.0,
+      "p75": 587.0,
+      "p90": 1212.0,
+      "p95": 1612.0,
+      "p99": 3356.0,
+      "max": 39164.0,
+      "mean": 538.55188
+    }
+  },
+  "stage5_rejected_examples": {
+    "script_ratio": [
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:36c1c5ef-d508-4a38-b600-754a29fbe282>",
+        "text": "تلاش شدہ نتائج\nمحفوظ شدہ الفاظ\n\"مُن٘ہ دِکھانے کے قابِل نَہ چھوڑْنا\" کے متعقلہ نتائج\nمُن٘ہ دِکھانے کے قابِل نَہ چھوڑْنا\nmu.nh dikhaane ke qaabil na chho.Dnaa•मुँह दिखाने के क़ाबिल न छोड़ना\nمُن٘ہ دِکھانے کے قابِل نَہ چھوڑْنا کے اردو معانی\n- نہایت شرمندہ کرنا ، نہایت ذلیل کردینا ، ناک کٹوا دینا ۔\nमुँह "
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:c344a26d-c258-4ab9-9df0-e474914aa126>",
+        "text": "پاکیزگی کیا ہے؟\nپویتراتا یسوع کی طرح زیادہ بننے کے لئے ہے!\nپویتراتا ہم میں خدا کا کام ہے جو یسوع میں یقین نہیں ہے. انہوں نے کہا کہ صورت گری کی پرورش اور ہم کو تبدیل کرنا چاہتا ہے.\nAv Christer Åberg\nlördag, 21 september 2019 17:41\nپویتراتا عمل ہے جو یسوع میں ایمان کے ذریعے محفوظ کی جاتی ہیں ان لوگوں "
+      }
+    ],
+    "too_short": [
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:ec7848b4-accb-49e5-9666-9b8f94ebbbd0>",
+        "text": "عمر گل نے خصوصی انٹرویو میں کرکٹ پاکستان سے گفتگو کی\n'کون چھوڑتا ہے اس سے کوئی فرق نہیں پڑتا': عماد وسیم\n12/Sep/2020\nبابر کی نقل نہیں کرنا چاہتا، پہلا طیب طاہر بننا چاہتا ہوں۔\nکیا محمد عامر کی قومی کرکٹ ٹیم میں واپسی ہوگی؟\nکیا اینڈی فلاور پاکستان ٹیم کے ہیڈ کوچ ہوں گے؟\nکیا آپ بابر اعظم کی اب تک کی ک"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:6a93218a-1dfd-4dfa-bb2c-040462890673>",
+        "text": "او جی ڈی سی ایل ٹی20 بلائنڈ سپر لیگ (کل) منگل سے کوئٹہ میںشروع ہوگی\nاتوار اپریل 13:20\n(جاری ہے)\nمزید متعلقہ خبریں پڑھئیے :\nوزیر اعظم کے وژن اور وزیر اعلیٰ کی رہنمائی میں وزارت اطلاعات میں کوئی کرپشن ہوگی نہ بد عنوانی ،قانون اور رولز ریگولیشنز کے مطابق کام چلائیں گے، فیاض ..\nوفاقی حکومت کی طرف سے سند"
+      }
+    ]
+  },
+  "pii": {
+    "pii_version": "1.0.0",
+    "config_fingerprint": "ac44c4eb5021",
+    "config": {
+      "redact_emails": true,
+      "redact_phones": true,
+      "email_placeholder": "[@]",
+      "phone_placeholder": "[#]",
+      "min_national_digits": 10,
+      "min_national_digits_unseparated": 11,
+      "max_national_digits": 12,
+      "min_international_digits": 10,
+      "max_international_digits": 13,
+      "max_shapes": 200
+    },
+    "documents": 19997,
+    "documents_redacted": 201,
+    "chars_in": 50708430,
+    "chars_out": 50704163,
+    "chars_removed": 4267,
+    "counts": {
+      "email": 141,
+      "phone": 142
+    },
+    "distinct_shapes": 36,
+    "shapes_dropped": 0,
+    "shapes": {
+      "email:xxxxx@xxxxxxx.xxx": 75,
+      "email:xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx": 66,
+      "phone:ddddddddddd": 49,
+      "phone:dddddddddddddd": 20,
+      "phone:dddd-ddddddd": 9,
+      "phone:ddd-dddddddd": 5,
+      "phone:dddd ddd ddddddd": 5,
+      "phone:dddd-dd-dddddddd": 4,
+      "phone:dddd-ddd-ddddddd": 4,
+      "phone:+dddddddddddd": 4,
+      "phone:ddd-ddddddd": 4,
+      "phone:+dd-ddd-dd-dd-ddd": 4,
+      "phone:+d ddd ddd dddd": 3,
+      "phone:+ddd-dd-ddddddd": 2,
+      "phone:+dd dddddddddd": 2,
+      "phone:+dddddddddd-dd": 2,
+      "phone:+d-ddd-ddd-dddd": 2,
+      "phone:ddd ddd dddd": 2,
+      "phone:+dd–dd-dd-dd-dd-dd": 2,
+      "phone:+ddd-dddd-ddddd": 2,
+      "phone:+dd-d-dddd-dddd": 2,
+      "phone:+ddddddddddddd": 1,
+      "phone:ddd dddd dddd": 1,
+      "phone:+dd d dddd dddd": 1,
+      "phone:ddd-ddd ddd ddd": 1,
+      "phone:dddd ddd ddd": 1,
+      "phone:dddd-dddddddd": 1,
+      "phone:ddddd ddd-ddd-dddd": 1,
+      "phone:+dd dd ddd dd dd": 1,
+      "phone:+d ddd-ddd-dddd": 1,
+      "phone:dddd dddd (dd": 1,
+      "phone:ddddddddddddddd": 1,
+      "phone:+dd-ddd-dddd-ddd": 1,
+      "phone:+dd ddd ddddddd": 1,
+      "phone:+dd d ddddddd": 1,
+      "phone:+dd-dd)ddd-ddd-ddd": 1
+    }
+  },
+  "pii_examples": {
+    "email": [
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:c31bdf83-a327-4ef3-8e74-7d33e8baf732>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "ں یا لکھنا چاہتے ہیں ؟ اگر ہاں تو آپ ہمیں اپنے آئیڈیاز [@] پر بھیج سکتے ہیں۔"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:6f21edd3-401e-43fa-9b6c-a008db125a8d>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "چند روزے ٹھنڈے موسم میں گزریں گے Leave a Comment / By [@] / March 31, 2023 March 31, 2023 لاہور مزید چند روزے ٹھ"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:c0287423-b36a-4cea-8af1-d2b81a370998>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "بر، فیس بُک آئی ڈی اور اپنے مختصر تعارف کے ساتھ [@] یا [@] پر اِی میل کر دیجیے۔ تحریر شائع کرنے کا فیصلہ ایڈیٹوری"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:94f7af7a-6659-4683-8c27-77304aff3fe6>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "ا کوئی خبر شائع کر نا چاہتے ہیں تو ہمارے آفیشیل ای میل [@] پر براہ راست ای میل کر سکتے ہیں۔ انتظامیہ قلب نیوز ڈاٹ"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:5d6832ef-7a14-44aa-8023-21816e398e25>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "بر، فیس بُک آئی ڈی اور اپنے مختصر تعارف کے ساتھ [@] یا [@] پر اِی میل کر دیجیے۔ تحریر شائع کرنے کا فیصلہ ایڈیٹوری"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:7a459c62-84b1-4872-9b30-d3e166a7af88>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "ریں جہاں سے آپ لکھ رہے ہیں۔ ڈاکٹر ہائیمرز کا ای میل ہے [@] (click here) ۔ آپ ڈاکٹر ہائیمرز کو کسی بھی زبان میں لک"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:f8aba82f-f22c-4273-81d8-5728e94f5457>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "ا کوئی خبر شائع کر نا چاہتے ہیں تو ہمارے آفیشیل ای میل [@] پر براہ راست ای میل کر سکتے ہیں۔ انتظامیہ قلب نیوز ڈاٹ"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:0cdacf80-957e-4f63-9f7b-fcc10c006cdd>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "آف کامرس، آرٹس اینڈ سائنس، پٹنہ میں اردو کے استاد ہیں] [@] (اگر زحمت نہ ہو تو ادبی میراث کے یوٹیوب چینل کو ضرور س"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:36c1c5ef-d508-4a38-b600-754a29fbe282>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "تضاد اور غلطیوں کی اصلاح کے لیے اپنے تجاویز و آرا ہمیں [@] پر ارسال کیجیے۔ یا رائے زنی کیجیے حوالہ جات: ریختہ ڈکش"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:e2af2d5d-7b3d-4db3-ac39-e3274c5ec490>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "تضاد اور غلطیوں کی اصلاح کے لیے اپنے تجاویز و آرا ہمیں [@] پر ارسال کیجیے۔ یا رائے زنی کیجیے حوالہ جات: ریختہ ڈکش"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:12f8a1b0-606e-4413-ae43-ee8a4e36c04c>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "-e-Arifia, Sayed Sarawan, Kaushambi,U.P. {6d} E-mail:[@] Ph: {10d} / {10d} پیش لفظ 2012ء میں جامعہ عا"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:9997671e-a59a-43bf-9099-340bf4098991>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "بٹن پر کلک کیجئے۔ [#]، {8d}، {8d} [#]، {7d} [@] بنک تفصیلات کے لیے یہاں کلک کریں"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:acd2826a-b7da-4eb9-af2d-6dcc38e7d5ae>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "پ کو جواب نہیں دے سکتے۔ ڈاکٹر ہائیمرز کا ای۔میل ایڈریس [@] ہے۔ ہمارے لڑنے کے ہتھیار THE WEAPONS OF OUR WARFARE ڈ"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:12af3279-b647-497c-9950-ee83e81464ff>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "بٹن پر کلک کیجئے۔ [#]، {8d}، {8d} [#]، {7d} [@] بنک تفصیلات کے لیے یہاں کلک کریں"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:e210abda-b26b-4445-ade3-6375ac38b7b0>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "فون نمبر، فیس بُک آئی ڈی اور اپنے مختصر تعارف کے ساتھ [@] یا [@] پر اِی میل کر دیجیے۔ تحریر شائع کرنے کا فیصلہ ا"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:d412d581-906f-48b7-9fad-a67504447ef9>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "پ کو جواب نہیں دے سکتے۔ ڈاکٹر ہائیمرز کا ای۔میل ایڈریس [@] ہے۔ دُکھ سہنے کے لیے پُختہ اِرادہ DETERMINED TO SUFFE"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:803a95f1-0d6c-481e-bd08-08971b6aa268>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "لوبل کمیونی کیشنز دیلوئے توش توماتسو لمیٹڈ موبائل: [#] [@]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:18aae96d-d42a-4835-a0cd-3acd3a8d4121>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "ور معاشی بحران ختم ، معشیت ترقی کے شاہراہ پر گامزن ہو۔ [@]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:83df9ca4-986b-4b88-8c4c-e9f266ce4efc>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "لئے بلاگ لکھنا چاہتے ہیں تو اپنی تحاریر ای میل ایڈریس ’[@]‘ یا واٹس ایپ \"[#]\" پر بھیج دیں۔"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:76555da4-3231-40a5-9742-abb9c8228478>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": ")||[#]| |Helpline||[#]| |Customer Service (UAE)||[#]| |[@]| |Dr. Hakeem Muhammad Irfan Skype ID||alshifa.herbal|"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:5ff2c2f4-a2da-4aff-ae78-943161b85b07>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "لے جائے۔ {مضمون نگار روزنامہ شان سدھارتھ کے صحافی ہیں} [@] {10d}/{10d}"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:cdf75e70-83f2-4d35-9435-faeed3c9673d>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "ت بھی آئے…. Azam Azim Azam تحریر : محمد اعظم عظیم اعظم [@]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:8c06edea-8e65-45e0-a264-5991898f7102>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "عارفہ مظفر (647) {7d} [@] ماجد جمال (416) {7d} [@]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:42b7a422-5fd2-4d53-873b-c1fecc2d0ee1>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "مانے پر حتی الواسع آزادی قدس کی تحریک کا اہتمام کریں ۔ [@] cell no {10d}"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:cb9dbba1-9f86-48fe-aaa0-f1ba9bb72974>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "حسین قریشی بلڈانہ مہاراشٹر اپنے مضامین اور خبر بھیجیں [@] {10d} ہمیں فیس بک پیج پر بھی فالو کریں https://ww"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:0d72f68a-5f71-474d-b864-61af13ad2245>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "site visit WWW.BAHAIAWARENESS.COM | feedback? write to [@]| ختم نبوت - مقدمہ حضرت نبی کریم صلی اللہ علیہ وسلم کا"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:42f860b3-d4f5-41d7-8fc2-3f83b0296460>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "دعا از من وجہاں آمین آباد ۔ اپنے مضامین اور خبر بھیجیں [@] {10d} ہمیں فیس بک پیج پر بھی فالو کریں https://ww"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:acd2826a-b7da-4eb9-af2d-6dcc38e7d5ae>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "ریں جہاں سے آپ لکھ رہے ہیں۔ ڈاکٹر ہائیمرز کا ای میل ہے [@] (click here) ۔ آپ ڈاکٹر ہائیمرز کو کسی بھی زبان میں لک"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:787a44dd-1ab0-4553-b0d2-d3d5b7636b5a>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "لطانہ اس بار کوئی مصلحت کا راستہ اختیار کرنا چاہتی ہے۔ [@]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:4bc515ee-2caf-4c71-8cdf-d07e6ddf5723>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "ین ٹی ٹی کمیونی کیشنز کارپوریشن، ٹیلی فون: [#] ای میل: [@]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:f0377552-9e8c-4097-a736-31c597473a99>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "فون نمبر، فیس بُک آئی ڈی اور اپنے مختصر تعارف کے ساتھ [@] یا [@] پر اِی میل کر دیجیے۔ تحریر شائع کرنے کا فیصلہ ا"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:4e346571-47f9-439d-9e9b-2a382c1f53ab>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "بارے میں آپ کے پاس کوئی اضافی سوالات ہیں تو ، براہ کرم [@] پر ای میل کریں اور ہم آپ کی مدد کرنے میں خوش ہوں گے۔ ہ"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:c5833e11-8fd3-4100-be01-5a2f64081ef5>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "ریں جہاں سے آپ لکھ رہے ہیں۔ ڈاکٹر ہائیمرز کا ای میل ہے [@] (click here) ۔ آپ ڈاکٹر ہائیمرز کو کسی بھی زبان میں لک"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:e8658046-1b2d-434c-9703-58d1ca611cdb>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "فون نمبر، فیس بُک آئی ڈی اور اپنے مختصر تعارف کے ساتھ [@] یا [@] پر اِی میل کر دیجیے۔ تحریر شائع کرنے کا فیصلہ ا"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:3d757a82-fe0d-41ad-b8fa-eaed3e6ca11e>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "بلاتکلف ای میل کر دیجیے گا۔ www.mubashirnazir.org and [@]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:5c21a818-0d82-4d84-8f64-9f6f8d6eb1c2>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "مائے آمین- کریم گنج،پورن پور،پیلی بھیت،مغربی اتر پردیش [@]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:93325d4f-0277-4763-965d-f487ec01530b>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "بھی خود بند کرنا پڑتا ہے۔ Kashif Butt تحریر : کاشف بٹ [@]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:e8658046-1b2d-434c-9703-58d1ca611cdb>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "بر، فیس بُک آئی ڈی اور اپنے مختصر تعارف کے ساتھ [@] یا [@] پر اِی میل کر دیجیے۔ تحریر شائع کرنے کا فیصلہ ایڈیٹوری"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:75de0793-2d40-4b1f-a71c-28748731f56a>",
+        "shape": "xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx",
+        "context": "ے۔ یو آی ایل کو حادثہ کی اطلاع {9d}:پر دیں۔ [@]،[@]، [@] : ای میل کلیم کی اطلاع سے قبل درج ذیل معلومات تیا"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:8119d9f8-5aa3-41c7-912a-2681208046f7>",
+        "shape": "xxxxx@xxxxxxx.xxx",
+        "context": "ت کی سیکڑوں تحقیقاتی رپورٹوں کے ساتھ خاک پھانک رہی ہے۔ [@]"
+      }
+    ],
+    "phone": [
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:fd5c57b3-e831-4062-a02c-43f3df6398c6>",
+        "shape": "ddddddddddd",
+        "context": "لا موبائل VIVO Y21برنگ بلیو مالیتی 39000روپے سم نمبران [#]، {11d}ایمی نمبران {15d}، {12d}"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:8270a1ab-81e8-447c-b71a-ed50b1edb18b>",
+        "shape": "dddd-ddddddd",
+        "context": "کانفرنس کی براہ راست کوریج فرمائیں۔ شکریہ برائے رابطہ: [#] /988/ن"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:ccd4c6e3-324c-4019-9b6e-db127a3e0831>",
+        "shape": "ddd ddd dddd",
+        "context": "مسائل یا ُبلنگ ورک سیف وکٹوریا مشورے کے لیے فون لائن: [#] ہنگامی صورتحال: {6d}"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:983b5480-9d69-4a38-8fe8-417c70ba1e4a>",
+        "shape": "dddd-ddd-ddddddd",
+        "context": "سبسکرائب کے بٹن پر کلک کیجئے۔ [#]، {8d}، {8d} [#]، {7d} [@] بنک تفصیلات کے لیے یہاں کلک کریں"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:e059ea8e-f0d2-400a-bd84-cc55befca2f7>",
+        "shape": "+dd-d-dddd-dddd",
+        "context": "زنس ڈویژن، این ٹی ٹی کمیونی کیشنز کارپوریشن، ٹیلی فون: [#]، ای میل: [email protected]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:d86cace2-abb6-44d7-956f-df259ceb2902>",
+        "shape": "dddd-ddddddd",
+        "context": "ے لئے ہمیشہ حاضر ہے۔ Zahid Mehmood تحریر : زاہد محمود ([#])"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:4cfc354e-fa34-4048-a0f8-ca46b390e9ee>",
+        "shape": "ddddddddddd",
+        "context": "ی کی صورت میں دیے گئے نمبرز پر رابطہ کرسکتے ہیں۔ سندھ: [#]، [#] خیبر پختونخوا: 1700 اسلام آباد: 1166 گلگت بلتستان"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:a6719ffe-f9b3-4a86-9504-3334bcff539b>",
+        "shape": "+dd-ddd-dd-dd-ddd",
+        "context": "صل کرنا چاہیں تو بلا جھجک مجھ سے رابطہ کر سکتے ہیں [@] [#] begin_of_the_skype_highlighting [#] end_of_the_skype_h"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:4cfc354e-fa34-4048-a0f8-ca46b390e9ee>",
+        "shape": "ddddddddddd",
+        "context": "700 اسلام آباد: 1166 گلگت بلتستان: {9d} واٹس ایپ: [#]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:2c467092-93fa-43d1-9613-4b114e92f031>",
+        "shape": "+dd-dd)ddd-ddd-ddd",
+        "context": "کلک کریں یا رہنمائی کےلئے ہمارے 24/7کال سینٹر کے نمبر([#] پر رابطہ کریں۔ آپ کی یوزر آئی ڈی خفیہ ہے اور اسے کسی ک"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:ccd4c6e3-324c-4019-9b6e-db127a3e0831>",
+        "shape": "ddd ddd dddd",
+        "context": "میں تاخیر، اور حراستی مراکز کامن ویلتھ اومبڈزمین فون: [#] قانونی مدد وکٹوریا لیگل ایڈ فون: {10d} پولیس کے"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:b228035f-45d1-428c-a8a0-e3ed295b35f6>",
+        "shape": "+dd d dddd dddd",
+        "context": "یٹ فوڈ جمعرات ، رونسڈورفر اسٹرای 134 ، 40233 ڈسلڈورف ، [#]. مخلصانہ فرض کی ایک اور عمومی مثال پرنسپل / ایجنٹ کے ت"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:caa800c3-52e6-4196-9316-0e1abb5a7557>",
+        "shape": "dddd ddd ddddddd",
+        "context": "کے لئے خواتین [#] یا [#] پر اور مرد حضرات بلال صاحب سے [#] پر رابطہ قائم کریں۔"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:803a95f1-0d6c-481e-bd08-08971b6aa268>",
+        "shape": "+d-ddd-ddd-dddd",
+        "context": "نا گلوبل کمیونی کیشنز دیلوئے توش توماتسو لمیٹڈ موبائل: [#] [@]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:69c7205a-c877-4128-885c-598ab560fda8>",
+        "shape": "dddd-ddddddd",
+        "context": "ش منگوانے کے لئے ہم سے ان نمبرز پر رابطہ کریں۔ Female: [#] Male: [#]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:abf8d0d4-c61f-4305-ac01-4fea7c9585a4>",
+        "shape": "ddddddddddd",
+        "context": "ت فرمائیں گے۔ مزید معلومات کے لئےاس نمبر پر رابطہ کریں:[#]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:3d56d0d7-1e7e-46d9-8281-48299f467ae2>",
+        "shape": "ddddddddddd",
+        "context": "۔ ₨ {6d} in stock Order This Product On WhatsApp # [#] Product Details نبی کریم صلی اللہ علیہ وسلم کا جود و س"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:ce9746bb-1518-4158-9ddf-98b1d7ec64a9>",
+        "shape": "ddddddddddd",
+        "context": "کی خواہش مند ٹیمیں آرگنائزر ریحان بابو سے موبائل نمبر [#]پر رابطہ کریں۔"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:424468b3-7a84-47dc-8383-3924b266aa99>",
+        "shape": "dddd-dddddddd",
+        "context": "مل ہیں۔ براہ کرم مزید تفصیل کے لئے کسٹمر سروس ہاٹ لائن [#] سے رابطہ کریں"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:c6882cfd-a527-4205-a8cd-6a2f6ee7e5d9>",
+        "shape": "ddddddddddddddd",
+        "context": "براہ راست کال کی جا سکتی ہے۔ - عراق سے باہر سے زائرین ([#]) نمبر پرکال کرسکتے ہیں ، لیکن یہ کال بلامعاوضہ نہیں ہے"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:caa800c3-52e6-4196-9316-0e1abb5a7557>",
+        "shape": "dddd ddd ddddddd",
+        "context": "لہ حاصل کر سکتے ہیں۔تعویذ منگوانے کے لئے خواتین [#] یا [#] پر اور مرد حضرات بلال صاحب سے [#] پر رابطہ قائم کریں۔"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:2a1769ac-0b72-4abe-b670-bca2807fa684>",
+        "shape": "ddddddddddd",
+        "context": "ھی ہراسمنٹ کی صورت میں وہ کراچی پولیس کے واٹس ایپ نمبر [#] پر فوری شکایت درج کرائیں۔"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:70d08ac6-d7ec-420d-8cd3-e3a74b3f3003>",
+        "shape": "dddddddddddddd",
+        "context": "الم نگار کے نام کیساتھ ایس ایم ایس اور واٹس ایپ رائےدیں[#])"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:9997671e-a59a-43bf-9099-340bf4098991>",
+        "shape": "dddd-ddd-ddddddd",
+        "context": "سبسکرائب کے بٹن پر کلک کیجئے۔ [#]، {8d}، {8d} [#]، {7d} [@] بنک تفصیلات کے لیے یہاں کلک کریں"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:83df9ca4-986b-4b88-8c4c-e9f266ce4efc>",
+        "shape": "ddddddddddd",
+        "context": "تے ہیں تو اپنی تحاریر ای میل ایڈریس ’[@]‘ یا واٹس ایپ \"[#]\" پر بھیج دیں۔"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:c1904a24-522d-49c4-8bdc-3431b9b5d4e4>",
+        "shape": "ddddddddddd",
+        "context": "سیل میں رجسٹر کراسکتے ہیں۔ کمپلین سیل کے متعلقہ نمبرز [#] کے علاوہ سیل کے اراکین ریاض احمد [#]، محب علی [#] اور"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:ccd4c6e3-324c-4019-9b6e-db127a3e0831>",
+        "shape": "dddd dddd (dd",
+        "context": "خواست گزار، پناہ گزین اور تارکین وطن ریفیوجی لیگل فون: [#])، صبح 10 بجے سے دوپہر 2 بجے، بدھ اور جمعہ صارفین کے حق"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:ee29377f-8a83-4fcc-9173-403f9fff35af>",
+        "shape": "ddddddddddd",
+        "context": "ھر میں گرڈ اسٹیشنز پر سکیورٹی کی فراہمی کا مطالبہ کیا۔ [#]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:76555da4-3231-40a5-9742-abb9c8228478>",
+        "shape": "+dd-ddd-dd-dd-ddd",
+        "context": "کروں گا۔ انشاءاللہ عزوجل |Customer Service (Pakistan)||[#]| |Helpline||[#]| |Customer Service (UAE)||[#]| |[@]| |"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:88403674-0844-4881-972b-f41fe2f6de5a>",
+        "shape": "ddddddddddd",
+        "context": "و سکتا ہے۔ Muhammad Riaz Prince تحریر : محمد ریاض پرنس [#]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:6ad82f9a-3546-4a55-9f95-e921021614a7>",
+        "shape": "dddddddddddddd",
+        "context": "نگار کے نام کے ساتھ ایس ایم ایس اور واٹس ایپ رائے دیں [#])"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:9ce8d0ed-846b-49f9-9be8-beedc59258b8>",
+        "shape": "ddddddddddd",
+        "context": "ں یا براہ راست ڈاکٹر سے رابطے کے لۓ اس نمبر پر کال کریں[#] خواتین میں جنسی کمزوری کی اقسام خواتین میں جنسی کمزوری"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:76555da4-3231-40a5-9742-abb9c8228478>",
+        "shape": "+dd–dd-dd-dd-dd-dd",
+        "context": "لہ عزوجل |Customer Service (Pakistan)||[#]| |Helpline||[#]| |Customer Service (UAE)||[#]| |[@]| |Dr. Hakeem Muham"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:a94400fb-de0c-41d7-9697-9990a6a9cbe3>",
+        "shape": "dddddddddddddd",
+        "context": "پایا جاسکے۔ اداریہ پر ایس ایم ایس اور واٹس ایپ رائے دیں[#]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:2a69a011-8bca-4314-b98d-73442a6ef830>",
+        "shape": "+d ddd ddd dddd",
+        "context": "میہؤلا پیکی (میک ڈونلڈس کے پیچھے) ، ملانی ، HI ، USA ، [#]. فعال طور پر ACEDS سے مصدقہ ای ڈسکوری ماہر سرٹیفیکیشن"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:8eca742c-edc3-43ba-ba4a-dbf0d7ed6065>",
+        "shape": "ddddddddddd",
+        "context": "سے ہم خود کو نہیں نکالیں گے۔ ([@]) (محمد قاسم ٹانڈؔوی=[#])"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:8eca742c-edc3-43ba-ba4a-dbf0d7ed6065>",
+        "shape": "ddddddddddd",
+        "context": "(محمد قاسم ٹانڈؔوی=[#]) رواں ہفتے آر ایس ایس چیف ‘موہن بھاگوت’ کا \"پانچ جنیہ”"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:8e335a5b-d1bf-4dc2-a9d5-cde9d615cc77>",
+        "shape": "ddddddddddd",
+        "context": "خان کھوسو کو خراج عقیدت پیش کیا جائے گا۔ غلام محمدخان [#]"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:dd79d83d-ed16-4136-90da-1dbea3662db3>",
+        "shape": "ddddddddddd",
+        "context": "مد عمران، محمد زبیر، اور دیگر رفقا، بولٹن مارکیٹ کراچی [#] جواب الحمد للہ وحدہ، والصلاہ والسلام علی من لا نبی بعد"
+      },
+      {
+        "doc_id": "fineweb2-urd_Arab:<urn:uuid:69c7205a-c877-4128-885c-598ab560fda8>",
+        "shape": "dddd-ddddddd",
+        "context": "کے لئے ہم سے ان نمبرز پر رابطہ کریں۔ Female: [#] Male: [#]"
+      }
+    ]
+  },
+  "glotlid_agreement": {
+    "urd_Arab -> urdu": 19919,
+    "urd_Arab -> code_switched": 78
+  }
+}

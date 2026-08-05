@@ -44,9 +44,10 @@ lives in [`progress.md`](progress.md).
 
 ## Status
 
-Pre-alpha. Weeks 3–4 of 16. Nothing has been trained. Gate G0 (novelty) passed; the corpus
-pipeline has stages 1–8 built and validated against real text, and the raw corpus is on disk.
-See `progress.md`.
+Pre-alpha. Weeks 3–4 of 16. Nothing has been trained. Gate G0 (novelty) passed and Gate G1
+(corpus size, per population) passes on the measured corpus; all ten PRD §6.3 pipeline stages
+plus the PII pass are built and validated against real text, and the raw corpus is on disk. What
+remains before the freeze is the freeze runs themselves. See `progress.md`.
 
 ## Layout
 
@@ -99,18 +100,25 @@ python scripts/dedup.py --source urdu-wikipedia --limit 250000                  
 python scripts/neardedup.py --source urdu-wikipedia --limit 0 --sweep 0.7 0.8 0.9      # stage 7
 python scripts/decontaminate.py --eval roman-urdu-parl:test \
     --source roman-urdu-parl --split train --both-columns --limit 0                    # stage 8
+python scripts/split.py --source urdu-wikipedia --limit 0 --measure-only                # stage 9
+python scripts/pack.py --source urdu-wikipedia --limit 0 --measure-only                 # stage 10
 
 # the 200-sample manual validation PRD §6.3.5 requires
 python scripts/quality_sample.py draw --out reports/quality_sample.md
 ```
 
+PRD §6.3's PII pass (one regex for phone numbers and emails, and explicitly *not* a PII system)
+runs inside every driver above, between stage 5 and stage 6 — see `reports/pii.md`. `probe.py`
+reports what it fired on, and `ravaan-pii` runs it over a single file.
+
 Fixture tests prove a rule does what it says; only real text shows whether it fires on the right
 things. Session 4 found a mojibake detector that passed 57 unit tests and would have deleted 3% of
-a clean corpus, so every threshold in stages 2, 3, 5, 6, 7 and 8 is pointed at the actual sources
-before the corpus is frozen, and the output is committed under `reports/probe_*.json`. Session 10
-is the sharpest case: stage 8's first run over real text reported 648 contaminated documents, and
-reading them showed 59 of every 60 was a false positive from a threshold that meant one thing in
-words and another in characters.
+a clean corpus, so every threshold in stages 2, 3, 5, 6, 7 and 8 and in the PII pass is pointed at
+the actual sources before the corpus is frozen, and the output is committed under
+`reports/probe_*.json`. Session 10 is the sharpest case: stage 8's first run over real text
+reported 648 contaminated documents, and reading them showed 59 of every 60 was a false positive
+from a threshold that meant one thing in words and another in characters. Session 13 is the
+cheapest: eleven of the PII pass's first thirteen phone matches on Urdu Wikipedia were ISBNs.
 
 Sources are declared in [`configs/data/sources.json`](configs/data/sources.json): every source
 pinned to a commit SHA, every file carrying its SHA-256 before download, and every licence checked

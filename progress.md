@@ -18,8 +18,10 @@ first.**
   the gate reported `pass` on a corpus from which arm B cannot be assembled (Finding U). It also
   **built stage 10, the last pipeline stage** ([`reports/packing.md`](reports/packing.md)), fetched
   FineWeb2 shard 000, and measured the corpus that resulted: **Gate G1 now returns `PASS` on both
-  the aggregate and the mixture, with both arms fundable.** Every §6.3 stage exists; only the PII
-  pass and the freeze runs themselves remain.
+  the aggregate and the mixture, with both arms fundable.** **Session 13 built the PII pass**
+  ([`reports/pii.md`](reports/pii.md)) — the last unbuilt thing in §6.3 — and reading its matches
+  found that 11 of its first 13 phone hits on Wikipedia were ISBNs (Finding V). **Every §6.3 stage
+  now exists and every one has been pointed at real text; only the freeze runs themselves remain.**
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
 - **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds
@@ -28,12 +30,13 @@ first.**
   4 falsifiable predictions, before any training.
 - **PRD version:** **v2.2** (2026-08-05) — §0.2 amends §6.1, §4.3, §8.2, §10 and §11 for Finding R.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 552 passing (72 splits · 69 normalization · 60 decontamination · 57 encoding ·
-  57 acquisition · 52 minhash · **51 packing** · 43 quality · 41 dedup · 32 langid · 18 shards)
-- **Committed** through session 11, on branch `stages-7-and-8` (main is at session 8; fast-forward
+- **Tests:** 622 passing (72 splits · **70 pii** · 69 normalization · 60 decontamination ·
+  57 encoding · 57 acquisition · 52 minhash · 51 packing · 43 quality · 41 dedup · 32 langid ·
+  18 shards)
+- **Committed** through session 12, on branch `stages-7-and-8` (main is at session 8; fast-forward
   it when convenient). Sessions 6 and 7 are one commit — stage 5, its 200-sample validation and the
-  write-up are one deliverable. Sessions 9, 10 and 11 are one commit each: stage 7, stage 8, and
-  stage 9 with the second stage-8 run.
+  write-up are one deliverable. Sessions 9, 10, 11, 12 and 13 are one commit each: stage 7, stage 8,
+  stage 9 with the second stage-8 run, stage 10 with the PRD v2.2 amendment, and the PII pass.
 
 ---
 
@@ -87,7 +90,11 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | **Tokenization + packing (stage 10)** | §6.3.10 | ✅ |
 | Real pass: Wikipedia → 7 shards, verified off disk | §6.3.10 | ✅ |
 | Fertility measured with §7's tokenizer, stage 9 re-solved | §6.3.10, §7 | ⬜ **Week 5** |
-| PII regex pass (phones, emails) | §6.3 | ⬜ |
+| **PII regex pass (phones, emails)** | §6.3 | ✅ |
+| Wired into all five drivers, between stage 5 and stage 6 | §6.3 | ✅ |
+| Real passes: Wikipedia, FineWeb2, Roman-Urdu-Parl → `reports/pii.md` | §6.3 | ✅ 56,214 documents |
+| 11 of 13 first Wikipedia phone matches were ISBNs (Finding V) | §6.3 | ✅ fixed, re-measured |
+| Eval sets must go through the same redaction before stage 8 | §6.3.8 | ⬜ freeze |
 | Corpus manifest + statistics | §6.3 | 🟡 acquisition manifest done; stage stats pending |
 
 ### Weeks 5–16
@@ -1968,6 +1975,83 @@ exactly §4.3's published figure and the reason the total-U reading is the inten
 
 ---
 
+### Session 13 — 2026-08-05
+
+**Done**
+
+1. **PII redaction — PRD §6.3's minimal pass** (`ravaan/data/pii.py`, `configs/data/pii.json`,
+   70 tests, `reports/pii.md`). The last unbuilt thing in §6.3, and it belonged before the corpus
+   is written. Two regexes, no model, no gazetteer, no name detection — §6.3 says "do not build a
+   PII system" and that is the ceiling, not a shortcut. Wired into all five drivers
+   (`dedup.py`, `neardedup.py`, `split.py`, `decontaminate.py`, `pack.py`) and into `probe.py`;
+   `ravaan-pii` runs it over a single file.
+
+2. **Pointed at real text, three sources, 56,214 documents** —
+   `reports/probe_pii_{wikipedia,fineweb,roman}.json`. This is what produced Finding V, below.
+
+**Finding V — 11 of the PII pass's first 13 phone matches on Urdu Wikipedia were ISBNs.**
+
+Finding D's lesson for the seventh time, in Finding D's exact shape, and this time on a stage whose
+failure mode is **silent by construction**: a redaction leaves a placeholder, so an over-eager
+pattern deletes bibliography entries and nothing is left in the corpus to notice it by.
+
+- **An unhyphenated ISBN-10 in the English registration group is ten digits beginning with a
+  zero** — character-for-character a ten-digit landline written without separators. Both matched.
+  `آئی ایس بی این [#]` and `بین الاقوامی معیاری کتابی عدد-13: 978-[#]` are what it looked like.
+- **The unit test that was supposed to cover this used the hyphenated form** `0-306-40615-2`,
+  which the pattern rejects for an unrelated reason (the first group has to be a contiguous
+  trunk-zero-plus-prefix, and `0-` is not). It passed and proved nothing. 61 tests passed.
+- **The obvious fix was worse than the one the data chose.** A flat floor of eleven national
+  digits removes every ISBN *and* one of Wikipedia's two genuine numbers, a ten-digit Multan
+  landline. The discriminator is not length: **people separate phone numbers, databases do not.**
+  Requiring a separator below eleven digits removed all eleven false positives and kept both true
+  positives. Unseparated is still accepted at eleven digits because that is the Pakistani mobile
+  format, which is 49 of FineWeb2's 142 phone matches.
+- **A second, smaller instance of the same thing surfaced only after the first was fixed:** two
+  matches remained, both ISBN-10s beginning `00`, entering through the *international* branch
+  because `00` plus eight digits cleared an E.164-theoretical floor no country actually uses.
+  `min_international_digits` 8 → 10.
+- **What the correction cost on the source that actually has phone numbers: three matches out of
+  286.** 10 of 14 removed on Wikipedia against 3 of 286 on FineWeb2 is the evidence that the rule
+  discriminates rather than merely being stricter.
+
+**Measured — shipped config, fingerprint `ac44c4eb5021`**
+
+| | Urdu Wikipedia | FineWeb2 `urd_Arab` | Roman-Urdu-Parl |
+|---|---|---|---|
+| documents | 19,999 | 19,997 | 16,218 |
+| documents redacted | 3 (**0.02%**) | 201 (**1.01%**) | **0** |
+| phone / email | 3 / 1 | 142 / 141 | 0 / 0 |
+| characters removed | 52 | 4,270 | 0 |
+| per million characters | **2.3** | **84.2** | **0.0** |
+
+- **FineWeb2 is where the PII is**, at 40× Wikipedia's rate per character, with contexts that say
+  so directly: `برائے رابطہ`, `موبائل:`, `ٹیلی فون:`, `واٹس ایپ:`, `ہمارے آفیشل ای میل`.
+- **Roman-Urdu-Parl matched nothing at all** — the fourth time a stage has turned out to be an
+  *assertion* on a source rather than a filter, after stage 2 and stage 3 on FineWeb2 and stage 6
+  on both native sources. The report must say "did not fire", not "cleaned".
+
+**Decisions made**
+
+| Decision | Rationale |
+|---|---|
+| Placeholders are `[@]` and `[#]` — **no letters, no digits, no angle brackets**, enforced in `__post_init__` | `<EMAIL>` is matched by stage 5's `_HTML_TAG_RE`, so re-running the quality filter over the frozen corpus would score our own redactions as HTML residue and reject documents the run that produced it kept. `[EMAIL]` puts five Latin letters into stage 3's letter count and stage 5's `script_ratio` denominator — the one rule whose measured precision is already 0.50. No digits is what makes redaction idempotent. Two tests assert the consequence (`html_ratio == 0.0`, `script_ratio` unchanged to 1e-9) rather than the property |
+| Runs **after stage 5, before stage 6** | Both edges load-bearing. Stage 5's thresholds were moved by 200 adjudicated *unredacted* documents, so redacting first applies a validated filter to text the validation never saw. Stages 6 and 7 hash, so hashing first fingerprints a corpus the release does not contain |
+| The phone pattern is anchored on **dialling structure**, not on runs of digits | A "7+ digits" rule deletes dates, year ranges, prices, ISBNs and Quranic citations, and Finding F put religious publishers among this corpus's largest contributors. `:` is deliberately not a separator — that is how surah:ayah is written |
+| **Nothing ever stores what it matched.** `PIIResult` has no `original`; matches carry a *shape* (`dddd-ddddddd`) | `NormalizationResult` keeps an original because §6.3.4 requires auditability. Here the original *is* the personal data, and a result that carried it would serialise the corpus's phone numbers into whatever log wrote it out — the artifact this stage exists to prevent. The shape is sufficient: the whole Finding V diagnosis came from the shape table |
+| Probe context windows are cut from the **redacted** text, *and* residual digit runs in them are masked to their length (`{10d}`) | The first half came from reasoning about the failure mode; the second came from grepping the file that was about to be committed, which had **29 live phone numbers** in it — the ones the pass had *missed*, sitting in the redacted text untouched. The stage that exists to remove phone numbers from a corpus had put twenty-nine of them into its own report. Years, prices and page numbers stay legible because the floor is six digits |
+| Counts are taken on the corpus pass, not sampled by `probe.py` | Unlike stage 4's per-rule counts, "N phone numbers and M email addresses removed" is a claim the release makes about the corpus. `pack.py` is the pass that writes it, so it is the pass that counts |
+| Indian mobile formats, dot-separated numbers and `[at]` obfuscation are **left uncaught and stated** | All three are measured in the FineWeb2 sample. Catching bare ten-digit runs with no trunk prefix is exactly the ISBN shape Finding V removed. §6.3 caps this stage's scope; `reports/pii.md` §6 is what the cap costs |
+
+**Carried into the freeze**
+
+- **The eval sets must go through the same redaction before stage 8 runs.** Stage 8 compares
+  training text against them; if a training document's only overlap with an eval item is a phone
+  number, redacting one side and not the other makes the match disappear and leaves the document
+  in. Same function, called on both sides.
+
+---
+
 ## Open questions for you
 
 1. ~~**Config format.**~~ **Decided in session 4: JSON, for the whole data pipeline.** Three
@@ -2007,21 +2091,17 @@ exactly §4.3's published figure and the reason the total-U reading is the inten
 
 ## Next session
 
-**Every §6.3 pipeline stage now exists, and Gate G1 passes.** Session 12 paid the PRD debt (v2.2),
-built stage 10, fetched shard 000 and measured the result: G1 returns **`PASS` on both the aggregate
-and the mixture, both arms fundable**, every population above 2×. What remains before the freeze is
-the PII pass and the freeze runs themselves — no new stage.
+**Nothing in §6.3 is unbuilt.** Session 12 paid the PRD debt (v2.2), built stage 10 and measured
+G1 to `PASS` on both the aggregate and the mixture; session 13 built the PII pass, the last
+missing piece, and re-measured it after Finding V. **Every remaining item is a freeze run, not a
+new component.**
 
 Two things to carry in. **The G1 margins have not been through stages 6/7/8** — code-switched at
 2.35× survives a 50% stage-7 loss, but FineWeb2's self-similarity has never been measured. And
 **the fertility estimate moves arm A's document set by a factor of two**, so the Week 5 re-solve
 has to land before the corpus is written.
 
-1. **The PII regex pass (§6.3)** — the last unbuilt thing in the pipeline, and it belongs before the
-   corpus is written. One regex pass for phone numbers and emails; §6.3 says explicitly not to build
-   a PII system.
-
-2. **The freeze needs one unsampled stage-9 phase 1 over all sources together.** The passes so far
+1. **The freeze needs one unsampled stage-9 phase 1 over all sources together.** The passes so far
    are per source, so each set of bands is calibrated to that source's totals rather than to the
    corpus — which gives each source its own held-out share instead of the corpus's. Measure once
    over everything, then apply that single plan everywhere with `--plan-in` (phase 2 needs nothing
@@ -2035,7 +2115,7 @@ has to land before the corpus is written.
      cross-source case and structurally cannot catch that one. **The held-out split's integrity
      depends on stage 7 having run first.**
 
-3. **Week 5, and it is stage 10's outstanding half.** Train §7's tokenizer, then:
+2. **Week 5, and it is stage 10's outstanding half.** Train §7's tokenizer, then:
    ```
    python scripts/pack.py --source … --measure-only --tokenizer <model> --resolve-plan <plan.json>
    ravaan-splits <plan.json> --chars-per-token urdu=… roman_urdu=… code_switched=…
@@ -2045,14 +2125,15 @@ has to land before the corpus is written.
    session 12, because measuring with a 32k model and quoting it for a 16k one is the same class of
    error as quoting the placeholder's 0.573.
 
-4. **Deferred to freeze time, unchanged from session 10:**
+3. **Deferred to freeze time, unchanged from session 10:**
    - **Stage 8 over FineWeb2's complete shard**, both for the Roman-Urdu-Parl eval sets and for the
      held-out split. The held-out number here (15 of 6,748 = 0.22%) is at a 5% sample and projects
      to **~4.4%**; that is the figure §8.2 needs and it should be measured, not projected.
    - **Stage 7: FineWeb2 self-similarity (complete shard) and Roman-Urdu-Parl with
      `shingle_unit="char"`.** ~2.3 hours two-pass. Finding G forbids sampling either.
-   - **The PII regex pass (§6.3)**, which is still not built and belongs before the corpus is
-     written.
+   - **Redact the eval sets before stage 8 runs** (session 13). Stage 8 compares training text
+     against them, so redacting one side and not the other makes a phone-number-only overlap
+     disappear and leaves the training document in. Same function, called on both sides.
 
 **A cheap halving of every future stage 7 run, measured but not taken.** The driver reads the
 corpus twice because stage 6 is two-phase, and stages 2–5 are 90% of that cost (profiled: stage 5
@@ -2088,6 +2169,19 @@ one file. Complete-Wikipedia stage 9 is ~20 minutes two-phase, alone.
   FineWeb2's exact-duplicate rate is nil (Finding H) but its *self-similarity* has never been
   measured, so the margin has to survive stage 7. At 2.35× it survives a 50% loss; at 0.92× it
   would not have, which is what the fetch actually bought.
+- **The PII pass's precision is adjudicated from context and shape, not by a native speaker.**
+  Finding V's ISBN family was unmistakable and the correction is measured, but one Wikipedia match
+  remains ambiguous: an eleven-digit unseparated run sitting next to an author's name, exactly
+  where an ISBN would also sit. It is one line for the same native-speaker sitting that owes stage
+  5 its 29 disagreements and stage 7 its sampled pairs. **The recall side is the one that matters
+  more and it is stated rather than fixed** — Indian mobile formats (ten digits, no trunk prefix),
+  dot-separated numbers and `[at]` obfuscation are all measured in the FineWeb2 sample and all
+  uncaught, because catching bare ten-digit runs is precisely what Finding V removed.
+  `reports/pii.md` §6 is the list, and the report must carry it.
+- **⚠️ Three installed console scripts still have the cp1252 hole** — `ravaan-splits`,
+  `ravaan-shards` and `ravaan-normalize` print non-ASCII from `main()` and survive only because an
+  em-dash *is* in cp1252 while `≈` is not. Diagnosed in session 12, and session 13's `ravaan-pii`
+  ships with the three-line guard, so the fix is a copy-paste into each. Still open.
 - **⚠️ ~4.4% of the held-out split is likely inside FineWeb2 (Finding T), and the measured figure is
   0.22% at a 5% sample.** The projection assumes an eval item with one crawled copy is found with
   probability *r*. §8.2's held-out native set is the primary endpoint's own instrument, so the

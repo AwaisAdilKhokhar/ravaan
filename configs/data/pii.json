@@ -1,0 +1,14 @@
+{
+  "pii_version": "1.0.0",
+  "_comment": "PII redaction (PRD §6.3, 'one regex pass for phone numbers and emails. Do not build a PII system.'). Runs after stage 5 and before stage 6: stage 5's thresholds were validated against 200 samples of unredacted text, and every hash from stage 6 onward must be over the text the frozen corpus actually contains. The placeholders carry no letters (they would enter stage 3's letter counts and stage 5's script_ratio denominator), no digits (redaction would stop being idempotent) and no angle brackets (stage 5 counts those as HTML residue, so re-running the quality filter over the frozen corpus would reject documents the run that produced it kept). PIIConfig enforces all three. The digit bounds are dialling-plan facts, not tuning knobs — 051-9201234 is 10 digits nationally, 0300-1234567 is 11, 042-111-123-456 is 12; internationally the 00 dialling prefix is the operator's and is not counted, and 10-13 covers every country that plausibly appears in an Urdu corpus against E.164's theoretical 7-15. The international floor is 10 rather than 8 for a measured reason too: at 8 an ISBN-10 whose registration group begins 00 reads as an international number with eight subscriber digits. min_national_digits_unseparated is the one bound that came from reading corpus text: an unhyphenated ISBN-10 in the English registration group is ten digits beginning with a zero, and that shape was 11 of the first 13 phone matches on Urdu Wikipedia. Requiring a separator below 11 digits removed all 11 and kept both genuine numbers. See reports/pii.md §3.",
+  "redact_emails": true,
+  "redact_phones": true,
+  "email_placeholder": "[@]",
+  "phone_placeholder": "[#]",
+  "min_national_digits": 10,
+  "min_national_digits_unseparated": 11,
+  "max_national_digits": 12,
+  "min_international_digits": 10,
+  "max_international_digits": 13,
+  "max_shapes": 200
+}

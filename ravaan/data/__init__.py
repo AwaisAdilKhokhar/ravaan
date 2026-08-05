@@ -47,6 +47,15 @@ from ravaan.data.normalization import (
     normalize,
     normalize_text,
 )
+from ravaan.data.pii import (
+    PII_VERSION,
+    PIIConfig,
+    PIILog,
+    PIIMatch,
+    PIIResult,
+    redact,
+    redact_text,
+)
 from ravaan.data.quality import (
     QUALITY_VERSION,
     QualityConfig,
@@ -75,6 +84,7 @@ __all__ = [
     "LANGID_VERSION",
     "MINHASH_VERSION",
     "NORMALIZER_VERSION",
+    "PII_VERSION",
     "QUALITY_VERSION",
     "SPLITS_VERSION",
     "ContaminationHit",
@@ -97,6 +107,10 @@ __all__ = [
     "NormalizationConfig",
     "NormalizationLog",
     "NormalizationResult",
+    "PIIConfig",
+    "PIILog",
+    "PIIMatch",
+    "PIIResult",
     "PopulationBands",
     "QualityConfig",
     "QualityLog",
@@ -118,5 +132,7 @@ __all__ = [
     "normalize",
     "normalize_text",
     "pair_key",
+    "redact",
+    "redact_text",
     "script_ratios",
 ]

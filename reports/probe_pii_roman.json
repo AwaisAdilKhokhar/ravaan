@@ -1,0 +1,291 @@
+{
+  "source": "roman-urdu-parl",
+  "split": "validation",
+  "limit": 20000,
+  "sample_rate": null,
+  "seed": 0,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 16218,
+    "documents_accepted": 16218,
+    "documents_rejected": 0,
+    "documents_repaired": 0,
+    "acceptance_rate": 1.0,
+    "bytes_in": 714968,
+    "chars_out": 714968,
+    "replacement_chars": 0,
+    "mojibake_chars": 0,
+    "control_chars": 0,
+    "verdicts": {
+      "ok": 16218
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 16218,
+    "documents_kept": 12835,
+    "keep_rate": 0.791405,
+    "documents_by_prior": 462,
+    "prior_rate": 0.028487,
+    "mixed_documents": 0,
+    "letters": 576075,
+    "labels": {
+      "empty": 2887,
+      "english": 34,
+      "other": 462,
+      "roman_urdu": 12835
+    },
+    "letters_by_label": {
+      "empty": 39264,
+      "english": 1068,
+      "other": 14637,
+      "roman_urdu": 521106
+    },
+    "segment_letters": {}
+  },
+  "stage4_normalization": {
+    "normalizer_version": "1.0.0",
+    "config_fingerprint": "afc7afac420e",
+    "config": {
+      "expand_presentation_forms": true,
+      "unify_yeh": true,
+      "unify_kaf": true,
+      "unify_heh": true,
+      "map_teh_marbuta": true,
+      "unify_alef": true,
+      "remove_tatweel": true,
+      "remove_zero_width": true,
+      "remove_zwnj": true,
+      "remove_bidi_marks": true,
+      "remove_harakat": false,
+      "digits": "ascii",
+      "normalize_whitespace": true,
+      "max_consecutive_newlines": 2
+    },
+    "documents": 16218,
+    "documents_changed": 0,
+    "chars_in": 714968,
+    "chars_out": 714968,
+    "chars_removed": 0,
+    "counts": {}
+  },
+  "stage5_quality": {
+    "quality_version": "1.0.0",
+    "config_fingerprint": "31a5a2d4805b",
+    "config": {
+      "min_chars": 20,
+      "min_words": 3,
+      "min_urdu_script_ratio": 0.6,
+      "min_roman_script_ratio": 0.6,
+      "min_mixed_script_ratio": 0.9,
+      "max_dup_line_ratio": 1.0,
+      "max_top_ngram_ratio": {
+        "2": 1.0
+      },
+      "max_dup_ngram_ratio": {},
+      "max_repetition_words": 100000,
+      "max_url_ratio": 0.3,
+      "max_html_ratio": 0.1,
+      "max_replacement_rate": 0.001
+    },
+    "documents": 16218,
+    "documents_kept": 14677,
+    "documents_rejected": 1541,
+    "keep_rate": 0.904982,
+    "chars_in": 714968,
+    "chars_kept": 693099,
+    "char_keep_rate": 0.969413,
+    "rejections": {
+      "too_short": 1541
+    },
+    "families": {
+      "too_short": 1541
+    },
+    "sole_rejections": {
+      "too_short": 1541
+    },
+    "by_label": {
+      "empty": 2887,
+      "english": 34,
+      "other": 462,
+      "roman_urdu": 12835
+    },
+    "kept_by_label": {
+      "empty": 1346,
+      "english": 34,
+      "other": 462,
+      "roman_urdu": 12835
+    },
+    "chars_kept_by_label": {
+      "empty": 32129,
+      "english": 1425,
+      "other": 18945,
+      "roman_urdu": 640600
+    },
+    "truncated_documents": 0
+  },
+  "stage5_distributions": {
+    "chars": {
+      "p1": 9.0,
+      "p5": 15.0,
+      "p25": 29.0,
+      "p50": 40.0,
+      "p75": 54.0,
+      "p90": 74.0,
+      "p95": 87.0,
+      "p99": 113.0,
+      "max": 499.0,
+      "mean": 44.08484
+    },
+    "dup_line_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.0,
+      "max": 0.0,
+      "mean": 0.0
+    },
+    "html_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.0,
+      "max": 0.0,
+      "mean": 0.0
+    },
+    "max_dup_ngram": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.0,
+      "max": 0.0,
+      "mean": 0.0
+    },
+    "max_top_ngram": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.30909,
+      "max": 1.0,
+      "mean": 0.00804
+    },
+    "script_ratio": {
+      "p1": 1.0,
+      "p5": 1.0,
+      "p25": 1.0,
+      "p50": 1.0,
+      "p75": 1.0,
+      "p90": 1.0,
+      "p95": 1.0,
+      "p99": 1.0,
+      "max": 1.0,
+      "mean": 0.99994
+    },
+    "url_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.0,
+      "max": 0.0,
+      "mean": 0.0
+    },
+    "words": {
+      "p1": 2.0,
+      "p5": 3.0,
+      "p25": 6.0,
+      "p50": 8.0,
+      "p75": 11.0,
+      "p90": 14.0,
+      "p95": 16.0,
+      "p99": 21.0,
+      "max": 50.0,
+      "mean": 8.89598
+    }
+  },
+  "stage5_rejected_examples": {
+    "too_short": [
+      {
+        "doc_id": "roman-urdu-parl:validation_set.csv:1:3377",
+        "text": "naveen 181 par"
+      },
+      {
+        "doc_id": "roman-urdu-parl:validation_set.csv:0:1352",
+        "text": "rubber boy"
+      }
+    ]
+  },
+  "pii": {
+    "pii_version": "1.0.0",
+    "config_fingerprint": "ac44c4eb5021",
+    "config": {
+      "redact_emails": true,
+      "redact_phones": true,
+      "email_placeholder": "[@]",
+      "phone_placeholder": "[#]",
+      "min_national_digits": 10,
+      "min_national_digits_unseparated": 11,
+      "max_national_digits": 12,
+      "min_international_digits": 10,
+      "max_international_digits": 13,
+      "max_shapes": 200
+    },
+    "documents": 16218,
+    "documents_redacted": 0,
+    "chars_in": 714968,
+    "chars_out": 714968,
+    "chars_removed": 0,
+    "counts": {},
+    "distinct_shapes": 0,
+    "shapes_dropped": 0,
+    "shapes": {}
+  },
+  "pii_examples": {},
+  "expected_label": "roman_urdu",
+  "accuracy": 0.7914
+}

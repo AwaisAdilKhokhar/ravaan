@@ -62,6 +62,7 @@ from ravaan.data.packing import (  # noqa: E402
     SentencePieceTokenizer,
     Tokenizer,
 )
+from ravaan.data.pii import PIIConfig, PIILog, redact  # noqa: E402
 from ravaan.data.quality import QualityConfig, QualityLog, check  # noqa: E402
 from ravaan.data.shards import LAYOUTS, ShardReader  # noqa: E402
 from ravaan.data.splits import SplitAssigner, SplitConfig, SplitPlan  # noqa: E402
@@ -87,6 +88,19 @@ class Pipeline:
         self.stage2 = EncodingLog(config=self.encoding_config)
         self.stage3 = LangIDLog(config=self.langid_config)
         self.stage5: dict[str, QualityLog] = {}
+        self.pii_config = PIIConfig()
+        self.pii = PIILog(config=self.pii_config)
+
+    def _redact(self, text: str) -> str:
+        """PRD §6.3's PII pass. This driver reads once, so it always logs.
+
+        The counts are taken here rather than sampled by `scripts/probe.py`, because "N phone
+        numbers and M email addresses removed" is a claim the release makes about the corpus.
+        This is also the pass that writes it.
+        """
+        result = redact(text, self.pii_config)
+        self.pii.add(result)
+        return result.text
 
     def _quality_config(self, source: str) -> QualityConfig:
         config = QualityConfig()
@@ -123,6 +137,11 @@ class Pipeline:
                     self.stage5[doc.source].add(verdict)
                     if not verdict.accepted:
                         continue
+                # PRD §6.3's PII pass sits here, between stage 5 and stage 6: stage 5's
+                # thresholds were validated against unredacted text, and the packed token stream
+                # is the corpus, so this is the last point at which redaction can still be
+                # what gets trained on. See reports/pii.md §2.
+                normalized = self._redact(normalized)
                 yield doc.doc_id, normalized, result.label, doc.source
 
 
@@ -326,7 +345,7 @@ def main(argv: list[str] | None = None) -> int:
             for line in _resolve_report(target, log.measured_chars_per_token()):
                 print(line, file=sys.stderr)
 
-    payload: dict = {"stage10": log.to_dict()}
+    payload: dict = {"stage10": log.to_dict(), "pii": pipeline.pii.to_dict()}
     if writer is not None:
         payload["corpus"] = writer.manifest(log)
         if args.manifest_out:

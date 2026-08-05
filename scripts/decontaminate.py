@@ -63,6 +63,7 @@ from ravaan.data.dedup import DedupConfig, ExactDeduplicator  # noqa: E402
 from ravaan.data.encoding import EncodingConfig, EncodingLog, validate_text  # noqa: E402
 from ravaan.data.langid import LangIDConfig, LangIDLog, classify  # noqa: E402
 from ravaan.data.normalization import NormalizationConfig, normalize_text  # noqa: E402
+from ravaan.data.pii import PIIConfig, PIILog, redact, redact_text  # noqa: E402
 from ravaan.data.quality import QualityConfig, QualityLog, check  # noqa: E402
 from ravaan.data.shards import LAYOUTS, ShardReader  # noqa: E402
 
@@ -88,7 +89,22 @@ class Pipeline:
         self.stage2 = EncodingLog(config=self.encoding_config)
         self.stage3 = LangIDLog(config=self.langid_config)
         self.stage5: dict[str, QualityLog] = {}
+        self.pii_config = PIIConfig()
+        self.pii = PIILog(config=self.pii_config)
         self.logging = True
+
+    def _redact(self, text: str) -> str:
+        """PRD §6.3's PII pass. Logged on the first pass only, like every other stage here.
+
+        Unlike stage 4 — whose per-rule counts are `scripts/probe.py`'s output — the counts are
+        taken on the corpus pass rather than from a sample, because "N phone numbers and M email
+        addresses removed" is a claim the release makes about the corpus, not a diagnostic.
+        """
+        if not self.logging:
+            return redact_text(text, self.pii_config)
+        result = redact(text, self.pii_config)
+        self.pii.add(result)
+        return result.text
 
     def _quality_config(self, source: str) -> QualityConfig:
         config = QualityConfig()
@@ -138,6 +154,11 @@ class Pipeline:
                             self.stage5[doc.source].add(verdict)
                         if not verdict.accepted:
                             continue
+                    # PRD §6.3's PII pass sits here, between stage 5 and stage 6: stage 5's
+                    # thresholds were validated against unredacted text, and every hash from stage 6
+                    # onward must be over the text the frozen corpus actually contains. See
+                    # reports/pii.md §2.
+                    normalized = self._redact(normalized)
                     yield doc_id, normalized, repaired, doc.source
         self.logging = False
 
@@ -513,6 +534,7 @@ def main(argv: list[str] | None = None) -> int:
     payload["stage2_encoding"] = pipeline.stage2.to_dict()
     payload["stage3_langid"] = pipeline.stage3.to_dict()
     payload["stage5_quality"] = {s: q.to_dict() for s, q in sorted(pipeline.stage5.items())}
+    payload["pii"] = pipeline.pii.to_dict()
     if exact is not None:
         payload["stage6_exact"] = exact.to_dict()
 

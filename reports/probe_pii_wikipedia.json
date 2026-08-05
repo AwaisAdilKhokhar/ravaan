@@ -1,0 +1,424 @@
+{
+  "source": "urdu-wikipedia",
+  "split": null,
+  "limit": 20000,
+  "sample_rate": null,
+  "seed": 0,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 20000,
+    "documents_accepted": 19999,
+    "documents_rejected": 1,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.99995,
+    "bytes_in": 39529127,
+    "chars_out": 22853926,
+    "replacement_chars": 2,
+    "mojibake_chars": 0,
+    "control_chars": 0,
+    "verdicts": {
+      "ok": 19999,
+      "replacement_heavy": 1
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 19999,
+    "documents_kept": 19933,
+    "keep_rate": 0.9967,
+    "documents_by_prior": 19,
+    "prior_rate": 0.00095,
+    "mixed_documents": 5467,
+    "letters": 17019930,
+    "labels": {
+      "arabic": 3,
+      "code_switched": 511,
+      "empty": 16,
+      "english": 20,
+      "other": 25,
+      "persian": 2,
+      "urdu": 19422
+    },
+    "letters_by_label": {
+      "arabic": 4045,
+      "code_switched": 407357,
+      "empty": 182,
+      "english": 34966,
+      "other": 118157,
+      "persian": 360,
+      "urdu": 16454863
+    },
+    "segment_letters": {
+      "arabic": 5519,
+      "code_switched": 84073,
+      "english": 287605,
+      "hindi": 815,
+      "other": 113867,
+      "persian": 1675,
+      "roman_urdu": 4205,
+      "urdu": 1496909
+    }
+  },
+  "stage4_normalization": {
+    "normalizer_version": "1.0.0",
+    "config_fingerprint": "afc7afac420e",
+    "config": {
+      "expand_presentation_forms": true,
+      "unify_yeh": true,
+      "unify_kaf": true,
+      "unify_heh": true,
+      "map_teh_marbuta": true,
+      "unify_alef": true,
+      "remove_tatweel": true,
+      "remove_zero_width": true,
+      "remove_zwnj": true,
+      "remove_bidi_marks": true,
+      "remove_harakat": false,
+      "digits": "ascii",
+      "normalize_whitespace": true,
+      "max_consecutive_newlines": 2
+    },
+    "documents": 19999,
+    "documents_changed": 18050,
+    "chars_in": 22853926,
+    "chars_out": 22697156,
+    "chars_removed": 156770,
+    "counts": {
+      "alef": 1365,
+      "bidi": 243,
+      "digits": 1387,
+      "heh": 4580,
+      "kaf": 1289,
+      "presentation_forms": 16560,
+      "tatweel": 530,
+      "teh_marbuta": 3079,
+      "whitespace": 173026,
+      "yeh": 7378,
+      "zero_width": 239,
+      "zwnj": 526
+    }
+  },
+  "stage5_quality": {
+    "quality_version": "1.0.0",
+    "config_fingerprint": "53d04d3fd079",
+    "config": {
+      "min_chars": 400,
+      "min_words": 40,
+      "min_urdu_script_ratio": 0.6,
+      "min_roman_script_ratio": 0.6,
+      "min_mixed_script_ratio": 0.9,
+      "max_dup_line_ratio": 0.5,
+      "max_top_ngram_ratio": {
+        "3": 0.26,
+        "4": 0.22
+      },
+      "max_dup_ngram_ratio": {
+        "5": 0.6,
+        "6": 0.58,
+        "7": 0.56,
+        "8": 0.54,
+        "9": 0.52,
+        "10": 0.5
+      },
+      "max_repetition_words": 100000,
+      "max_url_ratio": 0.3,
+      "max_html_ratio": 0.1,
+      "max_replacement_rate": 0.001
+    },
+    "documents": 19999,
+    "documents_kept": 10296,
+    "documents_rejected": 9703,
+    "keep_rate": 0.514826,
+    "chars_in": 22697156,
+    "chars_kept": 19856485,
+    "char_keep_rate": 0.874845,
+    "rejections": {
+      "html_residue": 6,
+      "repetition:dup_10gram": 2,
+      "repetition:dup_5gram": 4,
+      "repetition:dup_6gram": 2,
+      "repetition:dup_7gram": 2,
+      "repetition:dup_8gram": 2,
+      "repetition:dup_9gram": 2,
+      "repetition:dup_lines": 2,
+      "repetition:top_3gram": 128,
+      "repetition:top_4gram": 97,
+      "script_ratio": 43,
+      "too_short": 9645,
+      "url_density": 4
+    },
+    "families": {
+      "html_residue": 6,
+      "repetition": 215,
+      "script_ratio": 43,
+      "too_short": 9645,
+      "url_density": 4
+    },
+    "sole_rejections": {
+      "html_residue": 4,
+      "repetition": 28,
+      "script_ratio": 22,
+      "too_short": 9438,
+      "url_density": 2
+    },
+    "by_label": {
+      "arabic": 3,
+      "code_switched": 511,
+      "empty": 16,
+      "english": 20,
+      "other": 25,
+      "persian": 2,
+      "urdu": 19422
+    },
+    "kept_by_label": {
+      "arabic": 1,
+      "code_switched": 219,
+      "english": 13,
+      "other": 21,
+      "urdu": 10042
+    },
+    "chars_kept_by_label": {
+      "arabic": 4986,
+      "code_switched": 465808,
+      "english": 37646,
+      "other": 157614,
+      "urdu": 19190431
+    },
+    "truncated_documents": 0
+  },
+  "stage5_distributions": {
+    "chars": {
+      "p1": 115.0,
+      "p5": 191.0,
+      "p25": 297.0,
+      "p50": 415.0,
+      "p75": 1013.0,
+      "p90": 2290.0,
+      "p95": 3500.0,
+      "p99": 9445.0,
+      "max": 343758.0,
+      "mean": 1134.91455
+    },
+    "dup_line_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.03291,
+      "max": 1.0,
+      "mean": 0.00121
+    },
+    "html_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.0,
+      "max": 0.30569,
+      "mean": 0.00011
+    },
+    "max_dup_ngram": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.02399,
+      "p90": 0.13987,
+      "p95": 0.18605,
+      "p99": 0.31163,
+      "max": 0.99743,
+      "mean": 0.03213
+    },
+    "max_top_ngram": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.04236,
+      "p75": 0.104,
+      "p90": 0.15,
+      "p95": 0.17937,
+      "p99": 0.25,
+      "max": 0.53941,
+      "mean": 0.06187
+    },
+    "script_ratio": {
+      "p1": 0.69595,
+      "p5": 0.77407,
+      "p25": 0.90102,
+      "p50": 1.0,
+      "p75": 1.0,
+      "p90": 1.0,
+      "p95": 1.0,
+      "p99": 1.0,
+      "max": 1.0,
+      "mean": 0.9471
+    },
+    "url_ratio": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.0,
+      "p90": 0.0,
+      "p95": 0.0,
+      "p99": 0.0,
+      "max": 0.46774,
+      "mean": 0.00052
+    },
+    "words": {
+      "p1": 21.0,
+      "p5": 35.0,
+      "p25": 54.0,
+      "p50": 81.0,
+      "p75": 200.0,
+      "p90": 468.0,
+      "p95": 723.0,
+      "p99": 1966.0,
+      "max": 78653.0,
+      "mean": 228.45442
+    }
+  },
+  "stage5_rejected_examples": {
+    "html_residue": [
+      {
+        "doc_id": "urdu-wikipedia:267833",
+        "text": "سچ ٹی وی پاکستان کا ٹی وی چینل ہے جس کی نشریات 23 مارچ 2010 میں شروع ہوئیں۔ یہ اپنی نشریات اسلام آباد سے نشر کرتا ہے اور پاکستان کا ایک نجی ٹی وی چینل ہے۔ سچ ٹی وی کا دعوا ہے کہ ان کا مقصد عوام تک سچ کی رسائی، نظریہ پاکستان کی پاسداری، مملکتِ خداداد پاکستان کا استحکام اور معاشرے میں مایوسی پھیلانے ک"
+      },
+      {
+        "doc_id": "urdu-wikipedia:148305",
+        "text": "راحت اندوری ( پیدائش : 1 جنوری 1950ء، وفات: 11 اگست 2020ء) ایک بھارتی اردو شاعر اور ہندی فلموں کے نغمہ نگار تھے۔ وہ دیوی اہلیہ یونیورسٹی اندور میں اردو ادب کے پروفیسر بھی رہے۔ انھوں نے کئی بھارتی ٹیلی ویژن شو بھی کیے۔ انھوں نے کئی گلوکاری کے رئیلیٹی شو میں بہ طور جج حصہ لیا ہے۔ راحت اندوری کا 11 اگس"
+      }
+    ],
+    "repetition": [
+      {
+        "doc_id": "urdu-wikipedia:664814",
+        "text": "ماؤنٹ مچل (اوریگون) ) ریاستہائے متحدہ امریکا کا ایک پہاڑ جو اوریگون میں واقع ہے۔\n\nمزید دیکھیے\nریاستہائے متحدہ امریکا\nفہرست ریاستہائے متحدہ امریکا کے شہر\n\nحوالہ جات\n\nاوریگون کے پہاڑ\nسلسلہ کیسکیڈ"
+      },
+      {
+        "doc_id": "urdu-wikipedia:664683",
+        "text": "ووڈیز نوب ریاستہائے متحدہ امریکا کا ایک پہاڑ جو شمالی کیرولائنا میں واقع ہے۔\n\nمزید دیکھیے\nریاستہائے متحدہ امریکا\nفہرست ریاستہائے متحدہ امریکا کے شہر\n\nحوالہ جات\n\nشمالی کیرولائنا کے پہاڑ"
+      }
+    ],
+    "script_ratio": [
+      {
+        "doc_id": "urdu-wikipedia:682532",
+        "text": "آئیوری کوسٹ قومی فٹ بال ٹیم (; ) بین الاقومی فٹ بال میں آئیوری کوسٹ کی نمائندگی کرنے والی مردوں کی ٹیم ہے۔\n\nحوالہ جات\n\nبیرونی روابط\nIvory Coast Association — official website\nIvory Coast at فیفا\nIvory Coast at the World Cups\nIvory Coast Teams at World Cups\nIvory Coast: Head-to-Head Records at World "
+      },
+      {
+        "doc_id": "urdu-wikipedia:680421",
+        "text": "اے ایف سی ایشیائی کپ (AFC Asian Cup) ایشیائی فٹ بال کنفیڈریشن (Asian Football Confederation) کے تحت ایک بین الاقوامی ایسوسی ایشن فٹ بال کھیلوں کا مقابلہ ہے۔ اسے جیتنے والی ٹیم ایشیا کی چیمپئن بن جاتی ہے اور فیفا کنفیڈریشنز کپ کے لیے کوالیفائی کر لیتی ہے۔\n\nنتائج\n\nبہترین چار میں آنے والی ٹیمیں\n\n* host"
+      }
+    ],
+    "too_short": [
+      {
+        "doc_id": "urdu-wikipedia:426371",
+        "text": "لانگ آئلینڈ، بہاماس بہاماس کا ایک جزیرہ جو بہاماس میں واقع ہے۔\n\nتفصیلات\nلانگ آئلینڈ، بہاماس کا رقبہ 596 مربع کیلومیٹر ہے اور اس کی مجموعی آبادی 2,992 افراد پر مشتمل ہے۔\n\nمزید دیکھیے\nبہاماس\nفہرست بہاماس کے شہر\n\nحوالہ جات\n\nبہاماس کے جزائر"
+      },
+      {
+        "doc_id": "urdu-wikipedia:426152",
+        "text": "نارتھفیلڈ (کمیونٹی)، وسکونسن , Wisconsin) ریاستہائے متحدہ امریکا کا ایک انانکارپوریٹڈ کمیونٹی جو نارتھفیلڈ میں واقع ہے۔\n\nتفصیلات\nنارتھفیلڈ (کمیونٹی)، وسکونسن کی مجموعی آبادی 289.87 میٹر سطح سمندر سے بلندی پر واقع ہے۔\n\nمزید دیکھیے\nریاستہائے متحدہ امریکا\nفہرست ریاستہائے متحدہ امریکہ کے شہر\n\nحوالہ جات\n"
+      }
+    ],
+    "url_density": [
+      {
+        "doc_id": "urdu-wikipedia:891173",
+        "text": "کلپنا سنگھ چتنیس (ولادت: 12 مارچ1966ء) بھارتی امریکی شاعرہ، اداکارہ، فلم ہدایتکار، قلم کار اور پروڈیوسر ہیں۔ انہیں 2014ء میں راجیو گاندھی گلوبل ایکسیلینز اعزاز سے نوازا گیا۔\n\nحوالہ جات\n\nبیرونی روابط\nhttps://www.worldliteraturetoday.org/blog-author/kalpna-singh-chitnis\nhttps://www.amazon.com/Kalpna-S"
+      },
+      {
+        "doc_id": "urdu-wikipedia:823932",
+        "text": "اسلام آباد-راولپنڈی میٹروپولیٹن علاقہ () پاکستان کا تیسرا گنجان آباد علاقہ ہے۔ اس میں جڑواں شہروں اسلام آباد اور راولپنڈی کے میٹروپولیٹن علاقے شامل ہیں news|url=http://www.dawn.com/news/740350/islamabads-population-touches-two-million-mark|title=Islamabad’s population touches two-million mark|last=R"
+      }
+    ]
+  },
+  "pii": {
+    "pii_version": "1.0.0",
+    "config_fingerprint": "ac44c4eb5021",
+    "config": {
+      "redact_emails": true,
+      "redact_phones": true,
+      "email_placeholder": "[@]",
+      "phone_placeholder": "[#]",
+      "min_national_digits": 10,
+      "min_national_digits_unseparated": 11,
+      "max_national_digits": 12,
+      "min_international_digits": 10,
+      "max_international_digits": 13,
+      "max_shapes": 200
+    },
+    "documents": 19999,
+    "documents_redacted": 3,
+    "chars_in": 22697156,
+    "chars_out": 22697104,
+    "chars_removed": 52,
+    "counts": {
+      "email": 1,
+      "phone": 3
+    },
+    "distinct_shapes": 4,
+    "shapes_dropped": 0,
+    "shapes": {
+      "phone:ddd- ddddddd-d": 1,
+      "phone:ddd- ddddddd": 1,
+      "phone:ddddddddddd": 1,
+      "email:xxxxxxxxxxxxxxxxx@xxxxx.xxx": 1
+    }
+  },
+  "pii_examples": {
+    "email": [
+      {
+        "doc_id": "urdu-wikipedia:324575",
+        "shape": "xxxxxxxxxxxxxxxxx@xxxxx.xxx",
+        "context": "ر پر ایک ہی دھن پر یہ رقص 5 سے 25 منٹ تک جاری رہتا ہے۔ [@] محسود اتن محسود اتن بہت زیادہ مشہور اتن ہے لوگ بہت شو"
+      }
+    ],
+    "phone": [
+      {
+        "doc_id": "urdu-wikipedia:1073664",
+        "shape": "ddd- ddddddd-d",
+        "context": "آفس مکان نمبر 16-A، پہلی منزل، سول لائنز، راولپنڈی | [#] جنوبی: ملتان آفس مکان نمبر 7A، گلی نمبر 1، گلشنِ مدی"
+      },
+      {
+        "doc_id": "urdu-wikipedia:1073664",
+        "shape": "ddd- ddddddd",
+        "context": "کالونی، سورج میانی روڈ، رضا آباد چوک کے قریب، ملتان | [#] مفت ہیلپ لائن {9d} حوالہ جات پاکستان میں صحت"
+      },
+      {
+        "doc_id": "urdu-wikipedia:12463",
+        "shape": "ddddddddddd",
+        "context": "ہ یونیفیکیشن تھیوری, از ڈاکٹرحکیم سید رضوان شاہ گیلانی [#] اعضاء: (میڈیسن میں بھی تسلم ہیں) قوہ: (میڈیسن میں بھی"
+      }
+    ]
+  }
+}

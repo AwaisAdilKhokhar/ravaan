@@ -39,6 +39,7 @@ from __future__ import annotations
 import argparse
 import json
 import random
+import re
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -59,6 +60,7 @@ from ravaan.data.normalization import (  # noqa: E402
     NormalizationLog,
     normalize,
 )
+from ravaan.data.pii import PIIConfig, PIILog, PIIResult, redact  # noqa: E402
 from ravaan.data.quality import QualityConfig, QualityLog, check  # noqa: E402
 from ravaan.data.shards import LAYOUTS, Document, ShardReader  # noqa: E402
 
@@ -67,6 +69,11 @@ from ravaan.data.shards import LAYOUTS, Document, ShardReader  # noqa: E402
 VARIANT_RULES = ("yeh", "heh", "kaf", "teh_marbuta", "alef")
 
 PERCENTILES = (0.01, 0.05, 0.25, 0.50, 0.75, 0.90, 0.95, 0.99)
+
+# Digit runs left in a PII context window after redaction — i.e. numbers the pass did not catch.
+# Six is below any phone number this corpus writes and above a year, a price group or a page
+# number, so the linguistic context a reader needs survives intact. See `_pii_contexts`.
+_RESIDUAL_DIGITS_RE = re.compile(r"\d[\d .‐-―-]{4,}\d|\d{6,}")
 
 # Stage-5 metrics worth a distribution. The repetition family is where the published thresholds
 # turned out not to transfer, so every member of it is reported separately.
@@ -80,6 +87,40 @@ QUALITY_METRICS: tuple[str, ...] = (
     "max_top_ngram",
     "max_dup_ngram",
 )
+
+
+def _pii_contexts(result: PIIResult, config: PIIConfig, width: int = 55) -> list[str]:
+    """A context window around each redaction, taken from the **redacted** text.
+
+    This is the output a human reads to decide whether the PII pass is matching phone numbers or
+    dates, and it has to be adjudicable without being a contact list. Two things stand between it
+    and being one, and the second was found by grepping the committed report rather than by
+    reasoning about it.
+
+    * The window is cut from the **redacted** text. Windowing the input would be one line shorter
+      and would print the match itself.
+    * Residual digit runs are then masked to their **length**. Cutting from the redacted text is
+      not sufficient, because a number the pass *missed* still sits there in full — 29 of them in
+      the first committed run of this probe, including live Indian mobile numbers the pattern
+      cannot see (`reports/pii.md` §6). `{10d}` keeps the finding that an uncaught ten-digit run
+      is there, which is the only part a reader needs, and publishes no one's number.
+    """
+    windows: list[str] = []
+    delta = 0
+    for match in result.matches:
+        placeholder = (
+            config.email_placeholder if match.category == "email" else config.phone_placeholder
+        )
+        start = match.start + delta
+        end = start + len(placeholder)
+        delta += len(placeholder) - (match.end - match.start)
+        window = " ".join(result.text[max(0, start - width) : end + width].split())
+        windows.append(
+            _RESIDUAL_DIGITS_RE.sub(
+                lambda m: f"{{{sum(ch.isdigit() for ch in m.group())}d}}", window
+            )
+        )
+    return windows
 
 
 def _paragraphs(paths: list[str], min_chars: int) -> list[Document]:
@@ -148,6 +189,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--min-chars", type=int, default=200, help="--paths paragraph minimum")
     parser.add_argument("--examples", type=int, default=2, help="examples to show per label")
     parser.add_argument("--quality-config", help="stage-5 config JSON (default: shipped defaults)")
+    parser.add_argument("--pii-config", help="PII config JSON (default: shipped defaults)")
+    parser.add_argument(
+        "--pii-examples",
+        type=int,
+        default=25,
+        help="redaction context windows to keep per category, for reading what fired",
+    )
     parser.add_argument("--json", help="write the full report here")
     return parser
 
@@ -170,10 +218,13 @@ def main(argv: list[str] | None = None) -> int:
     if unit == "sentence":
         quality_config = quality_config.for_sentences()
 
+    pii_config = PIIConfig.from_json_file(args.pii_config) if args.pii_config else PIIConfig()
+
     stage2 = EncodingLog(config=encoding_config)
     stage3 = LangIDLog(config=langid_config)
     stage4 = NormalizationLog(config=normalization_config)
     stage5 = QualityLog(config=quality_config)
+    stage_pii = PIILog(config=pii_config)
 
     if args.paths:
         documents: object = _paragraphs(args.paths, args.min_chars)[: args.limit]
@@ -196,6 +247,8 @@ def main(argv: list[str] | None = None) -> int:
     rejected_examples: dict[str, list[tuple[str, str]]] = defaultdict(list)
     seen_per_label: Counter[str] = Counter()
     seen_per_family: Counter[str] = Counter()
+    pii_examples: dict[str, list[dict]] = defaultdict(list)
+    pii_seen: Counter[str] = Counter()
     glotlid_agree: Counter[str] = Counter()
     glotlid_scores: dict[str, list[float]] = defaultdict(list)
     site_docs: Counter[str] = Counter()
@@ -229,6 +282,20 @@ def main(argv: list[str] | None = None) -> int:
 
         for name in QUALITY_METRICS:
             metric_values[name].append(float(getattr(quality.metrics, name)))
+
+        # PRD §6.3's PII pass, in the position it runs in at the freeze: after stage 5, on the
+        # normalized text. It is measured on every document rather than on stage 5's survivors,
+        # because a rejected document still tells you what the two patterns fire on.
+        pii = redact(normalized.normalized, pii_config)
+        stage_pii.add(pii)
+        for match, window in zip(pii.matches, _pii_contexts(pii, pii_config), strict=True):
+            pii_seen[match.category] += 1
+            bucket = pii_examples[match.category]
+            entry = {"doc_id": doc.doc_id, "shape": match.shape, "context": window}
+            if len(bucket) < args.pii_examples:
+                bucket.append(entry)
+            elif rng.random() < args.pii_examples / pii_seen[match.category]:
+                bucket[rng.randrange(args.pii_examples)] = entry
 
         # Reservoir sample per label, so examples are not all from the head of the read order.
         seen_per_label[result.label] += 1
@@ -285,6 +352,8 @@ def main(argv: list[str] | None = None) -> int:
             family: [{"doc_id": d, "text": t} for d, t in hits]
             for family, hits in sorted(rejected_examples.items())
         },
+        "pii": stage_pii.to_dict(),
+        "pii_examples": {c: hits for c, hits in sorted(pii_examples.items())},
     }
 
     # --- human-readable summary on stderr ----------------------------------
@@ -338,6 +407,24 @@ def main(argv: list[str] | None = None) -> int:
                 f"p99={stats['p99']:>10.4f} max={stats['max']:>10.4f}",
                 file=sys.stderr,
             )
+
+    if stage_pii.documents:
+        print(
+            f"\nPII: redacted {stage_pii.documents_redacted}/{stage_pii.documents} documents "
+            f"= {100 * stage_pii.documents_redacted / stage_pii.documents:.2f}%, "
+            f"{sum(stage_pii.counts.values())} matches, "
+            f"{stage_pii.chars_in - stage_pii.chars_out} characters",
+            file=sys.stderr,
+        )
+        for category, count in stage_pii.counts.most_common():
+            print(f"  {category:<8} {count:>7}", file=sys.stderr)
+        # The shapes are the precision instrument: a false positive is a date, a year range or an
+        # ISBN, and those do not have a phone number's shape.
+        for key, count in stage_pii.shapes.most_common(12):
+            print(f"    {key:<40} {count:>6}", file=sys.stderr)
+        if not stage_pii.counts:
+            print("  (nothing matched — this pass is an assertion on this source)",
+                  file=sys.stderr)
 
     if args.expect:
         correct = stage3.labels.get(args.expect, 0)

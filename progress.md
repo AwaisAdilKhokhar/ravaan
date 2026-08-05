@@ -2331,9 +2331,23 @@ starting it, and expect paging rather than failure if you do not.
 ```
 
 1. **Stage 6+7, per source, unsampled.** Finding G forbids sampling either — a pair statistic
-   sampled at rate *r* is measured at *r²*. Wikipedia is running now; FineWeb2 (self-similarity,
-   both shards) and Roman-Urdu-Parl (`--shingle-unit char`) are the two long ones, ~2.3 h+ each
-   two-pass, and **the single-pass halving below should land before them.**
+   sampled at rate *r* is measured at *r²*. **Wikipedia is done** —
+   `reports/freeze/removals_67_wikipedia.txt`, 188 ids, 118 clusters, reproducing sessions 8 and 9
+   exactly. The two long ones remain:
+   ```
+   python scripts/neardedup.py --source fineweb2-urd_Arab --limit 0 --single-pass \
+       --removals reports/freeze/removals_67_fineweb2.txt --json reports/freeze/neardedup_fineweb2.json
+   python scripts/neardedup.py --source roman-urdu-parl --split train --limit 0 --shingle-unit char \
+       --removals reports/freeze/removals_67_roman.txt --json reports/freeze/neardedup_roman.json
+   ```
+   - **`--single-pass` on FineWeb2, not on Roman-Urdu-Parl.** It halves the read, and its cost is
+     peak memory proportional to the exact-duplicate rate — nil on FineWeb2 (Finding H), ~2× on
+     Roman-Urdu-Parl's collapsing rows, which this machine has no headroom for.
+   - **Close the browser and the editor before the FineWeb2 run.** ~4.5 GB of index against ~2 GB
+     free, on a machine whose pagefile is on `D:`.
+   - **Watch `largest_cluster` on both.** Nothing caps a component's size; the reason to believe it
+     stays small at 0.80 is a measurement on Wikipedia (23 here), and a source with heavier
+     templating can chain.
 
 2. **Stage 9, one unsampled phase 1 over all sources together.** The passes so far are per source,
    so each set of bands is calibrated to that source's totals rather than to the corpus — which
@@ -2347,13 +2361,18 @@ starting it, and expect paging rather than failure if you do not.
      case and structurally cannot catch that one. **The held-out split's integrity depends on stage
      7 having run first**, and now depends on `--exclude` actually being passed.
 
-3. **Take the single-pass stage 6+7 halving before the FineWeb2 and Roman-Urdu-Parl passes.** It is
-   ~6 hours of a ~30-hour freeze and this is where it pays for itself. Design settled in session
-   14's entry above; it needs `MinHashDeduplicator` to drop already-sketched documents before
-   `build()`, and the correctness argument is that identical texts have identical neighbourhoods.
-   **Make it opt-in** (`--single-pass`): it sketches the exact duplicates before dropping them, so
-   peak memory rises by the duplicate rate — nil on FineWeb2 (Finding H) but ~2× on
-   Roman-Urdu-Parl's Roman column, which is the one source where this machine cannot afford it.
+3. ~~Take the single-pass halving.~~ **Done in session 14** — `--single-pass`, 12 tests, equivalence
+   asserted across eleven counters. Use it as shown in step 1.
+
+4. **Then stage 8, then stage 10.** Both take the same `--exclude` lists; stage 8 additionally
+   indexes the held-out split stage 9 writes, so it runs after stage 9 even though its removals feed
+   stage 10. The eval sets now go through PII redaction on both sides automatically (session 14) —
+   nothing to remember there.
+
+5. **Week 5 blocks the corpus write, not the measurement.** `pack.py --measure-only
+   --resolve-plan` needs §7's tokenizer, and the arm cuts move by a factor of two across the
+   plausible fertility range. Stages 6/7/9/8 can all complete before it; only step 4's `pack.py`
+   run that *writes* has to wait.
 
 2. **Week 5, and it is stage 10's outstanding half.** Train §7's tokenizer, then:
    ```

@@ -52,6 +52,7 @@ for _stream in (sys.stdout, sys.stderr):
         _stream.reconfigure(encoding="utf-8", errors="replace")
 
 from ravaan.data.encoding import EncodingConfig, EncodingLog, validate_text  # noqa: E402
+from ravaan.data.exclusions import ExclusionSet  # noqa: E402
 from ravaan.data.langid import LangIDConfig, LangIDLog, classify  # noqa: E402
 from ravaan.data.normalization import NormalizationConfig, normalize_text  # noqa: E402
 from ravaan.data.packing import (  # noqa: E402
@@ -79,9 +80,16 @@ class Pipeline:
     make the measured fertility describe a corpus nobody trained on.
     """
 
-    def __init__(self, readers: list[ShardReader], *, quality: bool = True) -> None:
+    def __init__(
+        self,
+        readers: list[ShardReader],
+        *,
+        quality: bool = True,
+        exclusions: ExclusionSet | None = None,
+    ) -> None:
         self.readers = readers
         self.quality = quality
+        self.exclusions = exclusions or ExclusionSet()
         self.encoding_config = EncodingConfig()
         self.langid_config = LangIDConfig()
         self.normalization_config = NormalizationConfig()
@@ -114,6 +122,12 @@ class Pipeline:
     def __iter__(self) -> Iterator[tuple[str, str, str, str]]:
         for reader in self.readers:
             for doc in reader:
+                # Stages 6, 7 and 8 removed these in earlier passes. This is the pass that writes
+                # the corpus, so this line is the one that makes the freeze order mean anything:
+                # without it stage 10 packs text that has been through no dedup and no
+                # decontamination, and the packed shards look exactly the same either way.
+                if self.exclusions.excludes(doc.doc_id):
+                    continue
                 text = doc.text or ""
                 if not text:
                     continue
@@ -184,6 +198,17 @@ def build_parser() -> argparse.ArgumentParser:
         "--allow-placeholder",
         action="store_true",
         help="write shards with the placeholder tokenizer. A plumbing check, never a freeze",
+    )
+    parser.add_argument(
+        "--exclude",
+        action="append",
+        default=[],
+        metavar="FILE",
+        help="a removal list from an earlier stage, as `--removals` writes it; repeat for several. "
+        "This is the pass that writes the corpus, so this is where the freeze order (6 → 7 → 9 → "
+        "8 → 10) is either honoured or silently skipped — the packed shards look identical either "
+        "way. Each file's header is checked against this pass's read plan, and a source with no "
+        "list is named",
     )
     parser.add_argument("--no-quality", action="store_true")
     parser.add_argument("--json", help="write the full report here")
@@ -289,7 +314,17 @@ def main(argv: list[str] | None = None) -> int:
             args.out, config, tokenizer, allow_placeholder=args.allow_placeholder
         )
 
-    pipeline = Pipeline(readers, quality=not args.no_quality)
+    exclusions = ExclusionSet.load(args.exclude)
+    try:
+        coverage = exclusions.check(readers)
+    except ValueError as error:  # an operator mistake, not a stack trace
+        raise SystemExit(str(error)) from error
+    if args.exclude:
+        print(f"excluding {len(exclusions):,} documents removed by earlier stages", file=sys.stderr)
+    for line in coverage.report():
+        print(line, file=sys.stderr)
+
+    pipeline = Pipeline(readers, quality=not args.no_quality, exclusions=exclusions)
     if plan is None:
         # No plan: phase 1 has to run before anything can be assigned, so this is a two-pass
         # measurement over a materialized list. Only sane at --limit; the freeze always has a plan.
@@ -345,7 +380,15 @@ def main(argv: list[str] | None = None) -> int:
             for line in _resolve_report(target, log.measured_chars_per_token()):
                 print(line, file=sys.stderr)
 
-    payload: dict = {"stage10": log.to_dict(), "pii": pipeline.pii.to_dict()}
+    for line in exclusions.summary():
+        print(line, file=sys.stderr)
+
+    payload: dict = {
+        "stage10": log.to_dict(),
+        "pii": pipeline.pii.to_dict(),
+        "exclusions": exclusions.to_dict(),
+        "exclusion_coverage": coverage.to_dict(),
+    }
     if writer is not None:
         payload["corpus"] = writer.manifest(log)
         if args.manifest_out:

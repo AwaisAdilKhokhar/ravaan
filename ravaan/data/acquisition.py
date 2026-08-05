@@ -51,6 +51,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal
 
+from ravaan.console import pin_utf8_streams
+
 __all__ = [
     "ACQUISITION_VERSION",
     "MANIFEST_SCHEMA_VERSION",
@@ -739,6 +741,7 @@ def _cmd_verify(args, manifest: SourceManifest) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    pin_utf8_streams()  # Urdu on a cp1252 console raises rather than mangles.
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("-s", "--sources", default=str(DEFAULT_SOURCES), help="sources.json")
     parser.add_argument("--root", default="data/raw", help="download root (default: data/raw)")

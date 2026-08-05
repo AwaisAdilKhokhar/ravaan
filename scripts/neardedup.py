@@ -49,6 +49,7 @@ for _stream in (sys.stdout, sys.stderr):
 
 from ravaan.data.dedup import DedupConfig, ExactDeduplicator  # noqa: E402
 from ravaan.data.encoding import EncodingConfig, EncodingLog, validate_text  # noqa: E402
+from ravaan.data.exclusions import write_exclusions  # noqa: E402
 from ravaan.data.langid import LangIDConfig, LangIDLog, classify  # noqa: E402
 from ravaan.data.minhash import MinHashConfig, MinHashDeduplicator  # noqa: E402
 from ravaan.data.normalization import NormalizationConfig, normalize_text  # noqa: E402
@@ -319,6 +320,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     index = MinHashDeduplicator(config)
     exact: ExactDeduplicator | None = None
+    # Stage 6's removals, kept so `--removals` can write one list for the pass rather than only
+    # stage 7's half. A stage-9 run handed only the near-duplicates would measure its pool over
+    # every exact duplicate this pass had already decided to drop.
+    exact_removed: list[str] = []
 
     if args.no_exact_dedup:
         print("stage 6: skipped (--no-exact-dedup)", file=sys.stderr)
@@ -342,6 +347,8 @@ def main(argv: list[str] | None = None) -> int:
         for doc_id, normalized, raw, source in pipeline:
             if exact.decide(doc_id, normalized, raw=raw, source=source).kept:
                 index.index(doc_id, normalized, source=source)
+            else:
+                exact_removed.append(doc_id)
 
     print(
         f"stage 7: sketching done — {index.log.indexed:,} documents "
@@ -464,11 +471,19 @@ def main(argv: list[str] | None = None) -> int:
         payload["checked_pairs"] = pairs
 
     if args.removals:
-        removed = index.removed_ids()
-        Path(args.removals).write_text(
-            "".join(f"{doc_id}\n" for doc_id in removed), encoding="utf-8", newline="\n"
+        # Stage 7's removals plus stage 6's, when stage 6 ran here — they are one list because
+        # they are one pass, and a stage-9 run handed only the near-duplicates would put every
+        # exact duplicate back into the pool it is measuring.
+        removed = list(index.removed_ids())
+        if exact is not None:
+            removed.extend(sorted(exact_removed))
+        written = write_exclusions(
+            args.removals,
+            removed,
+            stage="6+7" if exact is not None else "7",
+            readers=readers,
         )
-        print(f"\nwrote {len(removed):,} removed ids to {args.removals}", file=sys.stderr)
+        print(f"\nwrote {written:,} removed ids to {args.removals}", file=sys.stderr)
 
     if args.pairs_out:
         with Path(args.pairs_out).open("w", encoding="utf-8", newline="\n") as handle:

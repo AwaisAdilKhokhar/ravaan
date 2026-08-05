@@ -48,6 +48,8 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal
 
+from ravaan.console import pin_utf8_streams
+
 __all__ = [
     "SHARDS_VERSION",
     "ReadOrder",
@@ -662,6 +664,7 @@ class ShardReader:
 
 
 def main(argv: list[str] | None = None) -> int:
+    pin_utf8_streams()  # Urdu on a cp1252 console raises rather than mangles.
     import argparse
 
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])

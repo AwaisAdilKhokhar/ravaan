@@ -41,6 +41,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
+from ravaan.console import pin_utf8_streams
+
 __all__ = [
     "NORMALIZER_VERSION",
     "DigitStyle",
@@ -490,6 +492,7 @@ def normalize(text: str, config: NormalizationConfig | None = None) -> Normaliza
 
 
 def main(argv: list[str] | None = None) -> int:
+    pin_utf8_streams()  # Urdu on a cp1252 console raises rather than mangles.
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("input", nargs="?", help="input file (default: stdin)")
     parser.add_argument("-o", "--output", help="output file (default: stdout)")

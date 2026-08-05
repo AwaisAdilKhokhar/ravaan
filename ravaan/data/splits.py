@@ -100,6 +100,8 @@ from collections.abc import Iterable, Iterator
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
+from ravaan.console import pin_utf8_streams
+
 __all__ = [
     "SPLITS_VERSION",
     "SPLIT_NAMES",
@@ -1054,6 +1056,7 @@ def _iter_report(plan: SplitPlan) -> Iterator[str]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    pin_utf8_streams()  # Urdu on a cp1252 console raises rather than mangles.
     parser = argparse.ArgumentParser(
         description="Re-solve a saved stage-9 plan under different assumptions, no corpus pass."
     )

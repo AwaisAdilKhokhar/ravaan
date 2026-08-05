@@ -47,6 +47,7 @@ for _stream in (sys.stdout, sys.stderr):
 
 from ravaan.data.dedup import DedupConfig, ExactDeduplicator  # noqa: E402
 from ravaan.data.encoding import EncodingConfig, EncodingLog, validate_text  # noqa: E402
+from ravaan.data.exclusions import write_exclusions  # noqa: E402
 from ravaan.data.langid import LangIDConfig, LangIDLog, classify  # noqa: E402
 from ravaan.data.normalization import NormalizationConfig, normalize_text  # noqa: E402
 from ravaan.data.pii import PIIConfig, PIILog, redact, redact_text  # noqa: E402
@@ -381,10 +382,8 @@ def main(argv: list[str] | None = None) -> int:
                 )
 
     if args.removals:
-        Path(args.removals).write_text(
-            "".join(f"{doc_id}\n" for doc_id in removed), encoding="utf-8", newline="\n"
-        )
-        print(f"\nwrote {len(removed):,} removed ids to {args.removals}", file=sys.stderr)
+        written = write_exclusions(args.removals, removed, stage="6", readers=readers)
+        print(f"\nwrote {written:,} removed ids to {args.removals}", file=sys.stderr)
 
     report = json.dumps(payload, indent=2, ensure_ascii=False)
     if args.json:

@@ -49,6 +49,7 @@ for _stream in (sys.stdout, sys.stderr):
         _stream.reconfigure(encoding="utf-8", errors="replace")
 
 from ravaan.data.encoding import EncodingConfig, EncodingLog, validate_text  # noqa: E402
+from ravaan.data.exclusions import ExclusionSet  # noqa: E402
 from ravaan.data.langid import LangIDConfig, LangIDLog, classify  # noqa: E402
 from ravaan.data.normalization import NormalizationConfig, normalize_text  # noqa: E402
 from ravaan.data.pii import PIIConfig, PIILog, redact, redact_text  # noqa: E402
@@ -73,9 +74,16 @@ class Pipeline:
     landed in different splits is not a pair.
     """
 
-    def __init__(self, readers: list[ShardReader], *, quality: bool = True) -> None:
+    def __init__(
+        self,
+        readers: list[ShardReader],
+        *,
+        quality: bool = True,
+        exclusions: ExclusionSet | None = None,
+    ) -> None:
         self.readers = readers
         self.quality = quality
+        self.exclusions = exclusions or ExclusionSet()
         self.encoding_config = EncodingConfig()
         self.langid_config = LangIDConfig()
         self.normalization_config = NormalizationConfig()
@@ -111,6 +119,12 @@ class Pipeline:
     def __iter__(self) -> Iterator[tuple[str, str, str, str]]:
         for reader in self.readers:
             for doc in reader:
+                # Stages 6, 7 and 8 removed these, in earlier passes, on evidence no single
+                # document carries. Dropped ahead of stage 2 so they cost nothing and — the part
+                # that matters — never enter this pass's stage 2/3/5 logs, which describe the
+                # corpus that survives rather than the one that was read.
+                if self.exclusions.excludes(doc.doc_id):
+                    continue
                 text = doc.text or ""
                 if not text:
                     continue
@@ -186,6 +200,18 @@ def build_parser() -> argparse.ArgumentParser:
         "set the second stage-8 run indexes",
     )
     parser.add_argument(
+        "--exclude",
+        action="append",
+        default=[],
+        metavar="FILE",
+        help="a removal list from an earlier stage, as `--removals` writes it; repeat for several. "
+        "The freeze order is 6 → 7 → 9 → 8 → 10, so stage 9 must be handed stages 6 and 7's "
+        "removals: measuring the pool over undeduplicated text overstates it, and carving the "
+        "held-out split from it puts near-duplicates of training documents into the instrument "
+        "§8.2 reports the primary endpoint on. Each file's header is checked against this pass's "
+        "read plan, and a source with no list is named",
+    )
+    parser.add_argument(
         "--no-quality", action="store_true", help="partition everything stage 3 kept, not stage 5's"
     )
     parser.add_argument("--json", help="write the full report here")
@@ -233,7 +259,17 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
 
-    pipeline = Pipeline(readers, quality=not args.no_quality)
+    exclusions = ExclusionSet.load(args.exclude)
+    try:
+        coverage = exclusions.check(readers)
+    except ValueError as error:  # an operator mistake, not a stack trace
+        raise SystemExit(str(error)) from error
+    if args.exclude:
+        print(f"excluding {len(exclusions):,} documents removed by earlier stages", file=sys.stderr)
+    for line in coverage.report():
+        print(line, file=sys.stderr)
+
+    pipeline = Pipeline(readers, quality=not args.no_quality, exclusions=exclusions)
     assigner = SplitAssigner(config, sample_rate=sample_rate)
 
     if args.plan_in:
@@ -283,7 +319,11 @@ def main(argv: list[str] | None = None) -> int:
             "stage3_langid": pipeline.stage3.to_dict(),
             "stage5_quality": {s: q.to_dict() for s, q in sorted(pipeline.stage5.items())},
             "pii": pipeline.pii.to_dict(),
+            "exclusions": exclusions.to_dict(),
+            "exclusion_coverage": coverage.to_dict(),
         }
+        for line in exclusions.summary():
+            print(line, file=sys.stderr)
         report = json.dumps(payload, indent=2, ensure_ascii=False)
         if args.json:
             Path(args.json).write_text(report + "\n", encoding="utf-8", newline="\n")
@@ -335,6 +375,10 @@ def main(argv: list[str] | None = None) -> int:
     payload["stage3_langid"] = pipeline.stage3.to_dict()
     payload["stage5_quality"] = {s: q.to_dict() for s, q in sorted(pipeline.stage5.items())}
     payload["pii"] = pipeline.pii.to_dict()
+    payload["exclusions"] = exclusions.to_dict()
+    payload["exclusion_coverage"] = coverage.to_dict()
+    for line in exclusions.summary():
+        print(line, file=sys.stderr)
 
     log = assigner.log
     print(

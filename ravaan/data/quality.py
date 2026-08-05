@@ -55,6 +55,7 @@ from dataclasses import asdict, dataclass, field, replace
 from functools import lru_cache
 from pathlib import Path
 
+from ravaan.console import pin_utf8_streams
 from ravaan.data.langid import script_ratios
 
 __all__ = [
@@ -788,6 +789,7 @@ def check(
 
 
 def main(argv: list[str] | None = None) -> int:
+    pin_utf8_streams()  # Urdu on a cp1252 console raises rather than mangles.
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("input", nargs="?", help="input file (default: stdin)")
     parser.add_argument("-c", "--config", help="quality config JSON")

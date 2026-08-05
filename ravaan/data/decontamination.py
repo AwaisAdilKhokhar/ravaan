@@ -94,6 +94,7 @@ from collections.abc import Iterable
 from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 
+from ravaan.console import pin_utf8_streams
 from ravaan.data.dedup import canonical, content_hash, lines
 from ravaan.data.minhash import SHINGLE_UNITS, shingle_hashes
 
@@ -931,6 +932,7 @@ def decontaminate(
 
 
 def main(argv: list[str] | None = None) -> int:
+    pin_utf8_streams()  # Urdu on a cp1252 console raises rather than mangles.
     """Print the shipped defaults, as the other stage modules do."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("--config", help="stage-8 config JSON (default: shipped defaults)")

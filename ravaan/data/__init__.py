@@ -23,6 +23,15 @@ from ravaan.data.dedup import (
     ExactDeduplicator,
     deduplicate,
 )
+from ravaan.data.exclusions import (
+    EXCLUSIONS_VERSION,
+    Coverage,
+    ExclusionHeader,
+    ExclusionSet,
+    ReadPlan,
+    read_exclusions,
+    write_exclusions,
+)
 from ravaan.data.langid import (
     LANGID_VERSION,
     LangIDConfig,
@@ -79,7 +88,9 @@ from ravaan.data.splits import (
 )
 
 __all__ = [
+    "ReadPlan",
     "DECONTAMINATION_VERSION",
+    "EXCLUSIONS_VERSION",
     "DEDUP_VERSION",
     "LANGID_VERSION",
     "MINHASH_VERSION",
@@ -88,6 +99,7 @@ __all__ = [
     "QUALITY_VERSION",
     "SPLITS_VERSION",
     "ContaminationHit",
+    "Coverage",
     "DecontaminationConfig",
     "DecontaminationLog",
     "DecontaminationVerdict",
@@ -97,6 +109,8 @@ __all__ = [
     "DedupVerdict",
     "EvalSetSpec",
     "ExactDeduplicator",
+    "ExclusionHeader",
+    "ExclusionSet",
     "LangIDConfig",
     "LangIDLog",
     "LangIDResult",
@@ -132,7 +146,9 @@ __all__ = [
     "normalize",
     "normalize_text",
     "pair_key",
+    "read_exclusions",
     "redact",
     "redact_text",
     "script_ratios",
+    "write_exclusions",
 ]

@@ -61,11 +61,13 @@ from ravaan.data.decontamination import (  # noqa: E402
 )
 from ravaan.data.dedup import DedupConfig, ExactDeduplicator  # noqa: E402
 from ravaan.data.encoding import EncodingConfig, EncodingLog, validate_text  # noqa: E402
+from ravaan.data.exclusions import ExclusionSet, write_exclusions  # noqa: E402
 from ravaan.data.langid import LangIDConfig, LangIDLog, classify  # noqa: E402
 from ravaan.data.normalization import NormalizationConfig, normalize_text  # noqa: E402
 from ravaan.data.pii import PIIConfig, PIILog, redact, redact_text  # noqa: E402
 from ravaan.data.quality import QualityConfig, QualityLog, check  # noqa: E402
 from ravaan.data.shards import LAYOUTS, ShardReader  # noqa: E402
+from ravaan.data.splits import pair_key  # noqa: E402
 
 URDU_COLUMN = "Urdu text"
 
@@ -79,10 +81,18 @@ class Pipeline:
     that read one column would clear the corpus on evidence from half of it.
     """
 
-    def __init__(self, readers: list[ShardReader], *, quality: bool, columns: str) -> None:
+    def __init__(
+        self,
+        readers: list[ShardReader],
+        *,
+        quality: bool,
+        columns: str,
+        exclusions: ExclusionSet | None = None,
+    ) -> None:
         self.readers = readers
         self.quality = quality
         self.columns = columns
+        self.exclusions = exclusions or ExclusionSet()
         self.encoding_config = EncodingConfig()
         self.langid_config = LangIDConfig()
         self.normalization_config = NormalizationConfig()
@@ -128,6 +138,12 @@ class Pipeline:
         """``(doc_id, normalized, raw, source)`` for every document reaching stage 8."""
         for reader in self.readers:
             for doc in reader:
+                # Checked on the *row* id, ahead of `_variants` and of stage 2. A parallel row
+                # removed by stage 6 or 7 leaves as a row: its halves are one document to every
+                # stage that budgets them (§6.1's "~500K deduplicated pairs"), and dropping one
+                # column while keeping the other is how a pair stops being a pair.
+                if self.exclusions.excludes(doc.doc_id):
+                    continue
                 for doc_id, text in self._variants(doc):
                     if not text:
                         continue
@@ -408,6 +424,16 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="switch off both halves of the exact match, to measure the fuzzy half alone",
     )
+    parser.add_argument(
+        "--exclude",
+        action="append",
+        default=[],
+        metavar="FILE",
+        help="a removal list from an earlier stage; repeat for several. The freeze order puts "
+        "stage 8 after stage 7, so its denominator should be the deduplicated corpus — a "
+        "contamination rate measured over text stage 7 has already removed is a rate about a "
+        "corpus nobody trains on. Each file's header is checked against this pass's read plan",
+    )
     parser.add_argument("--removals", help="write contaminated document ids here, one per line")
     parser.add_argument("--hits-out", help="write every measured hit here as JSONL, to read")
     parser.add_argument("--examples", type=int, default=10, help="hits to print")
@@ -501,7 +527,19 @@ def main(argv: list[str] | None = None) -> int:
             file=sys.stderr,
         )
 
-    pipeline = Pipeline(readers, quality=not args.no_quality, columns=columns)
+    exclusions = ExclusionSet.load(args.exclude)
+    try:
+        coverage = exclusions.check(readers)
+    except ValueError as error:  # an operator mistake, not a stack trace
+        raise SystemExit(str(error)) from error
+    if args.exclude:
+        print(f"excluding {len(exclusions):,} documents removed by earlier stages", file=sys.stderr)
+    for line in coverage.report():
+        print(line, file=sys.stderr)
+
+    pipeline = Pipeline(
+        readers, quality=not args.no_quality, columns=columns, exclusions=exclusions
+    )
     exact: ExactDeduplicator | None = None
 
     if args.exact_dedup:
@@ -535,6 +573,10 @@ def main(argv: list[str] | None = None) -> int:
     payload["stage3_langid"] = pipeline.stage3.to_dict()
     payload["stage5_quality"] = {s: q.to_dict() for s, q in sorted(pipeline.stage5.items())}
     payload["pii"] = pipeline.pii.to_dict()
+    payload["exclusions"] = exclusions.to_dict()
+    payload["exclusion_coverage"] = coverage.to_dict()
+    for line in exclusions.summary():
+        print(line, file=sys.stderr)
     if exact is not None:
         payload["stage6_exact"] = exact.to_dict()
 
@@ -617,11 +659,14 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.removals:
         cut = config.containment_threshold
-        removed = sorted({hit.doc_id for hit in hits if hit.containment >= cut})
-        Path(args.removals).write_text(
-            "".join(f"{doc_id}\n" for doc_id in removed), encoding="utf-8", newline="\n"
-        )
-        print(f"\nwrote {len(removed):,} contaminated ids to {args.removals}", file=sys.stderr)
+        # Written as *row* ids, with any `#roman` / `#urdu` suffix removed by the same function
+        # stage 9 splits on. This pass reads a parallel row as two documents because contamination
+        # arrives on one side or the other; every later stage reads it as one. A list naming
+        # `id#roman` would match nothing downstream and remove nothing, which is the quiet failure
+        # — the pass would report a removal it never made.
+        removed = sorted({pair_key(hit.doc_id) for hit in hits if hit.containment >= cut})
+        written = write_exclusions(args.removals, removed, stage="8", readers=readers)
+        print(f"\nwrote {written:,} contaminated ids to {args.removals}", file=sys.stderr)
 
     if args.hits_out:
         with Path(args.hits_out).open("w", encoding="utf-8", newline="\n") as handle:

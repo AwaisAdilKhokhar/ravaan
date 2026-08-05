@@ -74,6 +74,8 @@ from collections.abc import Iterable, Iterator
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
+from ravaan.console import pin_utf8_streams
+
 __all__ = [
     "DEDUP_VERSION",
     "DedupConfig",
@@ -811,6 +813,7 @@ def _at(record: tuple, position: int):
 
 
 def main(argv: list[str] | None = None) -> int:
+    pin_utf8_streams()  # Urdu on a cp1252 console raises rather than mangles.
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("input", nargs="?", help="JSONL file (default: stdin)")
     parser.add_argument("-c", "--config", help="dedup config JSON")

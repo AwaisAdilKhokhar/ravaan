@@ -24,8 +24,11 @@ first.**
   to start the freeze and found the freeze order was not runnable** (Finding W): every driver runs
   stages 2–5 and then its own stage, and none of them chains — stages 6, 7 and 8 each *wrote* a
   removal list and stages 9 and 10 could not *read* one. Stage 10 would have packed a corpus that
-  had been through no dedup and no decontamination. `ravaan/data/exclusions.py` is the missing hand;
-  the first freeze run is under way.
+  had been through no dedup and no decontamination. `ravaan/data/exclusions.py` is the missing
+  hand, and **Urdu Wikipedia is now frozen through stage 7** — 188 ids, reproducing sessions 8 and
+  9 exactly. Then **Finding X: stage 7's index costs 2× what the module documents**, so FineWeb2
+  needs ~10 GB against this machine's 0.9 GB free. **The freeze moves to Kaggle** —
+  [`reports/freeze_on_kaggle.md`](reports/freeze_on_kaggle.md).
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
 - **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds
@@ -109,8 +112,10 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | PII pass did not move stage 6 or 7 on Wikipedia — measured, not assumed | §6.3 | ✅ 9 groups, 118 clusters |
 | Single-pass stage 6+7 (`--single-pass`) — one corpus read, not two | §6.3.7 | ✅ 12 tests |
 | Single-pass verified against the two-pass run on the complete dump | §6.3.7 | ✅ 47/48 fields identical |
-| **Freeze run: stage 6+7, FineWeb2 both train shards** | §6.3.7 | 🟡 running, ~5.4 GB projected |
-| Freeze run: stage 6+7, Roman-Urdu-Parl (`--shingle-unit char`) | §6.3.7 | ⬜ next |
+| **Freeze run: stage 6+7, FineWeb2 both train shards** | §6.3.7 | ⛔ **needs ~10 GB (Finding X)** |
+| Freeze run: stage 6+7, Roman-Urdu-Parl (`--shingle-unit char`) | §6.3.7 | ⛔ same wall |
+| Kaggle runbook for both → `reports/freeze_on_kaggle.md` | §6.3.7 | ✅ |
+| `neardedup.py` resumability, if the 12 h cap binds | §6.3.7 | ⬜ decide from the trial |
 | Corpus manifest + statistics | §6.3 | 🟡 acquisition manifest done; stage stats pending |
 
 ### Weeks 5–16
@@ -2271,6 +2276,52 @@ cannot afford it on. And **stage 6's phase-2 counters are not measured at all**,
 never runs; the payload says `phase2_measured: false` rather than emitting a block of zeros a reader
 would take for "stage 6 removed nothing".
 
+**Finding X — stage 7's index costs twice what the module documents, and the freeze does not fit on
+this machine.**
+
+The FineWeb2 pass was launched on a projection of ~5.4 GB built from `minhash.py`'s own docstring
+(~700 bytes per document for the sketch and its bookkeeping, plus ~279 for stage 6's index).
+Measured on the running pass:
+
+| | |
+|---|---|
+| parquet read | **1.26 GB of 6.5 GB — 19%** |
+| private memory at 19% | **1.71 GB** |
+| implied per document | **~2,010 bytes**, against ~980 projected |
+| extrapolated to ~4.98M documents | **~9–10 GB** |
+| free physical RAM | **0.9 GB** |
+| CPU | 3.25 h for 19% → **~17–19 CPU-hours** for the pass |
+
+The excess is Python object overhead the docstring's `tracemalloc` figure did not carry: the id
+strings in `_ids`, the `_position` dict, and `measure_alternate`'s second hash set in stage 6. **It
+will not fail** — the 48 GB pagefile on `D:` absorbs it, and neither ceiling is near (3.4M candidate
+pairs against `max_candidate_pairs` 20M; 0.7M retained against 40M). It will simply become
+unusable, because banding reads every sketch 32 times and most of those reads would come from disk.
+
+Two things follow, and the second outlives this session.
+
+1. **The freeze needs a machine with ~30 GB, and the plan is now Kaggle** — free, ~30 GB on a CPU
+   notebook, and PRD §9 already assumes an account. `reports/freeze_on_kaggle.md` is the runbook.
+   **The binding constraint there is the ~12-hour session cap against FineWeb2's ~19 CPU-hours**,
+   and `neardedup.py` is not resumable — the shard *reader* checkpoints, the MinHash index does not
+   — so an overrun produces nothing. The runbook's step 4 is a timed trial that turns the
+   extrapolation into a measured rate *before* a session is committed to it.
+2. **A projection built from a docstring is not a measurement**, and this one was wrong by 2× in the
+   direction that costs a day. The number was there to be taken — one read of
+   `PrivateMemorySize64` in the first hour would have caught it — and it was not taken because the
+   pass had already started. Finding D's lesson now has a memory-shaped instance: **a profile in a
+   docstring describes the object, not the process holding a million of them.**
+
+**Also, on the estimate that could not be made at all.** Roman-Urdu-Parl's runtime has no
+projection. A two-point cost model fitted to Wikipedia and FineWeb2 returned a **negative**
+per-document cost (−26 ms) and a negative runtime, because two observations cannot separate a
+per-document term from a per-character one when both sources are character-dominated and one of the
+two observations was itself a guess. It is recorded here as discarded rather than quoted, and the
+runbook asks for a timed trial instead. 6.37M rows of ~74 characters is a shape nothing in this
+project has measured.
+
+**On the halving**
+
 Session 13's "cheap halving" was taken after all — see above. The reasoning that deferred it
 stands as written and is why it landed *after* the Wikipedia pass rather than before: a freeze pass
 should not run against corpus behaviour that has just been rewritten. What changed is that the
@@ -2325,16 +2376,33 @@ measurement rather than a preference.
 
 ## Next session
 
-**The freeze is running.** Session 14 found the order was not executable (Finding W) and built the
-missing piece; `--exclude` now carries stages 6/7/8's removals into stages 9 and 10, and refuses a
-list computed over a different read. **Every remaining item is now genuinely a freeze run.**
+**⚠️ START HERE: the freeze moves to Kaggle. `reports/freeze_on_kaggle.md` is the runbook.**
 
-Three things to carry in. **The G1 margins have not been through stages 6/7/8** — code-switched at
-2.35× survives a 50% stage-7 loss, but FineWeb2's self-similarity has never been measured.
-**The fertility estimate moves arm A's document set by a factor of two**, so the Week 5 re-solve
-has to land before the corpus is written. And **this machine has ~2 GB of free RAM and 29 GB of free
-disk**, against a stage-7 FineWeb2 index that projects to ~4.5 GB — close the browser before
-starting it, and expect paging rather than failure if you do not.
+Session 14 found the freeze order was not executable (Finding W) and built the missing piece —
+`--exclude` now carries stages 6/7/8's removals into stages 9 and 10 and refuses a list computed
+over a different read. **Urdu Wikipedia is frozen through stage 7.** Then Finding X: stage 7's index
+costs ~2,010 bytes per document, not the ~980 the module documents, so FineWeb2 needs **~9–10 GB
+against this machine's 0.9 GB free.** It will page, not fail, and take about a week. Kaggle's CPU
+notebooks give ~30 GB, free.
+
+**A local FineWeb2 pass was left running at session end** — pid was 31548, 19% read after 20.7
+hours, ~1.71 GB resident. It is the same job the Kaggle runbook does properly. **Kill it**
+(`Stop-Process -Id <pid>`); nothing depends on it and it is holding memory. Its log is
+`logs/freeze_67_fineweb2.log` and its partial outputs are not written until the pass completes, so
+there is nothing to salvage.
+
+Three things to carry in.
+
+- **The G1 margins have not been through stages 6/7/8.** Code-switched sits at 2.35×, which survives
+  a 50% stage-7 loss — but FineWeb2's self-similarity has never been measured, and that is exactly
+  what the blocked pass exists to measure.
+- **The fertility estimate moves arm A's document set by a factor of two**, so Week 5's re-solve has
+  to land before the corpus is *written*. It does not block stages 6/7/9/8.
+- **`neardedup.py` is not resumable**, and on a 12-hour session cap that is now load-bearing. If the
+  Kaggle trial says FineWeb2 needs more than ~10 hours, **build resumability before running it** —
+  the shard reader already checkpoints with a plan fingerprint, so what is missing is serializing
+  `MinHashDeduplicator`'s parallel arrays and `ExactDeduplicator._best`. Bounded work, and worth
+  having regardless: today a pass that dies at 80% restarts from zero.
 
 **The freeze order, and what each step now needs:**
 

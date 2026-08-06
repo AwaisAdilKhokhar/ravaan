@@ -55,3 +55,6 @@ htmlcov/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Build artifact for uploading the code to Kaggle; regenerate with git archive.
+/ravaan-code.zip

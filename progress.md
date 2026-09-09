@@ -46,9 +46,9 @@ first.**
   4 falsifiable predictions, before any training.
 - **PRD version:** **v2.2** (2026-08-05) — §0.2 amends §6.1, §4.3, §8.2, §10 and §11 for Finding R.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 664 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · **57 minhash**
+- **Tests:** 666 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · **57 minhash**
   · 57 encoding · 57 acquisition · 51 packing · **44 dedup** · 43 quality · 32 langid ·
-  **20 exclusions** · 18 shards · **14 kaggle**). The exclusion file carries the first
+  **20 exclusions** · 18 shards · **16 kaggle**). The exclusion file carries the first
   driver-level tests in the suite; the kaggle file is the first to cover the boundary between this
   repo and the machine the freeze runs on.
 - **Committed** through session 16, on branch `stages-7-and-8` (main is at session 8;
@@ -2458,6 +2458,36 @@ Fix: kaggle.com -> Settings -> Phone Verification …
 
 A test pins the ordering, because a preflight after the fetch is not a preflight.
 
+**A fourth bug, found locally instead of on Kaggle — and the read plans are now pinned**
+
+With the fetch blocked there was no way to exercise kernel 00 past its first minute, so the pieces
+after the fetch were run here instead. One of them does not work: the line whose comment reads
+*"the fingerprint that has to match back home for --exclude to accept these removal lists"* was
+
+```python
+run([sys.executable, str(code / "scripts" / "neardedup.py"), "--limit", "1"])
+```
+
+and `--source` is **required**. Under `check=True` that exits 2 and kills the kernel in the minute
+after the 7.7 GB fetch. **Nothing in a push validates the code it uploads**, so this was only ever
+going to be found by running the driver.
+
+Replaced with a check rather than a print, since the quantity is worth refusing on. All three plans
+measured here for the first time — Roman-Urdu-Parl's had never been recorded anywhere:
+
+| source | files | plan |
+|---|---|---|
+| `urdu-wikipedia` | 1 | `8743e78c000775aa` |
+| `fineweb2-urd_Arab` (train) | 2 | `54b744f92e3949f8` |
+| `roman-urdu-parl` (train) | 1 | `db3a15522463a364` |
+
+Two of the three corroborate independently: Wikipedia's is the header of session 14's frozen
+`reports/freeze/removals_67_wikipedia.txt`, and FineWeb2's is the value session 15's runbook claimed
+after checking it on a rented box. `check_read_plans()` compares all three after the fetch and
+**refuses the session on a mismatch** — a differing plan means every removal list the session would
+write is refused by name when `--exclude` reads it back, which is a ten-hour pass for nothing. The
+literals are pinned in `tests/test_kaggle_push.py`, as this repo pins every other hash.
+
 **Decisions made**
 
 | Decision | Rationale |
@@ -2468,6 +2498,7 @@ A test pins the ordering, because a preflight after the fetch is not a preflight
 | The bootstrap is duplicated on purpose, and a test holds the copies together | It is the code that finds the uploaded project, so it cannot be imported from the uploaded project. Where sharing is impossible, the test is the sharing |
 | `wait_for_dataset()` stays, though it was not the bug | A kernel pushed against an unprocessed dataset mounts nothing and fails *identically* to Finding Z. The race was a wrong diagnosis, not an impossible one, and 16 seconds is how close the first run came to it |
 | The network check goes in the kernel, not the runbook | The runbook already said to verify the phone. A document cannot fail a run at second one with the fix in the message |
+| A read-plan mismatch **raises**, rather than printing and continuing | It is the same decision `ExclusionSet` already makes one layer down (session 14), for the same reason: a list computed over a different read removes the wrong documents and nothing downstream can tell. Refusing costs a re-fetch; continuing costs a ten-hour pass and produces something that looks like a result |
 | `diag_input.py` is committed rather than deleted | It converted five weeks of a wrong hypothesis into one measurement in under a minute, and the next unexplained mount is what it is for |
 
 **Measured, and worth keeping**
@@ -2477,7 +2508,8 @@ A test pins the ordering, because a preflight after the fetch is not a preflight
 | kernel 00 attempts | 3 — errored at 1.6 s (v1), 1.1 s (v2), 41 s (v3) |
 | code dataset | 49 files, extracted, byte-exact against HEAD on three spot-checked files |
 | diagnostic kernel | pushed → COMPLETE in under one minute |
-| tests | **664 passing** (+14: `tests/test_kaggle_push.py`, the first tests in this repo covering the Kaggle boundary) |
+| tests | **666 passing** (+16: `tests/test_kaggle_push.py`, the first tests in this repo covering the Kaggle boundary) |
+| read plans | three, measured; two corroborated against independent earlier records |
 | spend | still **$0.00** — Kaggle CPU notebooks are free, and no paid instance has been touched |
 
 **What is left on the Kaggle side, and it is one manual step**

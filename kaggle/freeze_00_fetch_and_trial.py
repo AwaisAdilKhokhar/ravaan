@@ -15,6 +15,7 @@ session has a shorter cap).
 """
 
 import json
+import re
 import resource
 import socket
 import subprocess
@@ -32,6 +33,20 @@ ROMAN_ROWS = 6_370_000
 # The cap is ~12 h. Leave headroom: there is no resume, so overrunning costs the whole pass.
 CAP_HOURS = 12.0
 SAFE_HOURS = 10.0
+
+# Read-plan fingerprints, measured on the local machine 2026-09-10 (`neardedup.py --limit 1` prints
+# one per source on its first line). `plan_fingerprint()` hashes [source, path, sha256] per file
+# plus layout, order, seed and sample rate, and deliberately excludes the machine-specific
+# `local_path` — so Kaggle must produce these exact strings from the same pinned corpus.
+#
+# A difference is not cosmetic: it means the corpus here is not the corpus there, and every removal
+# list this session goes on to write would be refused by name when `--exclude` reads it back home.
+# Better to learn that in the minute after the fetch than at the end of a ten-hour pass.
+EXPECTED_PLANS = {
+    ("urdu-wikipedia", None): "8743e78c000775aa",
+    ("fineweb2-urd_Arab", "train"): "54b744f92e3949f8",
+    ("roman-urdu-parl", "train"): "db3a15522463a364",
+}
 
 
 # --- mount bootstrap: copied verbatim from kaggle/mount_bootstrap.py --------------------------
@@ -157,6 +172,54 @@ def trial(code: Path, label: str, extra: list[str], documents: int, total: int) 
     return result
 
 
+def read_plan(code: Path, source: str, split: str | None) -> str:
+    """The read-plan fingerprint for one source, from a one-document pass.
+
+    `neardedup.py` prints it on its first line — `reading <source>: plan <hex> over N file(s)`.
+    """
+    argv = [
+        sys.executable,
+        str(code / "scripts" / "neardedup.py"),
+        "--source",
+        source,
+        "--limit",
+        "1",
+    ]
+    if split:
+        argv += ["--split", split]
+    result = subprocess.run(argv, cwd=WORKING, check=True, capture_output=True, text=True)
+    match = re.search(r"plan ([0-9a-f]{16})", result.stdout)
+    if not match:
+        raise SystemExit(
+            f"no plan fingerprint in {source}'s output — the driver's first line has changed:\n"
+            f"{result.stdout[:400]}"
+        )
+    return match.group(1)
+
+
+def check_read_plans(code: Path) -> None:
+    """Refuse to spend a session on a corpus that is not the one the laptop pinned.
+
+    This replaces a line that read `neardedup.py --limit 1` with no `--source`, which is a required
+    argument — so it would have exited 2 under `check=True` and killed the kernel immediately after
+    the 7.7 GB fetch. Found locally on 2026-09-10 by running it, which is the only way it was ever
+    going to be found: nothing in a push validates the code it uploads.
+    """
+    print(f"\n{'=' * 70}\nread-plan fingerprints\n{'=' * 70}", flush=True)
+    wrong = []
+    for (source, split), expected in EXPECTED_PLANS.items():
+        actual = read_plan(code, source, split)
+        verdict = "ok" if actual == expected else f"MISMATCH, expected {expected}"
+        print(f"  {source:<22} {actual}  {verdict}", flush=True)
+        if actual != expected:
+            wrong.append((source, expected, actual))
+    if wrong:
+        raise SystemExit(
+            "read plans differ from the local corpus, so any removal list written here would be "
+            f"refused by --exclude back home: {wrong}"
+        )
+
+
 def main() -> int:
     code = find_code_root()
     print(f"code dataset: {code}", flush=True)
@@ -174,10 +237,7 @@ def main() -> int:
     run([sys.executable, acquire, "fetch"])
     run([sys.executable, acquire, "verify"])
 
-    # The fingerprint that has to match back home for --exclude to accept these removal lists.
-    # It hashes source-relative paths and digests, never local paths, so Kaggle and the laptop
-    # agree. Print it so a mismatch is visible here rather than after a 10-hour pass.
-    run([sys.executable, str(code / "scripts" / "neardedup.py"), "--limit", "1"])
+    check_read_plans(code)
 
     results = [
         trial(

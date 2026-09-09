@@ -18,6 +18,7 @@ kernel that does not exist, so both long passes would have started with no corpu
 
 from __future__ import annotations
 
+import ast
 import importlib.util
 import re
 from pathlib import Path
@@ -149,3 +150,47 @@ def test_kernel_00_checks_the_network_before_it_starts_fetching() -> None:
     assert "def require_internet(" in kernel
     assert kernel.index("require_internet()") < kernel.index("acquire.py")
     assert "Phone Verification" in kernel
+
+
+def test_kernel_00_pins_the_read_plan_fingerprints_measured_on_this_machine() -> None:
+    """The three fingerprints Kaggle must reproduce, pinned as literals.
+
+    `plan_fingerprint()` hashes [source, path, sha256] per file plus layout, order, seed and rate,
+    and excludes the machine-specific `local_path` — so the same pinned corpus gives the same string
+    on any machine. If Kaggle's differs, every removal list that session writes is refused by name
+    when `--exclude` reads it back, which is a wasted ten-hour pass.
+
+    Measured 2026-09-10 with `neardedup.py --source <s> --limit 1`, whose first line carries it.
+    Wikipedia's value is independently corroborated: it is the header of session 14's frozen
+    `reports/freeze/removals_67_wikipedia.txt`.
+
+    Parsed rather than imported because the kernel imports `resource`, which is Unix-only — it never
+    runs on this machine, only on Kaggle.
+    """
+    text = (
+        Path(__file__).resolve().parents[1] / "kaggle" / "freeze_00_fetch_and_trial.py"
+    ).read_text(encoding="utf-8")
+    plans = None
+    for node in ast.parse(text).body:
+        if isinstance(node, ast.Assign) and getattr(node.targets[0], "id", "") == "EXPECTED_PLANS":
+            plans = ast.literal_eval(node.value)
+    assert plans == {
+        ("urdu-wikipedia", None): "8743e78c000775aa",
+        ("fineweb2-urd_Arab", "train"): "54b744f92e3949f8",
+        ("roman-urdu-parl", "train"): "db3a15522463a364",
+    }
+
+
+def test_kernel_00_never_calls_the_driver_without_a_source() -> None:
+    """`--source` is required, so a call without it exits 2 and kills the kernel.
+
+    The line this pins out of existence was `neardedup.py --limit 1`, sitting immediately after the
+    7.7 GB fetch under `check=True`. Nothing in a push validates the code it uploads, so this was
+    only ever going to be found by running the driver — which is what found it, locally, before it
+    cost a session.
+    """
+    text = (
+        Path(__file__).resolve().parents[1] / "kaggle" / "freeze_00_fetch_and_trial.py"
+    ).read_text(encoding="utf-8")
+    assert '"--limit", "1"])' not in text
+    assert "check_read_plans" in text

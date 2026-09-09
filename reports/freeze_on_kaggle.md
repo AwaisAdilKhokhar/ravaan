@@ -139,6 +139,23 @@ this machine : 54b744f92e3949f8
 rented box   : 54b744f92e3949f8      # same digests, POSIX local paths
 ```
 
+**All three, measured on this machine 2026-09-10** (`neardedup.py --source <s> --limit 1` prints the
+plan on its first line). Roman-Urdu-Parl's was never recorded before, and Wikipedia's is
+independently corroborated as the header of session 14's frozen `removals_67_wikipedia.txt`:
+
+| source | files | plan |
+|---|---|---|
+| `urdu-wikipedia` | 1 | `8743e78c000775aa` |
+| `fineweb2-urd_Arab` (train) | 2 | `54b744f92e3949f8` |
+| `roman-urdu-parl` (train) | 1 | `db3a15522463a364` |
+
+`freeze_00` now checks all three after the fetch and **refuses the session on a mismatch**, because
+a differing plan means every removal list that session would write is refused by name when
+`--exclude` reads it back here — a ten-hour pass for nothing. The line this replaced was
+`neardedup.py --limit 1` with no `--source`, which is a required argument: it would have exited 2
+under `check=True` and killed the kernel in the minute after the 7.7 GB fetch. Nothing in a push
+validates the code it uploads.
+
 So a removal list written on Kaggle carries a header that `--exclude` accepts on the local machine
 with no editing. Let `acquire.py` write a fresh `data/manifest.json` on Kaggle rather than copying
 the local one — the digests will match, and the local paths should not.

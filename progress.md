@@ -46,9 +46,9 @@ first.**
   4 falsifiable predictions, before any training.
 - **PRD version:** **v2.2** (2026-08-05) — §0.2 amends §6.1, §4.3, §8.2, §10 and §11 for Finding R.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 666 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · **57 minhash**
+- **Tests:** 670 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · **57 minhash**
   · 57 encoding · 57 acquisition · 51 packing · **44 dedup** · 43 quality · 32 langid ·
-  **20 exclusions** · 18 shards · **16 kaggle**). The exclusion file carries the first
+  **20 exclusions** · 18 shards · **20 kaggle**). The exclusion file carries the first
   driver-level tests in the suite; the kaggle file is the first to cover the boundary between this
   repo and the machine the freeze runs on.
 - **Committed** through session 16, on branch `stages-7-and-8` (main is at session 8;
@@ -2488,6 +2488,19 @@ after checking it on a rented box. `check_read_plans()` compares all three after
 write is refused by name when `--exclude` reads it back, which is a ten-hour pass for nothing. The
 literals are pinned in `tests/test_kaggle_push.py`, as this repo pins every other hash.
 
+**One more inconsistency, in the runbook rather than the code**
+
+Every flag all three kernels pass was checked against `neardedup.py --help`: all valid. But the
+runbook's §5 snippet carried **`--single-pass` on Roman-Urdu-Parl**, which `freeze_02_roman.py` never
+had and which contradicts the paragraph directly beneath it. The kernel is right and the doc was
+wrong, for a reason stronger than the memory argument it states: **kernel 00 times Roman-Urdu-Parl in
+the two-pass form**, so a single-pass run is not covered by the projection that authorised it — and
+that projection is the only thing standing between this pass and a hard, unresumable session cap.
+
+Both properties are now tests, and both read the *argv the kernel builds* rather than its text — the
+first version searched the source and failed, because `freeze_02` names `--single-pass` in a comment
+explaining why it does not pass it.
+
 **Decisions made**
 
 | Decision | Rationale |
@@ -2508,7 +2521,7 @@ literals are pinned in `tests/test_kaggle_push.py`, as this repo pins every othe
 | kernel 00 attempts | 3 — errored at 1.6 s (v1), 1.1 s (v2), 41 s (v3) |
 | code dataset | 49 files, extracted, byte-exact against HEAD on three spot-checked files |
 | diagnostic kernel | pushed → COMPLETE in under one minute |
-| tests | **666 passing** (+16: `tests/test_kaggle_push.py`, the first tests in this repo covering the Kaggle boundary) |
+| tests | **670 passing** (+20: `tests/test_kaggle_push.py`, the first tests in this repo covering the Kaggle boundary) |
 | read plans | three, measured; two corroborated against independent earlier records |
 | spend | still **$0.00** — Kaggle CPU notebooks are free, and no paid instance has been touched |
 

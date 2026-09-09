@@ -218,12 +218,24 @@ where either alone was ~20, and here they would also contend for the 30 GB.
     --pairs-out reports/freeze/pairs_67_fineweb2.jsonl \
     --json reports/freeze/neardedup_fineweb2.json
 
-# Roman-Urdu-Parl — char shingles, because its rows are single sentences
+# Roman-Urdu-Parl — char shingles, because its rows are single sentences.
+# NO --single-pass here: see below.
 !cd /kaggle/working && python /kaggle/input/datasets/<owner>/<code-slug>/scripts/neardedup.py \
-    --source roman-urdu-parl --split train --limit 0 --shingle-unit char --single-pass \
+    --source roman-urdu-parl --split train --limit 0 --shingle-unit char \
     --removals reports/freeze/removals_67_roman.txt \
+    --pairs-out reports/freeze/pairs_67_roman.jsonl \
     --json reports/freeze/neardedup_roman.json
 ```
+
+**`--single-pass` on FineWeb2, not on Roman-Urdu-Parl** — this snippet carried it on both until
+2026-09-10, against the reasoning in its own next paragraph and against `freeze_02_roman.py`, which
+never had it. Two reasons it stays off there, and the second is the one that settles it:
+
+1. Peak memory under `--single-pass` rises with the source's exact-duplicate rate — nil on FineWeb2
+   (Finding H), but ~2× on 6.37M Roman rows collapsing toward 3.48M distinct.
+2. **Kernel 00's trial measures Roman-Urdu-Parl in the two-pass form.** A run that differs from the
+   pass that authorised it is not covered by that authorisation — and the authorisation is a
+   projection against a hard, unresumable session cap.
 
 `--single-pass` halves the read by sketching during stage 6's phase 1 and dropping its removals
 before banding. Verified equivalent to the two-pass form on the complete Wikipedia dump: 47 of 48

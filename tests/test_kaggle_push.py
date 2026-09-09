@@ -21,6 +21,8 @@ from __future__ import annotations
 import ast
 import importlib.util
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -194,3 +196,65 @@ def test_kernel_00_never_calls_the_driver_without_a_source() -> None:
     ).read_text(encoding="utf-8")
     assert '"--limit", "1"])' not in text
     assert "check_read_plans" in text
+
+
+@pytest.mark.parametrize("name", KERNEL_FILES)
+def test_every_flag_a_kernel_passes_is_one_the_driver_accepts(name: str) -> None:
+    """Generalises the bug that a missing `--source` was: an invocation the driver rejects.
+
+    A kernel's argv is only read by `argparse`, twelve hours from now, on another machine. Checking
+    it against the real parser here costs one subprocess, and the flags are the half of an
+    invocation that can be checked without the corpus.
+    """
+    repo = Path(__file__).resolve().parents[1]
+    helptext = subprocess.run(
+        [sys.executable, str(repo / "scripts" / "neardedup.py"), "--help"],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout
+    accepted = set(re.findall(r"--[a-z0-9][a-z0-9-]+", helptext))
+    used = set(re.findall(r'"(--[a-z0-9][a-z0-9-]+)"', (repo / "kaggle" / name).read_text("utf-8")))
+    assert used <= accepted, f"{name} passes flags the driver rejects: {sorted(used - accepted)}"
+
+
+def test_the_roman_pass_matches_the_trial_that_authorises_it() -> None:
+    """Kernel 00 times Roman-Urdu-Parl two-pass, so kernel 02 must run it two-pass.
+
+    `--single-pass` costs peak memory proportional to the exact-duplicate rate — nil on FineWeb2
+    (Finding H), ~2× on 6.37M Roman rows collapsing toward 3.48M distinct. But the binding argument
+    is not memory: a run that differs from the trial that projected it is not covered by that
+    projection, and the projection is all that stands between this pass and a hard, unresumable
+    session cap. The runbook's manual snippet carried `--single-pass` on both sources until
+    2026-09-10, contradicting the kernel and its own next paragraph.
+    """
+    kaggle_dir = Path(__file__).resolve().parents[1] / "kaggle"
+
+    # Read the argv the kernel builds, not its text: `freeze_02` *names* `--single-pass` in a
+    # comment saying why it does not pass it, and a text search cannot tell those apart.
+    roman_tree = ast.parse((kaggle_dir / "freeze_02_roman.py").read_text(encoding="utf-8"))
+    roman_argv = [
+        element.value
+        for node in ast.walk(roman_tree)
+        if isinstance(node, ast.Assign) and getattr(node.targets[0], "id", "") == "argv"
+        for element in node.value.elts
+        if isinstance(element, ast.Constant) and isinstance(element.value, str)
+    ]
+    assert "--single-pass" not in roman_argv
+    assert "--shingle-unit" in roman_argv
+    assert "char" in roman_argv
+
+    # The trial's own roman leg, read from the argv it passes rather than by slicing text — a
+    # `trial(code, "roman", [...])` call whose third argument is the flags under test.
+    trial_flags: dict[str, list[str]] = {}
+    tree = ast.parse((kaggle_dir / "freeze_00_fetch_and_trial.py").read_text(encoding="utf-8"))
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call) and getattr(node.func, "id", "") == "trial":
+            label = ast.literal_eval(node.args[1])
+            trial_flags[label] = ast.literal_eval(node.args[2])
+
+    assert set(trial_flags) == {"fineweb2", "roman"}
+    assert "--single-pass" not in trial_flags["roman"]
+    assert "--shingle-unit" in trial_flags["roman"]
+    # And the other way round, so the pairing is asserted rather than implied.
+    assert "--single-pass" in trial_flags["fineweb2"]

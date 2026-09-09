@@ -29,6 +29,15 @@ first.**
   9 exactly. Then **Finding X: stage 7's index costs 2× what the module documents**, so FineWeb2
   needs ~10 GB against this machine's 0.9 GB free. **The freeze moves to Kaggle** —
   [`reports/freeze_on_kaggle.md`](reports/freeze_on_kaggle.md).
+  **Session 16 (2026-09-10, after a five-week gap) made the Kaggle side work and found three
+  reasons it had not.** Kernel 00 had errored on 2026-08-06 and the failure was unreadable because
+  a kernel's address comes from its *title*, not the slug in `id` (Finding Y). Fixed, re-pushed, and
+  it failed again: the mount is `/kaggle/input/datasets/<owner>/<slug>/`, two levels below what
+  Kaggle's own docs describe (Finding Z) — settled in one minute by a kernel that printed the tree.
+  Fixed as a class; third push reached the fetch and died on DNS, because `enable_internet: True` is
+  recorded and returned by the API while an unverified account gets no network (Finding Z′).
+  **Everything automatable is done and tested. The freeze is blocked on one manual step: Kaggle
+  phone verification.**
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
 - **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds
@@ -37,12 +46,14 @@ first.**
   4 falsifiable predictions, before any training.
 - **PRD version:** **v2.2** (2026-08-05) — §0.2 amends §6.1, §4.3, §8.2, §10 and §11 for Finding R.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 650 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · **57 minhash**
+- **Tests:** 664 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · **57 minhash**
   · 57 encoding · 57 acquisition · 51 packing · **44 dedup** · 43 quality · 32 langid ·
-  **20 exclusions** · 18 shards). The exclusion file carries the first driver-level tests in the
-  suite.
-- **Committed** through session 14, on branch `stages-7-and-8` (main is at session 8; fast-forward
-  it when convenient). Sessions 6 and 7 are one commit — stage 5, its 200-sample validation and the
+  **20 exclusions** · 18 shards · **14 kaggle**). The exclusion file carries the first
+  driver-level tests in the suite; the kaggle file is the first to cover the boundary between this
+  repo and the machine the freeze runs on.
+- **Committed** through session 16, on branch `stages-7-and-8` (main is at session 8;
+  fast-forward it when convenient). Session 15's Kaggle work was written 2026-08-06 and left
+  uncommitted; session 16 committed it together with the three fixes it needed. Sessions 6 and 7 are one commit — stage 5, its 200-sample validation and the
   write-up are one deliverable. Sessions 9–14 are one commit each: stage 7, stage 8, stage 9 with
   the second stage-8 run, stage 10 with the PRD v2.2 amendment, and the PII pass. Session 14 is
   five: the exclusion chain, its write-up, the eval-side redaction, the header guard, and the
@@ -115,6 +126,14 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | **Freeze run: stage 6+7, FineWeb2 both train shards** | §6.3.7 | ⛔ **needs ~10 GB (Finding X)** |
 | Freeze run: stage 6+7, Roman-Urdu-Parl (`--shingle-unit char`) | §6.3.7 | ⛔ same wall |
 | Kaggle runbook for both → `reports/freeze_on_kaggle.md` | §6.3.7 | ✅ |
+| Kaggle runners: `push.py` + three kernels, driven from here | §6.3.7 | ✅ |
+| Code dataset uploaded, extracted, byte-exact against HEAD | §6.3.7 | ✅ 49 files |
+| Kernel address comes from the title, not `id`'s slug (Finding Y) | — | ✅ derived + asserted |
+| Mount is `/kaggle/input/datasets/<owner>/<slug>` (Finding Z) | — | ✅ searched, not built |
+| `enable_internet: True` is not a network (Finding Z′) | — | ✅ preflight in kernel 00 |
+| **Kaggle phone verification** | — | ⛔ **manual, blocks the freeze** |
+| Kernel 00: fetch + timed trials of both long passes | §6.3.7 | ⛔ blocked on verification |
+| Kernel 01 (FineWeb2) / 02 (Roman-Urdu-Parl) | §6.3.7 | ⬜ gated on 00's verdict |
 | `neardedup.py` resumability, if the 12 h cap binds | §6.3.7 | ⬜ decide from the trial |
 | Corpus manifest + statistics | §6.3 | 🟡 acquisition manifest done; stage stats pending |
 
@@ -2335,6 +2354,149 @@ so it needs compression to be viable at all on this machine. **Not recommended b
 recorded because it is the shape the freeze wants and the reason it is not being taken is a disk
 measurement rather than a preference.
 
+### Session 16 — 2026-09-10
+
+**Five weeks passed with no work logged.** Session 15's Kaggle automation was written on 2026-08-06
+and never committed; the calendar is now week 6 of 16, against a plan that has the corpus freeze
+finishing in week 4 and **G2 due end of week 7**. Nothing about the design has changed in the gap.
+
+The session's whole subject is the boundary between this repo and Kaggle, and it produced three
+findings that are one family: **every fact about that boundary had been taken from documentation
+rather than measured, and each wrong one failed either silently or illegibly.** Kernel 00 has now
+failed three times, for three different reasons, and the third one is the user's to fix.
+
+**What session 15 had already done, and what was wrong with it**
+
+`kaggle/` holds a driver (`push.py`) and three kernel scripts. Checked against the live account
+rather than read: the OAuth login had gone through (`awaisbinadil`, `auth_method: ACCESS_TOKEN`),
+the code dataset was uploaded, processed and **correctly extracted** — 49 files, and its
+`ravaan/data/dedup.py`, `ravaan/data/decontamination.py` and `scripts/neardedup.py` are byte-exact
+matches for HEAD, so no re-upload was needed. Kernel 00 had been pushed and had **errored 1.6 s
+into its run on 2026-08-06**, and nobody knew, for the reason below.
+
+**Finding Y — a kernel's address comes from its *title*. The slug in `id` is discarded.**
+
+`push.py` stored `slug` and `title` as independent fields and all three kernels disagreed. Pushing
+`id: …/ravaan-freeze-00-fetch-trial` under the title "ravaan freeze 00 fetch and trial" produced a
+live kernel at **`…/ravaan-freeze-00-fetch-and-trial`**, so `status`, `logs` and `pull` all queried
+an address that answers:
+
+```
+Cannot access kernel 'awaisbinadil/ravaan-freeze-00-fetch-trial'
+  (Permission 'kernels.get' was denied)
+```
+
+That is why a failed run sat unread for five weeks: the poller could not see the kernel it had
+pushed, and the error message blames permissions.
+
+**The cost still ahead of it was larger.** Kernels 01 and 02 mount kernel 00's output as their
+corpus by naming it in `kernel_sources`. Under the drift that name pointed at nothing, so both long
+passes would have started with **no corpus** and died at `find_corpus_root()` — after a ~12-hour
+session and the trial that authorised it had been spent. `neardedup.py` is not resumable, so that
+is a day for nothing.
+
+Fixed by deriving one from the other: `title_for(slug)` returns the title Kaggle will slugify back
+into exactly `slug`, so both fields carry the same string and it stops mattering which one the
+server honours. `assert_ref_live()` then confirms the pushed kernel is reachable at the address this
+file will ask for — the check whose absence hid the first failure.
+
+**Finding Z — the mount is `/kaggle/input/datasets/<owner>/<slug>/`, two levels below where the
+documentation says.**
+
+With the address fixed, kernel 00 was re-pushed and **failed again at 1.1 s, identically**:
+`no code dataset found under /kaggle/input`. The dataset was attached — its own live metadata says
+`dataset_sources: ['awaisbinadil/ravaan-code']` — and `datasets status` said `ready`. The first
+hypothesis was a processing race, since the dataset's files landed 16 seconds before the original
+run started. **That hypothesis was wrong, and it was cheap to stop guessing:** a kernel whose only
+job is to print the tree (`kaggle/diag_input.py`, pushed and complete in under a minute) answered it.
+
+```
+/kaggle/input holds 1 entry:
+  dir  datasets
+--- /kaggle/input/datasets ---
+  dir  awaisbinadil
+        ravaan-code
+kernel 00's test — */scripts/neardedup.py: []
+anywhere at all: ['/kaggle/input/datasets/awaisbinadil/ravaan-code/scripts/neardedup.py']
+```
+
+The file was there the whole time. `glob("*")` against `/kaggle/input` was one directory level too
+shallow, in **five places across three files** — the same wrong assumption copy-pasted, which is
+session 14's cp1252 lesson arriving on schedule.
+
+Fixed as a class. `find_mount(marker, what=…)` searches breadth-first for a file the mount must
+contain and returns the shallowest directory holding it, so the depth is never assumed again. It
+lives in `kaggle/mount_bootstrap.py` — **the one place in this repo where a copy-paste is correct**,
+because a kernel push uploads a single `code_file` and the code that *locates* the uploaded project
+cannot be imported from it. Two parametrized tests hold the three copies to that source character
+for character and assert the shallow form is absent.
+
+**Finding Z′ — `enable_internet: True` is recorded, returned by the API, and not a network.**
+
+Third push. The mount fix worked — `code dataset: /kaggle/input/datasets/awaisbinadil/ravaan-code`,
+pip install, then the fetch started on `data/urd_Arab/train/001_00000.parquet` — and died at 41 s:
+
+```
+socket.gaierror: [Errno -3] Temporary failure in name resolution
+```
+
+No DNS. The kernel was pushed with `enable_internet: true`, and pulling the **live** kernel's
+metadata back confirms Kaggle stored and returns `enable_internet: True`. The container had no
+network regardless, which is what an account without **phone verification** gets. The runbook has
+had "Phone Verification, required before a notebook can use the internet" as step 0.1 since session
+14; what it did not have is the symptom, and the symptom is a DNS error thirty lines deep in a
+urllib traceback that names neither the internet nor verification.
+
+So the flag is not evidence. The only evidence a notebook has a network is a hostname resolving
+inside a run, and `freeze_00` now checks exactly that, first, and exits with the fix in the message:
+
+```
+no network in this container — huggingface.co does not resolve (…).
+Kaggle records `enable_internet: True` and still gives an unverified account no DNS.
+Fix: kaggle.com -> Settings -> Phone Verification …
+```
+
+A test pins the ordering, because a preflight after the fetch is not a preflight.
+
+**Decisions made**
+
+| Decision | Rationale |
+|---|---|
+| `slug` is the only kernel name; the title is derived from it | Kaggle honours the title and discards the slug in `id`. Deriving one from the other means both fields carry the same string, so which one the server prefers stops being a thing this repo can be wrong about |
+| A mismatched or unreachable kernel ref **raises** after a push | The push succeeds either way. This is the only check that can catch a slug the server rewrote, and its absence is what hid a failed run for five weeks |
+| The mount is *searched for*, not constructed | Kaggle's layout is theirs to change and it already differs from their own documentation. A marker file is a fact about our own repo; a path is a guess about their platform |
+| The bootstrap is duplicated on purpose, and a test holds the copies together | It is the code that finds the uploaded project, so it cannot be imported from the uploaded project. Where sharing is impossible, the test is the sharing |
+| `wait_for_dataset()` stays, though it was not the bug | A kernel pushed against an unprocessed dataset mounts nothing and fails *identically* to Finding Z. The race was a wrong diagnosis, not an impossible one, and 16 seconds is how close the first run came to it |
+| The network check goes in the kernel, not the runbook | The runbook already said to verify the phone. A document cannot fail a run at second one with the fix in the message |
+| `diag_input.py` is committed rather than deleted | It converted five weeks of a wrong hypothesis into one measurement in under a minute, and the next unexplained mount is what it is for |
+
+**Measured, and worth keeping**
+
+| | |
+|---|---|
+| kernel 00 attempts | 3 — errored at 1.6 s (v1), 1.1 s (v2), 41 s (v3) |
+| code dataset | 49 files, extracted, byte-exact against HEAD on three spot-checked files |
+| diagnostic kernel | pushed → COMPLETE in under one minute |
+| tests | **664 passing** (+14: `tests/test_kaggle_push.py`, the first tests in this repo covering the Kaggle boundary) |
+| spend | still **$0.00** — Kaggle CPU notebooks are free, and no paid instance has been touched |
+
+**What is left on the Kaggle side, and it is one manual step**
+
+Everything automatable is now automated and tested. The freeze is blocked on **phone verification**,
+which is the account holder's to do and was always listed as irreducibly manual. After it:
+`push.py push 00` → read the trial verdict → `push 01` → `push 02`. The `needs_corpus` precondition
+now refuses 01 and 02 while 00 is not `COMPLETE`, so the gate cannot be skipped by accident.
+
+**The lesson, which is Finding D's again in a new place**
+
+Finding D said fixture tests prove a rule does what it says and only real text shows whether it does
+it to the right documents. Finding X said a profile in a docstring describes the object, not the
+process holding a million of them. This session says the same thing about a *platform*: three
+failures, three assumptions, none of them taken from the system itself. The measurement that settled
+Finding Z cost **one minute** and was available at any point in the preceding five weeks. The
+project's own practice — probe before trusting a threshold — had never been applied to the
+environment the pipeline runs in, only to the data it reads.
+
 ---
 
 ## Open questions for you
@@ -2376,7 +2538,34 @@ measurement rather than a preference.
 
 ## Next session
 
-**⚠️ START HERE: the freeze moves to Kaggle. `reports/freeze_on_kaggle.md` is the runbook.**
+**⚠️ START HERE: one manual step blocks the freeze — Kaggle → Settings → Phone Verification.**
+
+Everything else on the Kaggle side is built, pushed and tested (session 16). An unverified account
+gets no DNS inside a notebook while the API cheerfully reports `enable_internet: True`, so kernel 00
+cannot fetch the corpus until this is done. It is the account holder's to do and it takes a minute.
+
+Then, in order — nothing here needs a decision, and the preconditions refuse rather than waste a
+session:
+
+```bash
+python kaggle/push.py push 00      # fetch + verify + timed trials of both long passes
+python kaggle/push.py status 00    # poll
+python kaggle/push.py logs 00      # read the verdict: does each pass fit ~10 h?
+python kaggle/push.py push 01      # FineWeb2 — refuses while 00 is not COMPLETE
+python kaggle/push.py pull 01
+python kaggle/push.py push 02      # Roman-Urdu-Parl — never concurrently with 01
+```
+
+**If 00's verdict says a pass does not fit**, do not push it. Build resumability first
+(`reports/freeze_on_kaggle.md` §6): the shard reader already checkpoints, so what is missing is
+serializing `MinHashDeduplicator`'s parallel arrays and `ExactDeduplicator._best`. Sampling is not
+an option — Finding G.
+
+**If phone verification is not possible on this account**, the fallback is to upload the ~7.7 GB
+corpus as a private dataset from here rather than fetching it there. Steps 4 onward are unaffected,
+because they only read the mount.
+
+**The old runbook pointer, still accurate for everything after the fetch:**
 
 Session 14 found the freeze order was not executable (Finding W) and built the missing piece —
 `--exclude` now carries stages 6/7/8's removals into stages 9 and 10 and refuses a list computed

@@ -23,11 +23,50 @@ that produced nothing.
 ## 0. Account prep, once
 
 1. Kaggle → **Settings → Phone Verification.** Required before a notebook can use the internet, and
-   the fetch needs it.
+   the fetch needs it. **This is the step that is currently blocking the freeze**, and its symptom
+   is not the one you would expect — see the box below.
+
+   > **⚠️ An unverified account fails with a DNS error, not a permissions error.** Measured
+   > 2026-09-10: kernel 00 was pushed with `enable_internet: true`, Kaggle **accepted the flag and
+   > reported it back on the live kernel**, and the container still had no name resolution. The
+   > fetch died 41 s in on `socket.gaierror: [Errno -3] Temporary failure in name resolution` under
+   > thirty lines of urllib traceback, which name neither the internet nor verification. So
+   > `enable_internet: True` in the metadata is **not** evidence that a notebook has a network — the
+   > only evidence is a resolved hostname inside a run. `freeze_00` now checks that first and exits
+   > with the fix in the message.
+   >
+   > **If phone verification is not possible on this account**, the fallback is to upload the corpus
+   > itself as a private dataset from here (~7.7 GB over a home connection) instead of fetching it
+   > there. Slow and dull, but it needs no network inside the notebook at all — and steps 4 onward
+   > are unaffected, because they only read the mount.
 2. In the notebook: **Settings → Accelerator: None** (this job never touches a GPU — a GPU session
    also has a *shorter* cap) and **Internet: On**.
+3. **Log in to the CLI:** `kaggle auth login`. Session 15 note — the installed CLI is **2.2.3**,
+   which authenticates by **OAuth**, not the `~/.kaggle/kaggle.json` username+key pair that older
+   docs (and most search results) describe. `KAGGLE_API_TOKEN` or `~/.kaggle/access_token` are the
+   non-interactive alternatives. Every subcommand, including `config view`, refuses until this is
+   done.
 
 Check the current limits on Kaggle's docs rather than trusting the figures here; they move.
+
+**Steps 1–7 below are automated** by `kaggle/push.py` and the three kernel scripts beside it, which
+encode everything in this document. The runbook remains the explanation; run
+`python kaggle/push.py` for the commands. Only the account signup, the OAuth login and the phone
+verification are irreducibly manual.
+
+**Two things `push.py` now refuses rather than lets you do**, both learned by doing them:
+
+- **A kernel's address comes from its *title*, not from the slug in `id`.** Session 15 set the two
+  independently, so all three kernels landed at addresses `status`, `logs` and `pull` then queried
+  with the other string and got a 403 — which is how kernel 00's first failure sat unread for five
+  weeks. Worse was still ahead: 01 and 02 name 00 in `kernel_sources`, so under the drift they would
+  have mounted **no corpus** and died after their session was already spent. `title_for()` now
+  derives one from the other, and `assert_ref_live()` checks the pushed kernel is reachable at the
+  address this file will ask for.
+- **A dataset must finish processing before a kernel is pushed against it.** `wait_for_dataset()`
+  polls `datasets status` until it reports `ready` (403 means it does not exist). This was not
+  what broke the first run — the mount path was — but a kernel started against an unprocessed
+  dataset mounts nothing and fails identically, so the guard stays.
 
 ---
 
@@ -41,8 +80,21 @@ No git remote exists for this project, so either:
 git archive --format=zip -o ravaan-code.zip HEAD -- ravaan scripts configs pyproject.toml README.md
 ```
 
-Then Kaggle → Datasets → New Dataset → upload `ravaan-code.zip`, private. It mounts read-only at
-`/kaggle/input/<slug>/`. **`data/manifest.json` is deliberately not in that archive** — see step 3.
+Then Kaggle → Datasets → New Dataset → upload `ravaan-code.zip`, private. Kaggle extracts the
+archive, so the dataset mounts read-only as the repo tree.
+**`data/manifest.json` is deliberately not in that archive** — see step 3.
+
+> **⚠️ The mount is not where the documentation says it is.** Measured 2026-09-10 by a kernel whose
+> only job was to print the tree (`kaggle/diag_input.py`): a dataset attached to a script kernel
+> arrives at
+> ```
+> /kaggle/input/datasets/<owner>/<slug>/scripts/neardedup.py
+> ```
+> — **two levels deeper** than the `/kaggle/input/<slug>/` that Kaggle's docs, every tutorial, and
+> earlier drafts of this runbook describe. Kernel 00 failed twice on that assumption, one second
+> into each run, with the dataset correctly attached and reporting `ready` the whole time. Every
+> kernel now locates the mount by searching for a file it must contain
+> (`kaggle/mount_bootstrap.py`), so the depth is never assumed again. Do not hardcode either form.
 
 **(b) Push to GitHub and `!git clone`.** Also finally exercises `.github/workflows/tests.yml`, which
 has never run because there is no remote.
@@ -57,10 +109,17 @@ Fetch it once into `/kaggle/working`, then **Save Version → output as a Datase
 dataset read-only in every later session.
 
 ```python
-!pip install -q -e "/kaggle/input/<code-slug>[data]"
-!cd /kaggle/working && python /kaggle/input/<code-slug>/scripts/acquire.py fetch
-!cd /kaggle/working && python /kaggle/input/<code-slug>/scripts/acquire.py verify
+!pip install -q "pyarrow>=17" "zstandard>=0.23"
+!cd /kaggle/working && python /kaggle/input/datasets/<owner>/<code-slug>/scripts/acquire.py fetch
+!cd /kaggle/working && python /kaggle/input/datasets/<owner>/<code-slug>/scripts/acquire.py verify
 ```
+
+**There is no project install step, and the `pip install -e` this used to prescribe would have
+failed.** `/kaggle/input` is a read-only mount and an editable install has to write `egg-info`
+into it. None is needed: every driver in `scripts/` does its own
+`sys.path.insert(0, parents[1])`, and the package that *decides* anything is stdlib-only by
+design (§`pyproject.toml`). Only `pyarrow` is genuinely required, to read parquet — and Kaggle's
+image ships it, so the line above is belt-and-braces.
 
 `fetch` pins every file to a commit SHA and verifies SHA-256 as it streams, so this reproduces the
 exact bytes the local manifest describes — that is why uploading 6.5 GB from a home connection is
@@ -95,7 +154,7 @@ a real rate:
 import time, subprocess
 t = time.time()
 subprocess.run([
-    "python", "/kaggle/input/<code-slug>/scripts/neardedup.py",
+    "python", "/kaggle/input/datasets/<owner>/<code-slug>/scripts/neardedup.py",
     "--source", "fineweb2-urd_Arab", "--split", "train",
     "--limit", "200000", "--single-pass",
     "--json", "/kaggle/working/trial.json",
@@ -115,8 +174,12 @@ Also watch **peak RSS** during the trial — the ~2,010 bytes/document figure is
 and may differ on Roman-Urdu-Parl's short rows:
 
 ```python
-import resource; print(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1e6, "GB")
+import resource; print(resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss / 1e6, "GB")
 ```
+
+**`RUSAGE_CHILDREN`, not `RUSAGE_SELF`** — the pass runs in a subprocess, so `SELF` measures the
+notebook, reports ~0, and looks exactly like the memory problem having gone away. This is the
+number Finding X is about; reading the wrong process would be the quietest possible way to lose it.
 
 ---
 
@@ -132,14 +195,14 @@ where either alone was ~20, and here they would also contend for the 30 GB.
 !mkdir -p /kaggle/working/reports/freeze /kaggle/working/logs
 
 # FineWeb2 — only if step 4 said it fits
-!cd /kaggle/working && python /kaggle/input/<code-slug>/scripts/neardedup.py \
+!cd /kaggle/working && python /kaggle/input/datasets/<owner>/<code-slug>/scripts/neardedup.py \
     --source fineweb2-urd_Arab --split train --limit 0 --single-pass --sweep 0.7 0.8 0.9 \
     --removals reports/freeze/removals_67_fineweb2.txt \
     --pairs-out reports/freeze/pairs_67_fineweb2.jsonl \
     --json reports/freeze/neardedup_fineweb2.json
 
 # Roman-Urdu-Parl — char shingles, because its rows are single sentences
-!cd /kaggle/working && python /kaggle/input/<code-slug>/scripts/neardedup.py \
+!cd /kaggle/working && python /kaggle/input/datasets/<owner>/<code-slug>/scripts/neardedup.py \
     --source roman-urdu-parl --split train --limit 0 --shingle-unit char --single-pass \
     --removals reports/freeze/removals_67_roman.txt \
     --json reports/freeze/neardedup_roman.json

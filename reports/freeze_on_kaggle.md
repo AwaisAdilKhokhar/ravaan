@@ -1,5 +1,16 @@
 # Running the stage 6+7 freeze passes on Kaggle
 
+> **⛔ This path is closed, and the reason is not fixable in code.** A Kaggle notebook gets no
+> network without **phone verification**, which is not available on this account — Kaggle records
+> `enable_internet: True`, returns it on the live kernel, and still gives the container no DNS
+> (Finding Z′). **The freeze runs on Colab: see [`colab/README.md`](../colab/README.md).**
+>
+> Everything below stays accurate and is worth keeping. The kernels, the driver and its guards are
+> built and tested (`kaggle/`, 20 tests), three of this project's findings came from getting them
+> working, and §3 onward — read plans, the trial gate, what comes back and how it is checked — is
+> host-independent. If phone verification ever becomes possible, `python kaggle/push.py push 00`
+> is the whole of what is left here.
+
 Urdu Wikipedia is done locally. The two long passes — FineWeb2 (both train shards) and
 Roman-Urdu-Parl — need more RAM than the local machine has: stage 7's index measured
 **~2,010 bytes per document**, so FineWeb2's ~5.0M documents come to **~10 GB** against ~2 GB free.

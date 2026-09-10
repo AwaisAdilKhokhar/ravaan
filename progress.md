@@ -46,9 +46,9 @@ first.**
   4 falsifiable predictions, before any training.
 - **PRD version:** **v2.2** (2026-08-05) — §0.2 amends §6.1, §4.3, §8.2, §10 and §11 for Finding R.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 670 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · **57 minhash**
+- **Tests:** 678 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · **57 minhash**
   · 57 encoding · 57 acquisition · 51 packing · **44 dedup** · 43 quality · 32 langid ·
-  **20 exclusions** · 18 shards · **20 kaggle**). The exclusion file carries the first
+  **20 exclusions** · 18 shards · **20 kaggle** · **8 colab**). The exclusion file carries the first
   driver-level tests in the suite; the kaggle file is the first to cover the boundary between this
   repo and the machine the freeze runs on.
 - **Committed** through session 16, on branch `stages-7-and-8` (main is at session 8;
@@ -131,9 +131,11 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | Kernel address comes from the title, not `id`'s slug (Finding Y) | — | ✅ derived + asserted |
 | Mount is `/kaggle/input/datasets/<owner>/<slug>` (Finding Z) | — | ✅ searched, not built |
 | `enable_internet: True` is not a network (Finding Z′) | — | ✅ preflight in kernel 00 |
-| **Kaggle phone verification** | — | ⛔ **manual, blocks the freeze** |
-| Kernel 00: fetch + timed trials of both long passes | §6.3.7 | ⛔ blocked on verification |
-| Kernel 01 (FineWeb2) / 02 (Roman-Urdu-Parl) | §6.3.7 | ⬜ gated on 00's verdict |
+| **Kaggle phone verification** | — | ⛔ **not available — Kaggle path closed** |
+| **Freeze re-hosted on Colab** → `colab/README.md` | §6.3.7 | ✅ driver + 8 tests |
+| Colab memory gate: refuses a pass over 80% of measured RAM | §6.3.7 | ✅ |
+| Both passes' flag sets validated on real corpus at `--limit 2000` | §6.3.7 | ✅ |
+| Colab run: `trial`, then FineWeb2, then Roman-Urdu-Parl | §6.3.7 | ⬜ **next, and it is a session at a keyboard** |
 | `neardedup.py` resumability, if the 12 h cap binds | §6.3.7 | ⬜ decide from the trial |
 | Corpus manifest + statistics | §6.3 | 🟡 acquisition manifest done; stage stats pending |
 
@@ -2501,10 +2503,66 @@ Both properties are now tests, and both read the *argv the kernel builds* rather
 first version searched the source and failed, because `freeze_02` names `--single-pass` in a comment
 explaining why it does not pass it.
 
+
+**The freeze moves again — to Colab, because phone verification is not available**
+
+Finding Z′ is not a bug that can be fixed in code: a Kaggle notebook gets no network without phone
+verification, and that is not available on this account. Four hosts were weighed — Kaggle with the
+corpus uploaded (7.6 GB from a home connection, no resume, and 5.6 GB of free disk here means no
+staging copy), a rented 32 GB box (~$2–8 against a $150 cap with $0 spent), local with resumability
+plus band-partitioning built, and Colab. **Colab chosen.**
+
+The trade is precise and worth stating, because it moves the binding constraint from an account
+property to a physical one:
+
+| | Kaggle | Colab |
+|---|---|---|
+| RAM | ~30 GB | **~12.7 GB** free CPU runtime |
+| against Finding X's projection | ~9–10 GB | ~9–10 GB |
+| when RAM runs out | — | **process killed**, no pagefile to absorb it |
+| network in notebook | needs phone verification | yes |
+| corpus | fetched once, mounted | **re-fetched each session** (~7.7 GB, no `--source` on `fetch`) |
+| disk | ~30 GB | ~100 GB |
+
+**So `colab/freeze_colab.py` is built around the memory gate rather than around the passes.** `env`
+prints what the runtime reports rather than what a doc claims; `trial` projects hours *and* peak RSS
+from a prefix and refuses when either exceeds **80% of measured available RAM**; and a pass will not
+start without a passing trial on record. `--force` overrides deliberately, and nothing overrides it
+by accident. `child_peak_gb()` raises off-Linux rather than returning 0.0, because a memory gate that
+cannot measure memory must refuse instead of always opening.
+
+**One design point that is the session's own lesson applied to itself.** The first draft had
+`--sweep` on the real pass and not on the trial. That is the same class of error as everything above:
+the projection authorising a ten-hour unresumable run would have been measured on a *different
+computation*. Both argvs now come from one `build_argv()`, and a test asserts they differ in document
+count and output paths and in nothing else.
+
+**And the driver was actually exercised, which is the part that has been missing all along.** It
+imports on Windows on purpose — `resource` and `/proc/meminfo` deferred to their call sites — so its
+argument parsing and gate logic are testable here. Then the exact computational flags each Colab pass
+will use were run against the real corpus at `--limit 2000`:
+
+| | FineWeb2 (`--single-pass --sweep 0.7 0.8 0.9`) | Roman-Urdu-Parl (`--shingle-unit char`) |
+|---|---|---|
+| documents kept | 1,930 / 1,930 | **1,294 / 2,000** |
+| clusters | 0 | **224**, largest 7 |
+| candidate → verified → retained | 2 → 0 → 0 | 712 → 451 → 687 |
+| sweep at 0.70 / 0.80 / 0.90 | 0 / 0 / 0 removed | — |
+
+Nothing errored, `--sweep` composes with `--single-pass`, and the threshold sits above the retention
+floor — all four things that would have killed a Colab session minutes after a 7.7 GB fetch.
+Roman-Urdu-Parl's 35% removal at 2,000 rows is not a corpus number (it is one file's first rows) but
+it is the first direct sighting of what PRD §6.2 warns about: ~6.37M machine-transliterated pairs
+collapsing toward ~1.09M unique Urdu sentences. It is also why `--single-pass` stays off that source.
+
 **Decisions made**
 
 | Decision | Rationale |
 |---|---|
+| **Colab over Kaggle-with-upload, a rented box, or local** | Kaggle's blocker is an account property, not code. Uploading 7.6 GB has no resume and no disk here to stage it; a rented box costs money the project has not needed yet; local costs a week and 5.6 GB of free disk will not hold spilled sketches. Colab keeps the fetch working and moves the risk to memory, which is measurable — and `trial` measures it |
+| The Colab gate refuses on **memory** as well as time | Kaggle's ~30 GB made time the only real question. At ~12.7 GB against a ~9–10 GB projection, memory is the question, and an OOM there kills the process rather than paging |
+| One `build_argv()` for trial and pass | A flag in one and not the other means the projection did not measure the run it authorised. The first draft had exactly that, with `--sweep` |
+| The Colab driver imports on Windows | `resource` and `/proc/meminfo` at their call sites instead of the top. Otherwise nothing here can import it, and it goes unvalidated until an hour into a session on another machine — which is precisely how the four bugs above survived |
 | `slug` is the only kernel name; the title is derived from it | Kaggle honours the title and discards the slug in `id`. Deriving one from the other means both fields carry the same string, so which one the server prefers stops being a thing this repo can be wrong about |
 | A mismatched or unreachable kernel ref **raises** after a push | The push succeeds either way. This is the only check that can catch a slug the server rewrote, and its absence is what hid a failed run for five weeks |
 | The mount is *searched for*, not constructed | Kaggle's layout is theirs to change and it already differs from their own documentation. A marker file is a fact about our own repo; a path is a guess about their platform |
@@ -2521,7 +2579,7 @@ explaining why it does not pass it.
 | kernel 00 attempts | 3 — errored at 1.6 s (v1), 1.1 s (v2), 41 s (v3) |
 | code dataset | 49 files, extracted, byte-exact against HEAD on three spot-checked files |
 | diagnostic kernel | pushed → COMPLETE in under one minute |
-| tests | **670 passing** (+20: `tests/test_kaggle_push.py`, the first tests in this repo covering the Kaggle boundary) |
+| tests | **678 passing** (+28: `tests/test_kaggle_push.py` and `tests/test_colab_freeze.py`, the first tests covering this repo's boundary with the machines the freeze runs on) |
 | read plans | three, measured; two corroborated against independent earlier records |
 | spend | still **$0.00** — Kaggle CPU notebooks are free, and no paid instance has been touched |
 
@@ -2583,34 +2641,40 @@ environment the pipeline runs in, only to the data it reads.
 
 ## Next session
 
-**⚠️ START HERE: one manual step blocks the freeze — Kaggle → Settings → Phone Verification.**
+**⚠️ START HERE: `colab/README.md`. The freeze runs on Colab now, and the next step is a
+session at a keyboard rather than any more code.**
 
-Everything else on the Kaggle side is built, pushed and tested (session 16). An unverified account
-gets no DNS inside a notebook while the API cheerfully reports `enable_internet: True`, so kernel 00
-cannot fetch the corpus until this is done. It is the account holder's to do and it takes a minute.
+Phone verification is not available, so the Kaggle path is closed for good — its notebooks get no
+network without it. Colab has internet. The driver, the gate and the runbook are built and tested;
+what remains is running it, and the one thing that cannot be automated is that a Colab session needs
+someone to keep the tab open.
 
-Then, in order — nothing here needs a decision, and the preconditions refuse rather than waste a
-session:
+Paste the cells from `colab/README.md` in order. `ravaan-code.zip` is already rebuilt with `colab/`
+in it (234 KB, 62 entries):
 
-```bash
-python kaggle/push.py push 00      # fetch + verify + timed trials of both long passes
-python kaggle/push.py status 00    # poll
-python kaggle/push.py logs 00      # read the verdict: does each pass fit ~10 h?
-python kaggle/push.py push 01      # FineWeb2 — refuses while 00 is not COMPLETE
-python kaggle/push.py pull 01
-python kaggle/push.py push 02      # Roman-Urdu-Parl — never concurrently with 01
+```python
+!python colab/freeze_colab.py env       # what this runtime actually has
+!python colab/freeze_colab.py fetch     # ~7.7 GB, verified, read plans checked
+!python colab/freeze_colab.py trial     # THE GATE — read the verdict
+!python colab/freeze_colab.py fineweb2 --drive /content/drive/MyDrive/ravaan
+!python colab/freeze_colab.py roman    --drive /content/drive/MyDrive/ravaan
 ```
 
-**If 00's verdict says a pass does not fit**, do not push it. Build resumability first
-(`reports/freeze_on_kaggle.md` §6): the shard reader already checkpoints, so what is missing is
-serializing `MinHashDeduplicator`'s parallel arrays and `ExactDeduplicator._best`. Sampling is not
-an option — Finding G.
+**The verdict to expect, and what to do with it.** Finding X projects ~9–10 GB against a free
+runtime's ~12.7 GB, so `fits_memory` is genuinely uncertain — the gate exists because the honest
+answer is "measure it". If it refuses, the order is: make `neardedup.py` resumable, then
+band-partition to disk (Colab has ~100 GB spare and this machine has 5.6 GB), then rent a 32 GB box
+for ~$2–8. **Sampling is never an option** — Finding G.
 
-**If phone verification is not possible on this account**, the fallback is to upload the ~7.7 GB
-corpus as a private dataset from here rather than fetching it there. Steps 4 onward are unaffected,
-because they only read the mount.
+**Two things that are true regardless of the verdict:**
 
-**The old runbook pointer, still accurate for everything after the fetch:**
+- **`--drive` is not optional in practice.** A disconnected Colab session takes `/content` with it,
+  and the pass is unresumable.
+- **Watch `largest_cluster`.** Nothing caps a component's size; the only evidence 0.80 does not chain
+  is Wikipedia's 23.
+
+**The Kaggle runbook remains accurate for everything after the corpus arrives** — only the host
+changed, and stages 9, 8 and 10 were always local:
 
 Session 14 found the freeze order was not executable (Finding W) and built the missing piece —
 `--exclude` now carries stages 6/7/8's removals into stages 9 and 10 and refuses a list computed

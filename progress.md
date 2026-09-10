@@ -2712,6 +2712,21 @@ the clock without `--force` waiving the memory verdict along with it. The FineWe
 both counts at once (11.69 h > 9.0; 12.7 GB > 9.7), and memory is the projection Finding X already
 got wrong by 2x.
 
+**Finding AD — `reports/freeze/*.jsonl` had never been committed, and that is the fourth instance.**
+`.gitignore` blanket-ignores `*.jsonl` and re-includes `!/reports/*.jsonl`, which is one level deep
+and cannot reach `reports/freeze/`. So **both measured-pair files were silently untracked** —
+including the two Findings AA and AB were adjudicated from, which are 30 KB each and are the only
+record of which pairs threshold 0.80 was read against. `neardedup_threshold.md` says a threshold
+must be chosen from measured pairs; the pairs were never in the repo. Fixed with an explicit
+`!/reports/freeze/*.jsonl`. Sessions 2 and 4 hit the same shape (`data/` then `/data/`), and the
+file's own comment already warned about it — **a negation cannot re-include a file whose parent
+directory is excluded, and every new subdirectory under an ignored glob is a fresh instance.**
+
+Found while fixing a self-inflicted one: `git add -A` committed the 166 MB removal list and a Drive
+download bundle. The list is now pinned by `removals_67_roman.sha256.json` per §6.3 rather than
+tracked. **The blob is still in history and there is no remote yet**, so removing it is cheap now
+and will not be later.
+
 **The lesson.** Two independent quantitative signals — a 10,757 component and an average degree
 above percolation — both said "artifact", and both were wrong. The corpus was on this machine the
 whole time and reading twenty-four sentences from it settled what neither statistic could. Session

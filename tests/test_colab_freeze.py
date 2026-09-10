@@ -212,3 +212,28 @@ def test_the_session_cap_is_recorded_in_the_trial_it_authorises() -> None:
     parser_source = (REPO / "colab" / "freeze_colab.py").read_text(encoding="utf-8")
     assert '"safe_hours": safe_hours,' in parser_source
     assert "--safe-hours" in parser_source
+
+
+@pytest.mark.parametrize("name", ["fineweb2", "roman"])
+def test_every_pass_records_a_threshold_sweep(name: str) -> None:
+    """Both passes sweep, because the sweep is the only record of why 0.80 was kept.
+
+    Roman-Urdu-Parl ran without it on 2026-09-10 and returned `largest_cluster` 10,757 against
+    Wikipedia's 23 — the signal `colab/README.md` names as meaning the threshold does not transfer
+    — with no way to ask what 0.85 or 0.90 would have done. `sweep()` re-clusters from the pairs
+    held in the index, and `--pairs-out` writes only banded examples, so the answer died with the
+    process and the 1.38 h pass had to be run again. The pairs are retained at
+    `retain_pairs_above` either way; the flag is what turns them into a decision on the record.
+    """
+    argv = colab.build_argv(name, limit=0, write_outputs=True)
+    assert "--sweep" in argv, f"{name} discards its threshold evidence"
+    thresholds = []
+    for token in argv[argv.index("--sweep") + 1 :]:
+        if token.startswith("--"):
+            break
+        thresholds.append(float(token))
+    assert thresholds, f"{name} passes --sweep with no thresholds"
+    assert min(thresholds) >= 0.5, (
+        "a threshold below retain_pairs_above=0.5 makes the sweep silently incomplete — "
+        "the pairs that would decide it were never kept"
+    )

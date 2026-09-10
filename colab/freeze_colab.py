@@ -99,7 +99,25 @@ PASSES = {
         "split": "train",
         # Char shingles because the rows are single sentences. NOT --single-pass: its memory cost is
         # proportional to the exact-duplicate rate, and 6.37M rows collapse toward 3.48M distinct.
-        "extra": ["--shingle-unit", "char"],
+        #
+        # --sweep was missing here on the 2026-09-10 run, and that cost the run's threshold data.
+        # It came back with largest_cluster = 10,757 against Wikipedia's 23 — the number this
+        # driver's own README says would mean 0.80 does not transfer — and no way to ask what a
+        # higher threshold would have done, because `sweep()` re-clusters from the retained pairs
+        # held in the index and --pairs-out writes only banded examples. So the question that the
+        # result raised needed the pass run again to answer. The sweep is seconds over pairs that
+        # are retained either way (5.3M of them, at retain_pairs_above=0.5), which is exactly why
+        # its absence was easy to miss: it costs nothing and it is the only record of the decision.
+        "extra": [
+            "--shingle-unit",
+            "char",
+            "--sweep",
+            "0.75",
+            "0.80",
+            "0.85",
+            "0.90",
+            "0.95",
+        ],
         "documents": ROMAN_ROWS,
         "trial_documents": 500_000,
     },

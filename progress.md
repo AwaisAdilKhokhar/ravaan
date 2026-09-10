@@ -54,9 +54,9 @@ first.**
   4 falsifiable predictions, before any training.
 - **PRD version:** **v2.2** (2026-08-05) — §0.2 amends §6.1, §4.3, §8.2, §10 and §11 for Finding R.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 678 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · **57 minhash**
+- **Tests:** 682 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · **57 minhash**
   · 57 encoding · 57 acquisition · 51 packing · **44 dedup** · 43 quality · 32 langid ·
-  **20 exclusions** · 18 shards · **20 kaggle** · **8 colab**). The exclusion file carries the first
+  **20 exclusions** · 18 shards · **20 kaggle** · **12 colab**). The exclusion file carries the first
   driver-level tests in the suite; the kaggle file is the first to cover the boundary between this
   repo and the machine the freeze runs on.
 - **Committed** through session 16, on branch `stages-7-and-8` (main is at session 8;
@@ -143,8 +143,14 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | **Freeze re-hosted on Colab** → `colab/README.md` | §6.3.7 | ✅ driver + 8 tests |
 | Colab memory gate: refuses a pass over 80% of measured RAM | §6.3.7 | ✅ |
 | Both passes' flag sets validated on real corpus at `--limit 2000` | §6.3.7 | ✅ |
-| Colab run: `trial`, then FineWeb2, then Roman-Urdu-Parl | §6.3.7 | ⬜ **next, and it is a session at a keyboard** |
-| `neardedup.py` resumability, if the 12 h cap binds | §6.3.7 | ⬜ decide from the trial |
+| Colab run: `trial` — fineweb2 refused (11.69 h, 12.7 GB), roman `FITS` | §6.3.7 | ✅ |
+| **Freeze run: stage 6+7, Roman-Urdu-Parl, complete** | §6.3.7 | ✅ 1.38 h, 4,307,848 ids |
+| Its 82% character loss is genuine near-duplication (Findings AA, AB) | §6.3.7 | ✅ read, not inferred |
+| **roman_urdu cannot fund arm B — 0.44x** | §11 | ⛔ **PRD decision open** |
+| Freeze run: stage 6+7, FineWeb2 both shards | §6.3.7 | ⬜ **needs a rented 32 GB box, ~$2-4** |
+| `neardedup.py` resumability | §6.3.7 | ⬜ not needed if FineWeb2 runs on a rented box |
+| `--safe-hours`, so a capless host need not `--force` past the memory gate | §6.3.7 | ✅ 2 tests |
+| Both passes carry `--sweep`, floor asserted (Finding AC) | §6.3.7 | ✅ 2 tests |
 | Corpus manifest + statistics | §6.3 | 🟡 acquisition manifest done; stage stats pending |
 
 ### Weeks 5–16
@@ -2607,6 +2613,91 @@ failures, three assumptions, none of them taken from the system itself. The meas
 Finding Z cost **one minute** and was available at any point in the preceding five weeks. The
 project's own practice — probe before trusting a threshold — had never been applied to the
 environment the pipeline runs in, only to the data it reads.
+
+---
+
+### Session 17 — 2026-09-10
+
+**The Roman-Urdu-Parl freeze pass ran on Colab and answered the question G1 had been carrying
+unmeasured since session 12: the corpus loses 82% of that population, and the loss is real.**
+
+Complete pass, unsampled, 1.38 h, peak child RSS 5.60 GB against a 9.7 GB budget:
+
+| | documents | characters |
+|---|---|---|
+| read (post stages 2-5 + PII) | 6,032,599 | 465,303,750 |
+| after stage 6 (exact) | 3,478,770 | 258,876,832 (55.64%) |
+| after stage 7 (near, 0.80) | 1,724,751 | **81,791,735 (17.58% end to end)** |
+
+3,478,770 distinct reproduces session 8's Finding K' figure exactly, on a completely different code
+path — the strongest cross-check the corpus work has had.
+
+**Finding AA — the 82% is genuine near-duplication, not the chaining artifact the numbers implied.**
+`largest_cluster` came back **10,757** against Wikipedia's 23, which `colab/README.md` names as the
+signal that threshold 0.80 does not transfer. The aggregate evidence pointed the same way: 2,395,785
+verified pairs over 3,478,770 documents is an average degree of 1.38, above the percolation
+threshold where single-linkage produces a giant component whether or not any individual pair is
+correct. **Both were wrong, and reading the text settled it in minutes.** Every one of the five
+largest clusters is one Wikipedia geo-stub template:
+
+```
+cluster 0 (10,757)  lingdn knsas ka Raqba murabba kilomitr hai aur is ki majmoi abadi ...
+                    Ali ganj    ka Raqba murabba kilomitr hai aur is ki majmoi abadi ...
+cluster 1 (1,806)   Pakistan riloyz ki sarkari Website ke mutabiq <NAME> railway station ka code hai
+```
+
+The decisive detail is that **the source has the numbers stripped** — "rqba murabba kilomitr hai"
+is "area is __ square kilometres", with no figure. So these sentences differ in a proper noun and
+nothing else, and collapsing them is exactly what stage 7 is for.
+
+**Finding AB — 0.80 is if anything too conservative here, so no threshold move recovers budget.**
+Read across the cut, the pairs *below* it are still duplicates:
+
+| band | verdict | example |
+|---|---|---|
+| 0.75-0.80 | **kept** | `baah shehar ki majmoi abadi ... sataa darya` / `... Majmui abadi ... satah darya` |
+| 0.80-0.85 | deleted | `sooch ka nagar pathar` / `soch ka nagar pathar` |
+| 0.85-0.90 | deleted | `bohot mubarakbaad` / `bohat mubarakbaad` |
+
+These are the crowdsourced spelling variants §6.2 warns the corpus was built from. Raising the
+threshold retains more of them; it does not recover unique text. **The sweep re-run was therefore
+not needed** — the question it would have answered is answered by 24 sentences.
+
+**Consequence for G1, and it is conversion-independent.** The margin scales by the retention factor
+regardless of what chars-per-token turns out to be:
+
+| | session 12 margin | x 0.1758 | verdict |
+|---|---|---|---|
+| roman_urdu vs **arm B** + held-out | 2.48x | **0.44x** | **cannot be assembled** |
+| roman_urdu vs **arm A** + held-out | ~8.7x | **~1.53x** | fundable, thin, and **before stage 8** |
+
+`urdu` (46.66x) and `code_switched` (2.35x) are unaffected: the FineWeb2 trial measured that
+source's self-similarity at 9 clusters in 193,666 documents, largest 2, and 0 removed at 0.90.
+
+**Arm B is not dead, it moves.** `scripts/crossover.py` puts the predicted crossover at **U = 33M**
+for this compute. Arm A at 25M sits below it and is predicted to cross; the largest arm B the
+corpus can now build is **U ~= 40M** (9.58M roman tokens after a fixed ~1.20M held-out, at the
+23.53% mixture share), which sits *above* 33M and is predicted not to. The bracket survives at 25M
+vs 40M around a 33M pivot — narrower than 25 vs 100 around the same pivot, and still a bracket.
+**This is a decision for the PRD, not for a session log**, and the alternative is G1's written
+fallback of a single-arm report.
+
+**Finding AC — the sweep is not recoverable after the fact, and the run carried no `--sweep`.**
+`sweep()` re-clusters from the retained pairs held in the index; `--pairs-out` writes only banded
+examples. The 5.3M retained pairs died with the process. It happened to cost nothing because the
+text answered the question, but the flag is free and is now in both passes with a test asserting
+its floor against `retain_pairs_above`.
+
+**Also this session:** `--safe-hours` on the trial, so a rented box with no session cap can relax
+the clock without `--force` waiving the memory verdict along with it. The FineWeb2 trial refused on
+both counts at once (11.69 h > 9.0; 12.7 GB > 9.7), and memory is the projection Finding X already
+got wrong by 2x.
+
+**The lesson.** Two independent quantitative signals — a 10,757 component and an average degree
+above percolation — both said "artifact", and both were wrong. The corpus was on this machine the
+whole time and reading twenty-four sentences from it settled what neither statistic could. Session
+16's lesson was that the platform had never been probed the way the data had; this one is narrower
+and older: **an aggregate can only ever say where to look.**
 
 ---
 

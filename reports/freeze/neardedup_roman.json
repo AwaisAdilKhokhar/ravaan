@@ -1,0 +1,2180 @@
+{
+  "minhash_version": "1.0.0",
+  "config_fingerprint": "4662798df780",
+  "config": {
+    "num_bins": 128,
+    "bands": 32,
+    "rows": 4,
+    "shingle_size": 5,
+    "shingle_unit": "char",
+    "min_shingles": 8,
+    "similarity_threshold": 0.8,
+    "retain_pairs_above": 0.5,
+    "max_index_entries": 8000000,
+    "max_retained_pairs": 40000000,
+    "max_candidate_pairs": 20000000,
+    "seed": 0
+  },
+  "band_threshold": 0.4204,
+  "candidate_probability_at_threshold": 1.0,
+  "indexed": 3478770,
+  "eligible": 3478602,
+  "skipped_short": 168,
+  "dropped_before_build": 0,
+  "shingles_total": 234805978,
+  "mean_shingles": 67.5,
+  "candidate_pairs": 9348580,
+  "verified_pairs": 2395785,
+  "retained_pairs": 5297737,
+  "band_precision": 0.256273,
+  "clusters": 555182,
+  "duplicate_documents": 1754019,
+  "duplicate_rate": 0.504207,
+  "largest_cluster": 10757,
+  "cross_source_clusters": 0,
+  "cross_source_pairs": {},
+  "documents_kept": 1724751,
+  "documents_removed": 1754019,
+  "keep_rate": 0.495793,
+  "chars_in": 258876832,
+  "chars_kept": 81791735,
+  "char_keep_rate": 0.315948,
+  "by_source": {
+    "roman-urdu-parl": 3478770
+  },
+  "kept_by_source": {
+    "roman-urdu-parl": 1724751
+  },
+  "removed_by_source": {
+    "roman-urdu-parl": 1754019
+  },
+  "removed_cross_source_by_source": {},
+  "similarity_histogram": {
+    "0.50-0.55": 447868,
+    "0.55-0.60": 395209,
+    "0.60-0.65": 485828,
+    "0.65-0.70": 446949,
+    "0.70-0.75": 488125,
+    "0.75-0.80": 637973,
+    "0.80-0.85": 616816,
+    "0.85-0.90": 807342,
+    "0.90-0.95": 653650,
+    "0.95-1.00": 317977
+  },
+  "containment_histogram": {
+    "0.65-0.70": 122534,
+    "0.70-0.75": 395735,
+    "0.75-0.80": 573422,
+    "0.80-0.85": 728776,
+    "0.85-0.90": 958780,
+    "0.90-0.95": 1293835,
+    "0.95-1.00": 1224655
+  },
+  "distinct_documents": 1724751,
+  "top_clusters": [
+    {
+      "cluster": 0,
+      "size": 10757,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:125:7116",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:120:4376",
+        "roman-urdu-parl:train_set.csv:120:9429",
+        "roman-urdu-parl:train_set.csv:120:4062",
+        "roman-urdu-parl:train_set.csv:120:4066"
+      ]
+    },
+    {
+      "cluster": 1,
+      "size": 1806,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:112:2929",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:0:2881",
+        "roman-urdu-parl:train_set.csv:0:2765",
+        "roman-urdu-parl:train_set.csv:0:2870",
+        "roman-urdu-parl:train_set.csv:0:2851"
+      ]
+    },
+    {
+      "cluster": 2,
+      "size": 1557,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:124:6864",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:120:4044",
+        "roman-urdu-parl:train_set.csv:120:4049",
+        "roman-urdu-parl:train_set.csv:120:9482",
+        "roman-urdu-parl:train_set.csv:120:9466"
+      ]
+    },
+    {
+      "cluster": 3,
+      "size": 845,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:118:9620",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:120:3768",
+        "roman-urdu-parl:train_set.csv:120:3780",
+        "roman-urdu-parl:train_set.csv:120:3778",
+        "roman-urdu-parl:train_set.csv:120:3779"
+      ]
+    },
+    {
+      "cluster": 4,
+      "size": 777,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:114:8932",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:3:4692",
+        "roman-urdu-parl:train_set.csv:114:3752",
+        "roman-urdu-parl:train_set.csv:114:8649",
+        "roman-urdu-parl:train_set.csv:114:8874"
+      ]
+    },
+    {
+      "cluster": 5,
+      "size": 490,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:137:4844",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:120:4881",
+        "roman-urdu-parl:train_set.csv:120:7640",
+        "roman-urdu-parl:train_set.csv:120:8457",
+        "roman-urdu-parl:train_set.csv:120:4882"
+      ]
+    },
+    {
+      "cluster": 6,
+      "size": 390,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:618:5553",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:135:9418",
+        "roman-urdu-parl:train_set.csv:135:8249",
+        "roman-urdu-parl:train_set.csv:135:8250",
+        "roman-urdu-parl:train_set.csv:135:9403"
+      ]
+    },
+    {
+      "cluster": 7,
+      "size": 378,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:598:7281",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:106:4026",
+        "roman-urdu-parl:train_set.csv:106:4067",
+        "roman-urdu-parl:train_set.csv:106:3193",
+        "roman-urdu-parl:train_set.csv:106:4012"
+      ]
+    },
+    {
+      "cluster": 8,
+      "size": 376,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:114:8092",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:3:5136",
+        "roman-urdu-parl:train_set.csv:3:7679",
+        "roman-urdu-parl:train_set.csv:114:8316",
+        "roman-urdu-parl:train_set.csv:114:8318"
+      ]
+    },
+    {
+      "cluster": 9,
+      "size": 374,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:116:5613",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:3:4012",
+        "roman-urdu-parl:train_set.csv:3:8492",
+        "roman-urdu-parl:train_set.csv:114:8206",
+        "roman-urdu-parl:train_set.csv:114:7157"
+      ]
+    },
+    {
+      "cluster": 10,
+      "size": 372,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:615:5443",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:135:1048",
+        "roman-urdu-parl:train_set.csv:135:1028",
+        "roman-urdu-parl:train_set.csv:135:1030",
+        "roman-urdu-parl:train_set.csv:135:1041"
+      ]
+    },
+    {
+      "cluster": 11,
+      "size": 370,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:111:8078",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:120:3693",
+        "roman-urdu-parl:train_set.csv:120:3695",
+        "roman-urdu-parl:train_set.csv:120:4392",
+        "roman-urdu-parl:train_set.csv:120:3691"
+      ]
+    },
+    {
+      "cluster": 12,
+      "size": 291,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:254:9348",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:198:8562",
+        "roman-urdu-parl:train_set.csv:74:8280",
+        "roman-urdu-parl:train_set.csv:377:2525",
+        "roman-urdu-parl:train_set.csv:377:2527"
+      ]
+    },
+    {
+      "cluster": 13,
+      "size": 254,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:149:9362",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:226:7384",
+        "roman-urdu-parl:train_set.csv:226:7380",
+        "roman-urdu-parl:train_set.csv:226:7383",
+        "roman-urdu-parl:train_set.csv:4:7657"
+      ]
+    },
+    {
+      "cluster": 14,
+      "size": 251,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:110:8178",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:115:1162",
+        "roman-urdu-parl:train_set.csv:115:1220",
+        "roman-urdu-parl:train_set.csv:115:1226",
+        "roman-urdu-parl:train_set.csv:115:1159"
+      ]
+    },
+    {
+      "cluster": 15,
+      "size": 242,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:127:9016",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:137:8244",
+        "roman-urdu-parl:train_set.csv:137:8242",
+        "roman-urdu-parl:train_set.csv:137:8245",
+        "roman-urdu-parl:train_set.csv:137:8246"
+      ]
+    },
+    {
+      "cluster": 16,
+      "size": 222,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:618:2551",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:618:2478",
+        "roman-urdu-parl:train_set.csv:618:4000",
+        "roman-urdu-parl:train_set.csv:618:2750",
+        "roman-urdu-parl:train_set.csv:618:3519"
+      ]
+    },
+    {
+      "cluster": 17,
+      "size": 203,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:1:1121",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:114:6883",
+        "roman-urdu-parl:train_set.csv:114:6877",
+        "roman-urdu-parl:train_set.csv:114:6879",
+        "roman-urdu-parl:train_set.csv:114:6881"
+      ]
+    },
+    {
+      "cluster": 18,
+      "size": 202,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:111:3834",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:114:7907",
+        "roman-urdu-parl:train_set.csv:114:7763",
+        "roman-urdu-parl:train_set.csv:114:7902",
+        "roman-urdu-parl:train_set.csv:114:8209"
+      ]
+    },
+    {
+      "cluster": 19,
+      "size": 199,
+      "sources": [
+        "roman-urdu-parl"
+      ],
+      "kept": "roman-urdu-parl:train_set.csv:0:1296",
+      "duplicates": [
+        "roman-urdu-parl:train_set.csv:114:8812",
+        "roman-urdu-parl:train_set.csv:114:8807",
+        "roman-urdu-parl:train_set.csv:114:8810",
+        "roman-urdu-parl:train_set.csv:114:8777"
+      ]
+    }
+  ],
+  "pair_examples": [
+    {
+      "left": "roman-urdu-parl:train_set.csv:541:2602",
+      "right": "roman-urdu-parl:train_set.csv:541:2590",
+      "similarity": 0.9766,
+      "containment": 0.9881,
+      "left_shingles": 105,
+      "right_shingles": 105,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:625:6179",
+      "right": "roman-urdu-parl:train_set.csv:625:6190",
+      "similarity": 0.9531,
+      "containment": 0.9868,
+      "left_shingles": 135,
+      "right_shingles": 138,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:66:8076",
+      "right": "roman-urdu-parl:train_set.csv:411:7227",
+      "similarity": 0.9844,
+      "containment": 0.9942,
+      "left_shingles": 236,
+      "right_shingles": 235,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:118:277",
+      "right": "roman-urdu-parl:train_set.csv:118:268",
+      "similarity": 0.9609,
+      "containment": 0.9839,
+      "left_shingles": 128,
+      "right_shingles": 129,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:310:4549",
+      "right": "roman-urdu-parl:train_set.csv:310:4533",
+      "similarity": 0.9922,
+      "containment": 0.9984,
+      "left_shingles": 214,
+      "right_shingles": 215,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:114:4561",
+      "right": "roman-urdu-parl:train_set.csv:114:4552",
+      "similarity": 0.9609,
+      "containment": 0.9833,
+      "left_shingles": 151,
+      "right_shingles": 150,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:3:1310",
+      "right": "roman-urdu-parl:train_set.csv:134:7811",
+      "similarity": 0.9609,
+      "containment": 0.9823,
+      "left_shingles": 223,
+      "right_shingles": 224,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:363:4902",
+      "right": "roman-urdu-parl:train_set.csv:363:4907",
+      "similarity": 0.9609,
+      "containment": 0.9874,
+      "left_shingles": 67,
+      "right_shingles": 68,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:480:5544",
+      "right": "roman-urdu-parl:train_set.csv:480:5540",
+      "similarity": 0.9766,
+      "containment": 1.0,
+      "left_shingles": 150,
+      "right_shingles": 154,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:463:9466",
+      "right": "roman-urdu-parl:train_set.csv:463:9454",
+      "similarity": 0.9922,
+      "containment": 0.9986,
+      "left_shingles": 196,
+      "right_shingles": 197,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:553:8131",
+      "right": "roman-urdu-parl:train_set.csv:553:8141",
+      "similarity": 0.9688,
+      "containment": 0.99,
+      "left_shingles": 85,
+      "right_shingles": 84,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:449:6436",
+      "right": "roman-urdu-parl:train_set.csv:449:6437",
+      "similarity": 0.9609,
+      "containment": 1.0,
+      "left_shingles": 18,
+      "right_shingles": 17,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:588:2577",
+      "right": "roman-urdu-parl:train_set.csv:588:2590",
+      "similarity": 0.9219,
+      "containment": 0.962,
+      "left_shingles": 181,
+      "right_shingles": 182,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:329:4429",
+      "right": "roman-urdu-parl:train_set.csv:329:4442",
+      "similarity": 0.9375,
+      "containment": 0.971,
+      "left_shingles": 150,
+      "right_shingles": 149,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:448:162",
+      "right": "roman-urdu-parl:train_set.csv:448:171",
+      "similarity": 0.9141,
+      "containment": 0.9573,
+      "left_shingles": 220,
+      "right_shingles": 219,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:601:438",
+      "right": "roman-urdu-parl:train_set.csv:601:433",
+      "similarity": 0.9141,
+      "containment": 0.9637,
+      "left_shingles": 166,
+      "right_shingles": 169,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:585:8806",
+      "right": "roman-urdu-parl:train_set.csv:585:8797",
+      "similarity": 0.9375,
+      "containment": 0.9732,
+      "left_shingles": 89,
+      "right_shingles": 90,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:140:9252",
+      "right": "roman-urdu-parl:train_set.csv:140:9248",
+      "similarity": 0.9062,
+      "containment": 0.9627,
+      "left_shingles": 40,
+      "right_shingles": 41,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:147:1876",
+      "right": "roman-urdu-parl:train_set.csv:147:1869",
+      "similarity": 0.9297,
+      "containment": 0.9676,
+      "left_shingles": 242,
+      "right_shingles": 240,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:214:8524",
+      "right": "roman-urdu-parl:train_set.csv:214:8526",
+      "similarity": 0.9453,
+      "containment": 0.984,
+      "left_shingles": 40,
+      "right_shingles": 41,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:324:8456",
+      "right": "roman-urdu-parl:train_set.csv:324:8457",
+      "similarity": 0.9219,
+      "containment": 0.9659,
+      "left_shingles": 74,
+      "right_shingles": 73,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:469:9391",
+      "right": "roman-urdu-parl:train_set.csv:227:9171",
+      "similarity": 0.9219,
+      "containment": 0.9593,
+      "left_shingles": 154,
+      "right_shingles": 154,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:213:3317",
+      "right": "roman-urdu-parl:train_set.csv:213:3316",
+      "similarity": 0.9141,
+      "containment": 1.0,
+      "left_shingles": 20,
+      "right_shingles": 22,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:628:9475",
+      "right": "roman-urdu-parl:train_set.csv:628:9478",
+      "similarity": 0.9219,
+      "containment": 0.9675,
+      "left_shingles": 60,
+      "right_shingles": 59,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:327:4608",
+      "right": "roman-urdu-parl:train_set.csv:327:4623",
+      "similarity": 0.8906,
+      "containment": 0.9445,
+      "left_shingles": 198,
+      "right_shingles": 199,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:531:2899",
+      "right": "roman-urdu-parl:train_set.csv:531:2896",
+      "similarity": 0.875,
+      "containment": 0.9417,
+      "left_shingles": 112,
+      "right_shingles": 114,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:558:2184",
+      "right": "roman-urdu-parl:train_set.csv:558:2178",
+      "similarity": 0.875,
+      "containment": 0.9366,
+      "left_shingles": 144,
+      "right_shingles": 143,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:28:9331",
+      "right": "roman-urdu-parl:train_set.csv:71:9802",
+      "similarity": 0.8594,
+      "containment": 1.0,
+      "left_shingles": 18,
+      "right_shingles": 21,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:39:184",
+      "right": "roman-urdu-parl:train_set.csv:292:467",
+      "similarity": 0.8906,
+      "containment": 0.959,
+      "left_shingles": 56,
+      "right_shingles": 58,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:116:6997",
+      "right": "roman-urdu-parl:train_set.csv:116:7002",
+      "similarity": 0.8984,
+      "containment": 0.9465,
+      "left_shingles": 73,
+      "right_shingles": 73,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:8:9903",
+      "right": "roman-urdu-parl:train_set.csv:162:6820",
+      "similarity": 0.8594,
+      "containment": 0.9331,
+      "left_shingles": 54,
+      "right_shingles": 53,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:630:8032",
+      "right": "roman-urdu-parl:train_set.csv:630:8033",
+      "similarity": 0.8906,
+      "containment": 0.9452,
+      "left_shingles": 157,
+      "right_shingles": 156,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:483:5769",
+      "right": "roman-urdu-parl:train_set.csv:483:5768",
+      "similarity": 0.875,
+      "containment": 0.9393,
+      "left_shingles": 78,
+      "right_shingles": 79,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:583:1666",
+      "right": "roman-urdu-parl:train_set.csv:583:1658",
+      "similarity": 0.8516,
+      "containment": 0.9198,
+      "left_shingles": 110,
+      "right_shingles": 110,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:120:1185",
+      "right": "roman-urdu-parl:train_set.csv:120:1183",
+      "similarity": 0.8984,
+      "containment": 0.9465,
+      "left_shingles": 78,
+      "right_shingles": 78,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:577:7407",
+      "right": "roman-urdu-parl:train_set.csv:577:7404",
+      "similarity": 0.8672,
+      "containment": 0.9289,
+      "left_shingles": 65,
+      "right_shingles": 65,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:426:7489",
+      "right": "roman-urdu-parl:train_set.csv:426:7486",
+      "similarity": 0.8047,
+      "containment": 0.8968,
+      "left_shingles": 89,
+      "right_shingles": 88,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:237:4562",
+      "right": "roman-urdu-parl:train_set.csv:26:3415",
+      "similarity": 0.8047,
+      "containment": 0.9196,
+      "left_shingles": 17,
+      "right_shingles": 16,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:153:5793",
+      "right": "roman-urdu-parl:train_set.csv:153:5791",
+      "similarity": 0.8125,
+      "containment": 0.8966,
+      "left_shingles": 50,
+      "right_shingles": 50,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:195:1812",
+      "right": "roman-urdu-parl:train_set.csv:195:1813",
+      "similarity": 0.8438,
+      "containment": 0.9223,
+      "left_shingles": 66,
+      "right_shingles": 65,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:440:6798",
+      "right": "roman-urdu-parl:train_set.csv:440:6804",
+      "similarity": 0.8203,
+      "containment": 0.9107,
+      "left_shingles": 96,
+      "right_shingles": 98,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:125:9635",
+      "right": "roman-urdu-parl:train_set.csv:126:187",
+      "similarity": 0.8203,
+      "containment": 0.9429,
+      "left_shingles": 142,
+      "right_shingles": 130,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:435:8343",
+      "right": "roman-urdu-parl:train_set.csv:435:8349",
+      "similarity": 0.8203,
+      "containment": 0.9013,
+      "left_shingles": 60,
+      "right_shingles": 60,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:339:1927",
+      "right": "roman-urdu-parl:train_set.csv:339:1925",
+      "similarity": 0.8047,
+      "containment": 0.8958,
+      "left_shingles": 111,
+      "right_shingles": 112,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:137:7323",
+      "right": "roman-urdu-parl:train_set.csv:137:7320",
+      "similarity": 0.8359,
+      "containment": 0.9201,
+      "left_shingles": 49,
+      "right_shingles": 48,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:120:7656",
+      "right": "roman-urdu-parl:train_set.csv:120:7660",
+      "similarity": 0.8203,
+      "containment": 0.9013,
+      "left_shingles": 49,
+      "right_shingles": 49,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:415:1419",
+      "right": "roman-urdu-parl:train_set.csv:415:1421",
+      "similarity": 0.8438,
+      "containment": 0.9336,
+      "left_shingles": 26,
+      "right_shingles": 25,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:628:3358",
+      "right": "roman-urdu-parl:train_set.csv:628:3368",
+      "similarity": 0.8281,
+      "containment": 0.906,
+      "left_shingles": 125,
+      "right_shingles": 125,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:137:7831",
+      "right": "roman-urdu-parl:train_set.csv:137:7824",
+      "similarity": 0.7812,
+      "containment": 0.8772,
+      "left_shingles": 94,
+      "right_shingles": 94,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:240:854",
+      "right": "roman-urdu-parl:train_set.csv:240:856",
+      "similarity": 0.7578,
+      "containment": 0.8699,
+      "left_shingles": 56,
+      "right_shingles": 57,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:11:2073",
+      "right": "roman-urdu-parl:train_set.csv:172:3105",
+      "similarity": 0.7969,
+      "containment": 0.8955,
+      "left_shingles": 53,
+      "right_shingles": 52,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:32:6696",
+      "right": "roman-urdu-parl:train_set.csv:264:7059",
+      "similarity": 0.7891,
+      "containment": 0.9077,
+      "left_shingles": 73,
+      "right_shingles": 69,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:102:2110",
+      "right": "roman-urdu-parl:train_set.csv:564:2051",
+      "similarity": 0.7656,
+      "containment": 0.8822,
+      "left_shingles": 29,
+      "right_shingles": 30,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:234:5071",
+      "right": "roman-urdu-parl:train_set.csv:25:6556",
+      "similarity": 0.75,
+      "containment": 0.8714,
+      "left_shingles": 31,
+      "right_shingles": 30,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:459:6318",
+      "right": "roman-urdu-parl:train_set.csv:459:6319",
+      "similarity": 0.7969,
+      "containment": 0.893,
+      "left_shingles": 73,
+      "right_shingles": 74,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:243:7269",
+      "right": "roman-urdu-parl:train_set.csv:27:8002",
+      "similarity": 0.7656,
+      "containment": 0.8773,
+      "left_shingles": 44,
+      "right_shingles": 43,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:629:6775",
+      "right": "roman-urdu-parl:train_set.csv:629:6780",
+      "similarity": 0.7891,
+      "containment": 0.8919,
+      "left_shingles": 92,
+      "right_shingles": 90,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:491:3799",
+      "right": "roman-urdu-parl:train_set.csv:491:3801",
+      "similarity": 0.7812,
+      "containment": 0.8947,
+      "left_shingles": 26,
+      "right_shingles": 25,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:240:8957",
+      "right": "roman-urdu-parl:train_set.csv:240:8953",
+      "similarity": 0.7969,
+      "containment": 0.9194,
+      "left_shingles": 41,
+      "right_shingles": 44,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:15:7620",
+      "right": "roman-urdu-parl:train_set.csv:192:206",
+      "similarity": 0.7891,
+      "containment": 0.8931,
+      "left_shingles": 40,
+      "right_shingles": 41,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:375:6013",
+      "right": "roman-urdu-parl:train_set.csv:529:755",
+      "similarity": 0.7188,
+      "containment": 0.8545,
+      "left_shingles": 24,
+      "right_shingles": 23,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:338:6580",
+      "right": "roman-urdu-parl:train_set.csv:169:2272",
+      "similarity": 0.7266,
+      "containment": 0.8416,
+      "left_shingles": 63,
+      "right_shingles": 63,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:217:241",
+      "right": "roman-urdu-parl:train_set.csv:217:239",
+      "similarity": 0.7266,
+      "containment": 0.8416,
+      "left_shingles": 37,
+      "right_shingles": 37,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:115:3450",
+      "right": "roman-urdu-parl:train_set.csv:122:9028",
+      "similarity": 0.7344,
+      "containment": 0.85,
+      "left_shingles": 135,
+      "right_shingles": 136,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:320:2366",
+      "right": "roman-urdu-parl:train_set.csv:45:5644",
+      "similarity": 0.7266,
+      "containment": 0.8799,
+      "left_shingles": 22,
+      "right_shingles": 24,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:404:3951",
+      "right": "roman-urdu-parl:train_set.csv:404:3948",
+      "similarity": 0.7109,
+      "containment": 0.8877,
+      "left_shingles": 44,
+      "right_shingles": 50,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:406:7974",
+      "right": "roman-urdu-parl:train_set.csv:406:7976",
+      "similarity": 0.7109,
+      "containment": 0.8399,
+      "left_shingles": 47,
+      "right_shingles": 48,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:112:6264",
+      "right": "roman-urdu-parl:train_set.csv:133:3267",
+      "similarity": 0.7266,
+      "containment": 0.8618,
+      "left_shingles": 167,
+      "right_shingles": 175,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:117:9708",
+      "right": "roman-urdu-parl:train_set.csv:116:8493",
+      "similarity": 0.7031,
+      "containment": 0.8486,
+      "left_shingles": 133,
+      "right_shingles": 126,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:515:1426",
+      "right": "roman-urdu-parl:train_set.csv:515:1425",
+      "similarity": 0.7188,
+      "containment": 0.8364,
+      "left_shingles": 32,
+      "right_shingles": 32,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:145:8414",
+      "right": "roman-urdu-parl:train_set.csv:263:3578",
+      "similarity": 0.7109,
+      "containment": 0.8865,
+      "left_shingles": 45,
+      "right_shingles": 51,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:183:1166",
+      "right": "roman-urdu-parl:train_set.csv:183:1167",
+      "similarity": 0.7188,
+      "containment": 0.8513,
+      "left_shingles": 58,
+      "right_shingles": 56,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:23:7656",
+      "right": "roman-urdu-parl:train_set.csv:226:3624",
+      "similarity": 0.6953,
+      "containment": 0.8331,
+      "left_shingles": 33,
+      "right_shingles": 32,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:616:5036",
+      "right": "roman-urdu-parl:train_set.csv:108:1956",
+      "similarity": 0.6719,
+      "containment": 0.8212,
+      "left_shingles": 92,
+      "right_shingles": 96,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:208:2831",
+      "right": "roman-urdu-parl:train_set.csv:208:2835",
+      "similarity": 0.6797,
+      "containment": 0.8205,
+      "left_shingles": 37,
+      "right_shingles": 36,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:402:3150",
+      "right": "roman-urdu-parl:train_set.csv:402:3153",
+      "similarity": 0.6641,
+      "containment": 0.8106,
+      "left_shingles": 33,
+      "right_shingles": 32,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:332:6202",
+      "right": "roman-urdu-parl:train_set.csv:332:6198",
+      "similarity": 0.6562,
+      "containment": 0.8277,
+      "left_shingles": 49,
+      "right_shingles": 45,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:311:3266",
+      "right": "roman-urdu-parl:train_set.csv:300:7527",
+      "similarity": 0.6719,
+      "containment": 0.8129,
+      "left_shingles": 45,
+      "right_shingles": 44,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:394:7019",
+      "right": "roman-urdu-parl:train_set.csv:394:7020",
+      "similarity": 0.6875,
+      "containment": 0.8148,
+      "left_shingles": 36,
+      "right_shingles": 36,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:492:4375",
+      "right": "roman-urdu-parl:train_set.csv:492:4374",
+      "similarity": 0.6641,
+      "containment": 0.8074,
+      "left_shingles": 44,
+      "right_shingles": 43,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:333:1127",
+      "right": "roman-urdu-parl:train_set.csv:269:6065",
+      "similarity": 0.6641,
+      "containment": 0.8124,
+      "left_shingles": 29,
+      "right_shingles": 28,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:618:1696",
+      "right": "roman-urdu-parl:train_set.csv:618:6521",
+      "similarity": 0.6875,
+      "containment": 0.8394,
+      "left_shingles": 88,
+      "right_shingles": 83,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:159:7476",
+      "right": "roman-urdu-parl:train_set.csv:479:1451",
+      "similarity": 0.6797,
+      "containment": 0.8093,
+      "left_shingles": 29,
+      "right_shingles": 29,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:112:2929",
+      "right": "roman-urdu-parl:train_set.csv:112:1479",
+      "similarity": 0.6875,
+      "containment": 0.88,
+      "left_shingles": 87,
+      "right_shingles": 75,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:299:3402",
+      "right": "roman-urdu-parl:train_set.csv:299:3403",
+      "similarity": 0.6484,
+      "containment": 0.8186,
+      "left_shingles": 37,
+      "right_shingles": 40,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:614:5503",
+      "right": "roman-urdu-parl:train_set.csv:615:8381",
+      "similarity": 0.6328,
+      "containment": 0.7837,
+      "left_shingles": 90,
+      "right_shingles": 92,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:46:3299",
+      "right": "roman-urdu-parl:train_set.csv:49:4642",
+      "similarity": 0.6484,
+      "containment": 0.7867,
+      "left_shingles": 26,
+      "right_shingles": 26,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:2:2129",
+      "right": "roman-urdu-parl:train_set.csv:126:6023",
+      "similarity": 0.6328,
+      "containment": 0.793,
+      "left_shingles": 68,
+      "right_shingles": 65,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:257:8174",
+      "right": "roman-urdu-parl:train_set.csv:373:5329",
+      "similarity": 0.6172,
+      "containment": 0.7693,
+      "left_shingles": 64,
+      "right_shingles": 63,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:346:7779",
+      "right": "roman-urdu-parl:train_set.csv:346:7777",
+      "similarity": 0.6016,
+      "containment": 0.7727,
+      "left_shingles": 35,
+      "right_shingles": 37,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:280:2195",
+      "right": "roman-urdu-parl:train_set.csv:280:2194",
+      "similarity": 0.6406,
+      "containment": 0.8015,
+      "left_shingles": 40,
+      "right_shingles": 38,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:126:272",
+      "right": "roman-urdu-parl:train_set.csv:126:7010",
+      "similarity": 0.6484,
+      "containment": 0.8045,
+      "left_shingles": 133,
+      "right_shingles": 139,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:286:2263",
+      "right": "roman-urdu-parl:train_set.csv:286:2265",
+      "similarity": 0.6406,
+      "containment": 0.7907,
+      "left_shingles": 41,
+      "right_shingles": 40,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:359:3097",
+      "right": "roman-urdu-parl:train_set.csv:364:1558",
+      "similarity": 0.6094,
+      "containment": 0.7767,
+      "left_shingles": 39,
+      "right_shingles": 41,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:109:8012",
+      "right": "roman-urdu-parl:train_set.csv:114:7579",
+      "similarity": 0.6172,
+      "containment": 0.8567,
+      "left_shingles": 49,
+      "right_shingles": 61,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:63:42",
+      "right": "roman-urdu-parl:train_set.csv:65:8564",
+      "similarity": 0.6406,
+      "containment": 0.781,
+      "left_shingles": 28,
+      "right_shingles": 28,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:139:2174",
+      "right": "roman-urdu-parl:train_set.csv:126:5755",
+      "similarity": 0.5938,
+      "containment": 0.7534,
+      "left_shingles": 45,
+      "right_shingles": 46,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:298:2796",
+      "right": "roman-urdu-parl:train_set.csv:70:5463",
+      "similarity": 0.5859,
+      "containment": 0.9896,
+      "left_shingles": 47,
+      "right_shingles": 28,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:507:5306",
+      "right": "roman-urdu-parl:train_set.csv:152:6345",
+      "similarity": 0.5703,
+      "containment": 0.7498,
+      "left_shingles": 31,
+      "right_shingles": 33,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:617:6442",
+      "right": "roman-urdu-parl:train_set.csv:617:6130",
+      "similarity": 0.5625,
+      "containment": 0.7283,
+      "left_shingles": 89,
+      "right_shingles": 87,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:10:4997",
+      "right": "roman-urdu-parl:train_set.csv:399:4512",
+      "similarity": 0.5859,
+      "containment": 0.8826,
+      "left_shingles": 25,
+      "right_shingles": 18,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:583:1115",
+      "right": "roman-urdu-parl:train_set.csv:605:2188",
+      "similarity": 0.5859,
+      "containment": 0.7537,
+      "left_shingles": 75,
+      "right_shingles": 78,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:115:390",
+      "right": "roman-urdu-parl:train_set.csv:110:7365",
+      "similarity": 0.5859,
+      "containment": 0.8967,
+      "left_shingles": 103,
+      "right_shingles": 147,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:395:8976",
+      "right": "roman-urdu-parl:train_set.csv:395:8978",
+      "similarity": 0.5781,
+      "containment": 0.7327,
+      "left_shingles": 23,
+      "right_shingles": 23,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:531:1384",
+      "right": "roman-urdu-parl:train_set.csv:304:4304",
+      "similarity": 0.5703,
+      "containment": 0.7296,
+      "left_shingles": 112,
+      "right_shingles": 113,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:362:2333",
+      "right": "roman-urdu-parl:train_set.csv:359:8067",
+      "similarity": 0.5547,
+      "containment": 0.7391,
+      "left_shingles": 28,
+      "right_shingles": 30,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:100:793",
+      "right": "roman-urdu-parl:train_set.csv:49:5331",
+      "similarity": 0.5547,
+      "containment": 0.7618,
+      "left_shingles": 42,
+      "right_shingles": 37,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:614:1779",
+      "right": "roman-urdu-parl:train_set.csv:619:801",
+      "similarity": 0.5547,
+      "containment": 0.7188,
+      "left_shingles": 69,
+      "right_shingles": 68,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:90:7382",
+      "right": "roman-urdu-parl:train_set.csv:541:9227",
+      "similarity": 0.5078,
+      "containment": 0.842,
+      "left_shingles": 26,
+      "right_shingles": 39,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:137:4844",
+      "right": "roman-urdu-parl:train_set.csv:570:8063",
+      "similarity": 0.5234,
+      "containment": 0.78,
+      "left_shingles": 47,
+      "right_shingles": 37,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:179:4512",
+      "right": "roman-urdu-parl:train_set.csv:457:8703",
+      "similarity": 0.5469,
+      "containment": 0.7071,
+      "left_shingles": 69,
+      "right_shingles": 69,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:262:4171",
+      "right": "roman-urdu-parl:train_set.csv:488:7757",
+      "similarity": 0.5,
+      "containment": 0.6818,
+      "left_shingles": 23,
+      "right_shingles": 22,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:116:7476",
+      "right": "roman-urdu-parl:train_set.csv:130:5875",
+      "similarity": 0.5234,
+      "containment": 0.6872,
+      "left_shingles": 81,
+      "right_shingles": 81,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:321:9980",
+      "right": "roman-urdu-parl:train_set.csv:321:9981",
+      "similarity": 0.5312,
+      "containment": 0.7264,
+      "left_shingles": 32,
+      "right_shingles": 35,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:94:9860",
+      "right": "roman-urdu-parl:train_set.csv:527:2896",
+      "similarity": 0.5,
+      "containment": 0.6863,
+      "left_shingles": 18,
+      "right_shingles": 17,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:617:5311",
+      "right": "roman-urdu-parl:train_set.csv:617:4755",
+      "similarity": 0.5469,
+      "containment": 0.7194,
+      "left_shingles": 86,
+      "right_shingles": 89,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:618:9079",
+      "right": "roman-urdu-parl:train_set.csv:618:9865",
+      "similarity": 0.5469,
+      "containment": 0.7464,
+      "left_shingles": 63,
+      "right_shingles": 70,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:118:5831",
+      "right": "roman-urdu-parl:train_set.csv:127:1049",
+      "similarity": 0.5391,
+      "containment": 0.7957,
+      "left_shingles": 131,
+      "right_shingles": 103,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:523:2313",
+      "right": "roman-urdu-parl:train_set.csv:354:2664",
+      "similarity": 0.5078,
+      "containment": 0.7383,
+      "left_shingles": 31,
+      "right_shingles": 26,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    },
+    {
+      "left": "roman-urdu-parl:train_set.csv:141:7723",
+      "right": "roman-urdu-parl:train_set.csv:141:7721",
+      "similarity": 0.5234,
+      "containment": 0.734,
+      "left_shingles": 25,
+      "right_shingles": 22,
+      "left_source": "roman-urdu-parl",
+      "right_source": "roman-urdu-parl",
+      "cross_source": false
+    }
+  ],
+  "sources": [
+    "roman-urdu-parl"
+  ],
+  "limit": 0,
+  "sample_rate": null,
+  "host_filters": {},
+  "host_filtered_out": {},
+  "seed": 0,
+  "quality_filtered": true,
+  "exact_deduplicated": true,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 6333215,
+    "documents_accepted": 6333215,
+    "documents_rejected": 0,
+    "documents_repaired": 0,
+    "acceptance_rate": 1.0,
+    "bytes_in": 469746930,
+    "chars_out": 469746930,
+    "replacement_chars": 0,
+    "mojibake_chars": 0,
+    "control_chars": 0,
+    "verdicts": {
+      "ok": 6333215
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 6333215,
+    "documents_kept": 5629213,
+    "keep_rate": 0.88884,
+    "documents_by_prior": 114793,
+    "prior_rate": 0.018126,
+    "mixed_documents": 0,
+    "letters": 378352698,
+    "labels": {
+      "empty": 582783,
+      "english": 6426,
+      "other": 114793,
+      "roman_urdu": 5629213
+    },
+    "letters_by_label": {
+      "empty": 8407044,
+      "english": 204564,
+      "other": 4170552,
+      "roman_urdu": 365570538
+    },
+    "segment_letters": {}
+  },
+  "stage5_quality": {
+    "roman-urdu-parl": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "31a5a2d4805b",
+      "config": {
+        "min_chars": 20,
+        "min_words": 3,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 1.0,
+        "max_top_ngram_ratio": {
+          "2": 1.0
+        },
+        "max_dup_ngram_ratio": {},
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 6333215,
+      "documents_kept": 6032599,
+      "documents_rejected": 300616,
+      "keep_rate": 0.952533,
+      "chars_in": 469746930,
+      "chars_kept": 465304250,
+      "char_keep_rate": 0.990542,
+      "rejections": {
+        "too_short": 300616
+      },
+      "families": {
+        "too_short": 300616
+      },
+      "sole_rejections": {
+        "too_short": 300616
+      },
+      "by_label": {
+        "empty": 582783,
+        "english": 6426,
+        "other": 114793,
+        "roman_urdu": 5629213
+      },
+      "kept_by_label": {
+        "empty": 282222,
+        "english": 6426,
+        "other": 114739,
+        "roman_urdu": 5629212
+      },
+      "chars_kept_by_label": {
+        "empty": 6531420,
+        "english": 260732,
+        "other": 5386690,
+        "roman_urdu": 453125408
+      },
+      "truncated_documents": 0
+    }
+  },
+  "pii": {
+    "pii_version": "1.0.0",
+    "config_fingerprint": "ac44c4eb5021",
+    "config": {
+      "redact_emails": true,
+      "redact_phones": true,
+      "email_placeholder": "[@]",
+      "phone_placeholder": "[#]",
+      "min_national_digits": 10,
+      "min_national_digits_unseparated": 11,
+      "max_national_digits": 12,
+      "min_international_digits": 10,
+      "max_international_digits": 13,
+      "max_shapes": 200
+    },
+    "documents": 6032599,
+    "documents_redacted": 59,
+    "chars_in": 465304250,
+    "chars_out": 465303750,
+    "chars_removed": 500,
+    "counts": {
+      "phone": 59
+    },
+    "distinct_shapes": 2,
+    "shapes_dropped": 0,
+    "shapes": {
+      "phone:ddddddddddd": 45,
+      "phone:ddddddddddddd": 14
+    }
+  },
+  "single_pass": false,
+  "stage6_exact": {
+    "dedup_version": "1.0.0",
+    "config_fingerprint": "ba02bfe0afd5",
+    "config": {
+      "hash_bits": 128,
+      "collapse_whitespace": true,
+      "casefold": true,
+      "variant": "normalized",
+      "measure_alternate": true,
+      "paragraph_mode": "off",
+      "min_paragraph_chars": 60,
+      "paragraph_min_documents": 2,
+      "max_index_entries": 40000000
+    },
+    "indexed": 6032599,
+    "duplicate_groups": 804635,
+    "duplicate_documents": 2553829,
+    "duplicate_rate": 0.423338,
+    "largest_group": 124,
+    "variant": "normalized",
+    "alternate_variant": "raw",
+    "alternate_duplicate_documents": 2553829,
+    "cross_source_groups": 0,
+    "cross_source_pairs": {},
+    "documents": 6032599,
+    "documents_kept": 3478770,
+    "documents_removed": 2553829,
+    "keep_rate": 0.576662,
+    "chars_in": 465303750,
+    "chars_kept": 258876832,
+    "char_keep_rate": 0.556361,
+    "by_source": {
+      "roman-urdu-parl": 6032599
+    },
+    "kept_by_source": {
+      "roman-urdu-parl": 3478770
+    },
+    "removed_by_source": {
+      "roman-urdu-parl": 2553829
+    },
+    "removed_cross_source_by_source": {},
+    "paragraph_mode": "off",
+    "paragraph_units": 0,
+    "paragraph_distinct": 0,
+    "paragraph_duplicate_units": 0,
+    "paragraph_chars": 0,
+    "paragraph_chars_duplicated": 0,
+    "paragraph_chars_removable": 0,
+    "paragraph_removable_share": 0.0,
+    "paragraph_documents_changed": 0,
+    "paragraphs_removed": 0,
+    "paragraph_chars_removed": 0,
+    "paragraph_documents_emptied": 0,
+    "distinct_documents": 3478770,
+    "top_groups": [
+      {
+        "group": "698b82fefd15e45d",
+        "size": 124,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:598:6874",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:106:3998",
+          "roman-urdu-parl:train_set.csv:106:3961",
+          "roman-urdu-parl:train_set.csv:106:4092",
+          "roman-urdu-parl:train_set.csv:106:3958"
+        ]
+      },
+      {
+        "group": "f89661452bdb64d3",
+        "size": 94,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:112:3068",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:112:2697",
+          "roman-urdu-parl:train_set.csv:112:2890",
+          "roman-urdu-parl:train_set.csv:112:2398",
+          "roman-urdu-parl:train_set.csv:112:2332"
+        ]
+      },
+      {
+        "group": "ad46a1f9989108d3",
+        "size": 61,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:264:9626",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:70:623",
+          "roman-urdu-parl:train_set.csv:32:7304",
+          "roman-urdu-parl:train_set.csv:425:6571",
+          "roman-urdu-parl:train_set.csv:425:6581"
+        ]
+      },
+      {
+        "group": "d38c5cca6e37ec7f",
+        "size": 55,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:135:8702",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:3:3925",
+          "roman-urdu-parl:train_set.csv:114:3276",
+          "roman-urdu-parl:train_set.csv:114:3280",
+          "roman-urdu-parl:train_set.csv:114:3275"
+        ]
+      },
+      {
+        "group": "8804b7ad36ca54e6",
+        "size": 52,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:579:2348",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:3:3685",
+          "roman-urdu-parl:train_set.csv:135:6520",
+          "roman-urdu-parl:train_set.csv:135:6516",
+          "roman-urdu-parl:train_set.csv:135:6517"
+        ]
+      },
+      {
+        "group": "cf71afb8cbc38263",
+        "size": 51,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:319:5901",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:45:4126",
+          "roman-urdu-parl:train_set.csv:319:5909",
+          "roman-urdu-parl:train_set.csv:319:5927",
+          "roman-urdu-parl:train_set.csv:319:5895"
+        ]
+      },
+      {
+        "group": "fb00d0dc580ba3d2",
+        "size": 50,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:138:6920",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:3:7067",
+          "roman-urdu-parl:train_set.csv:585:3923",
+          "roman-urdu-parl:train_set.csv:585:3933",
+          "roman-urdu-parl:train_set.csv:585:3929"
+        ]
+      },
+      {
+        "group": "db1770c3e21b1a1e",
+        "size": 48,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:387:626",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:48:4703",
+          "roman-urdu-parl:train_set.csv:332:8197",
+          "roman-urdu-parl:train_set.csv:332:8190",
+          "roman-urdu-parl:train_set.csv:332:8205"
+        ]
+      },
+      {
+        "group": "102c6330fb9fc93e",
+        "size": 42,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:575:1390",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:575:1384",
+          "roman-urdu-parl:train_set.csv:575:1369",
+          "roman-urdu-parl:train_set.csv:575:1389",
+          "roman-urdu-parl:train_set.csv:575:1368"
+        ]
+      },
+      {
+        "group": "328a2a156630b03e",
+        "size": 42,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:607:1063",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:107:2941",
+          "roman-urdu-parl:train_set.csv:107:2942",
+          "roman-urdu-parl:train_set.csv:607:1030",
+          "roman-urdu-parl:train_set.csv:607:1060"
+        ]
+      },
+      {
+        "group": "61130f76ffa22a61",
+        "size": 42,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:609:743",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:3:8947",
+          "roman-urdu-parl:train_set.csv:609:761",
+          "roman-urdu-parl:train_set.csv:609:770",
+          "roman-urdu-parl:train_set.csv:609:767"
+        ]
+      },
+      {
+        "group": "ef2c4f6f0786e241",
+        "size": 42,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:135:7389",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:3:3770",
+          "roman-urdu-parl:train_set.csv:114:5503",
+          "roman-urdu-parl:train_set.csv:114:5499",
+          "roman-urdu-parl:train_set.csv:114:5478"
+        ]
+      },
+      {
+        "group": "08cfab1e4244dc57",
+        "size": 41,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:625:5734",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:625:5719",
+          "roman-urdu-parl:train_set.csv:625:5736",
+          "roman-urdu-parl:train_set.csv:625:5721",
+          "roman-urdu-parl:train_set.csv:625:5749"
+        ]
+      },
+      {
+        "group": "c79c80111f1baee9",
+        "size": 41,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:626:3827",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:3:6306",
+          "roman-urdu-parl:train_set.csv:109:242",
+          "roman-urdu-parl:train_set.csv:137:9949",
+          "roman-urdu-parl:train_set.csv:137:9961"
+        ]
+      },
+      {
+        "group": "5c0ce3966c2dd732",
+        "size": 40,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:132:4324",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:3:230",
+          "roman-urdu-parl:train_set.csv:126:8740",
+          "roman-urdu-parl:train_set.csv:126:8743",
+          "roman-urdu-parl:train_set.csv:126:8719"
+        ]
+      },
+      {
+        "group": "d5437c0848d632bb",
+        "size": 40,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:254:8763",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:254:8770",
+          "roman-urdu-parl:train_set.csv:254:8757",
+          "roman-urdu-parl:train_set.csv:254:8758",
+          "roman-urdu-parl:train_set.csv:254:8766"
+        ]
+      },
+      {
+        "group": "fa4553c82a599eab",
+        "size": 40,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:345:7858",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:51:4878",
+          "roman-urdu-parl:train_set.csv:516:4280",
+          "roman-urdu-parl:train_set.csv:516:4278",
+          "roman-urdu-parl:train_set.csv:516:4253"
+        ]
+      },
+      {
+        "group": "4376147fd5886d8f",
+        "size": 39,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:146:9913",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:47:5698",
+          "roman-urdu-parl:train_set.csv:15:5044",
+          "roman-urdu-parl:train_set.csv:146:9909",
+          "roman-urdu-parl:train_set.csv:146:9907"
+        ]
+      },
+      {
+        "group": "5b66699ecfecc80b",
+        "size": 39,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:622:8724",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:3:4218",
+          "roman-urdu-parl:train_set.csv:136:1332",
+          "roman-urdu-parl:train_set.csv:136:1337",
+          "roman-urdu-parl:train_set.csv:136:1331"
+        ]
+      },
+      {
+        "group": "6493ccf5c2bdb572",
+        "size": 39,
+        "sources": [
+          "roman-urdu-parl"
+        ],
+        "kept": "roman-urdu-parl:train_set.csv:567:6330",
+        "duplicates": [
+          "roman-urdu-parl:train_set.csv:567:6335",
+          "roman-urdu-parl:train_set.csv:567:6334",
+          "roman-urdu-parl:train_set.csv:567:6331",
+          "roman-urdu-parl:train_set.csv:567:6332"
+        ]
+      }
+    ],
+    "phase2_measured": true,
+    "removed": 2553829
+  }
+}

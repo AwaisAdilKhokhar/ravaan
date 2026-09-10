@@ -22,6 +22,12 @@ wandb/
 # something load-bearing (session 2's bare `data/`, session 4's `/data/`), so: verified with
 # `git check-ignore -v reports/quality_sample.jsonl`, which now reports nothing.
 !/reports/*.jsonl
+# Fourth instance, found session 17: the negation above is one level deep, so every measured-pair
+# file under reports/freeze/ was silently ignored — including the two that Findings AA and AB were
+# adjudicated from. They are ~30 KB each and they are the *only* record of which pairs the
+# threshold decision was read against, which is precisely what `neardedup_threshold.md` says a
+# threshold must be chosen from. Re-included explicitly.
+!/reports/freeze/*.jsonl
 # Detached-run console logs (`nohup … > reports/.decon_wiki.log`). Transient scratch, not evidence —
 # the evidence is the JSON the run writes. Dot-prefixed so it cannot collide with a report name.
 /reports/.*.log
@@ -56,5 +62,17 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# Build artifact for uploading the code to Kaggle; regenerate with git archive.
+# Build artifact for uploading the code to Kaggle/Colab; regenerate with git archive.
 /ravaan-code.zip
+# Google Drive's download bundles, when freeze results come back from a hosted run.
+/ravaan-*T*Z-*.zip
+
+# Freeze removal lists are evidence and are committed — Wikipedia's is 188 ids, and FineWeb2's
+# will be smaller still (its self-similarity measured 9 clusters in 193,666 documents). Roman
+# Urdu is the exception at 4,307,848 ids / 166 MB, which is corpus-scale rather than evidence-
+# scale, so it follows §6.3's release policy instead: the statistics live in
+# neardedup_roman.json and the file is pinned by removals_67_roman.sha256.json, both committed.
+# It stays on disk — stages 9, 8 and 10 read it via --exclude — and is regenerable by re-running
+# the 1.38 h pass. Named explicitly rather than globbed by size, because a rule that silently
+# drops the *small* lists is the fourth instance of this file's recurring bug.
+/reports/freeze/removals_67_roman.txt

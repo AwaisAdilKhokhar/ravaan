@@ -1,0 +1,11 @@
+{
+  "file": "reports/freeze/removals_67_roman.txt",
+  "sha256": "81be08a08273e22e8f12bf3b2d4fc1ef33afba2f98c1dc1b21ceaaaacb82ce58",
+  "bytes": 166869173,
+  "removed_ids": 4307848,
+  "header": [
+    "#!ravaan-exclusions {\"count\": 4307848, \"plans\": [{\"limit\": null, \"plan_fingerprint\": \"db3a15522463a364\", \"sample_rate\": null, \"source\": \"roman-urdu-parl\"}], \"stage\": \"6+7\", \"version\": \"1.0.0\"}"
+  ],
+  "produced_by": "colab/freeze_colab.py roman (session 17, 2026-09-10, 1.38 h, peak 5.60 GB)",
+  "why_not_committed": "4,307,848 ids is 166 MB. PRD 6.3's release policy is code, manifest, checksums and statistics; the statistics are in neardedup_roman.json (committed) and this is the checksum. The file itself stays on disk because stages 9, 8 and 10 read it via --exclude, and it is regenerable by re-running the pass."
+}

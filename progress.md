@@ -36,8 +36,16 @@ first.**
   Kaggle's own docs describe (Finding Z) — settled in one minute by a kernel that printed the tree.
   Fixed as a class; third push reached the fetch and died on DNS, because `enable_internet: True` is
   recorded and returned by the API while an unverified account gets no network (Finding Z′).
-  **Everything automatable is done and tested. The freeze is blocked on one manual step: Kaggle
-  phone verification.**
+  A fourth bug was found by running the driver locally instead of on Kaggle: the read-plan check
+  was `neardedup.py --limit 1` with no `--source`, which is required, so it would have exited 2 in
+  the minute after a 7.7 GB fetch. **Then phone verification turned out not to be available, which
+  closes the Kaggle path for good — and the freeze moved to Colab**
+  ([`colab/README.md`](colab/README.md)). Colab has internet, so the fetch works as designed; what
+  it does not have is Kaggle's ~30 GB, so `colab/freeze_colab.py` is built around a memory gate that
+  refuses any pass projecting past 80% of measured available RAM. Both passes' flag sets were
+  exercised against the real corpus at `--limit 2000` before anything was trusted to a session.
+  **Everything is built and tested. What remains is running it, which needs a browser and someone
+  to keep the tab open.**
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
 - **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds

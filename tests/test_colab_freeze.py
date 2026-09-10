@@ -175,3 +175,40 @@ def test_every_flag_the_driver_passes_is_one_neardedup_accepts() -> None:
         if token.startswith("--")
     }
     assert used <= accepted, f"driver passes flags neardedup rejects: {sorted(used - accepted)}"
+
+
+def test_raising_the_session_cap_cannot_open_the_memory_gate() -> None:
+    """`--safe-hours` relaxes the session cap and nothing else.
+
+    The 2026-09-10 Colab trial refused FineWeb2 on *both* counts — 11.69 h against a 9 h cap and
+    12.7 GB against a 9.7 GB budget. A rented box removes the first constraint and not the second,
+    so the override has to be scoped: `--force` would have waived the memory verdict too, and
+    memory is precisely the projection Finding X already got wrong by 2x in the expensive
+    direction. Asserted as a property of the result rather than of the printed verdict.
+    """
+    projection = {"projected_hours": 11.69, "projected_peak": 12.7, "budget": 9.7}
+
+    def fits(safe_hours: float) -> dict:
+        fits_time = projection["projected_hours"] <= safe_hours
+        fits_memory = projection["projected_peak"] <= projection["budget"]
+        return {
+            "fits_time": fits_time,
+            "fits_memory": fits_memory,
+            "fits": fits_time and fits_memory,
+        }
+
+    assert fits(colab.SAFE_HOURS) == {"fits_time": False, "fits_memory": False, "fits": False}
+    # A cap high enough for a rented box clears the clock and leaves the pass refused on memory.
+    assert fits(24.0) == {"fits_time": True, "fits_memory": False, "fits": False}
+
+
+def test_the_session_cap_is_recorded_in_the_trial_it_authorises() -> None:
+    """A trial read back later must say which cap it was judged against.
+
+    `cmd_pass` reads `fits` out of `trial_summary_colab.json` without re-deriving it, so a summary
+    that does not carry its own cap is a verdict whose meaning cannot be reconstructed — including
+    by whoever reads the freeze's numbers into the report.
+    """
+    parser_source = (REPO / "colab" / "freeze_colab.py").read_text(encoding="utf-8")
+    assert '"safe_hours": safe_hours,' in parser_source
+    assert "--safe-hours" in parser_source

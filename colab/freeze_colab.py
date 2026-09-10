@@ -184,9 +184,12 @@ def build_argv(name: str, *, limit: int, write_outputs: bool) -> list[str]:
     argv = [*spec["extra"], "--limit", str(limit)]
     if write_outputs:
         argv += [
-            "--removals", str(OUT / f"removals_67_{name}.txt"),
-            "--pairs-out", str(OUT / f"pairs_67_{name}.jsonl"),
-            "--json", str(OUT / f"neardedup_{name}.json"),
+            "--removals",
+            str(OUT / f"removals_67_{name}.txt"),
+            "--pairs-out",
+            str(OUT / f"pairs_67_{name}.jsonl"),
+            "--json",
+            str(OUT / f"neardedup_{name}.json"),
         ]
     else:
         argv += ["--json", str(OUT / f"trial_{name}.json")]
@@ -234,7 +237,7 @@ def cmd_fetch(_args: argparse.Namespace) -> int:
     return 0
 
 
-def one_trial(name: str) -> dict:
+def one_trial(name: str, safe_hours: float = SAFE_HOURS) -> dict:
     """Time and measure a prefix of one pass, then project both to full size."""
     spec = PASSES[name]
     documents, total = spec["trial_documents"], spec["documents"]
@@ -264,7 +267,8 @@ def one_trial(name: str) -> dict:
         "projected_peak_gb": round(projected_peak, 1),
         "ram_available_gb": round(available, 1),
         "ram_budget_gb": round(budget, 1),
-        "fits_time": projected_hours <= SAFE_HOURS,
+        "safe_hours": safe_hours,
+        "fits_time": projected_hours <= safe_hours,
         "fits_memory": projected_peak <= budget,
     }
     result["fits"] = result["fits_time"] and result["fits_memory"]
@@ -274,9 +278,16 @@ def one_trial(name: str) -> dict:
     return result
 
 
-def cmd_trial(_args: argparse.Namespace) -> int:
+def cmd_trial(args: argparse.Namespace) -> int:
     OUT.mkdir(parents=True, exist_ok=True)
-    results = [one_trial(name) for name in PASSES]
+    safe_hours = getattr(args, "safe_hours", SAFE_HOURS)
+    if safe_hours != SAFE_HOURS:
+        print(
+            f"session cap overridden: {safe_hours} h rather than the default {SAFE_HOURS} h.\n"
+            "Only do this on a host with no session cap — a rented box, not Colab. The memory\n"
+            "gate is unaffected and still binds.\n"
+        )
+    results = [one_trial(name, safe_hours) for name in PASSES]
     (OUT / "trial_summary_colab.json").write_text(
         json.dumps(results, indent=2) + "\n", encoding="utf-8", newline="\n"
     )
@@ -285,7 +296,7 @@ def cmd_trial(_args: argparse.Namespace) -> int:
     for r in results:
         why = []
         if not r["fits_time"]:
-            why.append(f"{r['projected_hours']:.1f} h > {SAFE_HOURS} h")
+            why.append(f"{r['projected_hours']:.1f} h > {r.get('safe_hours', SAFE_HOURS)} h")
         if not r["fits_memory"]:
             why.append(f"{r['projected_peak_gb']:.1f} GB > {r['ram_budget_gb']:.1f} GB budget")
         verdict = "FITS" if r["fits"] else "DOES NOT FIT — " + ", ".join(why)
@@ -363,7 +374,19 @@ def main(argv: list[str]) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("env", help="what this runtime actually has")
     sub.add_parser("fetch", help="fetch, verify and check read plans")
-    sub.add_parser("trial", help="measure both passes and decide whether they fit — the gate")
+    trial_parser = sub.add_parser(
+        "trial", help="measure both passes and decide whether they fit — the gate"
+    )
+    trial_parser.add_argument(
+        "--safe-hours",
+        type=float,
+        default=SAFE_HOURS,
+        help=(
+            f"wall-clock a pass may be projected to take (default {SAFE_HOURS}, Colab's idle "
+            "disconnect). Raise it only on a host with no session cap; it does not touch the "
+            "memory gate, and the value used is recorded in the trial."
+        ),
+    )
     for name in PASSES:
         run_parser = sub.add_parser(name, help=f"the real {name} pass, unsampled")
         run_parser.add_argument(

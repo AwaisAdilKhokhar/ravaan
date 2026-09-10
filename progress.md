@@ -18,7 +18,8 @@ first.**
   the gate reported `pass` on a corpus from which arm B cannot be assembled (Finding U). It also
   **built stage 10, the last pipeline stage** ([`reports/packing.md`](reports/packing.md)), fetched
   FineWeb2 shard 000, and measured the corpus that resulted: **Gate G1 now returns `PASS` on both
-  the aggregate and the mixture, with both arms fundable.** **Session 13 built the PII pass**
+  the aggregate and the mixture, with both arms fundable** *(pre-dedup — session 17 overturns the
+  arm B half of this)*. **Session 13 built the PII pass**
   ([`reports/pii.md`](reports/pii.md)) — the last unbuilt thing in §6.3 — and reading its matches
   found that 11 of its first 13 phone hits on Wikipedia were ISBNs (Finding V). **Session 14 went
   to start the freeze and found the freeze order was not runnable** (Finding W): every driver runs
@@ -29,8 +30,8 @@ first.**
   9 exactly. Then **Finding X: stage 7's index costs 2× what the module documents**, so FineWeb2
   needs ~10 GB against this machine's 0.9 GB free. **The freeze moves to Kaggle** —
   [`reports/freeze_on_kaggle.md`](reports/freeze_on_kaggle.md).
-  **Session 16 (2026-09-10, after a five-week gap) made the Kaggle side work and found three
-  reasons it had not.** Kernel 00 had errored on 2026-08-06 and the failure was unreadable because
+  **Sessions 16 and 17 (2026-09-10) moved the freeze to Colab, ran it, and closed the corpus
+  question it was blocking.** Session 16 found three reasons the Kaggle side had never worked. Kernel 00 had errored on 2026-08-06 and the failure was unreadable because
   a kernel's address comes from its *title*, not the slug in `id` (Finding Y). Fixed, re-pushed, and
   it failed again: the mount is `/kaggle/input/datasets/<owner>/<slug>/`, two levels below what
   Kaggle's own docs describe (Finding Z) — settled in one minute by a kernel that printed the tree.
@@ -42,10 +43,16 @@ first.**
   closes the Kaggle path for good — and the freeze moved to Colab**
   ([`colab/README.md`](colab/README.md)). Colab has internet, so the fetch works as designed; what
   it does not have is Kaggle's ~30 GB, so `colab/freeze_colab.py` is built around a memory gate that
-  refuses any pass projecting past 80% of measured available RAM. Both passes' flag sets were
-  exercised against the real corpus at `--limit 2000` before anything was trusted to a session.
-  **Everything is built and tested. What remains is running it, which needs a browser and someone
-  to keep the tab open.**
+  refuses any pass projecting past 80% of measured available RAM.
+  **Session 17 ran it, and the gate earned its keep in both directions.** The trial refused FineWeb2
+  on both counts (11.69 h > 9.0 cap; 12.7 GB > 9.7 budget) and passed Roman-Urdu-Parl, which then
+  completed unsampled in 1.38 h at 5.60 GB peak. That pass removed **82.4% of Roman-Urdu-Parl's
+  characters** — and reading the text rather than the rate showed the removal is genuine: the five
+  largest clusters are Wikipedia geo-stub templates whose numbers are stripped in the source
+  (Findings AA, AB). The consequence is the largest design change since v2.1: `roman_urdu` falls to
+  **0.44×** of arm B, **arm B is dropped**, and **PRD v2.3** makes Ravaan a single-arm study — six
+  core runs, ~$118, with P2 withdrawn in the preregistration's deviation log and its text above
+  unedited. **What remains of the freeze is one FineWeb2 pass, on a rented 32 GB box (~$2–4).**
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
 - **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds
@@ -115,7 +122,8 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | **PRD amended to v2.2 for Finding R** | §0.2, §4.3, §6.1, §8.2, §10, §11 | ✅ |
 | Gate G1 checks per-population sufficiency, not just the total (Finding U) | §11 | ✅ |
 | FineWeb2 train shard 000 fetched + verified — the code-switched fix | §6.2 | ✅ 4.84 GB |
-| **Gate G1 measured over both FineWeb2 shards** | §11 | ✅ **PASS**, both arms fundable |
+| Gate G1 measured over both FineWeb2 shards (session 12, pre-dedup) | §11 | ⚠️ **superseded** — was `PASS`, both arms |
+| **Gate G1 re-measured after stages 6+7 (session 17)** | §11 | ⛔ **FAIL on `roman_urdu`, 0.44×** → single-arm |
 | Full passes: Urdu Wikipedia (complete); FineWeb2 at 5% | §6.3.9 | ✅ |
 | One unsampled pass over **all** sources together | §6.3.9 | ⬜ deferred to freeze |
 | **Tokenization + packing (stage 10)** | §6.3.10 | ✅ |
@@ -264,6 +272,11 @@ commit (and, if you want it, add a GitHub remote + CI workflow).
 ---
 
 ## ✅ Decision taken 2026-08-03 — Option 2 (two-point law)
+
+> **⚠️ Superseded 2026-09-10 by PRD v2.3.** Option 2's second point (arm B, U = 100M) turned out
+> to be unbuildable — `roman_urdu` freezes at 0.44× of its requirement. The design that shipped
+> is effectively **option 1**: U = 25M, ~396 epochs, 3 seeds, 6 core runs. The reasoning below
+> stands as the record of why bracketing was worth attempting; see session 17 and PRD §0.3.
 
 Findings A and B are one problem seen twice: the PRD picked a model size at which Urdu is not
 data-constrained, so the unique-data budget must be chosen artificially regardless. Because U costs
@@ -2724,18 +2737,34 @@ and older: **an aggregate can only ever say where to look.**
      shards measured in hundreds of MB rather than the freeze's 7.7 GB. It does mean **no Kaggle job
      can ever fetch anything**, so every input has to be uploaded from here or produced there.
      Worth knowing before Week 6 plans around it.
-   - **Still open: the spot-GPU provider** (Vast/RunPod/Lambda) for the paid runs. Nothing blocks
-     until Week 6, but the $150 cap wants the spending limit set early — and a ~$2–8 CPU box is now
-     also the standing fallback for any pass too large for a free tier.
+   - **⚠️ Now blocking, as of session 17: a rented CPU box.** This stopped being a Week 6 question.
+     FineWeb2's stage 6+7 pass is the freeze's last outstanding step and Colab refused it on both
+     time and memory, so **the corpus cannot be frozen until a 32 GB Linux box is rented for
+     ~14 h (~$2–4)**. Any provider does — Hetzner, Vast, DigitalOcean — and `colab/freeze_colab.py`
+     runs unmodified on it (`/proc/meminfo`, not a Colab API). **Set the spending limit when the
+     account is created**, which is what PRD §9 wanted on day one anyway, and the same account then
+     answers the spot-GPU question for Week 9's runs.
+   - **Budget context:** $0 spent of $150, and PRD v2.3 dropped two core runs, so the plan is now
+     ~$118. This box is a rounding error against that.
 3. **Annotators.** §8.4 needs 3 fluent Urdu speakers for ~2 hours each in Week 13, and §8.2 needs
    ~200 hand-written transliteration pairs. Both are favour-sized asks that take weeks of lead
    time. Worth lining up people now, not in Week 12.
 4. **Hardware here.** Is there a local GPU on this machine for the tiny pilots, or is everything
-   going to Kaggle? Changes how the Week 6–7 throughput work gets set up. Two measurements from
-   session 16 bear on it: **free disk is 5.6 GB**, down from 29 GB in session 14, and **free RAM is
-   ~2 GB of 16 GB** — so this machine can no longer stage a large intermediate, and Colab's ~100 GB
-   of scratch disk is now the project's largest spare resource. If the answer is "no local GPU",
-   Colab is the pilot host too, and its ~12.7 GB is the number Week 6's throughput work has to fit.
+   going to a free tier? Changes how the Week 6–7 throughput work gets set up. Measurements that
+   bear on it: **free disk ~8 GB** with `data/raw` at 7.8 GB, and **free RAM ~2 GB of 16 GB** — so
+   this machine can no longer stage a large intermediate, and a rented box or Colab's ~100 GB of
+   scratch is the project's largest spare resource. If the answer is "no local GPU", Colab is the
+   pilot host and its ~12.7 GB is the number Week 6's throughput work has to fit. **Kaggle remains
+   usable for the Week 8 pilots** despite Finding Z′ — a validation run needs no network if its
+   inputs are uploaded as datasets, and packed shards are hundreds of MB, not 7.7 GB.
+
+5. **The infilling share — the last open design question, and it now blocks Week 6.** PRD §4.2 sets
+   10%; reported FIM practice is 50–90% with no left-to-right degradation (review §6). If 10% leaves
+   Ravaan-AR genuinely bad at infilling, ablation A2 loses its meaning — the *fair* baseline would
+   also be undertrained, and §4.1's whole fairness argument weakens. **Decide before the task
+   mixture is frozen ahead of Stage C**, i.e. before the training code is written. Carried in the
+   list below since session 4 and never answered; promoted here because Week 6 is next after the
+   freeze and this is the one thing that cannot be deferred past it.
 
 ---
 
@@ -2760,176 +2789,108 @@ and older: **an aggregate can only ever say where to look.**
 
 ## Next session
 
-**⚠️ START HERE: `colab/README.md`. The freeze runs on Colab now, and the next step is a
-session at a keyboard rather than any more code.**
+**START HERE. The corpus freeze has one pass left, and it needs a rented Linux box — not Colab,
+not this machine.** Everything else in stages 6+7 is done and on disk.
 
-Phone verification is not available, so the Kaggle path is closed for good — its notebooks get no
-network without it. Colab has internet. The driver, the gate and the runbook are built and tested;
-what remains is running it, and the one thing that cannot be automated is that a Colab session needs
-someone to keep the tab open.
+### Where the freeze stands
 
-Paste the cells from `colab/README.md` in order. `ravaan-code.zip` is already rebuilt with `colab/`
-in it (234 KB, 62 entries):
+| source | stage 6+7 | evidence |
+|---|---|---|
+| Urdu Wikipedia | ✅ session 14 | `reports/freeze/removals_67_wikipedia.txt` — 188 ids, 118 clusters |
+| Roman-Urdu-Parl | ✅ session 17, on Colab | `removals_67_roman.txt` — 4,307,848 ids, 1.38 h, peak 5.60 GB |
+| FineWeb2 (both shards) | ⬜ **the one thing left** | Colab refused it: 11.69 h > 9.0 cap, 12.7 GB > 9.7 budget |
 
-```python
-!python colab/freeze_colab.py env       # what this runtime actually has
-!python colab/freeze_colab.py fetch     # ~7.7 GB, verified, read plans checked
-!python colab/freeze_colab.py trial     # THE GATE — read the verdict
-!python colab/freeze_colab.py fineweb2 --drive /content/drive/MyDrive/ravaan
-!python colab/freeze_colab.py roman    --drive /content/drive/MyDrive/ravaan
+### 1. FineWeb2, on a rented box — ~14 h, ~$2-4
+
+Colab's free CPU runtime cannot do this. The trial refused on **both** counts at once, and the
+memory half is the one Finding X already got wrong by 2x in the expensive direction. Do **not**
+`--force` past it: `--force` waives the memory verdict along with the clock. Session 17 added
+`--safe-hours` for exactly this, which relaxes the session cap and leaves the memory gate binding.
+
+Rent **32 GB RAM, CPU only, ~20 GB disk** (Hetzner CX42-class, Vast, DigitalOcean — the account and
+its spending limit are still open question 2). Then, on that box:
+
+```bash
+git clone <this repo> && cd ravaan && pip install -e .
+python colab/freeze_colab.py env                    # confirm the RAM is really there
+python colab/freeze_colab.py fetch                  # 7.7 GB, verified, read plans checked
+python colab/freeze_colab.py trial --safe-hours 24  # no session cap on a rented box
+python colab/freeze_colab.py fineweb2
 ```
 
-**The verdict to expect, and what to do with it.** Finding X projects ~9–10 GB against a free
-runtime's ~12.7 GB, so `fits_memory` is genuinely uncertain — the gate exists because the honest
-answer is "measure it". If it refuses, the order is: make `neardedup.py` resumable, then
-band-partition to disk (Colab has ~100 GB spare and this machine has 5.6 GB), then rent a 32 GB box
-for ~$2–8. **Sampling is never an option** — Finding G.
+`colab/freeze_colab.py` is not Colab-specific — it reads `/proc/meminfo` and works on any Linux
+host. The read plans must come back `8743e78c000775aa` / `54b744f92e3949f8` / `db3a15522463a364`,
+or every removal list the box writes is refused by `--exclude` back here.
 
-**Two things that are true regardless of the verdict:**
+**Expect it to remove almost nothing.** The trial measured 9 clusters in 193,666 documents, largest
+2, and 0 removed at 0.90 — Finding H's 31% upstream MinHash removal, confirmed. It is run to have
+been run, not because it changes the corpus. Watch `largest_cluster` anyway.
 
-- **`--drive` is not optional in practice.** A disconnected Colab session takes `/content` with it,
-  and the pass is unresumable.
-- **Watch `largest_cluster`.** Nothing caps a component's size; the only evidence 0.80 does not chain
-  is Wikipedia's 23.
+### 2. Then stages 9 → 8 → 10, all local, all cheap
 
-**The Kaggle runbook remains accurate for everything after the corpus arrives** — only the host
-changed, and stages 9, 8 and 10 were always local:
-
-Session 14 found the freeze order was not executable (Finding W) and built the missing piece —
-`--exclude` now carries stages 6/7/8's removals into stages 9 and 10 and refuses a list computed
-over a different read. **Urdu Wikipedia is frozen through stage 7.** Then Finding X: stage 7's index
-costs ~2,010 bytes per document, not the ~980 the module documents, so FineWeb2 needs **~9–10 GB
-against this machine's 0.9 GB free.** It will page, not fail, and take about a week. Kaggle's CPU
-notebooks give ~30 GB, free.
-
-**A local FineWeb2 pass was left running at session end** — pid was 31548, 19% read after 20.7
-hours, ~1.71 GB resident. It is the same job the Kaggle runbook does properly. **Kill it**
-(`Stop-Process -Id <pid>`); nothing depends on it and it is holding memory. Its log is
-`logs/freeze_67_fineweb2.log` and its partial outputs are not written until the pass completes, so
-there is nothing to salvage.
-
-Three things to carry in.
-
-- **The G1 margins have not been through stages 6/7/8.** Code-switched sits at 2.35×, which survives
-  a 50% stage-7 loss — but FineWeb2's self-similarity has never been measured, and that is exactly
-  what the blocked pass exists to measure.
-- **The fertility estimate moves arm A's document set by a factor of two**, so Week 5's re-solve has
-  to land before the corpus is *written*. It does not block stages 6/7/9/8.
-- **`neardedup.py` is not resumable**, and on a 12-hour session cap that is now load-bearing. If the
-  Kaggle trial says FineWeb2 needs more than ~10 hours, **build resumability before running it** —
-  the shard reader already checkpoints with a plan fingerprint, so what is missing is serializing
-  `MinHashDeduplicator`'s parallel arrays and `ExactDeduplicator._best`. Bounded work, and worth
-  having regardless: today a pass that dies at 80% restarts from zero.
-
-**The freeze order, and what each step now needs:**
+Same order as before; only the host of step 1 changed.
 
 ```
-6+7  neardedup.py --source S --limit 0 --removals reports/freeze/removals_67_S.txt
-9    split.py --source ALL --limit 0 --measure-only --exclude <each 6+7 list> --plan-out plan.json
-                                                     --heldout-out data/freeze/heldout.jsonl
-8    decontaminate.py --source ALL --limit 0 --exclude <each 6+7 list> --removals removals_8.txt
-10   pack.py --source ALL --limit 0 --plan-in plan_resolved.json
-                           --exclude <each 6+7 list> --exclude removals_8.txt --out data/packed
+9   split.py --source ALL --limit 0 --measure-only --exclude <each 6+7 list>
+              --plan-out reports/freeze/plan.json --heldout-out data/freeze/heldout.jsonl
+8   decontaminate.py --source ALL --limit 0 --exclude <each 6+7 list>
+              --removals reports/freeze/removals_8.txt
+10  pack.py --source ALL --limit 0 --plan-in plan_resolved.json
+              --exclude <each 6+7 list> --exclude removals_8.txt --out data/packed
 ```
 
-1. **Stage 6+7, per source, unsampled.** Finding G forbids sampling either — a pair statistic
-   sampled at rate *r* is measured at *r²*. **Wikipedia is done** —
-   `reports/freeze/removals_67_wikipedia.txt`, 188 ids, 118 clusters, reproducing sessions 8 and 9
-   exactly. The two long ones remain:
-   ```
-   python scripts/neardedup.py --source fineweb2-urd_Arab --limit 0 --single-pass \
-       --removals reports/freeze/removals_67_fineweb2.txt --json reports/freeze/neardedup_fineweb2.json
-   python scripts/neardedup.py --source roman-urdu-parl --split train --limit 0 --shingle-unit char \
-       --removals reports/freeze/removals_67_roman.txt --json reports/freeze/neardedup_roman.json
-   ```
-   - **`--single-pass` on FineWeb2, not on Roman-Urdu-Parl.** It halves the read, and its cost is
-     peak memory proportional to the exact-duplicate rate — nil on FineWeb2 (Finding H), ~2× on
-     Roman-Urdu-Parl's collapsing rows, which this machine has no headroom for.
-   - **Close the browser and the editor before the FineWeb2 run.** Projected from Wikipedia's
-     measured ratios (0.645 candidate pairs and 0.139 retained pairs per document) at 5.26M
-     documents: sketches and ids **3.68 GB**, stage 6's index **1.47 GB**, the `seen_pairs` set
-     **0.24 GB**, retained-pair arrays 0.01 GB — **~5.4 GB**, against ~2 GB free on a 16 GB machine
-     whose pagefile is on `D:`. Neither `max_candidate_pairs` (20M) nor `max_retained_pairs` (40M)
-     is close at the projected 3.4M and 0.7M, so the ceilings will not fire first — memory will.
-     FineWeb2 should sit *below* Wikipedia's pair ratios, since Finding H says 31% was already
-     MinHash-removed upstream; if it comes out above them, that is the number to report.
-   - **Watch `largest_cluster` on both.** Nothing caps a component's size; the reason to believe it
-     stays small at 0.80 is a measurement on Wikipedia (23 here), and a source with heavier
-     templating can chain.
+- **Stage 9 must come after 7**, or the held-out split can contain near-duplicates of training
+  documents. Stage 8 catches the cross-source case and structurally cannot catch that one.
+- **Stage 8 must run complete, not sampled.** Finding T's held-out contamination measured 0.22% at
+  a 5% sample and projects to **~4.4%**; §8.2's instrument is the primary endpoint's own, so the
+  report needs the measured number.
+- **Only step 10's *writing* pass is blocked on Week 5.** Stages 9 and 8 can complete first.
 
-2. **Stage 9, one unsampled phase 1 over all sources together.** The passes so far are per source,
-   so each set of bands is calibrated to that source's totals rather than to the corpus — which
-   gives each source its own held-out share instead of the corpus's. Measure once over everything,
-   then apply that one plan everywhere with `--plan-in`.
-   - **`--measure-only` is the flag for it** (session 12) — one pass, not two. The both-shard 5%
-     run took ~35 minutes that way; unsampled over 8.3 GB is the freeze's longest single read.
-   - **Stage 9 must come after 7.** Stage 9 ran *before* dedup in every pass so far, so the
-     held-out split can still contain near-duplicates of training documents from within Wikipedia —
-     the geo-stub farms session 9 measured at 10.7% of the dump. Stage 8 catches the cross-source
-     case and structurally cannot catch that one. **The held-out split's integrity depends on stage
-     7 having run first**, and now depends on `--exclude` actually being passed.
+### 3. ⚠️ The G1 re-check is now load-bearing
 
-3. ~~Take the single-pass halving.~~ **Done in session 14** — `--single-pass`, 12 tests, equivalence
-   asserted across eleven counters. Use it as shown in step 1.
+Arm A's `roman_urdu` margin is **~1.53×**, and that is a *pre-stage-8* number. Stage 8 will remove
+more — including matches against Roman-Urdu-Parl's own test split. If it eats a third of that
+margin, arm A gets tight, and G1's remaining fallback is **"below 25M → stop."**
 
-4. **Then stage 8, then stage 10.** Both take the same `--exclude` lists; stage 8 additionally
-   indexes the held-out split stage 9 writes, so it runs after stage 9 even though its removals feed
-   stage 10. The eval sets now go through PII redaction on both sides automatically (session 14) —
-   nothing to remember there.
+**Re-run the gate the moment stage 8's numbers exist.** This is flagged in PRD §11's verdict row.
+It is not a worry yet; it is the number to look at early rather than late.
 
-5. **Week 5 blocks the corpus write, not the measurement.** `pack.py --measure-only
-   --resolve-plan` needs §7's tokenizer, and the arm cuts move by a factor of two across the
-   plausible fertility range. Stages 6/7/9/8 can all complete before it; only step 4's `pack.py`
-   run that *writes* has to wait.
+### 4. Week 5 — the tokenizer, and stage 10's outstanding half
 
-2. **Week 5, and it is stage 10's outstanding half.** Train §7's tokenizer, then:
-   ```
-   python scripts/pack.py --source … --measure-only --tokenizer <model> --resolve-plan <plan.json>
-   ravaan-splits <plan.json> --chars-per-token urdu=… roman_urdu=… code_switched=…
-   ```
-   `orature/ALIF-Base-100M` (Apache-2.0, 32k Urdu SentencePiece, found in session 4) is a free
-   external fertility bracket to sanity-check the result against — deliberately *not* run in
-   session 12, because measuring with a 32k model and quoting it for a 16k one is the same class of
-   error as quoting the placeholder's 0.573.
+```
+python scripts/pack.py --source … --measure-only --tokenizer <model> --resolve-plan <plan.json>
+ravaan-splits <plan.json> --chars-per-token urdu=… roman_urdu=… code_switched=…
+```
 
-3. **Deferred to freeze time, unchanged from session 10:**
-   - **Stage 8 over FineWeb2's complete shard**, both for the Roman-Urdu-Parl eval sets and for the
-     held-out split. The held-out number here (15 of 6,748 = 0.22%) is at a 5% sample and projects
-     to **~4.4%**; that is the figure §8.2 needs and it should be measured, not projected.
-   - **Stage 7: FineWeb2 self-similarity (complete shard) and Roman-Urdu-Parl with
-     `shingle_unit="char"`.** ~2.3 hours two-pass. Finding G forbids sampling either.
-   - ~~Redact the eval sets before stage 8 runs.~~ **Done in session 14**, unconditionally in
-     both loaders, and measured: one-sided redaction moves stage 8 from `removed` to `kept`.
+Fertility moves arm A's document set by a factor of two, so the re-solve must land before the corpus
+is *written*. `orature/ALIF-Base-100M` (Apache-2.0, 32k Urdu SentencePiece) is a free external
+bracket to sanity-check against — deliberately not quoted as the answer, since measuring with a 32k
+model and reporting it for a 16k one is the same class of error as quoting the placeholder's 0.573.
 
-**Still not taken, and now sequenced — see item 3 above and session 14's entry for the settled
-design.** The driver reads the
-corpus twice because stage 6 is two-phase, and stages 2–5 are 90% of that cost (profiled: stage 5
-53%, stage 3 27%, stage 4 9%). But stage 6 knows its survivors at the end of *phase 1* — that is
-what `--index-only` already claims — so a driver that sketched during phase 1 and applied stage 6's
-verdict from the index would need one pass, not two. Worth taking before the FineWeb2 and
-Roman-Urdu-Parl passes above, which is where it pays for itself. **Stage 9 does not need it** —
-its phase 2 can be skipped entirely by carrying the plan.
+**Do not start** modelling. The tokenizer is timeboxed to Week 5, and stage 10 is built so that
+waiting costs one command rather than a rewrite.
 
-**Correction to the sentence this note used to end on**, which said the work "needs a small public
-accessor on `ExactDeduplicator` to avoid reaching into `_best`". `is_kept()` is already that
-accessor and it is not enough: it takes the *text*, and a single-pass driver has thrown the text
-away by the time stage 6 has sealed. The text-free form is a key-membership test —
-`document_key(doc_id) in {winning keys}`, which is sound because a winning key belongs to exactly
-one document and that document is its own group's winner. **The harder half is on the other side:**
-`MinHashDeduplicator` has no way to un-index a document, and the removals have to leave its
-`_eligible` list, its six log counters and `_cluster`'s final accounting loop. That is where the
-work actually is.
+### What session 17 settled, so it is not re-opened
 
-**Do not start** tokenizer training or modelling. The tokenizer is timeboxed to Week 5, and stage
-10 is deliberately built so that waiting costs one command rather than a rewrite.
+- **The 82.4% Roman-Urdu-Parl loss is genuine.** `largest_cluster` 10,757 and an average pair degree
+  of 1.38 both pointed at a chaining artifact; both were wrong. Every one of the five largest
+  clusters is a Wikipedia geo-stub template whose **numbers are stripped in the source**, so the
+  sentences differ in a proper noun and nothing else. Read across the cut, 0.80 is if anything too
+  conservative — the 0.75-0.80 pairs it *keeps* are still spelling variants of one sentence.
+  **No threshold move recovers budget. Do not re-litigate this.**
+- **Arm B is dropped; PRD is v2.3; P2 is withdrawn** in the preregistration's deviation log with its
+  text above unedited. Six core runs, ~$118. The narrower arm B at U≈40M was considered and
+  declined on the record (§0.3).
 
-**A note on running long passes here.** Tracked background jobs in this environment were killed
-three times at somewhere under 14 minutes, and foreground calls cap at 10 minutes. What works is
-`nohup … &` as a detached process; sessions 9, 10 and 11 all confirm it. Session 11 adds a
-measurement to session 10's contention correction: **two** concurrent passes over the *same* 2 GB
-parquet file (a stage-9 two-phase run and a stage-8 run, both on FineWeb2 at 5%) took ~50 minutes
-where either alone is ~20. Parallel passes are free in cores and are not free when they contend on
-one file. Complete-Wikipedia stage 9 is ~20 minutes two-phase, alone.
+### Running long passes here
+
+Tracked background jobs in this environment were killed three times under ~14 minutes, and
+foreground calls cap at 10. `nohup … &` as a detached process works — sessions 9, 10 and 11 confirm
+it. Two concurrent passes over the *same* parquet file took ~50 minutes where either alone is ~20:
+parallel passes are free in cores and are not free when they contend on one file.
+
+**Disk here is tight** — 8 GB free on C:, with `data/raw` at 7.8 GB. Stages 9 and 8 are read-only
+with small outputs; packed arm A is ~200 MB. It fits, with no room for a second copy of anything.
 
 **Carried forward**
 
@@ -2945,6 +2906,12 @@ one file. Complete-Wikipedia stage 9 is ~20 minutes two-phase, alone.
   FineWeb2's exact-duplicate rate is nil (Finding H) but its *self-similarity* has never been
   measured, so the margin has to survive stage 7. At 2.35× it survives a 50% loss; at 0.92× it
   would not have, which is what the fetch actually bought.
+  **⚠️ Session 17 closed it, and one population did not survive.** Two of three did: FineWeb2's
+  self-similarity measured ~nil (9 clusters in 193,666, largest 2), so `urdu` and `code_switched`
+  stand. **`roman_urdu` fell from 2.48× to 0.44×** — Roman-Urdu-Parl lost 82.4% of its characters
+  and is that population's only source. **Arm B is dropped; PRD v2.3.** The margin above was never
+  banked, which is exactly why this note said "still to close at the freeze" rather than treating
+  2.48× as a result.
 - **The PII pass's precision is adjudicated from context and shape, not by a native speaker.**
   Finding V's ISBN family was unmistakable and the correction is measured, but one Wikipedia match
   remains ambiguous: an eleven-digit unseparated run sitting next to an author's name, exactly

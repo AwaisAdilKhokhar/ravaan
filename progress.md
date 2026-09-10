@@ -2617,14 +2617,28 @@ environment the pipeline runs in, only to the data it reads.
    and all fingerprinted into the manifest. Revisit only if training configs get unwieldy in
    Week 6 — a YAML training config alongside JSON data configs is a fine outcome, and by then
    nothing in the pipeline has to change to get it.
-2. **Compute account.** PRD §9 wants a provider spending limit set on day one and Kaggle used for
-   all validation. Do you already have a Kaggle account and a spot-GPU provider (Vast/RunPod/
-   Lambda) in mind? Nothing blocks until Week 6, but the $150 cap wants the limit set early.
+2. **Compute account.** PRD §9 wants a provider spending limit set on day one and **Kaggle used for
+   all validation**. Session 16 answers half of this and complicates the other half.
+   - **Kaggle account: exists** (`awaisbinadil`), CLI authenticated by OAuth, and
+     `kaggle/push.py` drives it end to end.
+   - **But its notebooks get no internet**, because phone verification is not available on the
+     account (Finding Z′). That does **not** rule Kaggle out for §9's validation role — a validation
+     run needs no network if its inputs are uploaded as datasets, and the Week 8 pilots read packed
+     shards measured in hundreds of MB rather than the freeze's 7.7 GB. It does mean **no Kaggle job
+     can ever fetch anything**, so every input has to be uploaded from here or produced there.
+     Worth knowing before Week 6 plans around it.
+   - **Still open: the spot-GPU provider** (Vast/RunPod/Lambda) for the paid runs. Nothing blocks
+     until Week 6, but the $150 cap wants the spending limit set early — and a ~$2–8 CPU box is now
+     also the standing fallback for any pass too large for a free tier.
 3. **Annotators.** §8.4 needs 3 fluent Urdu speakers for ~2 hours each in Week 13, and §8.2 needs
    ~200 hand-written transliteration pairs. Both are favour-sized asks that take weeks of lead
    time. Worth lining up people now, not in Week 12.
 4. **Hardware here.** Is there a local GPU on this machine for the tiny pilots, or is everything
-   going to Kaggle? Changes how the Week 6–7 throughput work gets set up.
+   going to Kaggle? Changes how the Week 6–7 throughput work gets set up. Two measurements from
+   session 16 bear on it: **free disk is 5.6 GB**, down from 29 GB in session 14, and **free RAM is
+   ~2 GB of 16 GB** — so this machine can no longer stage a large intermediate, and Colab's ~100 GB
+   of scratch disk is now the project's largest spare resource. If the answer is "no local GPU",
+   Colab is the pilot host too, and its ~12.7 GB is the number Week 6's throughput work has to fit.
 
 ---
 

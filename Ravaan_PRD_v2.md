@@ -1,8 +1,8 @@
 # Ravaan v2: Does Masked Diffusion Pay Off for a Genuinely Low-Resource Language?
 
-**Version:** 2.2
-**Status:** Amended 2026-08-05 during the Weeks 3–4 corpus build, after stage 9 found §6.1 and §4.3 describing different corpora (Finding R). See §0.2. Previously amended 2026-08-03 after the Week 1 literature review (Gate G0 — passed); see §0.1.
-**Supersedes:** v2.1 (August 3, 2026); v2.0 (August 3, 2026); v1.1 (August 2, 2026)
+**Version:** 2.3
+**Status:** Amended 2026-09-10 at the corpus freeze, after Gate **G1 failed on the `roman_urdu` population** and arm B was dropped for a single-arm design. See §0.3. Previously amended 2026-08-05 (Finding R; see §0.2) and 2026-08-03 after the Week 1 literature review (Gate G0 — passed; see §0.1).
+**Supersedes:** v2.2 (August 5, 2026); v2.1 (August 3, 2026); v2.0 (August 3, 2026); v1.1 (August 2, 2026)
 **Project type:** Open-source NLP research and portfolio project
 **Development model:** Solo, part-time, rented spot GPUs
 **Hard compute cap:** USD 150
@@ -62,6 +62,52 @@ Building stage 9 (split creation) required deciding which documents constitute a
 
 ---
 
+## 0.3 What changed in v2.3, and why
+
+**Arm B is dropped. Ravaan is a single-arm study.** This is Gate G1's pre-committed fallback (§11)
+taken on the condition v2.2 added to it, and it is forced by a measurement made at the corpus freeze
+**before any model was trained**. The preregistration's deviation log records it; its text is
+unedited.
+
+The complete stage 6+7 pass over Roman-Urdu-Parl (2026-09-10, unsampled, 1.38 h) removed **82.4% of
+its characters** — 465,303,750 in, 81,791,735 out — as 42.3% exact duplicates followed by half the
+remainder as near-duplicates. Roman-Urdu-Parl is the *only* source feeding the `roman_urdu`
+population; FineWeb2 contributes zero. At §6.1's fixed 120 : 40 : 10 mixture that leaves the
+population at **0.44× of arm B's requirement**, so arm B cannot be assembled at any seed count.
+
+| Area | v2.2 | v2.3 | Reason |
+|---|---|---|---|
+| Arms | **A** (U=25M, 3 seeds) and **B** (U=100M, 1 seed) | **A only** — U=25M, ~396 epochs, 3 seeds | `roman_urdu` supply is 0.44× of arm B's need. §11's fallback names this outcome and this response |
+| Core runs | 8 | **6** (2 models × 3 seeds) | Two arm-B runs are unfunded because they are unbuildable, not because of budget |
+| What the primary endpoint tests | The crossover's **sign and location**, by bracketing C_crit | The crossover's **sign at one U**, 1.79× past predicted C_crit | The bracket needed two arms. §4.5's primary endpoint was always arm A alone and is unchanged |
+| Preregistration | P1–P4 | **P2 withdrawn**, P1/P3/P4 unaffected | P2 is a statement about arm B. It is withdrawn rather than restated; the §3 outcome table collapses to its two arm-A rows |
+| Budget | ~$134 | **~$118** | Two fewer core runs, ~47 GPU-hours |
+
+**Why the gate worked.** v2.2 tightened G1 from an aggregate token count to *aggregate **and**
+per-population sufficiency at the arm mixture*, on the argument that "the gate as written could pass
+on a corpus from which arm B cannot be assembled". That is exactly the corpus that arrived: the
+aggregate clears 100M many times over — `urdu` sits at 46.66× — while `roman_urdu` cannot fund arm
+B. The condition added in v2.2 is the one that caught it.
+
+**What survives, and it is the load-bearing part.** Arm A sits **1.79× past** the predicted
+C_crit = 2.32 × 10¹⁸ FLOPs, and `scripts/crossover.py` puts the predicted crossover at U = 33M for
+this compute against arm A's 25M. So §12's central defence is untouched: "no crossover where the
+English law predicts one" remains a genuine falsification of transfer rather than a null by
+construction. What is lost is the ability to test the crossover's *location* by bracketing it —
+the report must claim the sign at one U and must not imply more.
+
+> **A narrower arm B was available and was declined.** The largest arm B this corpus can build is
+> U ≈ 40M, which does sit above the 33M pivot. It was rejected because a 25M-vs-40M bracket around
+> a 33M pivot is inside the fitted law's own uncertainty, and a bracket that cannot fail is the
+> error v2.0 was amended to remove. Recorded here so the option is not rediscovered as an oversight.
+
+**Unchanged:** the matched pair (§4.1), task mixture (§4.2), arm A's specification and epoch count
+(§4.3), the primary endpoint and its 3 seeds (§4.5), model specification (§5), corpus targets and
+mixture (§6.1), tokenizer (§7), evaluation (§8), the $150 cap (§9), and the definition of done
+(§14) except for its arm-B clause.
+
+---
+
 ## 1. Research question
 
 **Primary.** Does the data-constrained crossover between masked diffusion and autoregression occur where the English scaling law predicts, when the training corpus is naturally noisy non-English Nastaliq-script web text rather than clean C4?
@@ -82,7 +128,7 @@ Urdu corpora are noisier, more duplicated, and more domain-skewed than a C4 subs
 
 1. **Ravaan-DIFF** — masked diffusion LM, ~70M params, released checkpoint
 2. **Ravaan-AR** — compute-matched autoregressive baseline, released checkpoint
-3. **The epoch-crossover curve** — validation bits-per-byte vs. compute for both models at U ∈ {25M, 100M}; 3 seeds in arm A, 1 in arm B
+3. **The epoch-crossover curve** — validation bits-per-byte vs. compute for both models at U = 25M, 3 seeds *(v2.3: arm B dropped, §0.3)*
 4. **Urdu corpus pipeline** — code, manifest, checksums, statistics (no raw text redistribution)
 5. **Urdu SentencePiece tokenizer** — 16k, with a fertility benchmark across native/Roman/mixed script
 6. **Evaluation suite** — including a hand-corrected real-OCR test set and a human-written transliteration set
@@ -134,18 +180,28 @@ Corruptions are generated dynamically at training time from clean text, with the
 
 ### 4.3 The epoch sweep
 
-Two arms, both processing ~9.9B tokens, differing only in how much unique data those tokens are drawn from:
+One arm, processing ~9.9B tokens:
 
 | Arm | Unique U | Epochs | Seeds | Predicted position |
 |---|---|---|---|---|
 | **A** (primary) | 25M | ~396 | 3 | **1.79× past** C_crit = 2.32 × 10¹⁸ FLOPs |
-| **B** (bracket) | 100M | ~99 | 1 | **0.09× of** C_crit = 4.72 × 10¹⁹ FLOPs |
+| ~~**B** (bracket)~~ | ~~100M~~ | ~~99~~ | ~~1~~ | **Dropped in v2.3** — `roman_urdu` supply is 0.44× of its requirement. See §0.3 |
+
+At this compute the fitted law puts the crossover at **U = 33M**, so arm A's 25M sits on the side
+where a crossover is predicted. Reproduce with `python scripts/crossover.py --params 70e6
+--unique 25e6 --epochs 396`.
 
 **U is the arm's *total* unique-token budget** — native Urdu, Roman Urdu and code-switched text summed — not any one component. That is what the epoch counts above divide 9.9B by, and it is what U means in the fitted law: the training set the model repeats over. §6.1 gives the composition. *(Stated explicitly in v2.2; see §0.2.)*
 
 Checkpoint at **1, 2, 5, 10, 25, 50, 100% of tokens processed** — identical fractions for both models and both arms, so the curves share a compute x-axis. Evaluate every checkpoint.
 
-This is the primary experiment and it costs one run per model per arm per seed (8 total). Arm A is predicted to *cross*; arm B is predicted *not* to. The paired outcome is the result: it tests the crossover's **location** against the English fit, not merely its sign.
+This is the primary experiment and it costs one run per model per seed (**6 total**). Arm A is predicted to *cross*.
+
+> **v2.3: this tests the sign, not the location.** With both arms it tested the crossover's location
+> against the English fit, because a cross in A paired with no cross in B brackets C_crit. Arm B is
+> unbuildable from the frozen corpus (§0.3), so the claim available is whether a crossover occurs at
+> U = 25M, 1.79× past where the English law predicts one. **The report must not imply the location
+> was measured.**
 
 > **Corrected in v2.1.** v2.0 fixed U ≈ 300M and asserted "epoch 33 is deep into the regime where the diffusion advantage is predicted to appear." Against the reference paper's own fitted law that is wrong by two orders of magnitude — U = 300M at 70M params for 33 epochs is **124× below** C_crit and would need ~4,080 epochs. The authors corroborate this themselves: at U = 500M they required a 2.3B-parameter model and saw no convergence at 130 epochs. Reproduce with `scripts/crossover.py`.
 
@@ -170,8 +226,8 @@ A2 is included deliberately. Running the broken baseline alongside the fair one 
 
 ### 4.5 Statistical protocol
 
-- **3 seeds** per core config (AR, DIFF) in **arm A**; 1 seed in arm B, reported as directional. Ablations get 1 seed and are reported as directional.
-- **Primary endpoint, preregistered:** the sign and compute-location of the AR/DIFF crossover in validation BPB across arm A's sweep. **Committed 2026-08-03 in `reports/preregistration.md`, before any training** — including four falsifiable predictions (P1–P4) and a committed reading for every outcome combination.
+- **3 seeds** per core config (AR, DIFF) in **arm A**, which is now the only arm (§0.3). Ablations get 1 seed and are reported as directional.
+- **Primary endpoint, preregistered:** the sign and compute-location of the AR/DIFF crossover in validation BPB across arm A's sweep. **Committed 2026-08-03 in `reports/preregistration.md`, before any training** — including four falsifiable predictions (P1–P4) and a committed reading for every outcome combination. *(v2.3: **P2 withdrawn** with arm B; P1, P3 and P4 stand. The withdrawal is in the deviation log, §8 — the preregistration's text above it is unedited, and no model had been trained when it was written.)*
 - **Secondary endpoints (3, Holm-corrected):** transliteration chrF on the human-written set, infill exact-match, OCR CER reduction on the real-OCR set.
 - Paired bootstrap confidence intervals on all task metrics. If a CI includes zero, say so in the abstract.
 - No metric is added to the results table after seeing results.
@@ -224,9 +280,16 @@ Exact parameter counts must be computed programmatically and asserted equal with
 | Code-switched | 5.88% | 1.47M | **5.88M** | ~10M | 1.70× |
 | **Total (U)** | 100% | **25M** | **100M** | ~170M | 1.70× |
 
+> **Measured at the freeze, 2026-09-10 (v2.3).** These are *pre-dedup* pools. Stages 6 and 7 removed
+> **82.4%** of Roman-Urdu-Parl's characters, and it is the only source of `roman_urdu` — taking that
+> population to **0.44×** of arm B's 23.53M and **~1.53×** of arm A's 5.88M. `urdu` (46.66×) and
+> `code_switched` (2.35×) are effectively untouched: FineWeb2's self-similarity measured 9 clusters
+> in 193,666 documents. **Arm B is therefore dropped (§0.3); the arm B column below is retained as
+> the record of what was budgeted.** Arm A's margin is not yet through stage 8.
+
 Holding the mixture fixed across arms is what §4.1's "differ in size and nothing else" means once there is more than one population. Scaling only the native component would confound U with source mix — the same failure this section already forbids for crawl date.
 
-Arm A's 25M-token corpus is a **deterministic, seeded subsample** of arm B's 100M — not a separate collection. Stage 9 makes this structural rather than maintained: a document's split and arm are one integer, a keyed hash of its id, and arm A is a *prefix* of arm B's bucket range, so the containment cannot be violated by a later pass. The plan is checksummed and committed.
+Arm A's 25M-token corpus is a **deterministic, seeded subsample** — not a separate collection. Stage 9 makes this structural rather than maintained: a document's split and arm are one integer, a keyed hash of its id, and arm A is a *prefix* of the bucket range, so the containment cannot be violated by a later pass. The plan is checksummed and committed. *(v2.3: arm B is dropped (§0.3). The mechanism is unchanged — arm A was always the prefix — so nothing in stage 9 changes; the bucket range above arm A's cut is simply unused.)*
 
 **How much clean data could we have collected?** ~5–6B tokens. UrduLM (arXiv:2601.17664, Jan 2026) curated and released 33 GB / ~5–6B tokens of Urdu. **Capping is therefore a deliberate design decision, not a limitation**, and the report must say so in exactly those terms. v2.0 asked this question; v2.1 records the answer. (Qualification recorded in `configs/data/sources.json`: the 33 GB artifact is not actually public, and of what is described, 5.5 GB is machine-translated English and 19.4 GB is CommonCrawl overlapping our own primary source. The conclusion survives the discount; the report must quote the number with the caveat rather than flat.)
 
@@ -313,14 +376,14 @@ Validation BPB by epoch and by script; transliteration CER/WER/chrF with named-e
 |---|---|---|
 | Debug and tiny pilots | Kaggle free tier | $0 |
 | Throughput tuning | 20 | $7 |
-| 8 core runs (arm A: 2 models × 3 seeds; arm B: 2 models × 1 seed) | 187 | $66 |
+| **6 core runs** (arm A: 2 models × 3 seeds) | 140 | $50 |
 | 2 ablation runs (A1, A2) | 45 | $16 |
 | Evaluation sampling | 25 | $9 |
 | Failed runs and restarts | 60 | $21 |
 | Storage | — | $15 |
-| **Total** | **~337** | **~$134** |
+| **Total** | **~290** | **~$118** |
 
-Per-run cost is unchanged from v2.0 — every run processes the same ~9.9B tokens. Only the run count rose, 6 → 8, funded by trimming the failed-run contingency from 80 to 60 GPU-hours. **If that contingency proves tight, drop arm B's seed to a shared-seed pair or cut ablation A1 — never cut arm A's 3 seeds**, which carry the primary endpoint.
+Per-run cost is unchanged from v2.0 — every run processes the same ~9.9B tokens. The count went 6 → 8 in v2.1 and back to **6** in v2.3, when arm B turned out to be unbuildable (§0.3). **If the contingency proves tight, cut ablation A1 — never cut arm A's 3 seeds**, which now carry the primary endpoint alone. The ~47 GPU-hours arm B released are *not* reallocated: they are contingency for the six runs that remain.
 
 **Hard cap: $150.** Assumes RTX 4090-class spot instances at ~$0.35/hr. Verify against live marketplace pricing in Week 6 before committing.
 
@@ -335,7 +398,7 @@ Roughly 250–320 person-hours across 16 weeks, or about 16–20 hrs/week.
 | Weeks | Work | Output |
 |---|---|---|
 | 1–2 | Literature review; corpus acquisition; language/script ID | ✅ Lit review + **preregistration** committed W1; raw corpus on disk |
-| 3–4 | Normalization, dedup, quality filter, decontamination | **Frozen corpus v1** (~170M-token pool, §6.1) + arm B's 100M and arm A's seeded 25M + manifest + statistics |
+| 3–4 | Normalization, dedup, quality filter, decontamination | **Frozen corpus v1** (~170M-token pool, §6.1) + arm A's seeded 25M + manifest + statistics *(v2.3: arm B dropped at the freeze — §0.3)* |
 | 5 | Tokenizer training and benchmark | **Frozen tokenizer** + checksum |
 | 6–7 | Shared backbone, AR head, MDLM objective, tiny-model validation, throughput measurement | **Gate 1** |
 | 8 | Pilot runs at 20M params, all 4 configs, 1 seed | **Gate 2** |
@@ -357,9 +420,10 @@ Every gate below can actually fail. v1's Gate D ("script-aware improves at least
 |---|---|---|---|
 | **G0** | End W2 | Literature review confirms the comparison is unpublished | Reframe or stop |
 | **G1** | End W4 | Clean corpus ≥ **100M** tokens **and** every population at or above arm B's share of it (§6.1: 70.59M / 23.53M / 5.88M) | 25–100M → run arm A only, report single-arm. Below 25M → stop. **A population short at the mixture is its own failure** — the aggregate can clear 100M several times over while arm B cannot be assembled |
-| **G2** | End W7 | Measured throughput implies 8 core runs ≤ $90 | Shrink model, never epoch count |
+| ↳ **verdict, 2026-09-10** | | **FAILED on `roman_urdu` at 0.44×** — the aggregate cleared easily (`urdu` 46.66×) and the population did not, which is the case this row was rewritten for in v2.2 | **Fallback taken: arm A only, single-arm (§0.3).** Arm A's own `roman_urdu` margin is ~1.53× and has not yet been through stage 8 — **re-check this gate after decontamination** |
+| **G2** | End W7 | Measured throughput implies **6** core runs ≤ $90 *(v2.3: was 8)* | Shrink model, never epoch count |
 | **G3** | End W8 | 20M pilot DIFF produces coherent Urdu after 50 epochs; both models resume from checkpoint correctly | Implementation bug — debug, do not scale |
-| **G4** | Mid W10 | Arm A curves are separating or converging in a legible way **by 50% of tokens processed** | No signal by then → complete arm A's 3 seeds, cut arm B, report the flat result as the primary finding per preregistration §7 |
+| **G4** | Mid W10 | Arm A curves are separating or converging in a legible way **by 50% of tokens processed** | No signal by then → complete arm A's 3 seeds and report the flat result as the primary finding per preregistration §7. *(v2.3: "cut arm B" is spent — it was cut at G1, so this gate's only remaining lever is the write-up, not the run list.)* |
 | **G5** | W13 hard date | Automatic results are in hand | Cut human eval and demo, ship the report |
 
 ---
@@ -410,7 +474,7 @@ ravaan/
 **Ship criteria** — all must hold:
 
 - Both models trained from random initialization on identical data, tasks, and compute
-- Epoch sweep complete: 3 seeds per model in arm A (U=25M), 1 seed per model in arm B (U=100M)
+- Epoch sweep complete: 3 seeds per model in arm A (U=25M) *(v2.3: arm B dropped — §0.3; its absence is explained in the report, not omitted)*
 - Preregistration committed before results were seen, and honoured
 - Real-OCR and human-written transliteration test sets built and used
 - Human evaluation completed or its absence explained

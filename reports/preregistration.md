@@ -115,7 +115,7 @@ never edited.*
 
 | Date | Change | Reason |
 |---|---|---|
-| — | *(none yet)* | |
+| 2026-09-10 | **Arm B is dropped. The project reports a single arm (A, U = 25M, 3 seeds).** P2 becomes unresolvable and is withdrawn, not restated. The outcome table in §3 collapses to its two arm-A rows: *cross* → the crossover occurs where the English law predicts at this U; *no cross* → it does not, and §7's first bullet governs the write-up. P1, P3 and P4 are unaffected, and §4's primary endpoint — arm A, 3 seeds — is unchanged. | Corpus availability, measured at the freeze and **before any training run**. Roman-Urdu-Parl loses 82.4% of its characters to stages 6 and 7 (465,303,750 → 81,791,735), and it is the only source feeding the `roman_urdu` population. That leaves it at **0.44× of arm B's requirement** at the fixed 120:40:10 mixture, so arm B cannot be assembled at any seed count. This is Gate G1's pre-committed fallback (PRD §11, "run arm A only, report single-arm") taken on the condition v2.2 added to it for precisely this case. The deletion was verified as genuine near-duplication by reading the text, not inferred from the rate — see progress.md session 17, Findings AA and AB. **No model has been trained and no result has been seen**; this deviation is forced by the data that exists, and is recorded here rather than in the text above because §8 is the only place a preregistration may change. |
 
 ---
 

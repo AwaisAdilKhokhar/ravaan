@@ -52,7 +52,9 @@ first.**
   at 25M, 1 at 100M. PRD amended to v2.1; preregistration committed.
 - **Preregistration:** ✅ committed [`reports/preregistration.md`](reports/preregistration.md) —
   4 falsifiable predictions, before any training.
-- **PRD version:** **v2.2** (2026-08-05) — §0.2 amends §6.1, §4.3, §8.2, §10 and §11 for Finding R.
+- **PRD version:** **v2.3** (2026-09-10) — §0.3 drops arm B for a single-arm design after G1 failed on
+  `roman_urdu` at 0.44×. Six core runs, not eight; ~$118, not ~$134. P2 withdrawn in the
+  preregistration's deviation log, its text above unedited, with no model trained.
 - **Spend to date:** $0.00 of $150 hard cap
 - **Tests:** 682 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · **57 minhash**
   · 57 encoding · 57 acquisition · 51 packing · **44 dedup** · 43 quality · 32 langid ·
@@ -146,7 +148,9 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | Colab run: `trial` — fineweb2 refused (11.69 h, 12.7 GB), roman `FITS` | §6.3.7 | ✅ |
 | **Freeze run: stage 6+7, Roman-Urdu-Parl, complete** | §6.3.7 | ✅ 1.38 h, 4,307,848 ids |
 | Its 82% character loss is genuine near-duplication (Findings AA, AB) | §6.3.7 | ✅ read, not inferred |
-| **roman_urdu cannot fund arm B — 0.44x** | §11 | ⛔ **PRD decision open** |
+| **roman_urdu cannot fund arm B — 0.44x** | §11 | ✅ **G1 fallback taken: single-arm** |
+| **PRD amended to v2.3; preregistration deviation logged** | §0.3 | ✅ P2 withdrawn, text above §8 unedited |
+| Arm A's roman_urdu margin ~1.53x — **re-check G1 after stage 8** | §11 | ⬜ |
 | Freeze run: stage 6+7, FineWeb2 both shards | §6.3.7 | ⬜ **needs a rented 32 GB box, ~$2-4** |
 | `neardedup.py` resumability | §6.3.7 | ⬜ not needed if FineWeb2 runs on a rented box |
 | `--safe-hours`, so a capless host need not `--force` past the memory gate | §6.3.7 | ✅ 2 tests |
@@ -2679,8 +2683,10 @@ for this compute. Arm A at 25M sits below it and is predicted to cross; the larg
 corpus can now build is **U ~= 40M** (9.58M roman tokens after a fixed ~1.20M held-out, at the
 23.53% mixture share), which sits *above* 33M and is predicted not to. The bracket survives at 25M
 vs 40M around a 33M pivot — narrower than 25 vs 100 around the same pivot, and still a bracket.
-**This is a decision for the PRD, not for a session log**, and the alternative is G1's written
-fallback of a single-arm report.
+**Decided the same day: the single-arm fallback.** The 40M option was declined because a 25M-vs-40M
+bracket around a 33M pivot sits inside the fitted law's own uncertainty, and a bracket that cannot
+fail is the error v2.0 was amended to remove. PRD v2.3 §0.3 records both the choice and the
+rejected alternative, so the option is not rediscovered later as an oversight.
 
 **Finding AC — the sweep is not recoverable after the fact, and the run carried no `--sweep`.**
 `sweep()` re-clusters from the retained pairs held in the index; `--pairs-out` writes only banded

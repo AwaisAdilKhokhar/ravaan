@@ -239,7 +239,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | ↳ the requirement, in hardware terms: **64,162 tok/s**, against 37,236 at 25M here | §11 | ✅ session 21 |
 | ↳ Finding AM — both arms cost the same per token, within 2.2% | §4.1 | ✅ and it is the half that transfers |
 | ↳ §4.2's generator is ~180 ms of CPU per 256-sequence step — G2 must measure it | §11 | ✅ `throughput` builds tasks by default |
-| **G3** — 20M pilot, both arms, resume | §11 | ⛔ resume half **PASS**; **coherence half FAILS** — session 22 |
+| **G3** — 20M pilot, both arms, resume | §11 | ✅ resume **PASS**; coherence **FAIL**, gate recorded unmet, W9 proceeds |
 | ↳ 50-epoch run complete, both arms, §4.3's seven fraction checkpoints written | §4.3 | ✅ the curve infrastructure works |
 | ↳ **`ravaan/sampling/` — both decoders, §4.2's framings, §4.4's A3/A4** | §8, §4.4 | ✅ session 22, 36 tests |
 | ↳ §8.1's locked-token and determinism invariants, asserted on both arms | §8.1 | ✅ untestable before this |
@@ -248,8 +248,8 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | ↳ **Finding AO — `</s>` on a context-free canvas**: 47% of first commits, script 0.00 → 1.00 | §8 | ✅ measured, swept, not defaulted |
 | ↳ **Finding AP — A3 runs backwards**: 64 steps repeats more than 8, monotonically | §4.4 | ⚠️ directional, 1 seed |
 | ↳ A4: random beats confidence on every repetition measure, at every step count | §4.4 | ⚠️ directional, 1 seed |
-| ↳ **Finding AQ — §4.2's AR FIM framing has no middle terminator** | §4.2, §8.3 | ⛔ **decide before Week 9** |
-| ↳ a diffusion decode is told its answer's length and an AR decode is not | §4.1, §8.3 | ⚠️ asymmetry, stated not fixed |
+| ↳ **Finding AQ — §4.2's AR FIM framing has no middle terminator** | §4.2, §8.3 | ✅ **decided: not fixed**; infill scored to gold length |
+| ↳ a diffusion decode is told its answer's length and an AR decode is not | §4.1, §8.3 | ⚠️ now *both* are, at scoring time — deviation logged |
 | ↳ §8.3's three metrics cannot separate fluent Urdu from Urdu-shaped noise | §8.4 | ⚠️ §8.4's annotators carry it |
 | ↳ Finding AL — Kaggle gates GPUs too, so kernel 10 runs locally | §9 | ✅ host-agnostic, Kaggle branch kept |
 | ↳ the kernel measured its second arm under the first arm's VRAM (2.8× penalty) | §4.1 | ✅ fixed, found by running it |
@@ -3474,8 +3474,8 @@ already being recorded in JSON. **The fourteen fraction checkpoints were kept de
      first, then filter, which is also what a caller asking for top-p 0.95 meant — 95% of the mass
      it is *choosing between*. Found by forbidding `</s>` for Finding AO, pinned by a test.
 
-9. **Finding AQ — §4.2's AR FIM framing never taught the model where a middle ends, and this is
-   the expensive one.** `_frame_infill`'s AR branch builds `<infill> <fim_prefix> prefix
+9. **Finding AQ — §4.2's AR FIM framing never taught the model where a middle ends.** *(Decided
+   2026-09-13: not fixed. The cost moves to scoring — see the handoff's step 7.)* `_frame_infill`'s AR branch builds `<infill> <fim_prefix> prefix
    <fim_suffix> suffix <fim_middle> middle` and the middle runs to the end of the 512-token
    sequence. **There is no terminator after it.** Published FIM puts one there precisely so the
    model learns to stop. Measured over 12 infill prompts with a 32-token hole, `</s>` allowed as a
@@ -3491,9 +3491,12 @@ already being recorded in JSON. **The fourteen fraction checkpoints were kept de
    scored this way inflates **toward diffusion** — the opposite direction from the one A2 exists
    to quantify. (c) **The fix is a training-side change and it is cheap exactly now**: a
    terminator after the middle, reusing one of §7's twelve framing pieces, which costs no
-   parameters and breaks no §4.1 matching. It costs a pilot re-run today and six core runs later.
-   **Decide before Week 9**, together with open question 5 — they are the same conversation about
-   whether Ravaan-AR is a fair FIM baseline or a straw one.
+   parameters and breaks no §4.1 matching. It would cost a pilot re-run today and six core runs
+   later. **Declined on 2026-09-13**: infill exact-match is instead scored by truncating the AR
+   arm's generation to the gold span's length, which is symmetric because the diffusion arm is
+   already given it, and the rule is logged in `reports/preregistration.md` §8 before any result
+   exists. The residue the report must carry is that **both arms are now told how long the answer
+   is**, so the metric measures content and not length for either of them.
 
 10. **The inference-side asymmetry §4.1 cannot match, written down before it turns up inside a
     results table.** A diffusion decode is handed the width of its answer before its first forward
@@ -3579,14 +3582,17 @@ already being recorded in JSON. **The fourteen fraction checkpoints were kept de
    degradation (review §6). If 10% leaves Ravaan-AR genuinely bad at infilling, ablation A2 loses
    its meaning — the *fair* baseline would also be undertrained, and §4.1's whole fairness argument
    weakens. Carried unanswered since session 4.
-   **Session 22 found the second half of the same question.** §4.2's AR FIM framing has no
-   terminator after the middle, so the model was never taught where an infill *ends*: it stopped on
-   5 of 12 prompts and its median generation was the budget, against a 32-token hole (Finding AQ).
-   §8.3's infill exact-match is therefore not computable for the AR arm as trained, and scored
-   anyway it inflates toward diffusion.
-   Both are the same question — *is Ravaan-AR a fair FIM baseline or a straw one* — and both are
-   one framing token and a pilot re-run today against six core runs later. **Decide them together,
-   before the first core run.**
+   **Session 22 found the second half of the same question and it has since been settled the other
+   way.** §4.2's AR FIM framing has no terminator after the middle, so the model was never taught
+   where an infill *ends*: it stopped on 5 of 12 prompts and its median generation was the budget,
+   against a 32-token hole (Finding AQ). **Decided 2026-09-13: the framing is not changed.** The
+   cost moves to scoring — infill exact-match cuts the AR arm's generation to the gold span's
+   length, which is the symmetric repair because the diffusion arm is already given that length,
+   and the rule is logged in `reports/preregistration.md` §8 before any result exists.
+   **The share itself is still open**, and it was only ever bundled with AQ because one pilot
+   re-run would have covered both. With no re-run happening it is its own question again — and
+   still the last substantive open design question in the project. It costs a re-pilot whenever it
+   is answered, and six core runs once they have started.
 
 6. **Does PRD §6.2's Roman-Urdu-Parl warning get amended for Finding AE?** *Your call — the PRD is
    the spec and v2.3 was cut the same day.* Nothing in the design changes and no number in the PRD
@@ -3640,14 +3646,14 @@ matched pair trains on real Urdu, and both halves of G3 are answered. **The free
 thing left that is blocked on you.** Steps 1–5 below are unchanged; step 6 is closed and replaced
 by step 7, which is a decision rather than a task.
 
-> **⚠️ Session 22 put two things on the critical path that were not on it before, and both are
-> cheap now and expensive after Week 9 starts.** Read step 7 before renting anything.
-> **(a) Finding AQ — §4.2's AR FIM framing has no middle terminator**, so the AR arm cannot know
-> where an infill ends and §8.3's infill exact-match is not computable for it as trained. One
-> framing token, one pilot re-run now; six core runs later.
-> **(b) G3's coherence half FAILS.** The pilot diffusion arm does not produce coherent Urdu under
-> any of 16 decoder settings. That is a statement about 368M training tokens and not about masked
-> diffusion, and §11 still has to be told.
+> **✅ Session 22's two open decisions were taken on 2026-09-13, and both are now record rather
+> than question.** Step 7 holds what each one obliges the report to say.
+> **(a) G3's coherence half FAILS, and the gate is recorded unmet on its own terms.** The pilot
+> diffusion arm does not produce coherent Urdu under any of 16 decoder settings; the AR arm, on
+> the same corpus and code, is fluent. Judged a statement about 368M training tokens rather than
+> about masked diffusion, so **Week 9 proceeds** and PRD §11 carries the verdict.
+> **(b) Finding AQ — §4.2's AR FIM framing keeps its missing terminator.** Not fixed; the cost is
+> paid at scoring time instead, and the rule is preregistered.
 
 > **⚠️ Two hosting facts changed in session 21 and they are the first thing to read.**
 > **(a) Kaggle is out for anything needing a GPU (Finding AL)** — phone verification gates
@@ -3806,28 +3812,44 @@ up there and nowhere else, and Finding AN's bare objective showed up in neither.
 noisier estimator than AR's** — inside the noise at 300 steps of four sequences, clear at 1,200. A
 flat diffusion curve in a short pilot is not evidence of anything.
 
-### 7. ⚠️ Two decisions session 22 put on the table, both due before Week 9
+### 7. ✅ Both of session 22's decisions were taken — what they oblige
 
-Neither is a task. Both get *more* expensive the moment the core runs start, and both are about
-§4.1's fairness argument rather than about the corpus — which is why they do not wait on the
-freeze.
+Taken 2026-09-13. Neither is a task any more; each is something the report has to say and one of
+them is something Week 12's scorer has to do.
 
-**(a) Finding AQ — give the AR arm a FIM middle terminator, or don't.** `_frame_infill`'s AR branch
-builds `<infill> <fim_prefix> prefix <fim_suffix> suffix <fim_middle> middle` and the middle runs
-to the end of the sequence with **no terminator after it**. Measured: over 12 infill prompts with a
-32-token hole, the AR arm stopped 5/12 and its median generation was the 200-token budget; the
-stops it did make were 33, 86, 124, 127, 152 tokens long. The 5/12 is stage 10's document separator
-at its corpus rate — `lm/free`, which has no middle at all, stops 4/12.
+**(a) G3 is recorded unmet on its own terms, and Week 9 proceeds.** The gate's kill criterion reads
+"implementation bug — debug, do not scale", and no implementation bug was found. The control is
+that **Ravaan-AR is fluent on the same corpus, the same loop and the same code** — a defect in
+anything shared would show in both arms — and three separate decoder defects were found *and fixed*
+without moving the verdict. A 25M model at 368M training tokens over a 7.36M-token corpus is
+plausibly below the scale at which coherent Urdu is reachable at all, so the gate's premise is
+judged wrong rather than the code.
 
-So **§8.3's infill exact-match is not computable for the AR arm as trained**, and the metric as
-scored inflates *toward diffusion* — the opposite direction from the one A2 exists to quantify. The
-fix is one of §7's twelve framing pieces placed after the middle: no parameters, no §4.1 breakage,
-one pilot re-run. **After Week 9 it is six runs.**
+**What this obliges.** PRD §11 carries the verdict row and the reasoning; the technical report must
+carry both, and must not describe G3 as passed. §14's definition of done should be read against
+that. And the risk that was accepted is worth naming rather than filed away: *if* there is a
+diffusion-only defect, it now surfaces after the six core runs are paid for. The cheapest early
+warning is **G4** — arm A's curves at 50% of tokens — which is already a gate and should be read
+with this in mind rather than only for the crossover.
 
-**(b) Open question 5, the infilling share, which this makes urgent rather than merely open.**
-§4.2 sets 10%; reported FIM practice is 50–90%. The two are one conversation: both decide whether
-Ravaan-AR is a fair FIM baseline or a straw one, and A2's entire meaning rides on the answer.
-**Decide them together, and before the first core run.**
+**(b) Finding AQ is not fixed. The cost moves to scoring, and the rule is preregistered.** §4.2's
+AR FIM framing keeps its missing middle terminator, so the AR arm still has no learned signal for
+where an infill ends. §8.3's infill exact-match is therefore scored against a **truncation rule,
+fixed before any result exists: cut the AR arm's generation to the gold span's token length.**
+Logged in [`reports/preregistration.md`](reports/preregistration.md) §8, dated, with the reason.
+
+**Why that rule and not another.** It is the *symmetric* repair rather than a generous one — the
+diffusion arm is already given the gold length, because an absorbing-state canvas has a fixed width
+from its first forward pass. Scoring AR unbounded would compare a bounded answer against an
+unbounded one and inflate **toward diffusion**, the opposite of the bias preregistration §6 warns
+about and the opposite of what A2 exists to quantify. The residue, which the report must state:
+**both arms are now told how long the answer is**, so infill exact-match measures content and not
+length, for either of them.
+
+**Open question 5 — the infilling share — is unaffected and still open.** §4.2 sets 10%; reported
+FIM practice is 50–90%. It was bundled with AQ because one pilot re-run would have covered both;
+with no re-run happening it goes back to being its own question, and it is still the last
+substantive open design question in the project.
 
 **And three things to carry into Week 12's eval, from the same session:**
 
@@ -3842,7 +3864,9 @@ Ravaan-AR is a fair FIM baseline or a straw one, and A2's entire meaning rides o
 * **§8.3's three generation metrics cannot tell fluent Urdu from Urdu-shaped noise.** AR and DIFF
   score within 0.09 of each other on all three while producing text a reader separates instantly.
   **§8.4's human evaluation is the only instrument in the plan that can** — so open question 3's
-  three annotators are load-bearing, and they have weeks of lead time.
+  three annotators are load-bearing, and they have weeks of lead time. This is now the *second*
+  place a claim rests on a native speaker who has not been lined up yet; stage 5's 29 disagreements
+  are the first.
 
 ### What session 22 settled, so it is not re-opened
 

@@ -17,7 +17,7 @@ session 22 because nothing in the repository could turn a checkpoint into a sent
 |---|---|
 | **Ravaan-AR** | Fluent, grammatical, script-consistent Urdu. Locally coherent over a sentence or two; no long-range sense, which is expected at this scale. |
 | **Ravaan-DIFF** | **Does not produce coherent Urdu under any of the 16 decoder settings measured.** Two distinct failures, depending on the schedule — a repetition collapse (confidence) or word-shaped noise (random). |
-| **G3** | **The coherence half does not pass.** The resume half does. |
+| **G3** | **The coherence half does not pass.** The resume half does. **Decided 2026-09-13: the gate is recorded unmet on its own terms and Week 9 proceeds** — see §9. |
 
 **Adjudicated by Claude, not by a native speaker** — the same caveat
 [`quality_validation.md`](quality_validation.md) carries, in the same words, for the same reason.
@@ -225,9 +225,26 @@ roughly its corpus rate — the same 4/12 appears on `lm/free`, which has no mid
    pieces and both arms embed all of them, so reusing one costs no parameters and breaks no §4.1
    matching. It costs a pilot re-run. After the core runs start it costs six.
 
-**Decide before Week 9.** This is the second item on that list, after the infilling *share*
-(open question 5), and the two are the same conversation: both are about whether Ravaan-AR is a
-fair FIM baseline or a straw one, which is §4.1's entire argument.
+### Decided 2026-09-13 — the framing is not changed, and the cost moves to scoring
+
+The terminator is **not** being added and the pilot is **not** being re-run. Infill exact-match is
+instead scored against a truncation rule, fixed before any result exists and logged in
+[`preregistration.md`](preregistration.md) §8: **the AR arm's generation is cut to the gold span's
+token length.**
+
+That is the *symmetric* repair, not a generous one — the diffusion arm is already given the gold
+length, because an absorbing-state canvas has a fixed width from its first forward pass. Scoring AR
+unbounded would compare a bounded answer against an unbounded one and inflate toward diffusion,
+which is the opposite of the bias preregistration §6 warns about.
+
+**What the report must state, and it is not a footnote:** under this rule **both arms are told how
+long the answer is**, so §8.3's infill exact-match measures content and not length, for either of
+them. The claim "Ravaan-AR can infill" is therefore weaker than it looks — the model has not
+demonstrated that it knows where to stop, because it was never taught, and the metric no longer
+asks. §8.4's human evaluation covers infilling and is the only place that gap can show up.
+
+Open question 5 — the infilling *share* — is unaffected and still open. It was bundled with this
+only because one re-pilot would have covered both.
 
 ---
 
@@ -246,3 +263,27 @@ arm is the slow half at 5.9 s a sample against the diffusion arm's 1.2 s: there 
 KV cache, deliberately — `ravaan/sampling/ar.py` records why, and the short version is that a
 second attention path is too high a price for inference speed in a project whose matched pair is
 held together by there being only one.
+
+---
+
+## 9. What was decided, 2026-09-13
+
+**G3 is recorded unmet, and the core runs proceed.** The gate's kill criterion is "implementation
+bug — debug, do not scale", and no implementation bug was found. The control is §2: Ravaan-AR is
+fluent on the same corpus, through the same loop, in the same code, so a defect in anything the
+arms share would show in both. Three decoder defects *were* found and fixed during this session and
+none of them moved the verdict. The judgement is that a 25M model at 368M training tokens over a
+7.36M-token pilot corpus is below the scale at which coherent Urdu is reachable at all — the gate's
+premise is wrong rather than the code.
+
+The alternative considered and declined was a re-pilot at the 40M rung (~8 h on the 4060, at a
+reduced microbatch because 8.19 GB is tight), which would have converted the judgement into a
+measurement.
+
+**The risk that was accepted, named rather than filed.** If a diffusion-only defect does exist, it
+now surfaces after the six core runs are paid for. The cheapest early warning is **G4** — arm A's
+curves at 50% of tokens processed — which is already a gate and should be read with this in mind
+rather than only for the crossover.
+
+**The technical report must carry the verdict and this reasoning, and must not describe G3 as
+passed.**

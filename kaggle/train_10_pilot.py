@@ -34,28 +34,70 @@ from pathlib import Path
 
 INPUT = Path("/kaggle/input")
 WORKING = Path("/kaggle/working")
+REPO = Path(__file__).resolve().parents[1]
+
+# Windows picks cp1252 for a console *and* for a redirected pipe, and cp1252 raises rather than
+# mangles — so this has to happen before the first non-ASCII print, which here is the pilot-corpus
+# warning. `ravaan.console` is the class fix from session 14 and this is the sixth instance of the
+# same Windows text default; the guard is called, never copied. It is reached through REPO because
+# the code tree's real location is not known until `discover()` has run, and on Kaggle that import
+# fails harmlessly: the tree is under the mount and Linux stdout is UTF-8 already.
+sys.path.insert(0, str(REPO))
+try:
+    from ravaan.console import pin_utf8_streams
+
+    pin_utf8_streams()
+except ImportError:
+    pass
+
+
+def on_kaggle() -> bool:
+    """Whether this is a Kaggle kernel, as opposed to any other host with a GPU."""
+    return INPUT.exists()
+
+
+def working_dir() -> Path:
+    """Where checkpoints and results go: `/kaggle/working` there, `runs/pilot` here."""
+    if on_kaggle():
+        return WORKING
+    out = Path(os.environ.get("RAVAAN_OUT", REPO / "runs" / "pilot"))
+    out.mkdir(parents=True, exist_ok=True)
+    return out
 
 
 def discover() -> tuple[Path, Path]:
-    """Find the code tree and the corpus under the mount. See `kaggle/mount_bootstrap.py`.
+    """Find the code tree and the corpus — under Kaggle's mount, or in the repo.
 
-    Kaggle's mount layout has surprised this project twice (Findings Z and Y), so this looks for
-    marker files rather than assuming a path, and prints what it found either way.
+    Kaggle's mount layout has surprised this project twice (Findings Z and Y), so the Kaggle path
+    looks for marker files rather than assuming a path, and prints what it found either way.
+
+    **The local path is not a convenience, it is the one that runs.** Kaggle gates *accelerators*
+    behind phone verification, not only notebook internet — Finding Z' recorded the internet half
+    and this kernel needs the other half, so on that host it has no GPU to run on at all.
+    `colab/freeze_colab.py` is the precedent: a runner named for one host and deliberately
+    dependent on nothing that host provides.
     """
-    print(f"{INPUT} holds: {[p.name for p in sorted(INPUT.iterdir())] if INPUT.exists() else '—'}")
+    if not on_kaggle():
+        corpus = Path(os.environ.get("RAVAAN_CORPUS", REPO / "data" / "packed-pilot"))
+        if not (corpus / "manifest.json").exists():
+            raise SystemExit(f"no packed corpus at {corpus} — run `scripts/pack_pilot.py` first")
+        print(f"host   local\ncode   {REPO}\ncorpus {corpus}")
+        return REPO, corpus
 
-    code = next((p.parent for p in INPUT.rglob("ravaan/models/backbone.py")), None)
-    corpus = next((p.parent for p in INPUT.rglob("manifest.json") if "packed" in str(p)), None)
+    print(f"{INPUT} holds: {[q.name for q in sorted(INPUT.iterdir())]}")
+    code = next((q.parent for q in INPUT.rglob("ravaan/models/backbone.py")), None)
+    corpus = next((q.parent for q in INPUT.rglob("manifest.json") if "packed" in str(q)), None)
     if code is None:
         raise SystemExit("no code tree under /kaggle/input — attach the ravaan-code dataset")
     if corpus is None:
         raise SystemExit("no packed corpus under /kaggle/input — attach the ravaan-pilot dataset")
-    print(f"code   {code}\ncorpus {corpus}")
+    print(f"host   kaggle\ncode   {code}\ncorpus {corpus}")
     return code, corpus
 
 
 def main() -> int:
     code, corpus_dir = discover()
+    work = working_dir()
     sys.path.insert(0, str(code))
 
     import torch
@@ -72,7 +114,7 @@ def main() -> int:
     if device == "cuda":
         print(f"  {torch.cuda.get_device_name(0)}, bf16={torch.cuda.is_bf16_supported()}")
     else:
-        print("  ⚠️ no GPU attached — set Accelerator to GPU T4 x2 or P100 and re-run")
+        print("  ⚠️ no GPU — on Kaggle set Accelerator to GPU; locally install a CUDA torch build")
 
     train = PackedCorpus(corpus_dir, split="train", arm="A")
     val = PackedCorpus(corpus_dir, split="validation", arm=None)
@@ -121,7 +163,7 @@ def main() -> int:
                   f"({'PASS' if speed['g2_passes_at_0.35'] else 'FAIL'})", flush=True)
             results[f"{arm}_throughput"] = speed
 
-        out = WORKING / f"pilot-{arm}"
+        out = work / f"pilot-{arm}"
         trainer = Trainer(model, train, config, out_dir=out, device=device,
                           microbatch=microbatch, run_name=arm)
         started = time.time()
@@ -156,12 +198,12 @@ def main() -> int:
         results[arm]["resume_exact"] = bool(exact)
         print(f"  resume round-trip exact: {exact}")
 
-    (WORKING / "pilot_results.json").write_text(json.dumps(results, indent=1), encoding="utf-8")
-    print(f"\nwrote {WORKING / 'pilot_results.json'}")
+    (work / "pilot_results.json").write_text(json.dumps(results, indent=1), encoding="utf-8")
+    print(f"\nwrote {work / 'pilot_results.json'}")
 
     verdict = all(results[a]["resume_exact"] for a in ("ar", "diff"))
     print(f"\nG3 resume half: {'PASS' if verdict else 'FAIL'}. "
-          "The coherence half needs a reader — sample from the checkpoints in /kaggle/working.")
+          f"The coherence half needs a reader — sample from the checkpoints in {work}.")
     return 0
 
 

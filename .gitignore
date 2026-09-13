@@ -41,9 +41,12 @@ wandb/
 # bug, not the fix: `**` re-includes evidence at any depth, and no future report directory has to
 # remember this file exists. Verified with `git check-ignore -v reports/eval/pairs_testsplit_roman.jsonl`.
 !/reports/**/*.jsonl
-# Detached-run console logs (`nohup … > reports/.decon_wiki.log`). Transient scratch, not evidence —
-# the evidence is the JSON the run writes. Dot-prefixed so it cannot collide with a report name.
-/reports/.*.log
+# Detached-run scratch: console logs (`nohup … > reports/.decon_wiki.log`) and completion
+# sentinels (`touch reports/.subs_done`). Not evidence — the evidence is the JSON the run writes.
+# The rule was `.*.log` and session 21 arrived with a `.subs_done` it did not match, so it is
+# widened to the class it was always about: dot-prefixed is the convention for transient here, and
+# no report is named with a leading dot. Verified with `git check-ignore -v reports/.subs_done`.
+/reports/.*
 *.txt.zst
 *.model
 *.vocab

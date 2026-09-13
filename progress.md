@@ -3560,6 +3560,21 @@ Filtering on the full 225-candidate screen needs the native-speaker pass first, 
 
 ### 6. The pilots (G3) — half done, and the remaining half is one command
 
+> **⚠️ A run is in flight as of the end of session 21 — read its output before starting another.**
+> Launched 2026-09-13 after the fixes below, on this machine's 4060: 25M, both arms, 50 epochs,
+> **5,614 steps over 367,948,800 tokens**, ~6 h. Three places to look, in this order:
+>
+> | | |
+> |---|---|
+> | `reports/.pilot_g3.log` | live progress, the realized-mixture block per arm, the G3 verdict |
+> | `runs/pilot/pilot_results.json` | held-out BPB by population, resume checks, throughput |
+> | `runs/pilot/pilot-{ar,diff}/` | checkpoints — **this is what the coherence half needs a reader for** |
+>
+> If the log ends mid-run, the machine slept or the process was killed; the rolling checkpoint
+> makes that cheap to resume rather than restart. If it is complete, G3 is answerable in full and
+> the only thing left in the whole project is the freeze.
+
+
 G3 asks two things: *"20M pilot DIFF produces coherent Urdu after 50 epochs; both models resume
 from checkpoint correctly."* **The resume half is answered and it PASSES on both arms** — the
 kernel trains, saves, reloads into a fresh model and asserts every parameter is identical, and it

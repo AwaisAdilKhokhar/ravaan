@@ -1,0 +1,1808 @@
+{
+ "sample_step": 16,
+ "rows_sampled": 395827,
+ "urdu_types": 36531,
+ "suspect_types": 714,
+ "candidates": [
+  {
+   "urdu": "و",
+   "rows": 9136,
+   "coverage": 0.31,
+   "substitute": "o",
+   "p_sub_given_urdu": 0.876,
+   "p_urdu_given_sub": 0.881
+  },
+  {
+   "urdu": "ہوئے",
+   "rows": 8394,
+   "coverage": 0.355,
+   "substitute": "hue",
+   "p_sub_given_urdu": 0.906,
+   "p_urdu_given_sub": 0.948
+  },
+  {
+   "urdu": "ہوئی",
+   "rows": 6820,
+   "coverage": 0.241,
+   "substitute": "hui",
+   "p_sub_given_urdu": 0.922,
+   "p_urdu_given_sub": 0.994
+  },
+  {
+   "urdu": "گھر",
+   "rows": 3795,
+   "coverage": 0.407,
+   "substitute": "mamu",
+   "p_sub_given_urdu": 0.886,
+   "p_urdu_given_sub": 0.971
+  },
+  {
+   "urdu": "دونوں",
+   "rows": 3402,
+   "coverage": 0.071,
+   "substitute": "dono",
+   "p_sub_given_urdu": 0.938,
+   "p_urdu_given_sub": 0.991
+  },
+  {
+   "urdu": "ایسی",
+   "rows": 3360,
+   "coverage": 0.157,
+   "substitute": "aisi",
+   "p_sub_given_urdu": 0.934,
+   "p_urdu_given_sub": 0.975
+  },
+  {
+   "urdu": "خوش",
+   "rows": 3248,
+   "coverage": 0.138,
+   "substitute": "khush",
+   "p_sub_given_urdu": 0.959,
+   "p_urdu_given_sub": 0.996
+  },
+  {
+   "urdu": "سکتے",
+   "rows": 3245,
+   "coverage": 0.373,
+   "substitute": "satke",
+   "p_sub_given_urdu": 0.911,
+   "p_urdu_given_sub": 0.996
+  },
+  {
+   "urdu": "امریکہ",
+   "rows": 2578,
+   "coverage": 0.106,
+   "substitute": "america",
+   "p_sub_given_urdu": 0.995,
+   "p_urdu_given_sub": 0.869
+  },
+  {
+   "urdu": "خوشی",
+   "rows": 1960,
+   "coverage": 0.222,
+   "substitute": "khusi",
+   "p_sub_given_urdu": 0.899,
+   "p_urdu_given_sub": 0.988
+  },
+  {
+   "urdu": "امریکی",
+   "rows": 1421,
+   "coverage": 0.111,
+   "substitute": "amrici",
+   "p_sub_given_urdu": 0.935,
+   "p_urdu_given_sub": 0.881
+  },
+  {
+   "urdu": "ویب",
+   "rows": 1285,
+   "coverage": 0.079,
+   "substitute": "website",
+   "p_sub_given_urdu": 0.967,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "فروری",
+   "rows": 1138,
+   "coverage": 0.012,
+   "substitute": "feb",
+   "p_sub_given_urdu": 0.994,
+   "p_urdu_given_sub": 0.996
+  },
+  {
+   "urdu": "فون",
+   "rows": 979,
+   "coverage": 0.093,
+   "substitute": "phone",
+   "p_sub_given_urdu": 0.972,
+   "p_urdu_given_sub": 0.999
+  },
+  {
+   "urdu": "توجہ",
+   "rows": 943,
+   "coverage": 0.288,
+   "substitute": "tavajja",
+   "p_sub_given_urdu": 0.91,
+   "p_urdu_given_sub": 0.999
+  },
+  {
+   "urdu": "غور",
+   "rows": 931,
+   "coverage": 0.23,
+   "substitute": "ghhor",
+   "p_sub_given_urdu": 0.995,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "مت",
+   "rows": 792,
+   "coverage": 0.365,
+   "substitute": "sukh",
+   "p_sub_given_urdu": 0.913,
+   "p_urdu_given_sub": 0.927
+  },
+  {
+   "urdu": "اسکین",
+   "rows": 752,
+   "coverage": 0.021,
+   "substitute": "scan",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "نیچے",
+   "rows": 735,
+   "coverage": 0.027,
+   "substitute": "neechay",
+   "p_sub_given_urdu": 0.999,
+   "p_urdu_given_sub": 0.985
+  },
+  {
+   "urdu": "ووٹ",
+   "rows": 724,
+   "coverage": 0.033,
+   "substitute": "vote",
+   "p_sub_given_urdu": 0.983,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کلک",
+   "rows": 667,
+   "coverage": 0.102,
+   "substitute": "click",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.987
+  },
+  {
+   "urdu": "شیخ",
+   "rows": 666,
+   "coverage": 0.147,
+   "substitute": "sheikh",
+   "p_sub_given_urdu": 0.992,
+   "p_urdu_given_sub": 0.994
+  },
+  {
+   "urdu": "کالج",
+   "rows": 665,
+   "coverage": 0.108,
+   "substitute": "college",
+   "p_sub_given_urdu": 0.531,
+   "p_urdu_given_sub": 0.992
+  },
+  {
+   "urdu": "اعلی",
+   "rows": 646,
+   "coverage": 0.467,
+   "substitute": "alla",
+   "p_sub_given_urdu": 0.913,
+   "p_urdu_given_sub": 0.995
+  },
+  {
+   "urdu": "چکر",
+   "rows": 618,
+   "coverage": 0.382,
+   "substitute": "post",
+   "p_sub_given_urdu": 0.89,
+   "p_urdu_given_sub": 0.874
+  },
+  {
+   "urdu": "کھلاڑی",
+   "rows": 616,
+   "coverage": 0.497,
+   "substitute": "rgbi",
+   "p_sub_given_urdu": 0.718,
+   "p_urdu_given_sub": 0.98
+  },
+  {
+   "urdu": "اوورز",
+   "rows": 553,
+   "coverage": 0.009,
+   "substitute": "overs",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.998
+  },
+  {
+   "urdu": "امی",
+   "rows": 540,
+   "coverage": 0.2,
+   "substitute": "ammi",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کوڈ",
+   "rows": 524,
+   "coverage": 0.029,
+   "substitute": "code",
+   "p_sub_given_urdu": 0.935,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "افریقہ",
+   "rows": 518,
+   "coverage": 0.015,
+   "substitute": "africa",
+   "p_sub_given_urdu": 0.998,
+   "p_urdu_given_sub": 0.981
+  },
+  {
+   "urdu": "فیس",
+   "rows": 511,
+   "coverage": 0.049,
+   "substitute": "facebook",
+   "p_sub_given_urdu": 0.969,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "عینی",
+   "rows": 471,
+   "coverage": 0.238,
+   "substitute": "sdraldin",
+   "p_sub_given_urdu": 0.975,
+   "p_urdu_given_sub": 0.989
+  },
+  {
+   "urdu": "اوور",
+   "rows": 460,
+   "coverage": 0.017,
+   "substitute": "over",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "اسکول",
+   "rows": 447,
+   "coverage": 0.183,
+   "substitute": "school",
+   "p_sub_given_urdu": 0.944,
+   "p_urdu_given_sub": 0.942
+  },
+  {
+   "urdu": "سیریز",
+   "rows": 441,
+   "coverage": 0.075,
+   "substitute": "series",
+   "p_sub_given_urdu": 0.998,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "بقول",
+   "rows": 434,
+   "coverage": 0.053,
+   "substitute": "bakol",
+   "p_sub_given_urdu": 0.998,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کہتی",
+   "rows": 429,
+   "coverage": 0.38,
+   "substitute": "kahoon",
+   "p_sub_given_urdu": 0.958,
+   "p_urdu_given_sub": 0.965
+  },
+  {
+   "urdu": "چیک",
+   "rows": 419,
+   "coverage": 0.041,
+   "substitute": "nato",
+   "p_sub_given_urdu": 0.924,
+   "p_urdu_given_sub": 0.935
+  },
+  {
+   "urdu": "کلاس",
+   "rows": 418,
+   "coverage": 0.201,
+   "substitute": "class",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "لائبریری",
+   "rows": 402,
+   "coverage": 0.109,
+   "substitute": "tromin",
+   "p_sub_given_urdu": 0.918,
+   "p_urdu_given_sub": 0.992
+  },
+  {
+   "urdu": "روک",
+   "rows": 387,
+   "coverage": 0.093,
+   "substitute": "rokkk",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "چینی",
+   "rows": 380,
+   "coverage": 0.108,
+   "substitute": "cheeni",
+   "p_sub_given_urdu": 0.995,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کروڑ",
+   "rows": 373,
+   "coverage": 0.18,
+   "substitute": "crore",
+   "p_sub_given_urdu": 0.962,
+   "p_urdu_given_sub": 0.989
+  },
+  {
+   "urdu": "آفس",
+   "rows": 373,
+   "coverage": 0.48,
+   "substitute": "office",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "سکول",
+   "rows": 372,
+   "coverage": 0.145,
+   "substitute": "shool",
+   "p_sub_given_urdu": 0.927,
+   "p_urdu_given_sub": 0.991
+  },
+  {
+   "urdu": "الیکشن",
+   "rows": 368,
+   "coverage": 0.212,
+   "substitute": "election",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.995
+  },
+  {
+   "urdu": "پڑتی",
+   "rows": 362,
+   "coverage": 0.409,
+   "substitute": "padtee",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "آؤ",
+   "rows": 358,
+   "coverage": 0.05,
+   "substitute": "aao",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.962
+  },
+  {
+   "urdu": "انقلاب",
+   "rows": 348,
+   "coverage": 0.477,
+   "substitute": "khatima",
+   "p_sub_given_urdu": 0.52,
+   "p_urdu_given_sub": 0.995
+  },
+  {
+   "urdu": "چودہ",
+   "rows": 347,
+   "coverage": 0.046,
+   "substitute": "chodan",
+   "p_sub_given_urdu": 0.994,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "سچی",
+   "rows": 346,
+   "coverage": 0.205,
+   "substitute": "sachhi",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "دیش",
+   "rows": 317,
+   "coverage": 0.205,
+   "substitute": "bangladesh",
+   "p_sub_given_urdu": 0.915,
+   "p_urdu_given_sub": 0.887
+  },
+  {
+   "urdu": "کونسل",
+   "rows": 315,
+   "coverage": 0.073,
+   "substitute": "council",
+   "p_sub_given_urdu": 0.975,
+   "p_urdu_given_sub": 0.853
+  },
+  {
+   "urdu": "پیج",
+   "rows": 314,
+   "coverage": 0.045,
+   "substitute": "page",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.997
+  },
+  {
+   "urdu": "کورٹ",
+   "rows": 313,
+   "coverage": 0.297,
+   "substitute": "court",
+   "p_sub_given_urdu": 0.997,
+   "p_urdu_given_sub": 0.972
+  },
+  {
+   "urdu": "نیوز",
+   "rows": 312,
+   "coverage": 0.045,
+   "substitute": "news",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.997
+  },
+  {
+   "urdu": "چوری",
+   "rows": 310,
+   "coverage": 0.019,
+   "substitute": "chori",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "مولوی",
+   "rows": 301,
+   "coverage": 0.083,
+   "substitute": "molvi",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.993
+  },
+  {
+   "urdu": "نوید",
+   "rows": 298,
+   "coverage": 0.067,
+   "substitute": "naveed",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کمیٹی",
+   "rows": 298,
+   "coverage": 0.158,
+   "substitute": "committee",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کینیڈا",
+   "rows": 293,
+   "coverage": 0.102,
+   "substitute": "canada",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.997
+  },
+  {
+   "urdu": "آئینہ",
+   "rows": 293,
+   "coverage": 0.215,
+   "substitute": "aaina",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.973
+  },
+  {
+   "urdu": "خفیہ",
+   "rows": 293,
+   "coverage": 0.287,
+   "substitute": "khufia",
+   "p_sub_given_urdu": 0.444,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "لڑی",
+   "rows": 285,
+   "coverage": 0.228,
+   "substitute": "ladi",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "جمعہ",
+   "rows": 280,
+   "coverage": 0.175,
+   "substitute": "jummay",
+   "p_sub_given_urdu": 0.986,
+   "p_urdu_given_sub": 0.986
+  },
+  {
+   "urdu": "کیس",
+   "rows": 266,
+   "coverage": 0.252,
+   "substitute": "case",
+   "p_sub_given_urdu": 0.992,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "قاتل",
+   "rows": 259,
+   "coverage": 0.375,
+   "substitute": "pearl",
+   "p_sub_given_urdu": 0.726,
+   "p_urdu_given_sub": 0.891
+  },
+  {
+   "urdu": "تینوں",
+   "rows": 259,
+   "coverage": 0.046,
+   "substitute": "tenu",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ٹیکنالوجی",
+   "rows": 256,
+   "coverage": 0.0,
+   "substitute": "intibah",
+   "p_sub_given_urdu": 0.652,
+   "p_urdu_given_sub": 0.977
+  },
+  {
+   "urdu": "یونہی",
+   "rows": 255,
+   "coverage": 0.0,
+   "substitute": "yuhin",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کمیشن",
+   "rows": 248,
+   "coverage": 0.27,
+   "substitute": "commission",
+   "p_sub_given_urdu": 0.565,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "اسلئے",
+   "rows": 248,
+   "coverage": 0.427,
+   "substitute": "churraya",
+   "p_sub_given_urdu": 0.923,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ایشیا",
+   "rows": 244,
+   "coverage": 0.123,
+   "substitute": "asia",
+   "p_sub_given_urdu": 0.75,
+   "p_urdu_given_sub": 0.968
+  },
+  {
+   "urdu": "فوٹو",
+   "rows": 240,
+   "coverage": 0.013,
+   "substitute": "photo",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "یورپی",
+   "rows": 239,
+   "coverage": 0.025,
+   "substitute": "europi",
+   "p_sub_given_urdu": 0.996,
+   "p_urdu_given_sub": 0.988
+  },
+  {
+   "urdu": "رونا",
+   "rows": 235,
+   "coverage": 0.213,
+   "substitute": "shukriya",
+   "p_sub_given_urdu": 0.957,
+   "p_urdu_given_sub": 0.934
+  },
+  {
+   "urdu": "قرض",
+   "rows": 229,
+   "coverage": 0.127,
+   "substitute": "karzzzz",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.996
+  },
+  {
+   "urdu": "کرنسی",
+   "rows": 226,
+   "coverage": 0.283,
+   "substitute": "currency",
+   "p_sub_given_urdu": 0.991,
+   "p_urdu_given_sub": 0.996
+  },
+  {
+   "urdu": "روٹی",
+   "rows": 223,
+   "coverage": 0.054,
+   "substitute": "rootti",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.991
+  },
+  {
+   "urdu": "سلوک",
+   "rows": 217,
+   "coverage": 0.106,
+   "substitute": "sulooq",
+   "p_sub_given_urdu": 0.991,
+   "p_urdu_given_sub": 0.995
+  },
+  {
+   "urdu": "یونین",
+   "rows": 217,
+   "coverage": 0.046,
+   "substitute": "union",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.982
+  },
+  {
+   "urdu": "کوئٹہ",
+   "rows": 212,
+   "coverage": 0.175,
+   "substitute": "queta",
+   "p_sub_given_urdu": 0.995,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "سائنسی",
+   "rows": 207,
+   "coverage": 0.188,
+   "substitute": "scienci",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.99
+  },
+  {
+   "urdu": "غصے",
+   "rows": 205,
+   "coverage": 0.42,
+   "substitute": "ghusse",
+   "p_sub_given_urdu": 0.883,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "نقوی",
+   "rows": 200,
+   "coverage": 0.015,
+   "substitute": "naqvi",
+   "p_sub_given_urdu": 0.995,
+   "p_urdu_given_sub": 0.985
+  },
+  {
+   "urdu": "عیسائی",
+   "rows": 198,
+   "coverage": 0.131,
+   "substitute": "isaai",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "سیکشن",
+   "rows": 191,
+   "coverage": 0.058,
+   "substitute": "section",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "خوبی",
+   "rows": 191,
+   "coverage": 0.162,
+   "substitute": "khoobi",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ریڈیو",
+   "rows": 186,
+   "coverage": 0.005,
+   "substitute": "radio",
+   "p_sub_given_urdu": 0.984,
+   "p_urdu_given_sub": 0.92
+  },
+  {
+   "urdu": "ورژن",
+   "rows": 185,
+   "coverage": 0.016,
+   "substitute": "version",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ڈیڑھ",
+   "rows": 184,
+   "coverage": 0.288,
+   "substitute": "daidh",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "خودی",
+   "rows": 183,
+   "coverage": 0.202,
+   "substitute": "khudi",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.995
+  },
+  {
+   "urdu": "کشتی",
+   "rows": 177,
+   "coverage": 0.418,
+   "substitute": "ulatnay",
+   "p_sub_given_urdu": 0.74,
+   "p_urdu_given_sub": 0.942
+  },
+  {
+   "urdu": "ضد",
+   "rows": 176,
+   "coverage": 0.239,
+   "substitute": "bhaap",
+   "p_sub_given_urdu": 0.841,
+   "p_urdu_given_sub": 0.886
+  },
+  {
+   "urdu": "دوڑ",
+   "rows": 175,
+   "coverage": 0.143,
+   "substitute": "daud",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.994
+  },
+  {
+   "urdu": "ٹیکس",
+   "rows": 174,
+   "coverage": 0.063,
+   "substitute": "tax",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.972
+  },
+  {
+   "urdu": "آئینی",
+   "rows": 174,
+   "coverage": 0.247,
+   "substitute": "aaeni",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.961
+  },
+  {
+   "urdu": "دیجیے",
+   "rows": 173,
+   "coverage": 0.012,
+   "substitute": "degiye",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "گوئی",
+   "rows": 172,
+   "coverage": 0.157,
+   "substitute": "goi",
+   "p_sub_given_urdu": 0.994,
+   "p_urdu_given_sub": 0.994
+  },
+  {
+   "urdu": "اوہائیو",
+   "rows": 165,
+   "coverage": 0.358,
+   "substitute": "avhayyo",
+   "p_sub_given_urdu": 0.988,
+   "p_urdu_given_sub": 0.982
+  },
+  {
+   "urdu": "واسطہ",
+   "rows": 162,
+   "coverage": 0.228,
+   "substitute": "vaastaa",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "وجی",
+   "rows": 161,
+   "coverage": 0.099,
+   "substitute": "vji",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "جج",
+   "rows": 161,
+   "coverage": 0.18,
+   "substitute": "judge",
+   "p_sub_given_urdu": 0.994,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ایکس",
+   "rows": 157,
+   "coverage": 0.115,
+   "substitute": "x",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.952
+  },
+  {
+   "urdu": "ریلیز",
+   "rows": 157,
+   "coverage": 0.0,
+   "substitute": "release",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.987
+  },
+  {
+   "urdu": "جلوہ",
+   "rows": 157,
+   "coverage": 0.248,
+   "substitute": "jalva",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.994
+  },
+  {
+   "urdu": "اوکے",
+   "rows": 156,
+   "coverage": 0.179,
+   "substitute": "ok",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.975
+  },
+  {
+   "urdu": "ٹیکسٹ",
+   "rows": 156,
+   "coverage": 0.019,
+   "substitute": "text",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "آئینے",
+   "rows": 155,
+   "coverage": 0.135,
+   "substitute": "aaiine",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کوچ",
+   "rows": 155,
+   "coverage": 0.09,
+   "substitute": "coach",
+   "p_sub_given_urdu": 0.935,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "عیسوی",
+   "rows": 153,
+   "coverage": 0.02,
+   "substitute": "eewsi",
+   "p_sub_given_urdu": 0.987,
+   "p_urdu_given_sub": 0.987
+  },
+  {
+   "urdu": "انڈیز",
+   "rows": 152,
+   "coverage": 0.164,
+   "substitute": "indies",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "یقینی",
+   "rows": 152,
+   "coverage": 0.046,
+   "substitute": "yakeeni",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.962
+  },
+  {
+   "urdu": "عقیدت",
+   "rows": 139,
+   "coverage": 0.381,
+   "substitute": "khra",
+   "p_sub_given_urdu": 0.655,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "میسج",
+   "rows": 138,
+   "coverage": 0.0,
+   "substitute": "confirm",
+   "p_sub_given_urdu": 0.993,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کوٹ",
+   "rows": 134,
+   "coverage": 0.127,
+   "substitute": "coat",
+   "p_sub_given_urdu": 0.993,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ٹیکساس",
+   "rows": 133,
+   "coverage": 0.008,
+   "substitute": "texas",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.95
+  },
+  {
+   "urdu": "کوششوں",
+   "rows": 129,
+   "coverage": 0.085,
+   "substitute": "koshisho",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "لسی",
+   "rows": 128,
+   "coverage": 0.273,
+   "substitute": "iasi",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "عیسائیوں",
+   "rows": 124,
+   "coverage": 0.04,
+   "substitute": "esaion",
+   "p_sub_given_urdu": 0.984,
+   "p_urdu_given_sub": 0.984
+  },
+  {
+   "urdu": "ایکشن",
+   "rows": 122,
+   "coverage": 0.27,
+   "substitute": "commando",
+   "p_sub_given_urdu": 0.566,
+   "p_urdu_given_sub": 0.908
+  },
+  {
+   "urdu": "ایجنسی",
+   "rows": 119,
+   "coverage": 0.042,
+   "substitute": "agency",
+   "p_sub_given_urdu": 0.992,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کرپشن",
+   "rows": 119,
+   "coverage": 0.269,
+   "substitute": "corruption",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کورس",
+   "rows": 119,
+   "coverage": 0.345,
+   "substitute": "course",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "یوزر",
+   "rows": 119,
+   "coverage": 0.025,
+   "substitute": "user",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "سوشل",
+   "rows": 117,
+   "coverage": 0.111,
+   "substitute": "social",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کیمرے",
+   "rows": 117,
+   "coverage": 0.043,
+   "substitute": "camera",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.944
+  },
+  {
+   "urdu": "ایکسپریس",
+   "rows": 115,
+   "coverage": 0.035,
+   "substitute": "express",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "اپنوں",
+   "rows": 113,
+   "coverage": 0.15,
+   "substitute": "abyari",
+   "p_sub_given_urdu": 0.956,
+   "p_urdu_given_sub": 0.923
+  },
+  {
+   "urdu": "وضو",
+   "rows": 108,
+   "coverage": 0.019,
+   "substitute": "wudu",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ڈیزائن",
+   "rows": 107,
+   "coverage": 0.121,
+   "substitute": "design",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "روانی",
+   "rows": 107,
+   "coverage": 0.075,
+   "substitute": "ravani",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "سوویت",
+   "rows": 106,
+   "coverage": 0.047,
+   "substitute": "soviet",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "عیش",
+   "rows": 104,
+   "coverage": 0.433,
+   "substitute": "aish",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.937
+  },
+  {
+   "urdu": "کیرولائنا",
+   "rows": 104,
+   "coverage": 0.087,
+   "substitute": "kirolayna",
+   "p_sub_given_urdu": 0.99,
+   "p_urdu_given_sub": 0.981
+  },
+  {
+   "urdu": "ذوالقرنین",
+   "rows": 104,
+   "coverage": 0.115,
+   "substitute": "zol",
+   "p_sub_given_urdu": 0.894,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "اونچی",
+   "rows": 103,
+   "coverage": 0.019,
+   "substitute": "onche",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.981
+  },
+  {
+   "urdu": "خوشیوں",
+   "rows": 103,
+   "coverage": 0.049,
+   "substitute": "khoshion",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "یونیکوڈ",
+   "rows": 102,
+   "coverage": 0.0,
+   "substitute": "unicode",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کزن",
+   "rows": 101,
+   "coverage": 0.218,
+   "substitute": "cosuon",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "آبائی",
+   "rows": 99,
+   "coverage": 0.222,
+   "substitute": "aabadi",
+   "p_sub_given_urdu": 0.99,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "بتادیں",
+   "rows": 99,
+   "coverage": 0.061,
+   "substitute": "hoto",
+   "p_sub_given_urdu": 0.99,
+   "p_urdu_given_sub": 0.907
+  },
+  {
+   "urdu": "بھیجے",
+   "rows": 98,
+   "coverage": 0.102,
+   "substitute": "beje",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.99
+  },
+  {
+   "urdu": "سعودیہ",
+   "rows": 98,
+   "coverage": 0.01,
+   "substitute": "saudia",
+   "p_sub_given_urdu": 0.99,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "سوئی",
+   "rows": 98,
+   "coverage": 0.235,
+   "substitute": "soi",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "لاشیں",
+   "rows": 98,
+   "coverage": 0.255,
+   "substitute": "aymbolinson",
+   "p_sub_given_urdu": 0.908,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ڈویژن",
+   "rows": 97,
+   "coverage": 0.01,
+   "substitute": "division",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.97
+  },
+  {
+   "urdu": "سائیکل",
+   "rows": 97,
+   "coverage": 0.247,
+   "substitute": "cycle",
+   "p_sub_given_urdu": 0.928,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ویو",
+   "rows": 97,
+   "coverage": 0.443,
+   "substitute": "view",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.98
+  },
+  {
+   "urdu": "ورجینیا",
+   "rows": 97,
+   "coverage": 0.0,
+   "substitute": "virginia",
+   "p_sub_given_urdu": 0.979,
+   "p_urdu_given_sub": 0.922
+  },
+  {
+   "urdu": "سوچو",
+   "rows": 95,
+   "coverage": 0.0,
+   "substitute": "socho",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "اکاؤنٹ",
+   "rows": 94,
+   "coverage": 0.383,
+   "substitute": "account",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "اڑتیس",
+   "rows": 93,
+   "coverage": 0.054,
+   "substitute": "adatees",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کرنل",
+   "rows": 93,
+   "coverage": 0.376,
+   "substitute": "colonel",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ایڈیشن",
+   "rows": 93,
+   "coverage": 0.032,
+   "substitute": "addition",
+   "p_sub_given_urdu": 0.989,
+   "p_urdu_given_sub": 0.989
+  },
+  {
+   "urdu": "شیئرنگ",
+   "rows": 91,
+   "coverage": 0.055,
+   "substitute": "sites",
+   "p_sub_given_urdu": 0.978,
+   "p_urdu_given_sub": 0.957
+  },
+  {
+   "urdu": "اٹھی",
+   "rows": 90,
+   "coverage": 0.489,
+   "substitute": "bharak",
+   "p_sub_given_urdu": 0.9,
+   "p_urdu_given_sub": 0.953
+  },
+  {
+   "urdu": "عافیہ",
+   "rows": 89,
+   "coverage": 0.045,
+   "substitute": "afia",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "شیشے",
+   "rows": 88,
+   "coverage": 0.091,
+   "substitute": "sheeshay",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کیمپ",
+   "rows": 88,
+   "coverage": 0.25,
+   "substitute": "camp",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "شیشہ",
+   "rows": 88,
+   "coverage": 0.102,
+   "substitute": "sheesha",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "چیلنج",
+   "rows": 87,
+   "coverage": 0.0,
+   "substitute": "challenge",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.989
+  },
+  {
+   "urdu": "چوٹی",
+   "rows": 86,
+   "coverage": 0.058,
+   "substitute": "chouti",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.966
+  },
+  {
+   "urdu": "کور",
+   "rows": 84,
+   "coverage": 0.369,
+   "substitute": "cover",
+   "p_sub_given_urdu": 0.976,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "وسیم",
+   "rows": 83,
+   "coverage": 0.084,
+   "substitute": "vsim",
+   "p_sub_given_urdu": 0.964,
+   "p_urdu_given_sub": 0.988
+  },
+  {
+   "urdu": "کلچر",
+   "rows": 83,
+   "coverage": 0.181,
+   "substitute": "culture",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "وحید",
+   "rows": 82,
+   "coverage": 0.049,
+   "substitute": "vhid",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "غنی",
+   "rows": 81,
+   "coverage": 0.222,
+   "substitute": "ghanni",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.988
+  },
+  {
+   "urdu": "امیہ",
+   "rows": 81,
+   "coverage": 0.296,
+   "substitute": "umia",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.988
+  },
+  {
+   "urdu": "چیخ",
+   "rows": 81,
+   "coverage": 0.012,
+   "substitute": "cheekh",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "زاویہ",
+   "rows": 81,
+   "coverage": 0.21,
+   "substitute": "zavia",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.988
+  },
+  {
+   "urdu": "عیدی",
+   "rows": 80,
+   "coverage": 0.237,
+   "substitute": "aidee",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "چانس",
+   "rows": 80,
+   "coverage": 0.062,
+   "substitute": "chance",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "عدنان",
+   "rows": 80,
+   "coverage": 0.163,
+   "substitute": "seme",
+   "p_sub_given_urdu": 0.838,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کیف",
+   "rows": 79,
+   "coverage": 0.228,
+   "substitute": "katrina",
+   "p_sub_given_urdu": 0.886,
+   "p_urdu_given_sub": 0.972
+  },
+  {
+   "urdu": "شوخ",
+   "rows": 79,
+   "coverage": 0.0,
+   "substitute": "shokh",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.975
+  },
+  {
+   "urdu": "غرق",
+   "rows": 78,
+   "coverage": 0.077,
+   "substitute": "ghark",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "امیج",
+   "rows": 78,
+   "coverage": 0.128,
+   "substitute": "image",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "اوہو",
+   "rows": 78,
+   "coverage": 0.154,
+   "substitute": "oho",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "فورس",
+   "rows": 78,
+   "coverage": 0.038,
+   "substitute": "force",
+   "p_sub_given_urdu": 0.449,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "عالیہ",
+   "rows": 77,
+   "coverage": 0.338,
+   "substitute": "alia",
+   "p_sub_given_urdu": 0.403,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "بجٹ",
+   "rows": 76,
+   "coverage": 0.276,
+   "substitute": "budget",
+   "p_sub_given_urdu": 0.987,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "میچز",
+   "rows": 76,
+   "coverage": 0.0,
+   "substitute": "matches",
+   "p_sub_given_urdu": 0.987,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "شیریں",
+   "rows": 76,
+   "coverage": 0.026,
+   "substitute": "sheree",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "سورس",
+   "rows": 76,
+   "coverage": 0.118,
+   "substitute": "source",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "شعبوں",
+   "rows": 75,
+   "coverage": 0.2,
+   "substitute": "shobo",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "محشر",
+   "rows": 74,
+   "coverage": 0.149,
+   "substitute": "dawer",
+   "p_sub_given_urdu": 0.973,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "جارج",
+   "rows": 74,
+   "coverage": 0.095,
+   "substitute": "george",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.974
+  },
+  {
+   "urdu": "دیو",
+   "rows": 74,
+   "coverage": 0.068,
+   "substitute": "dio",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کلیم",
+   "rows": 73,
+   "coverage": 0.151,
+   "substitute": "claim",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.986
+  },
+  {
+   "urdu": "یورو",
+   "rows": 72,
+   "coverage": 0.0,
+   "substitute": "euro",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ایجنٹ",
+   "rows": 72,
+   "coverage": 0.139,
+   "substitute": "agent",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "سینٹی",
+   "rows": 72,
+   "coverage": 0.083,
+   "substitute": "centi",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.973
+  },
+  {
+   "urdu": "رضوی",
+   "rows": 72,
+   "coverage": 0.0,
+   "substitute": "rizvi",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "لائیو",
+   "rows": 71,
+   "coverage": 0.254,
+   "substitute": "live",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.866
+  },
+  {
+   "urdu": "آفیسر",
+   "rows": 71,
+   "coverage": 0.014,
+   "substitute": "officer",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "لائسنس",
+   "rows": 71,
+   "coverage": 0.085,
+   "substitute": "licence",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "جغرافیائی",
+   "rows": 70,
+   "coverage": 0.014,
+   "substitute": "geographiyai",
+   "p_sub_given_urdu": 0.971,
+   "p_urdu_given_sub": 0.986
+  },
+  {
+   "urdu": "ڈرائیو",
+   "rows": 70,
+   "coverage": 0.086,
+   "substitute": "drive",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کیچ",
+   "rows": 70,
+   "coverage": 0.129,
+   "substitute": "catch",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "اپوزیشن",
+   "rows": 70,
+   "coverage": 0.043,
+   "substitute": "oppostion",
+   "p_sub_given_urdu": 0.929,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "افریقی",
+   "rows": 70,
+   "coverage": 0.014,
+   "substitute": "africi",
+   "p_sub_given_urdu": 0.971,
+   "p_urdu_given_sub": 0.986
+  },
+  {
+   "urdu": "ویر",
+   "rows": 69,
+   "coverage": 0.13,
+   "substitute": "veer",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "جیون",
+   "rows": 69,
+   "coverage": 0.087,
+   "substitute": "jevan",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "اونچائی",
+   "rows": 69,
+   "coverage": 0.116,
+   "substitute": "oonchai",
+   "p_sub_given_urdu": 0.609,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "آکسیجن",
+   "rows": 68,
+   "coverage": 0.088,
+   "substitute": "oxygen",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "فیورٹ",
+   "rows": 67,
+   "coverage": 0.015,
+   "substitute": "fav",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "سیزن",
+   "rows": 67,
+   "coverage": 0.075,
+   "substitute": "season",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "پڑھتی",
+   "rows": 67,
+   "coverage": 0.433,
+   "substitute": "padti",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کانٹے",
+   "rows": 66,
+   "coverage": 0.333,
+   "substitute": "movie",
+   "p_sub_given_urdu": 0.848,
+   "p_urdu_given_sub": 0.875
+  },
+  {
+   "urdu": "ادی",
+   "rows": 65,
+   "coverage": 0.138,
+   "substitute": "adla",
+   "p_sub_given_urdu": 0.969,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "آڈیو",
+   "rows": 65,
+   "coverage": 0.046,
+   "substitute": "audio",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "اشکوں",
+   "rows": 65,
+   "coverage": 0.062,
+   "substitute": "ashqo",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "وں",
+   "rows": 65,
+   "coverage": 0.492,
+   "substitute": "vn",
+   "p_sub_given_urdu": 0.615,
+   "p_urdu_given_sub": 0.952
+  },
+  {
+   "urdu": "آئیڈیا",
+   "rows": 64,
+   "coverage": 0.25,
+   "substitute": "idea",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "میکسیکو",
+   "rows": 64,
+   "coverage": 0.0,
+   "substitute": "mexico",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.97
+  },
+  {
+   "urdu": "دیار",
+   "rows": 63,
+   "coverage": 0.238,
+   "substitute": "hazam",
+   "p_sub_given_urdu": 0.857,
+   "p_urdu_given_sub": 0.964
+  },
+  {
+   "urdu": "جوس",
+   "rows": 63,
+   "coverage": 0.143,
+   "substitute": "juice",
+   "p_sub_given_urdu": 0.984,
+   "p_urdu_given_sub": 0.912
+  },
+  {
+   "urdu": "پیکج",
+   "rows": 63,
+   "coverage": 0.032,
+   "substitute": "package",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.863
+  },
+  {
+   "urdu": "ڈور",
+   "rows": 61,
+   "coverage": 0.492,
+   "substitute": "baag",
+   "p_sub_given_urdu": 0.82,
+   "p_urdu_given_sub": 0.926
+  },
+  {
+   "urdu": "قوی",
+   "rows": 61,
+   "coverage": 0.213,
+   "substitute": "quwwat",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.871
+  },
+  {
+   "urdu": "اسٹیج",
+   "rows": 60,
+   "coverage": 0.067,
+   "substitute": "stage",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.984
+  },
+  {
+   "urdu": "کیون",
+   "rows": 60,
+   "coverage": 0.15,
+   "substitute": "kiven",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "دیوی",
+   "rows": 60,
+   "coverage": 0.15,
+   "substitute": "devi",
+   "p_sub_given_urdu": 0.983,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "مائیکل",
+   "rows": 60,
+   "coverage": 0.033,
+   "substitute": "michael",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.882
+  }
+ ]
+}

@@ -1,0 +1,101 @@
+{
+ "rows": 16241,
+ "roman_chars": 722296,
+ "rows_with_confirmed_substitution": 420,
+ "share_of_rows": 0.025860476571639677,
+ "char_share": 0.02988802374649728,
+ "rows_including_ambiguous": 1380,
+ "share_including_ambiguous": 0.08497013730681609,
+ "by_word": {
+  "بس": {
+   "substitute": "dehli",
+   "urdu_rows": 153,
+   "substituted": 129,
+   "correct": 20,
+   "substitute_elsewhere": 0,
+   "p_sub_given_urdu": 0.8431372549019608,
+   "specificity": 1.0,
+   "ambiguous": false
+  },
+  "کرتے": {
+   "substitute": "baghaawat",
+   "urdu_rows": 125,
+   "substituted": 98,
+   "correct": 21,
+   "substitute_elsewhere": 0,
+   "p_sub_given_urdu": 0.784,
+   "specificity": 1.0,
+   "ambiguous": false
+  },
+  "گھر": {
+   "substitute": "mamu",
+   "urdu_rows": 112,
+   "substituted": 104,
+   "correct": 8,
+   "substitute_elsewhere": 0,
+   "p_sub_given_urdu": 0.9285714285714286,
+   "specificity": 1.0,
+   "ambiguous": false
+  },
+  "مت": {
+   "substitute": "sukh",
+   "urdu_rows": 39,
+   "substituted": 35,
+   "correct": 4,
+   "substitute_elsewhere": 0,
+   "p_sub_given_urdu": 0.8974358974358975,
+   "specificity": 1.0,
+   "ambiguous": false
+  },
+  "چکر": {
+   "substitute": "post",
+   "urdu_rows": 27,
+   "substituted": 27,
+   "correct": 0,
+   "substitute_elsewhere": 0,
+   "p_sub_given_urdu": 1.0,
+   "specificity": 1.0,
+   "ambiguous": false
+  },
+  "کھلاڑی": {
+   "substitute": "rgbi",
+   "urdu_rows": 16,
+   "substituted": 10,
+   "correct": 6,
+   "substitute_elsewhere": 0,
+   "p_sub_given_urdu": 0.625,
+   "specificity": 1.0,
+   "ambiguous": false
+  },
+  "لائبریری": {
+   "substitute": "tromin",
+   "urdu_rows": 13,
+   "substituted": 13,
+   "correct": 0,
+   "substitute_elsewhere": 0,
+   "p_sub_given_urdu": 1.0,
+   "specificity": 1.0,
+   "ambiguous": false
+  },
+  "انقلاب": {
+   "substitute": "khatima",
+   "urdu_rows": 8,
+   "substituted": 8,
+   "correct": 0,
+   "substitute_elsewhere": 0,
+   "p_sub_given_urdu": 1.0,
+   "specificity": 1.0,
+   "ambiguous": false
+  },
+  "یہ": {
+   "substitute": "ki",
+   "urdu_rows": 1206,
+   "substituted": 992,
+   "correct": 178,
+   "substitute_elsewhere": 2939,
+   "p_sub_given_urdu": 0.8225538971807629,
+   "specificity": 0.25235309081658613,
+   "ambiguous": true
+  }
+ }
+}

@@ -1,0 +1,101 @@
+{
+ "rows": 6333218,
+ "roman_chars": 469746930,
+ "rows_with_confirmed_substitution": 250249,
+ "share_of_rows": 0.03951371956562998,
+ "char_share": 0.05258441178104133,
+ "rows_including_ambiguous": 885711,
+ "share_including_ambiguous": 0.13985165203534758,
+ "by_word": {
+  "بس": {
+   "substitute": "dehli",
+   "urdu_rows": 93307,
+   "substituted": 79594,
+   "correct": 11833,
+   "substitute_elsewhere": 3107,
+   "p_sub_given_urdu": 0.8530335344615088,
+   "specificity": 0.9624309258654672,
+   "ambiguous": false
+  },
+  "کرتے": {
+   "substitute": "baghaawat",
+   "urdu_rows": 129423,
+   "substituted": 86437,
+   "correct": 39876,
+   "substitute_elsewhere": 2774,
+   "p_sub_given_urdu": 0.6678642899639168,
+   "specificity": 0.9689051798545022,
+   "ambiguous": false
+  },
+  "گھر": {
+   "substitute": "mamu",
+   "urdu_rows": 61005,
+   "substituted": 54101,
+   "correct": 6866,
+   "substitute_elsewhere": 1554,
+   "p_sub_given_urdu": 0.8868289484468486,
+   "specificity": 0.972077980415057,
+   "ambiguous": false
+  },
+  "مت": {
+   "substitute": "sukh",
+   "urdu_rows": 12864,
+   "substituted": 11649,
+   "correct": 1258,
+   "substitute_elsewhere": 1065,
+   "p_sub_given_urdu": 0.9055503731343284,
+   "specificity": 0.9162340726757905,
+   "ambiguous": false
+  },
+  "چکر": {
+   "substitute": "post",
+   "urdu_rows": 10007,
+   "substituted": 8922,
+   "correct": 1072,
+   "substitute_elsewhere": 1354,
+   "p_sub_given_urdu": 0.8915758968721895,
+   "specificity": 0.8682366679641884,
+   "ambiguous": false
+  },
+  "کھلاڑی": {
+   "substitute": "rgbi",
+   "urdu_rows": 9716,
+   "substituted": 6823,
+   "correct": 2828,
+   "substitute_elsewhere": 134,
+   "p_sub_given_urdu": 0.7022437216961712,
+   "specificity": 0.9807388242058358,
+   "ambiguous": false
+  },
+  "لائبریری": {
+   "substitute": "tromin",
+   "urdu_rows": 6647,
+   "substituted": 6200,
+   "correct": 447,
+   "substitute_elsewhere": 57,
+   "p_sub_given_urdu": 0.9327516172709494,
+   "specificity": 0.9908902029726706,
+   "ambiguous": false
+  },
+  "انقلاب": {
+   "substitute": "khatima",
+   "urdu_rows": 6121,
+   "substituted": 3206,
+   "correct": 2895,
+   "substitute_elsewhere": 12,
+   "p_sub_given_urdu": 0.5237706257147525,
+   "specificity": 0.9962709757613425,
+   "ambiguous": false
+  },
+  "یہ": {
+   "substitute": "ki",
+   "urdu_rows": 783079,
+   "substituted": 671685,
+   "correct": 177460,
+   "substitute_elsewhere": 1614911,
+   "p_sub_given_urdu": 0.8577487073462575,
+   "specificity": 0.2937488738719039,
+   "ambiguous": true
+  }
+ }
+}

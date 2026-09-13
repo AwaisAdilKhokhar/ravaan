@@ -1,0 +1,432 @@
+{
+ "sample_step": 1,
+ "rows_sampled": 16241,
+ "urdu_types": 6159,
+ "suspect_types": 145,
+ "candidates": [
+  {
+   "urdu": "و",
+   "rows": 387,
+   "coverage": 0.253,
+   "substitute": "o",
+   "p_sub_given_urdu": 0.811,
+   "p_urdu_given_sub": 0.975
+  },
+  {
+   "urdu": "پہ",
+   "rows": 188,
+   "coverage": 0.277,
+   "substitute": "pay",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.931
+  },
+  {
+   "urdu": "ہوئی",
+   "rows": 178,
+   "coverage": 0.163,
+   "substitute": "hui",
+   "p_sub_given_urdu": 0.865,
+   "p_urdu_given_sub": 0.963
+  },
+  {
+   "urdu": "اے",
+   "rows": 173,
+   "coverage": 0.468,
+   "substitute": "ae",
+   "p_sub_given_urdu": 0.832,
+   "p_urdu_given_sub": 0.96
+  },
+  {
+   "urdu": "ہوئے",
+   "rows": 169,
+   "coverage": 0.266,
+   "substitute": "hue",
+   "p_sub_given_urdu": 0.817,
+   "p_urdu_given_sub": 0.945
+  },
+  {
+   "urdu": "بس",
+   "rows": 153,
+   "coverage": 0.399,
+   "substitute": "dehli",
+   "p_sub_given_urdu": 0.843,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "فروری",
+   "rows": 143,
+   "coverage": 0.0,
+   "substitute": "feb",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کرتے",
+   "rows": 125,
+   "coverage": 0.36,
+   "substitute": "baghaawat",
+   "p_sub_given_urdu": 0.784,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ایسی",
+   "rows": 116,
+   "coverage": 0.103,
+   "substitute": "aisi",
+   "p_sub_given_urdu": 0.922,
+   "p_urdu_given_sub": 0.982
+  },
+  {
+   "urdu": "گھر",
+   "rows": 112,
+   "coverage": 0.312,
+   "substitute": "mamu",
+   "p_sub_given_urdu": 0.929,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "خوش",
+   "rows": 112,
+   "coverage": 0.089,
+   "substitute": "khush",
+   "p_sub_given_urdu": 0.946,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "دونوں",
+   "rows": 83,
+   "coverage": 0.048,
+   "substitute": "dono",
+   "p_sub_given_urdu": 0.952,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "امریکہ",
+   "rows": 75,
+   "coverage": 0.187,
+   "substitute": "ryast",
+   "p_sub_given_urdu": 0.693,
+   "p_urdu_given_sub": 0.897
+  },
+  {
+   "urdu": "میچ",
+   "rows": 70,
+   "coverage": 0.0,
+   "substitute": "test",
+   "p_sub_given_urdu": 0.871,
+   "p_urdu_given_sub": 0.859
+  },
+  {
+   "urdu": "سکتے",
+   "rows": 64,
+   "coverage": 0.375,
+   "substitute": "satke",
+   "p_sub_given_urdu": 0.844,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "رنز",
+   "rows": 58,
+   "coverage": 0.328,
+   "substitute": "chay",
+   "p_sub_given_urdu": 0.845,
+   "p_urdu_given_sub": 0.86
+  },
+  {
+   "urdu": "امریکی",
+   "rows": 50,
+   "coverage": 0.14,
+   "substitute": "jarjya",
+   "p_sub_given_urdu": 0.4,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ویب",
+   "rows": 49,
+   "coverage": 0.0,
+   "substitute": "website",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "اسکین",
+   "rows": 48,
+   "coverage": 0.0,
+   "substitute": "scan",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "اوورز",
+   "rows": 46,
+   "coverage": 0.0,
+   "substitute": "overs",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ٹی",
+   "rows": 45,
+   "coverage": 0.289,
+   "substitute": "tv",
+   "p_sub_given_urdu": 0.867,
+   "p_urdu_given_sub": 0.867
+  },
+  {
+   "urdu": "خوشی",
+   "rows": 40,
+   "coverage": 0.0,
+   "substitute": "khusi",
+   "p_sub_given_urdu": 0.8,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "مت",
+   "rows": 39,
+   "coverage": 0.103,
+   "substitute": "sukh",
+   "p_sub_given_urdu": 0.897,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "زمین",
+   "rows": 38,
+   "coverage": 0.447,
+   "substitute": "sayarah",
+   "p_sub_given_urdu": 0.553,
+   "p_urdu_given_sub": 0.955
+  },
+  {
+   "urdu": "غور",
+   "rows": 32,
+   "coverage": 0.0,
+   "substitute": "ghhor",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "افریقہ",
+   "rows": 32,
+   "coverage": 0.0,
+   "substitute": "africa",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کوڈ",
+   "rows": 32,
+   "coverage": 0.0,
+   "substitute": "code",
+   "p_sub_given_urdu": 0.969,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "قریب",
+   "rows": 31,
+   "coverage": 0.0,
+   "substitute": "baais",
+   "p_sub_given_urdu": 0.323,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "الدین",
+   "rows": 31,
+   "coverage": 0.484,
+   "substitute": "mohi",
+   "p_sub_given_urdu": 0.387,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "اوور",
+   "rows": 30,
+   "coverage": 0.0,
+   "substitute": "over",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "مار",
+   "rows": 29,
+   "coverage": 0.172,
+   "substitute": "arfat",
+   "p_sub_given_urdu": 0.345,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "چکر",
+   "rows": 27,
+   "coverage": 0.0,
+   "substitute": "post",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "سائنس",
+   "rows": 27,
+   "coverage": 0.148,
+   "substitute": "science",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.931
+  },
+  {
+   "urdu": "نوید",
+   "rows": 27,
+   "coverage": 0.0,
+   "substitute": "naveed",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "بندہ",
+   "rows": 27,
+   "coverage": 0.0,
+   "substitute": "shayar",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 0.871
+  },
+  {
+   "urdu": "خانہ",
+   "rows": 27,
+   "coverage": 0.37,
+   "substitute": "nites",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ہنسی",
+   "rows": 26,
+   "coverage": 0.154,
+   "substitute": "ruknay",
+   "p_sub_given_urdu": 0.308,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ای",
+   "rows": 26,
+   "coverage": 0.462,
+   "substitute": "deal",
+   "p_sub_given_urdu": 0.385,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کلک",
+   "rows": 25,
+   "coverage": 0.0,
+   "substitute": "click",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "لیٹ",
+   "rows": 23,
+   "coverage": 0.0,
+   "substitute": "purse",
+   "p_sub_given_urdu": 0.304,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کیلئے",
+   "rows": 22,
+   "coverage": 0.0,
+   "substitute": "baais",
+   "p_sub_given_urdu": 0.455,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کالج",
+   "rows": 22,
+   "coverage": 0.091,
+   "substitute": "vle",
+   "p_sub_given_urdu": 0.818,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "ہوجائیں",
+   "rows": 22,
+   "coverage": 0.0,
+   "substitute": "dastbrdar",
+   "p_sub_given_urdu": 0.364,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "بقول",
+   "rows": 21,
+   "coverage": 0.0,
+   "substitute": "bakol",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "کےلئے",
+   "rows": 21,
+   "coverage": 0.238,
+   "substitute": "doctors",
+   "p_sub_given_urdu": 0.333,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "فون",
+   "rows": 21,
+   "coverage": 0.143,
+   "substitute": "phone",
+   "p_sub_given_urdu": 0.952,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "پڑھیے",
+   "rows": 21,
+   "coverage": 0.0,
+   "substitute": "pachtaawa",
+   "p_sub_given_urdu": 0.333,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "گیندوں",
+   "rows": 21,
+   "coverage": 0.0,
+   "substitute": "wickten",
+   "p_sub_given_urdu": 0.762,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "دماغ",
+   "rows": 20,
+   "coverage": 0.0,
+   "substitute": "paon",
+   "p_sub_given_urdu": 0.5,
+   "p_urdu_given_sub": 0.909
+  },
+  {
+   "urdu": "اسلئے",
+   "rows": 20,
+   "coverage": 0.4,
+   "substitute": "churraya",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "پیج",
+   "rows": 20,
+   "coverage": 0.0,
+   "substitute": "page",
+   "p_sub_given_urdu": 1.0,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "حرام",
+   "rows": 20,
+   "coverage": 0.0,
+   "substitute": "makrooh",
+   "p_sub_given_urdu": 0.5,
+   "p_urdu_given_sub": 1.0
+  },
+  {
+   "urdu": "مایوس",
+   "rows": 20,
+   "coverage": 0.4,
+   "substitute": "badter",
+   "p_sub_given_urdu": 0.4,
+   "p_urdu_given_sub": 1.0
+  }
+ ]
+}

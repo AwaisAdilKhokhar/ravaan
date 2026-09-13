@@ -5,7 +5,9 @@ Spec is the PRD; this file is the state of play. **Read the "Next session" secti
 first.**
 
 - **Started:** 2026-08-03 (Week 1 of 16)
-- **Current phase:** Weeks 1–2 complete → Weeks 3–4, corpus freeze. Pipeline stages 1–9 are built
+- **Current phase:** Weeks 1–2 complete; **Weeks 5–7 complete ahead of them** (tokenizer, model,
+  both objectives, training loop, §4.2's task generator — sessions 19 and 20). What remains open is
+  Weeks 3–4's corpus freeze, which is now the *only* thing on the critical path. Pipeline stages 1–9 are built
   and validated on real text; stage 5's 200-sample validation is adjudicated, scored and written up
   ([`reports/quality_validation.md`](reports/quality_validation.md)), stage 6 has run **complete
   passes over every source**, stage 7's threshold is chosen from measured pairs and written up
@@ -53,6 +55,32 @@ first.**
   **0.44×** of arm B, **arm B is dropped**, and **PRD v2.3** makes Ravaan a single-arm study — six
   core runs, ~$118, with P2 withdrawn in the preregistration's deviation log and its text above
   unedited. **What remains of the freeze is one FineWeb2 pass, on a rented 32 GB box (~$2–4).**
+  **Session 18 could not touch that pass** — everything in the freeze order is downstream of it —
+  so it took the one substantive item that is not: the note carried since session 11 asking for
+  stage 7 to be pointed at the reference transliteration split. That split turns out to be **4,500
+  sentences wearing 16,241 rows** (effective *n* 2,978, so a row-level bootstrap CI is 2.34× too
+  narrow), and reading its duplicate groups produced **Finding AE**: the Roman column renders eight
+  common Urdu words as a **fixed unrelated word** — کرتے as `baghaawat` ("rebellion"), بس as
+  `dehli`, گھر as `mamu` — at 52–93% of their occurrences, with specificity 0.87–0.99, across
+  **3.95% of the complete training corpus** and 2.77% of what survives stage 6+7. Roman-Urdu-Parl
+  is the only source feeding `roman_urdu`, which is 23.53% of arm A's tokens, so this is a corpus
+  finding that happened to be found in an eval set
+  ([`reports/eval/transliteration_reference_set.md`](reports/eval/transliteration_reference_set.md)).
+  No preregistered endpoint and no gate moves.
+  **Session 19 stopped waiting for the freeze and built Weeks 5–7 instead** (Finding AF: the
+  corpus had not been the critical path for a while). §7's tokenizer is trained, benchmarked and
+  fingerprinted `2855877c8ecd38c9`; §5's model exists at 69,975,680 parameters in both arms; both
+  objectives and the training loop exist, and resume is exact. **Session 20 built the last piece
+  §4.1 was missing — §4.2's five-task corruption generator** — so both arms now train on all five
+  objectives rather than on plain LM. Its restoration damage is `ravaan/data/normalization.py`
+  run backwards, which makes "the clean side is the right answer" a test rather than a claim, and
+  half of it is deliberately *not* reversible (dot confusions) so the task is not a regex with
+  extra steps. Building it turned up three things worth the name: the first romanizer emitted
+  vowel-less Roman that tokenized at 1.80 tokens per native token and was fixed to 1.54 by
+  inherent-vowel epenthesis; the mixture's apportionment **starved three of the five tasks to
+  0.00% at every microbatch a host actually fits** (Finding AJ); and `evaluate` was rescaling the
+  two arms' bits-per-byte by different amounts (Finding AK). **The corpus freeze is now the only
+  thing left on the critical path, and it still needs one rented box.**
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
 - **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds
@@ -63,13 +91,22 @@ first.**
   `roman_urdu` at 0.44×. Six core runs, not eight; ~$118, not ~$134. P2 withdrawn in the
   preregistration's deviation log, its text above unedited, with no model trained.
 - **Spend to date:** $0.00 of $150 hard cap
-- **Tests:** 682 passing (72 splits · 70 pii · 69 normalization · 60 decontamination · **57 minhash**
-  · 57 encoding · 57 acquisition · 51 packing · **44 dedup** · 43 quality · 32 langid ·
-  **20 exclusions** · 18 shards · **20 kaggle** · **12 colab**). The exclusion file carries the first
-  driver-level tests in the suite; the kaggle file is the first to cover the boundary between this
-  repo and the machine the freeze runs on.
-- **Committed** through session 16, on branch `stages-7-and-8` (main is at session 8;
-  fast-forward it when convenient). Session 15's Kaggle work was written 2026-08-06 and left
+- **Tests:** 847 passing (**76 corruption** · 72 splits · 70 pii · 69 normalization ·
+  60 decontamination · 57 minhash · 57 encoding · 57 acquisition · 51 packing · 44 dedup ·
+  43 quality · 32 langid · 26 substitutions · **25 tasks** · 21 kaggle · 20 exclusions ·
+  **19 models** · **18 training** · 18 shards · 12 colab). The corruption file is the largest
+  single addition to the suite and most of it is one claim checked many ways: that the reversible
+  half of §4.2's OCR damage is exactly what stage 4 undoes. The exclusion file carries the first
+  driver-level tests; the kaggle file is the first to cover the boundary between this repo and the
+  machine the freeze runs on; the substitutions file is the third driver to get any, and two of its
+  tests failed first for real reasons rather than for bugs.
+- ⚠️ **Committed** through session 18, on branch `stages-7-and-8` (main is at session 8;
+  fast-forward it when convenient). **Sessions 19 and 20 are on disk and uncommitted** — that is
+  §7's tokenizer, §5's model, both objectives, the training loop, §4.2's task generator and their
+  four test files, which is the whole of Weeks 5–7. `data/tokenizer/` is untracked because the
+  `.gitignore` re-include session 19 added is itself uncommitted; the 36 MB of sample text stays
+  ignored and only the 302 KB model, its vocab and the two JSON manifests are re-included.
+  Session 15's Kaggle work was written 2026-08-06 and left
   uncommitted; session 16 committed it together with the three fixes it needed. Sessions 6 and 7 are one commit — stage 5, its 200-sample validation and the
   write-up are one deliverable. Sessions 9–14 are one commit each: stage 7, stage 8, stage 9 with
   the second stage-8 run, stage 10 with the PRD v2.2 amendment, and the PII pass. Session 14 is
@@ -164,11 +201,37 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | `--safe-hours`, so a capless host need not `--force` past the memory gate | §6.3.7 | ✅ 2 tests |
 | Both passes carry `--sweep`, floor asserted (Finding AC) | §6.3.7 | ✅ 2 tests |
 | Corpus manifest + statistics | §6.3 | 🟡 acquisition manifest done; stage stats pending |
+| **Reference transliteration split measured at whole-split level** | §8.2 | ✅ 4,500 sentences in 16,241 rows |
+| Its effective *n* is 2,978 — bootstrap must resample sentences | §4.5 | ✅ measured, not estimated |
+| **Finding AE — the Roman column substitutes fixed wrong words** | §6.2, §8.2 | ⚠️ **3.95% of rows, corpus-wide** |
+| Measured over the complete train split, and after stage 6+7 | §6.2 | ✅ 2.77% survives the freeze |
+| The 225-candidate screen needs a native speaker | §6.2 | ⬜ ranked list is `substitutions_screen.json` |
+| Whether to filter `roman_urdu` on it — **decide with stage 8 in hand** | §6.1 | ⬜ costs arm A margin |
+| `.gitignore` fixed as a class: `!/reports/**/*.jsonl` (Finding AD 5th) | — | ✅ replaces both negations |
+| Sixth instance it surfaced: stage 9's Finding T evidence was untracked | §6.3.8 | ✅ now tracked |
 
 ### Weeks 5–16
-All ⬜. Tokenizer (W5) → backbone + objectives (W6–7, **G2**) → 20M pilots (W8, **G3**) →
-core runs (W9–11, **G4**) → automatic eval (W12) → human eval (W13, **G5**) → demo (W14) →
-report and release (W15–16).
+| Item | PRD | Status |
+|---|---|---|
+| **Tokenizer** — SentencePiece Unigram 16k, byte fallback, 12 framing tokens | §7 | ✅ session 19, `2855877c8ecd38c9` |
+| ↳ fertility measured, retiring stage 9's estimate | §7 | ✅ urdu 3.8935 / roman 4.1928 / cs 3.2758 |
+| ↳ **stage 9 re-solve against it** — must land before the corpus is *written* | §6.3.9 | ⬜ one command, waits on the freeze |
+| **Shared backbone** — RoPE, RMSNorm, SwiGLU, SDPA, tied embeddings | §5 | ✅ session 19, both arms at 69,975,680 |
+| **AR objective** | §4.1 | ✅ session 19 (FIM belongs to the task generator) |
+| **MDLM objective**, time-agnostic | §4.1 | ✅ session 19 |
+| **Training loop** — checkpoint, resume, per-population BPB | §4.3, §9 | ✅ session 19, resume tested exact |
+| **§4.2's five-task corruption generator** | §4.2 | ✅ session 20, both arms train on all five |
+| ↳ restoration damage is stage 4 inverted — `normalize_text(corrupt) == clean` asserted | §6.3.4 | ✅ 40 seeds at a 50% edit rate |
+| ↳ and half of it is dot confusions, which no regex undoes | §8.2 | ✅ the two families cannot overlap |
+| ↳ **Finding AI** — rule-based romanizer, fixed by inherent-vowel epenthesis | §4.2 | ✅ 14 words pinned against how speakers write |
+| ↳ the three conditional tasks are byte-identical across arms | §4.1 | ✅ asserted on the tensor |
+| ↳ **Finding AJ** — fixed-tie-break apportionment starved 3 of 5 tasks at microbatch 4 | §4.2 | ✅ systematic sampling, unbiased at size 1 |
+| ↳ Finding AK — `evaluate` rescaled AR's BPB by L/(L−1); `LossOutput.scored` fixes it | §8.3 | ✅ and the framings need it far more |
+| ↳ synthetic Roman is 1.54 tokens per native token, not ~0.93 | §7, §8.2 | ⚠️ measured, in the report's caveats |
+| **G2** — measured throughput implies 6 runs ≤ $90 | §11 | ⬜ `train.py throughput --corpus` on the real GPU |
+| ↳ §4.2's generator is ~180 ms of CPU per 256-sequence step — G2 must measure it | §11 | ✅ `throughput` builds tasks by default |
+| **G3** — 20M pilot, both arms, resume | §11 | 🟡 kernel 10 written, not yet pushed |
+| Core runs (W9–11, **G4**) → eval (W12) → human eval (W13, **G5**) → demo (W14) → report (W15–16) | | ⬜ |
 
 ---
 
@@ -2735,6 +2798,389 @@ and older: **an aggregate can only ever say where to look.**
 
 ---
 
+### Session 18 — 2026-09-10
+
+**The freeze did not move — it is still waiting on the rented box (see "Next session" §1), and
+nothing in the numbered plan can start before it.** So this session took the one substantive item
+that is not downstream of that box: the carried-forward note asking for stage 7 to be pointed at
+the reference transliteration split, "which is one cheap pass". It is one cheap pass. It answered
+its own question and then a much larger one nobody had asked.
+Everything is in [`reports/eval/transliteration_reference_set.md`](reports/eval/transliteration_reference_set.md).
+
+**The split is 4,500 sentences wearing 16,241 rows.** Counted off the CSV and reproduced
+independently by stage 6:
+
+| | test_set.csv | validation_set.csv |
+|---|---|---|
+| rows | 16,241 | 16,219 |
+| **distinct Urdu sentences** | **4,500 (27.7%)** | **4,500 (27.7%)** |
+| rows byte-identical to another row | 5,205 (32.0%) | 5,182 (32.0%) |
+| mean rows per Urdu sentence | 3.61 | 3.60 |
+
+The two splits share **zero** sentences, so the boundary was drawn correctly — at the sentence.
+What was not done is the step after: each held-out sentence was expanded into all of its
+crowdsourced Roman variants and the rows shipped as if independent. The Urdu column is genuinely
+clean once exact duplicates are gone (stage 7 removes 8 more of 4,500); the Roman column keeps
+collapsing to **46.0%**, and reading across the cut says 0.80 is conservative there too — the same
+verdict Finding AB reached on the training side, reached again by the same method on a different
+split.
+
+**Effective sample size 2,978, not 16,241** (`N²/Σmᵢ²`, 18.3% of nominal). Two consequences and
+they are different sizes: the point estimate is a multiplicity-weighted average that nothing but
+sentence-level scoring fixes, and **a paired bootstrap resampled by row reports an interval 2.34×
+too narrow.** PRD §4.5 and preregistration §4 put paired bootstrap CIs on all task metrics, so the
+resampling unit has to be the sentence. That costs nothing to honour and is invisible if missed.
+
+**Finding AE — the Roman column substitutes fixed wrong words, and this is a corpus finding, not an
+eval one.** Reading the largest duplicate groups to check they were what they looked like showed
+the ten variants of one sentence do not differ only in spelling: nine of ten render کرتے
+(`kartay`, "do/work") as `baghaawat` — **rebellion** — and the one correct variant is the minority,
+so majority vote returns the wrong reference. Measured over the **complete 6,333,218-row training
+split**, unsampled:
+
+| Urdu | rendered as | rows | wrongly | correct present | specificity |
+|---|---|---|---|---|---|
+| بس (`bas`) | `dehli` | 93,307 | 85.3% | 12.7% | 0.962 |
+| کرتے (`kartay`) | `baghaawat` | 129,423 | 66.8% | 30.8% | 0.969 |
+| گھر (`ghar`) | `mamu` | 61,005 | 88.7% | 11.3% | 0.972 |
+| مت (`mat`) | `sukh` | 12,864 | 90.6% | 9.8% | 0.916 |
+| چکر | `post` | 10,007 | 89.2% | 10.7% | 0.868 |
+| کھلاڑی (`khilari`) | `rgbi` | 9,716 | 70.2% | 29.1% | 0.981 |
+| لائبریری (`library`) | `tromin` | 6,647 | 93.3% | 6.7% | 0.991 |
+| انقلاب (`inqilab`) | `khatima` | 6,121 | 52.4% | 47.3% | 0.996 |
+| یہ (`yeh`) | `ki` | 783,079 | 85.8% | 22.7% | 0.294 |
+
+**Specificity — P(the Urdu word is present | the substitute is present) — is the column that
+carries it.** At 0.87–0.99, `dehli`, `baghaawat`, `mamu`, `rgbi` and `tromin` essentially do not
+occur in this corpus *except* as the rendering of one word they do not mean. That is a fixed wrong
+entry in a lexicon, not spelling variation. On the test split all eight measure **1.000**. یہ→`ki`
+is listed for its rate but held out of the count, because `ki` is also correct for کی and کہ.
+
+**Reach: 250,249 rows, 3.95%, 5.26% of Roman characters** from the eight high-specificity words
+(885,711 / 13.99% including یہ). **Both are floors** — eight words hand-read out of 225 candidates
+over a 1/16 sample that contained 36,531 distinct Urdu types. Words are **deleted** as well as
+replaced: eight of the nine rows the carried-forward note itself named drop فائدہ entirely, and the
+note read them as spelling variants and stopped.
+
+**Stage 6+7 does not clean it up.** Against the freeze's own removal list, dedup takes the corpus
+from 6,333,218 rows to 2,025,370 and the rate only from 3.95% to **2.77%** (3.67% of characters).
+It is a property of the source, not of its duplication.
+
+**What this does and does not mean.** PRD §6.2's warning — "matches that transliterator, not
+transliterates well" — is correct and **not strong enough**: it describes a style mismatch, and
+this is a wrong lexicon. Two consequences. (a) The reference-set transliteration number now carries
+a *third* independent discount, after Finding Q's 16.8% contamination and this session's 3.61 : 1
+row inflation, and it is the largest of the three — a model that transliterates کرتے correctly is
+**penalised** on two thirds of the rows containing it. §8.2's human-written set is carrying the
+whole transliteration claim. (b) **Roman-Urdu-Parl is the only source feeding `roman_urdu`, which
+is 23.53% of arm A's tokens**, so this is pretraining text, not just an eval set, and stage 8
+cannot touch it — those rows match no test item. **No preregistered endpoint moves** (the
+preregistered one is the human-written set), **no gate moves** (G1 counts tokens), and the AR/DIFF
+comparison is not biased in *direction*, since PRD §4.1 gives both models the identical corpus.
+
+**The screen is reported as what it is.** `scripts/substitutions.py screen` flags an Urdu type when
+some Roman token with no plausible sound-correspondence appears in ≥30% of its rows and ≥85% of the
+time beside it. Over a 1/16 sample it returns **714 suspect types and 225 candidates**, of which
+maybe a quarter survive reading — it cannot tell a substitution from an English loanword its crude
+skeleton misses (`فروری`→`feb`, `کلک`→`click`). Its first draft stripped `h`/`w`/`y` as vowels and
+flagged `ہے`→`hai`, which is the failure mode in one line. **The phenomenon is established beyond
+doubt; its extent is not.** `substitutions_screen.json` is the ranked list to hand a native speaker
+— an hour of work, the same sitting that already owes stage 5 its 29 disagreements, stage 7 its
+sampled pairs and the PII pass its one ambiguous match.
+
+**Finding AD's fifth and sixth instances, one line apart.** Creating `reports/eval/` reproduced the
+bug immediately: `!/reports/*.jsonl` and `!/reports/freeze/*.jsonl` are both one level deep, so the
+new directory's pair evidence was ignored on arrival. Session 17 fixed that as an instance and said
+in the file's own comment that "every new subdirectory under an ignored glob is a fresh instance" —
+so this time it is fixed **as a class**: `!/reports/**/*.jsonl`, replacing both negations. The
+class fix immediately surfaced the sixth: **`reports/stage9/hits_heldout_vs_fineweb2.jsonl` has
+been untracked since session 11**, alone among that directory's fourteen files, and it is the read
+evidence behind **Finding T** — the ~4.4% held-out contamination projection the handoff calls
+load-bearing on §8.2's own instrument. Now tracked.
+
+**Also this session:** `scripts/substitutions.py` (three modes, so the three strengths of evidence
+cannot be quoted as one number) and `tests/test_substitutions.py` — 26 tests, the third driver in
+the suite to get any, per Finding W. Two of them failed first and both failures were real: the
+screen genuinely still flags `ہوئے`→`hue` (pinned as a known false positive rather than asserted
+away), and a degenerate fixture showed the screen cannot name which of two perfectly-correlated
+tokens is the substitute. And **Finding X's shape one layer up** — the screen compares every Urdu
+token in a row against every Roman one, so its memo of pair similarities is not a cache but a slow
+leak: the first run reached 1.2 GB RSS with 0.2 GB free and was still in pass 1 after twenty
+minutes. Now keyed on the *skeleton* pair rather than the word pair (which collapses every spelling
+variant onto one entry — most of what a crowdsourced corpus is) and dropped whole above 2M entries.
+Identical results by construction; the key was always a function of the skeletons.
+
+**The lesson, and it is session 17's turned around.** Session 17 learned that an aggregate can only
+say where to look. This session looked where an aggregate pointed, at a question about
+*duplication*, and the text answered a question about *correctness* that no one had asked and no
+aggregate would have raised. The note that sent me here had the right nine rows in it since session
+11 and drew the smaller of the two conclusions available from them. **Reading is not a check you
+run on a number; it is a different instrument.**
+
+---
+
+### Session 19 — 2026-09-13
+
+**The freeze still has not moved — and this session stopped waiting for it.** Steps 1-3 of "Next
+session" all sit behind a rented box that has not been rented, and every one of them is about the
+*corpus*. Meanwhile `ravaan/models/`, `ravaan/training/` and `ravaan/tokenization/` held nothing but
+`__init__.py` docstrings, which is Weeks 5-7 of the schedule, **none of which depends on the frozen
+corpus**. So: §7's tokenizer is trained and benchmarked, §5's model exists, both objectives exist,
+the training loop exists, and both arms have trained on real Urdu.
+
+**Finding AF — the corpus was not the critical path, and had not been for a while.** The freeze's
+remaining pass is expected to remove almost nothing (9 clusters in 193,666 documents, 0 removed at
+0.90). The modelling work is ~2 weeks of the schedule and was at zero. Ordering the two by *what
+blocks what* rather than by phase number puts the tokenizer first — and the tokenizer needs the
+corpus only as text to count, not as a frozen artifact.
+
+#### §7's tokenizer is trained, and it retires the fertility estimate
+
+`scripts/tokenizer.py` — `sample` (one pass over the corpus, mixture-balanced) then `train` then
+`bench`. Split three ways because the expensive part is the corpus read, and vocabulary size is then
+a decision that costs 147 seconds to revisit instead of 2.5 hours.
+
+| | estimate (`configs/data/splits.json`) | **measured, effective** | move |
+|---|---|---|---|
+| `urdu` | 3.5 | **3.8935** | +11.2% |
+| `roman_urdu` | 4.2 | **4.1928** | -0.2% |
+| `code_switched` | 3.8 | **3.2758** | -13.8% |
+
+**"Effective" is the word that matters**, and `packing.py`'s docstring predicted the gap before it
+was measured: content-only fertility from `bench` reads `roman_urdu` at 4.5643, and stage 10's
+separator-inclusive number is 4.1928 — an 8.1% difference on the population whose rows are single
+sentences. **The stage-9 re-solve takes the packer's number, not the benchmark's.** The
+carried-forward note said "fertility moves arm A's document set by a factor of two"; measured, the
+worst move is 11%, and `roman_urdu` — the population with the thinnest margin — was already right.
+
+Vocabulary: 16,384 Unigram, byte fallback, `identity` normalization (stage 4 already normalized the
+corpus, and a second opinion would put the tokenizer's idea of the text and stage 4's out of step).
+Fingerprint `2855877c8ecd38c9`. Fertility 1.24 tokens/word on Urdu and 1.08 on Roman; byte fallback
+1.03% and 0.065%. **Twelve framing tokens are inside the vocabulary**, not bolted on later —
+`<mask>` above all, because MDLM's absorbing state is a token the model embeds, and a `<mask>`
+outside the 16,384 would give the two arms different vocabularies and break §4.1 with the very
+thing the experiment is measuring.
+
+⚠️ `code_switched` filled to only **43.4%** of its mixture share before the sampler's FineWeb2 cap
+bound — that population is ~10 characters per document read, so filling it costs a multi-hour pass.
+It is 5.88% of the mixture and both its scripts are densely covered by the other two populations, so
+the vocabulary is not in doubt; its **3.2758 fertility is the least-supported of the three numbers**
+and should be re-measured when stage 10 runs for real.
+
+#### §5's model, and §4.1 as a property rather than a promise
+
+One backbone, one flag. `RavaanTransformer(config)` is the AR model when `config.causal` and the
+diffusion model when it is not, so "differ in exactly one thing" has one place it could be false
+rather than two implementations to keep in step.
+
+- Both arms build at **69,975,680 parameters — identical, not "within 2%"**, matching §5's table to
+  the number (59,489,920 non-embedding against §5's ~59.5M). `assert_matched` **refuses a near
+  miss**: inside 2% but unequal means something was added to one arm, and time-agnostic MDLM adds
+  nothing, so that is a bug report rather than a pass.
+- `tests/test_models.py` tests causality as *behaviour*, not as a flag: a later token may not move
+  an earlier AR output, and must move a bidirectional one.
+- Time-agnostic MDLM per §4.1. The `1/t` weight is `alpha'_t/(1-alpha_t)` for the linear absorbing
+  schedule, not a heuristic reweighting — dropped, the number bounds nothing.
+- **The 25M rung of §5's fallback ladder computes to 20.45M total** (14.16M non-embedding) at the
+  stated 8 layers / d=384. Recorded rather than changed: G2's lever is the ladder, so the label
+  should say what it is before anyone pulls it under time pressure.
+
+#### Both arms train on real Urdu, and resume is exact
+
+`scripts/pack_pilot.py` packs the 30M-character tokenizer sample — already through stages 2-5,
+PII-redacted, stage 6+7 exclusions applied — into stage 10's own shard format with §7's tokenizer:
+**7.36M tokens** (urdu 73.95%, roman_urdu 22.88%, code_switched 3.17%). Both arms train on it; loss
+starts at ln(16384) = 9.70, exactly where an untrained model over that vocabulary belongs, and
+falls. **§9's resume precondition is met and tested**: a checkpoint reloaded into a freshly seeded
+model reproduces every tensor exactly, for both arms, in `tests/test_training.py`.
+
+⚠️ **The pilot corpus is not the freeze and its manifest says so** (`pilot.is_frozen_corpus: false`,
+with the outstanding stages named). Stage 8 has not run, FineWeb2's stage 6+7 has not run, and the
+held-out split is a sequence fraction rather than stage 9's keyed hash of the document id. **No
+number taken off it goes in a results table.** It exists so G3 is answerable before the freeze
+finishes, which is what §10's schedule asks for.
+
+#### Finding AG — the diffusion arm's loss is a far noisier estimator than AR's
+
+One `t` per sequence and a `1/t` weight makes the per-step diffusion loss swing by several nats on a
+small batch with no bearing on the model. Measured over six (learning rate x batch size) cells from
+3e-4 to 3e-3: **the trend is inside the noise at 300 steps of four sequences and clear at 1,200, in
+every cell.** Not a defect and not a reason to touch the objective — but **an early diffusion curve
+that looks flat is not yet evidence of anything**, which is worth holding when G4 reads arm A's
+separation at 50% of tokens processed. It also cost a test that compared two single steps and was
+measuring the draw rather than the model.
+
+**Finding AH — CPU bf16 autocast is roughly an order of magnitude slower than fp32 here**, which
+turned a 20M-parameter smoke test into a stall. §5's BF16 row is about the paid instances; CPU paths
+now stay in fp32. Nothing whose numbers reach the report runs on CPU, and CPU throughput measured
+~600 tok/s — **9.9B tokens would be about 200 days, so the GPU path is not optional.**
+
+#### What is now runnable
+
+```
+python scripts/tokenizer.py sample|train|bench     # §7 — done, fingerprint 2855877c8ecd38c9
+python scripts/pack_pilot.py                       # G3's corpus, from the tokenizer sample
+python scripts/train.py spec                       # §5's parameter assertion, both arms
+python scripts/train.py throughput --device cuda   # G2's number
+python scripts/train.py run --arm ar|diff ...      # a run
+python kaggle/push.py data && python kaggle/push.py push 10   # G3 on a Kaggle GPU
+```
+
+`kaggle/push.py` grew a `data` command and a per-kernel `gpu` flag, so kernel 10 is the first that
+asks for an accelerator. It mounts the packed pilot rather than kernel 00's output, which is why G3
+does not wait on the freeze.
+
+**Housekeeping, because this machine is disk-constrained and it is load-bearing:** the pip cache had
+grown to **6.2 GB** against 2.2 GB free on C:. `python -m pip cache purge` reclaims it. Stages 8, 9
+and 10 still need room to run.
+
+---
+
+### Session 20 — 2026-09-13
+
+**§4.2's five-task corruption generator is built, and both arms now train on all five.** It was the
+last row in the status board marked "the last unbuilt piece before the pilots", and it is the piece
+that makes §4.1's central claim checkable rather than aspirational: the two arms see the *same
+tasks*, and for the three conditional objectives they now see byte-identical token layouts.
+
+Two modules, split at the seam the PRD already draws. `ravaan/data/corruption.py` damages **text**
+and knows nothing about tokens or arms; `ravaan/training/tasks.py` frames clean packed sequences
+into each arm's tensors. §4.2's shares, its eligibility rules, the version and the seed are all in
+the second, and `scripts/train.py` writes them into the run's `config.json` — §4.2 asks for "the
+generator version and seed recorded" and that is where it now is.
+
+#### The restoration task is stage 4 run backwards, and that is a test rather than a claim
+
+§4.2's OCR-and-spacing row needs a (damaged, clean) pair whose clean side is genuinely the answer.
+So half the damage is drawn from the exact families `ravaan/data/normalization.py` already folds —
+the Arabic Yeh and Kaf spellings, presentation forms, tatweel, zero-width characters, digit
+variants — and `tests/test_corruption.py` asserts `normalize_text(corrupted) == clean` over forty
+seeds at a **50% per-character edit rate**. The presentation-form table is derived by scanning the
+two Unicode blocks stage 4's own regex covers, not by listing shapes: 247 entries, and restating
+them here would have been a second answer to a question stage 4 already answers.
+
+The other half must *not* be reversible, or the task is a regex with extra steps. That half is
+**dot confusions** — the letters of one rasm family separated only by dots, which is what Tesseract
+loses on scanned Nastaliq and what needs the sentence rather than the character to recover. A test
+asserts the two families cannot overlap, because the near miss is real: the Arabic-keyboard heh is
+in the reversible family, so it is deliberately absent from the heh dot-confusion pair, and without
+that separation the reversibility test would pass by accident.
+
+**Harakat are not injected.** `remove_harakat` is False for this corpus and the normalizer's own
+comment calls them information, so teaching a restoration model to delete them would be teaching it
+to destroy what stage 4 kept.
+
+#### Finding AI — the romanizer's first version was 1.80 tokens per native token, and that was the bug
+
+Urdu is an abjad, so a grapheme map emits `krte` where a speaker types `karte`. The first version
+did exactly that, and the cost was not cosmetic: measured on the pilot corpus the unvowelled Roman
+tokenized to **1.80 tokens per native token**, against a real Roman-Urdu ratio near 0.93, because
+§7's tokenizer learned its Roman pieces from text that has vowels in it. The transliteration task's
+source half was eating two thirds of the sequence budget *and* sitting in a register the
+`roman_urdu` population does not contain.
+
+Inherent-vowel epenthesis fixes the register and most of the ratio — **1.54**, and the output now
+reads as Roman Urdu: `aik bar phar ghazayi bahran ne logon ki zandagian chhinna sharoa kardia`.
+Two rules, both conventional: a word-initial consonant before another consonant always takes an
+`a`; elsewhere a consonant takes one only when the consonant after it is not itself followed by a
+written vowel. That is what puts the vowel after the kaf in `karte` and not after the re.
+Fourteen words are pinned against how speakers actually write them — `ghar`, `dargah`, `banda`,
+`hamare`, `parhna`, `achha` — and four more are pinned only as *consonant skeletons*, because
+`kitab` comes out `katab` and demanding the `i` would be asserting something the script does not
+record.
+
+⚠️ **1.54 is not 0.93 and the gap stays.** What is left is spelling convention: `zandagian` against
+`zindagiyan`, `min` against `mein`. The vowel *quality* is unrecoverable from an abjad, so no rule
+fixes this, and it belongs in the report's transliteration caveats next to §6.2's existing warning
+— §8.2's human-written set is the only instrument that can measure what it cost.
+
+#### Finding AJ — the task mixture was starved at every microbatch a host actually fits
+
+Apportioning §4.2's five shares over a microbatch by largest remainder with a fixed tie-break gives
+**the same answer for every batch of the same size**, so the bias is constant rather than
+converging. At a microbatch of 4 — which is what the CPU smoke run uses — it produced three
+plain-LM sequences and one infilling sequence, and **transliteration, restoration and code-switch
+normalization never appeared at all, at any number of steps.** Found by running it rather than by
+reading it: the driver prints the realized mixture against §4.2's table, and three rows said 0.00%.
+
+Fixed by **systematic sampling over the fractional parts** — one uniform draw, then every boundary
+it crosses at `u`, `u+1`, `u+2`. Each task's inclusion probability is exactly its fractional part,
+so the expected count is `share × size` at *any* batch size, and it stays a pure function of
+(seed, step), which a running ledger of who-is-owed-what would not be. Measured over 20,000 draws:
+max error 0.0040 at microbatch 1, 0.0001 at 32. The mixture test is now parametrized on the
+microbatch, because the size that rounds well was the one the first test happened to pick.
+
+#### Finding AK — `evaluate` was rescaling the arms' BPB by different amounts
+
+`Trainer.evaluate` multiplied each arm's per-token loss by `tokens.numel()` to get a sequence
+total. The AR arm's average is over `L−1` positions (it has no context for the first token) and the
+diffusion arm's is over `L`, so AR's bits-per-byte came out **inflated by L/(L−1) ≈ 0.2%** — small,
+systematic, and in the primary endpoint. `LossOutput` grew a `scored` field, the denominator the
+average was taken over, and `evaluate` uses it.
+
+It matters far more with §4.2's framings in the path: a conditional example scores only its target
+half, so the old line would have rescaled it by roughly two. The diffusion arm's denominator now
+also excludes `keep`-pinned positions, which are conditioning the bound says nothing about — and
+the happy consequence is that under a framed batch **both arms score the same positions**, which
+the unframed path cannot, since AR necessarily omits the token it has no context for.
+
+#### What each arm actually sees
+
+| §4.2 | Ravaan-AR | Ravaan-DIFF |
+|---|---|---|
+| Plain LM 65% | `<lm>` + sequence, next-token | same tokens, random-ratio masking |
+| Infill 10% | `<infill><fim_prefix>…<fim_suffix>…<fim_middle>…`, scored throughout | same order as the corpus, middle span left maskable |
+| Translit 10% | `<translit><rom>src<sep><ur>tgt`, loss on target | **identical tokens**, source pinned by `keep` |
+| Restore 8% | same framing | same framing |
+| Code-switch 7% | same framing | same framing |
+
+Infilling is the one row where the layouts differ, and it has to be: FIM *is* a reordering — it is
+how an AR model is handed a suffix — while diffusion conditions on a suffix by not masking it.
+§4.1 states both in the same row. The consequence to carry into the report is that AR's FIM example
+is scored over the whole rearranged sequence, as published FIM is, while DIFF's is scored over the
+middle alone; that asymmetry is intrinsic and already present in plain LM.
+
+**Transliteration and code-switch normalization can only be built from native-script text** — a
+Roman-Urdu sentence has no native original on disk to be the answer. Rather than drawing per
+sequence and falling back, which would bend §4.2's frozen shares by the population mixture (about
+6 points at arm A's 23.53% Roman share), the batch is apportioned to §4.2's shares first and the
+constrained tasks are assigned to eligible sequences. What cannot be placed is counted in
+`shortfall/<task>` and lands in the run log.
+
+#### Costs, measured
+
+* **Padding.** A conditional framing cannot hit 512 exactly, so the clean window is fitted in up to
+  four re-encodes and the remainder padded, masked out of attention and out of the loss. Four
+  rounds is where the curve bends: 0.59% of tokens processed, against 0.75% at two rounds and 0.30%
+  at eight. The loop logs `pad_tokens` every time it logs a loss.
+* **CPU.** 45 ms per 64 sequences, so ~180 ms of single-core work per 256-sequence optimizer step —
+  the same order as the step itself on a 4090. **`throughput` now builds tasks by default**, since
+  G2 is a budget gate and a number taken on the bare objective would be measuring a run nobody
+  intends to make. `scripts/train.py throughput` warns when run without `--corpus`.
+
+#### Verified end to end, on real Urdu
+
+Both arms ran on the pilot corpus with the tasks on: loss starts at ~9.65 against ln(16384) = 9.70,
+the realized mixture prints against §4.2's table, and **resume is still exact with the generator in
+the path** — `tests/test_training.py` runs the round trip for both arms. The tasks are keyed on the
+microbatch step rather than on a counter the generator advances, for the same reason
+`SequenceSampler` is: a resume reconstructs the order from a step number, and a task stream that
+did not would put a seam in the curve at every preemption that looked exactly like a mis-restored
+optimizer.
+
+`scripts/pack_pilot.py` now writes **all twelve** of §7's framing ids into the corpus manifest plus
+the control ids, and `FramingTokens.from_manifest` refuses a partial set rather than inventing one.
+The existing `data/packed-pilot/manifest.json` was patched in place to match.
+
+```
+python scripts/train.py run --arm ar|diff --corpus data/packed-pilot \
+       --tokenizer data/tokenizer/ravaan-16k.model --out runs/…     # §4.2 on by default
+python scripts/train.py run … --no-tasks                            # bare objective, a smoke test
+python scripts/train.py throughput --corpus data/packed-pilot …     # G2, with §4.2's CPU cost in it
+```
+
+---
+
 ## Open questions for you
 
 1. ~~**Config format.**~~ **Decided in session 4: JSON, for the whole data pipeline.** Three
@@ -2781,14 +3227,35 @@ and older: **an aggregate can only ever say where to look.**
    list below since session 4 and never answered; promoted here because Week 6 is next after the
    freeze and this is the one thing that cannot be deferred past it.
 
+6. **Does PRD §6.2's Roman-Urdu-Parl warning get amended for Finding AE?** *Your call — the PRD is
+   the spec and v2.3 was cut the same day.* Nothing in the design changes and no number in the PRD
+   moves, which is why session 18 did **not** bump the version on its own. But §6.2 currently says
+   the corpus is "substantially machine-produced" and that a claim evaluated on it means "matches
+   that transliterator" — and that describes a *style* mismatch, where what is measured is a wrong
+   lexicon at 3.95% of rows. Two options, both defensible:
+   - **(a) Leave the PRD at v2.3** and carry Finding AE in the technical report and in
+     `reports/eval/transliteration_reference_set.md`, which is where the method and the caveats
+     live anyway. Cheapest, and §6.2's warning is *directionally* right.
+   - **(b) v2.4 — a wording amendment to §6.2 and §8.2 only.** §6.2's warning gains a sentence with
+     the rate and the specificity; §8.2's "Transliteration (reference)" row gains "4,500 distinct
+     sentences; see `reports/eval/`". This is the same class of change v2.2 was — a documentation
+     correction made before the corpus is written rather than after — and it has the same argument
+     for it: the next person to read §6.2 will otherwise under-weight the human-written set exactly
+     as this project did until session 18.
+   Either way, **§4.5's bootstrap has to resample sentences, not rows.** That is not a wording
+   question and it is recorded in the carried-forward list regardless of what happens here.
+
 ---
 
 ## Deferred / parked
 
-- **Offset mapping through normalization.** Not built. The OCR-restoration and spacing-repair
-  tasks (§4.2) may need to align normalized text back to original character offsets to build gold
-  pairs. Revisit when building the corruption generators in Week 6 — if it is needed, it is much
-  easier to add to the normalizer than to reconstruct downstream.
+- ~~**Offset mapping through normalization.**~~ **Not needed — closed in session 20.** The note
+  asked whether the OCR-restoration and spacing-repair tasks would have to align normalized text
+  back to original offsets to build gold pairs. They do not, because the corruption runs in the
+  other direction: the *clean* side is stage 4's output, which the corpus already holds, and the
+  damaged side is generated from it. `ravaan/data/corruption.py` reuses the normalizer's own
+  character inventories, which is what makes `normalize_text(corrupted) == clean` assertable for
+  the reversible half. Nothing has to be reconstructed.
 - **Parallelizing normalization.** Single-threaded is fast enough for one pass over 1.5 GB.
 - ~~**CI workflow.**~~ Added session 4 — `.github/workflows/tests.yml`, ruff + pytest on 3.11 and
   3.13. PRD §14 makes "all §8.1 invariants passing in CI" a ship criterion, so it stopped being
@@ -2805,7 +3272,18 @@ and older: **an aggregate can only ever say where to look.**
 ## Next session
 
 **START HERE. The corpus freeze has one pass left, and it needs a rented Linux box — not Colab,
-not this machine.** Everything else in stages 6+7 is done and on disk.
+not this machine.** Everything else in stages 6+7 is done and on disk. This was true at the end of
+session 17 and it is still true: sessions 18, 19 and 20 could not move it, so they took the work
+that does not depend on it. **That work is now done** — Weeks 5–7 are complete and §4.1's matched
+pair is implemented, tested and running on real Urdu — so **the freeze is no longer merely next,
+it is the only thing left.** Steps 1–5 below are unchanged, and step 6 is new.
+
+> **What is *not* blocked, and is worth doing while the box is being rented:** G2. Run
+> `python scripts/train.py throughput --arm ar --size 70M --device cuda --corpus data/packed-pilot
+> --tokenizer data/tokenizer/ravaan-16k.model --microbatch 16` on whatever GPU is available —
+> including the free Kaggle T4, as long as the report says which card it was. It needs the pilot
+> corpus and not the frozen one, and **it must carry `--corpus` or the number leaves out §4.2's
+> generator**, which is ~180 ms of CPU per 256-sequence step against a step time of the same order.
 
 ### Where the freeze stands
 
@@ -2877,13 +3355,80 @@ python scripts/pack.py --source … --measure-only --tokenizer <model> --resolve
 ravaan-splits <plan.json> --chars-per-token urdu=… roman_urdu=… code_switched=…
 ```
 
-Fertility moves arm A's document set by a factor of two, so the re-solve must land before the corpus
-is *written*. `orature/ALIF-Base-100M` (Apache-2.0, 32k Urdu SentencePiece) is a free external
-bracket to sanity-check against — deliberately not quoted as the answer, since measuring with a 32k
-model and reporting it for a 16k one is the same class of error as quoting the placeholder's 0.573.
+**Done in session 19, except the re-solve.** §7's tokenizer is trained and fingerprinted
+`2855877c8ecd38c9`, and the fertility it measured retires the estimate: urdu **3.8935**,
+roman_urdu **4.1928**, code_switched **3.2758** (the packer's separator-inclusive numbers, not the
+benchmark's content-only ones). The worst move against `configs/data/splits.json` is 11%, not the
+factor of two this note feared, and `roman_urdu` — the thinnest margin — was already right.
+**What is still owed is the stage-9 re-solve**, which is one command and has to land before the
+corpus is *written*:
 
-**Do not start** modelling. The tokenizer is timeboxed to Week 5, and stage 10 is built so that
-waiting costs one command rather than a rewrite.
+```
+ravaan-splits <plan.json> --chars-per-token urdu=3.8935 roman_urdu=4.1928 code_switched=3.2758
+```
+
+⚠️ `code_switched`'s 3.2758 is the least-supported of the three — that population filled to only
+43.4% of its mixture share in the tokenizer sample before the FineWeb2 cap bound — so re-measure it
+when stage 10 runs for real.
+
+~~**Do not start** modelling.~~ **Started deliberately in session 19 and finished in session 20**,
+on Finding AF's argument: the freeze's remaining pass is expected to remove almost nothing, the
+modelling work was ~2 weeks of the schedule sitting at zero, and none of it depends on a frozen
+corpus. Weeks 5–7 are now complete.
+
+### 5. When stage 8's numbers land, one more decision comes due with them
+
+Session 18's Finding AE puts a **wrong-lexicon** rate on the `roman_urdu` population — 3.95% of
+rows before dedup, **2.77% after** — and that population is 23.53% of arm A. Filtering it is
+possible and it is not free: arm A's `roman_urdu` margin is ~1.53× *before* stage 8, and stage 8 is
+about to take some of that. **So this decision waits for the same number the G1 re-check waits
+for**, and it is the second thing to do with that number rather than a separate errand:
+
+1. re-run G1 (§3 above) — is arm A still fundable at all?
+2. then, with the margin known: filter on the confirmed list, or train as-is and state the rate?
+
+Filtering on the eight confirmed words alone is cheap (2.77% of surviving rows) and shallow.
+Filtering on the full 225-candidate screen needs the native-speaker pass first, or it deletes
+`فروری`→`feb` along with `کرتے`→`baghaawat`. **Do not filter on the screen unadjudicated.**
+
+### 6. The pilots (G3), which no longer wait on anything
+
+Everything G3 asks — "20M pilot DIFF produces coherent Urdu after 50 epochs; both models resume
+from checkpoint correctly" — is runnable now, on the pilot corpus and a free GPU. Kernel 10 is
+written and has never been pushed.
+
+```
+python kaggle/push.py data && python kaggle/push.py push 10
+```
+
+Two things to carry into it, both from session 20:
+
+* **Pass `--tokenizer`.** §4.2's corruptions decode packed sequences back to text, so a run without
+  §7's model on the box falls back to nothing — `build_tasks` raises rather than quietly training
+  plain LM, but the kernel has to ship the tokenizer alongside the corpus for that not to fire.
+* **Read the realized mixture the driver prints, not just the loss.** Finding AJ's starved mixture
+  showed up there and nowhere else — the loss curve was entirely unremarkable while three of
+  §4.2's five objectives were at 0.00%.
+
+⚠️ And the standing warning from session 19's Finding AG applies hardest here: **the diffusion
+arm's per-step loss is a far noisier estimator than AR's**, inside the noise at 300 steps of four
+sequences and clear at 1,200. A flat diffusion curve in a short pilot is not evidence of anything.
+
+### What session 20 settled, so it is not re-opened
+
+- **The transliteration task is synthesized by a rule, not drawn from Roman-Urdu-Parl's pairs, and
+  that was a decision.** §4.2 requires dynamic generation from clean text, which stored pairs are
+  not; and Finding AE measured that column rendering eight common words as fixed *unrelated* words
+  at 52–93% of their occurrences. Training on it would be training on known-corrupt supervision.
+  The cost — the model learns *this* map — is the same caveat §6.2 already carries one step later,
+  and §8.2's human-written set is what measures it. **Do not re-derive this; extend the caveat.**
+- **The romanizer's remaining 1.54-vs-0.93 fertility gap is vowel quality and no rule closes it.**
+  The abjad does not record whether the vowel in `kitab` was an `i`. Epenthesis recovered the
+  presence of the vowel and took the ratio from 1.80 to 1.54; the rest is spelling convention
+  (`min` vs `mein`). It belongs in the report, not in another pass at the map.
+- **The mixture is checked in the counters, not in a batch.** §4.2's shares hold in expectation at
+  every microbatch, exactly, and the run log carries the realized mixture, the shortfalls and the
+  padding at every logged step. A per-batch count that does not match the table is not a defect.
 
 ### What session 17 settled, so it is not re-opened
 
@@ -2896,6 +3441,20 @@ waiting costs one command rather than a rewrite.
 - **Arm B is dropped; PRD is v2.3; P2 is withdrawn** in the preregistration's deviation log with its
   text above unedited. Six core runs, ~$118. The narrower arm B at U≈40M was considered and
   declined on the record (§0.3).
+
+### What session 18 settled, so it is not re-opened
+
+- **The reference transliteration split is 4,500 sentences, not 16,241 items.** Measured off the
+  CSV and reproduced by stage 6; validation is the same shape and shares nothing with test. The
+  bootstrap unit is the sentence. Nothing here needs re-measuring.
+- **Finding AE is not a threshold question and not a dedup question.** The eight words were
+  measured unsampled over the whole training split, and again against the freeze's own removal
+  list; the rate survives at 2.77%. Specificity 0.87–0.99 is the evidence, and on the test split it
+  is 1.000. **Do not re-derive the rate — extend the word list, and only with a native speaker.**
+- **The screen's precision is low on purpose and is documented, not a defect to fix.** Its false
+  positives are English loanwords and `h`/`w`/`y`-heavy words the crude skeleton cannot match;
+  `tests/test_substitutions.py` pins four of them so a later "improvement" has to notice it is
+  invalidating the report's precision paragraph.
 
 ### Running long passes here
 
@@ -2972,13 +3531,31 @@ with small outputs; packed arm A is ~200 MB. It fits, with no room for a second 
   eval sets — it is no longer optional hygiene. (b) The report must state the 16.8% and say the
   reference-set transliteration number is weaker evidence than the human-written set of §8.2, which
   is now carrying more weight than originally planned.
-- **⚠️ The reference transliteration split contains internal near-duplicates, and that is an
-  instrument defect independent of contamination.** Nine test rows (`test_set.csv:1:606`–`1:614`)
-  are spelling variants of one sentence with an *identical* Urdu column. Any chrF computed on that
-  split weights that sentence nine times. §4.5 makes transliteration chrF a Holm-corrected
-  secondary endpoint, so this belongs in the results section next to the number, and it is an
-  independent argument for §8.2's human-written set. **Not yet measured at the whole-split level** —
-  the obvious check is stage 7 pointed at the test split alone, which is one cheap pass.
+- ~~**⚠️ The reference transliteration split contains internal near-duplicates…**~~ **Measured in
+  session 18, and the pass found a second, larger defect.** The split is **4,500 distinct Urdu
+  sentences in 16,241 rows** (validation: 4,500 in 16,219; the two share none), 5,205 rows are
+  byte-identical to another row, and its **effective *n* is 2,978** — so **a paired bootstrap must
+  resample the 4,500 sentences, not the rows, or the CI is 2.34× too narrow.** That is the whole
+  cost of the duplication half and it is free to honour. The half nobody asked for is **Finding
+  AE**, below. Note for the record: the nine rows this bullet named had *both* defects in them
+  since session 11 — eight of the nine also drop فائدہ entirely — and this bullet drew the smaller
+  conclusion. See [`reports/eval/transliteration_reference_set.md`](reports/eval/transliteration_reference_set.md).
+- **⚠️⚠️ Finding AE — Roman-Urdu-Parl renders common Urdu words as a fixed *unrelated* word, and it
+  is 23.53% of arm A's tokens.** کرتے→`baghaawat` ("rebellion"), بس→`dehli`, گھر→`mamu`,
+  لائبریری→`tromin`, and five more, at 52–93% of each word's occurrences with specificity 0.87–0.99
+  — measured unsampled over all 6,333,218 training rows. **3.95% of rows / 5.26% of Roman
+  characters**, and stage 6+7 only takes that to **2.77%**, so it is a property of the source rather
+  than of its duplication. PRD §6.2's existing warning describes a *style* mismatch and is not
+  strong enough for a wrong lexicon; the report must carry the rate and the method. Three things
+  follow. (a) The reference-set transliteration number takes a third independent discount, after
+  Finding Q and the row inflation above, and it is the largest — a correct transliteration of کرتے
+  is **penalised** on two thirds of its rows. §8.2's human-written set now carries the claim
+  essentially alone. (b) **This is pretraining text**, and stage 8 cannot touch it: the rows match
+  no test item. (c) The 225-candidate screen has low precision by construction and needs the
+  native-speaker sitting — `substitutions_screen.json`, ranked, about an hour.
+  **The open decision, and it should be taken with stage 8's numbers in hand:** filter `roman_urdu`
+  on a confirmed substitution list and pay for it out of arm A's ~1.53× margin, or train on the
+  corpus as it is and state the rate. Not before.
 - **Stage 8's precision is 0.73 and its three errors are one named family.** Every false positive
   in the adjudicated 11 was a byline whose year differs (`Sayeda shagufata , May 17 , 2007` against
   `... 2009`). Left in deliberately — a false positive costs one training row out of millions, a

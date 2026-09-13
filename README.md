@@ -57,9 +57,9 @@ ravaan/
   data/             acquisition, normalization, langid, dedup, quality, corruption, packing
   tokenization/     SentencePiece Unigram 16k + fertility benchmark
   models/           shared backbone, ar/, diffusion/
-  training/
-  sampling/
-  evaluation/
+  training/         loop, config, packed-corpus loader, §4.2's task mixture
+  sampling/         both decoders, §4.2's framings for inference, §4.4's A3/A4
+  evaluation/       §8.3's generation metrics
 tests/              engineering invariants (PRD §8.1) — these are CI, never results
 scripts/
 demo/               HF Space

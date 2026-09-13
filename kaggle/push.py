@@ -9,6 +9,9 @@
     python kaggle/push.py pull 00         # download its output into reports/freeze/
     python kaggle/push.py push 01         # only after 00's verdict says FineWeb2 fits
 
+    python kaggle/push.py data            # upload data/packed-pilot + §7's tokenizer
+    python kaggle/push.py push 10         # G3's pilot: both arms, one seed, on a GPU
+
 Kernel 00 is a decision gate. `neardedup.py` is not resumable — the shard reader checkpoints but
 the MinHash index lives in memory — so a pass that overruns the ~12 h session cap produces
 nothing. Do not push 01 or 02 until 00 says they fit.
@@ -61,7 +64,24 @@ KERNELS = {
         "internet": False,
         "needs_corpus": True,
     },
+    # The first kernel that trains anything, and the first that wants an accelerator. It mounts
+    # the packed pilot corpus (`push.py data`) rather than kernel 00's raw-corpus output, so it
+    # does not wait on the freeze — which is the whole reason G3 can be answered now.
+    "10": {
+        "file": "train_10_pilot.py",
+        "slug": "ravaan-train-10-pilot",
+        "internet": False,
+        "needs_corpus": False,
+        "gpu": True,
+        "needs_packed": True,
+    },
 }
+
+# `data/packed-pilot` plus §7's tokenizer, uploaded separately from the code so a code push does
+# not re-upload a corpus and a corpus push does not invalidate the code dataset's version.
+PILOT_SLUG = "ravaan-pilot"
+PILOT_PATHS = ("data/packed-pilot", "data/tokenizer/ravaan-16k.model",
+               "data/tokenizer/ravaan-16k.vocab", "data/tokenizer/ravaan-16k.json")
 
 # Kaggle rejects a title under five characters; every slug here is far longer.
 MIN_TITLE = 5
@@ -258,6 +278,52 @@ def cmd_code() -> int:
     return 0
 
 
+def cmd_data() -> int:
+    """Upload `data/packed-pilot` and §7's tokenizer as the `ravaan-pilot` dataset.
+
+    Separate from the code dataset because they change on different clocks: the code changes every
+    session and the corpus changes when a pack runs. Versioning them together would re-upload
+    ~15 MB of shards for a one-line fix, and — worse — would make "which corpus was this kernel
+    run against" a question about a code version.
+    """
+    staged = [p for p in (REPO / q for q in PILOT_PATHS) if p.exists()]
+    if not staged:
+        raise SystemExit(
+            "nothing to upload — run `python scripts/pack_pilot.py` first"
+        )
+    ref = f"{username()}/{PILOT_SLUG}"
+
+    with tempfile.TemporaryDirectory() as tmp:
+        staging = Path(tmp)
+        for path in staged:
+            target = staging / path.name
+            if path.is_dir():
+                shutil.copytree(path, target)
+            else:
+                shutil.copy2(path, target)
+
+        size = sum(f.stat().st_size for f in staging.rglob("*") if f.is_file())
+        print(f"staging {len(staged)} paths, {size / 1e6:.1f} MB")
+
+        kaggle("datasets", "init", "-p", str(staging))
+        meta_path = _metadata_file(staging)
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        meta.update({"title": PILOT_SLUG, "id": ref, "licenses": [{"name": "Apache 2.0"}]})
+        meta_path.write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+        listing = kaggle("datasets", "list", "--mine", capture=True, check=False)
+        if PILOT_SLUG in listing:
+            print(f"versioning existing dataset {ref}")
+            kaggle("datasets", "version", "-p", str(staging), "-m", "repack", "-d")
+        else:
+            print(f"creating dataset {ref}")
+            kaggle("datasets", "create", "-p", str(staging), "-d")
+
+    wait_for_dataset(ref)
+    print(f"done: https://www.kaggle.com/datasets/{ref}")
+    return 0
+
+
 def cmd_push(key: str) -> int:
     spec = KERNELS[key]
     user = username()
@@ -265,6 +331,8 @@ def cmd_push(key: str) -> int:
 
     # Two preconditions, each of which costs a whole session when it fails instead of refusing.
     wait_for_dataset(f"{user}/{DATASET_SLUG}")
+    if spec.get("needs_packed"):
+        wait_for_dataset(f"{user}/{PILOT_SLUG}")
     if spec["needs_corpus"]:
         gate = f"{user}/{KERNELS['00']['slug']}"
         state = kaggle("kernels", "status", gate, capture=True, check=False)
@@ -293,7 +361,10 @@ def cmd_push(key: str) -> int:
                 # No GPU: this job never touches one, and a GPU session has a shorter cap.
                 "enable_gpu": False,
                 "enable_internet": spec["internet"],
-                "dataset_sources": [f"{user}/{DATASET_SLUG}"],
+                "dataset_sources": (
+                    [f"{user}/{DATASET_SLUG}"]
+                    + ([f"{user}/{PILOT_SLUG}"] if spec.get("needs_packed") else [])
+                ),
                 "kernel_sources": (
                     [f"{user}/{KERNELS['00']['slug']}"] if spec["needs_corpus"] else []
                 ),
@@ -352,13 +423,17 @@ def main(argv: list[str]) -> int:
         return cmd_auth()
     if command == "code":
         return cmd_code()
+    if command == "data":
+        return cmd_data()
     if command in {"push", "status", "pull", "logs"}:
         if not rest or rest[0] not in KERNELS:
             raise SystemExit(f"{command} needs a kernel: {', '.join(KERNELS)}")
         handlers = {"push": cmd_push, "status": cmd_status, "pull": cmd_pull, "logs": cmd_logs}
         return handlers[command](rest[0])
 
-    raise SystemExit(f"unknown command {command!r} — one of: auth, code, push, status, logs, pull")
+    raise SystemExit(
+        f"unknown command {command!r} — one of: auth, code, data, push, status, logs, pull"
+    )
 
 
 if __name__ == "__main__":

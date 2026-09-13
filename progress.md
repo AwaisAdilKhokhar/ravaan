@@ -5,9 +5,11 @@ Spec is the PRD; this file is the state of play. **Read the "Next session" secti
 first.**
 
 - **Started:** 2026-08-03 (Week 1 of 16)
-- **Current phase:** Weeks 1–2 complete; **Weeks 5–7 complete ahead of them** (tokenizer, model,
-  both objectives, training loop, §4.2's task generator — sessions 19 and 20). What remains open is
-  Weeks 3–4's corpus freeze, which is now the *only* thing on the critical path. Pipeline stages 1–9 are built
+- **Current phase:** Weeks 1–2 complete; **Weeks 5–8 complete ahead of them** (tokenizer, model,
+  both objectives, training loop, §4.2's task generator, and now §8's decoders and the G3 pilots —
+  sessions 19 through 22). What remains open is Weeks 3–4's corpus freeze, which is still the only
+  thing blocked on a decision outside this machine — plus **two design decisions session 22 put due
+  before Week 9** (Finding AQ and the infilling share, open question 5). Pipeline stages 1–9 are built
   and validated on real text; stage 5's 200-sample validation is adjudicated, scored and written up
   ([`reports/quality_validation.md`](reports/quality_validation.md)), stage 6 has run **complete
   passes over every source**, stage 7's threshold is chosen from measured pairs and written up
@@ -237,12 +239,22 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | ↳ the requirement, in hardware terms: **64,162 tok/s**, against 37,236 at 25M here | §11 | ✅ session 21 |
 | ↳ Finding AM — both arms cost the same per token, within 2.2% | §4.1 | ✅ and it is the half that transfers |
 | ↳ §4.2's generator is ~180 ms of CPU per 256-sequence step — G2 must measure it | §11 | ✅ `throughput` builds tasks by default |
-| **G3** — 20M pilot, both arms, resume | §11 | 🟡 resume half **PASS**; coherence blocked on a sampler that does not exist |
+| **G3** — 20M pilot, both arms, resume | §11 | ⛔ resume half **PASS**; **coherence half FAILS** — session 22 |
 | ↳ 50-epoch run complete, both arms, §4.3's seven fraction checkpoints written | §4.3 | ✅ the curve infrastructure works |
-| ↳ `ravaan/sampling/` is a one-line stub — **nothing can sample a checkpoint** | §8 | ⬜ cheapest modelling work left |
+| ↳ **`ravaan/sampling/` — both decoders, §4.2's framings, §4.4's A3/A4** | §8, §4.4 | ✅ session 22, 36 tests |
+| ↳ §8.1's locked-token and determinism invariants, asserted on both arms | §8.1 | ✅ untestable before this |
+| ↳ §8.3's generation metrics — script consistency, distinct-n, repetition | §8.3 | ✅ `ravaan/evaluation/generation.py` |
+| ↳ 306 generations read → [`reports/pilot_coherence.md`](reports/pilot_coherence.md) | §11 | ✅ AR fluent; DIFF not, under any of 16 settings |
+| ↳ **Finding AO — `</s>` on a context-free canvas**: 47% of first commits, script 0.00 → 1.00 | §8 | ✅ measured, swept, not defaulted |
+| ↳ **Finding AP — A3 runs backwards**: 64 steps repeats more than 8, monotonically | §4.4 | ⚠️ directional, 1 seed |
+| ↳ A4: random beats confidence on every repetition measure, at every step count | §4.4 | ⚠️ directional, 1 seed |
+| ↳ **Finding AQ — §4.2's AR FIM framing has no middle terminator** | §4.2, §8.3 | ⛔ **decide before Week 9** |
+| ↳ a diffusion decode is told its answer's length and an AR decode is not | §4.1, §8.3 | ⚠️ asymmetry, stated not fixed |
+| ↳ §8.3's three metrics cannot separate fluent Urdu from Urdu-shaped noise | §8.4 | ⚠️ §8.4's annotators carry it |
 | ↳ Finding AL — Kaggle gates GPUs too, so kernel 10 runs locally | §9 | ✅ host-agnostic, Kaggle branch kept |
 | ↳ the kernel measured its second arm under the first arm's VRAM (2.8× penalty) | §4.1 | ✅ fixed, found by running it |
 | ↳ **Finding AN — the kernel trained the bare objective**; `build_tasks` now in the library | §4.2 | ✅ fixed + 3 tests |
+| **Ablations A3/A4** — inference only, and now runnable | §4.4 | 🟡 pilot-scale sweep done; core-run sweep is Week 12 |
 | Core runs (W9–11, **G4**) → eval (W12) → human eval (W13, **G5**) → demo (W14) → report (W15–16) | | ⬜ |
 
 ---
@@ -3362,6 +3374,155 @@ checkpoints came out — 937 MB, housekeeping by `loop.py`'s own definition, the
 already being recorded in JSON. **The fourteen fraction checkpoints were kept deliberately.**
 
 
+### Session 22 — 2026-09-13
+
+**Done**
+
+1. **Built `ravaan/sampling/` — the thing G3's second half had been waiting on.** Four modules,
+   split by what is shared rather than by what is convenient: `decoding.py` (temperature, top-k,
+   top-p, the forbidden ids, the seeded generator — **both arms**, for the same reason both arms
+   share one backbone), `ar.py`, `diffusion.py` carrying §4.4's A3 and A4 as two arguments, and
+   `prompts.py` rebuilding §4.2's five framings for inference. Plus `checkpoint.py`, which
+   rebuilds a trained arm from a checkpoint alone — the arm, the rung, the mask id and the twelve
+   framing pieces are all *in* the checkpoint, so nothing is passed in that could disagree with
+   what the model trained under. 36 tests, 886 in the suite.
+
+   **No KV cache, deliberately.** It would make the AR loop O(L) instead of O(L²) forwards and it
+   would do it by adding an inference path through `Attention` that the diffusion arm cannot use
+   and training never exercises. §4.1's matched pair is held together by there being exactly one
+   attention implementation. The whole decoding workload here is a few hundred sequences; AR
+   samples at 5.9 s per 160 tokens on the 4060 and that is fine.
+
+2. **§8.1's two engineering invariants are asserted for the first time, because until now they
+   could not be.** "Locked-token preservation" and "bit-identical determinism under fixed seed"
+   have been in §8.1 since v1 and nothing could test either without a decoder. Both decoders now
+   assert the first against the tokens they return, and the second is four tests. A third fell out
+   of building them: **sampling must not disturb global RNG**, or a generation taken mid-run moves
+   the training trajectory. Every draw goes through an explicit `torch.Generator`.
+
+3. **G3's coherence half is answered, and it does not pass** —
+   [`reports/pilot_coherence.md`](reports/pilot_coherence.md), from 306 generations over the two
+   `f1` checkpoints. **AR is fluent**: real words, agreement and case marking mostly right, script
+   0.987–0.995, repetition ~0.001. **DIFF is not coherent under any of the 16 decoder settings
+   measured** — it fails in two different ways depending on the schedule, and §4–§6 below are
+   those two failures. Adjudicated by Claude, not by a native speaker, and flagged in those words
+   the way `quality_validation.md` is; `pilot_samples.md` is laid out to be marked up by one.
+
+   **This is not evidence about masked diffusion.** 25M parameters, 50 epochs, 7.36M tokens of
+   pilot corpus. G3 is a go/no-go on the pipeline. What *does* generalise is the three decoder
+   findings, because they are properties of the procedure rather than of this checkpoint.
+
+4. **Finding AO — `</s>` is a trap on a context-free canvas, and it cost the entire script.** A
+   diffusion canvas has a width the caller chose, so "the document ends here" is not a question
+   the model is being asked. Asked anyway, it answers loudly: on the unconditional 512 canvas at
+   64 steps, **60 of the confidence schedule's first 128 commits are `</s>`** (47%), and the first
+   content tokens to clear the bar after that are `▁hai` (42) and `▁nahi` (24) — Roman-Urdu
+   function words, short and frequent, `roman_urdu` being 23.53% of arm A. Attention is
+   bidirectional, so a handful of them conditions the whole canvas and **the sample comes out in
+   Roman Urdu at Arabic-script share 0.000.** Forbidding `</s>` takes the same setting to **1.000**.
+
+   The check that the explanation is right rather than merely consistent: the effect is confined
+   to the context-free set. On `lm/continue` and `infill`, where a real prefix is pinned,
+   forbidding `</s>` moves nothing at all. `</s>` wins only when there is nothing else to condition
+   on.
+
+   **Not hard-coded, on purpose.** `sample_diffusion` forces only `<mask>` (see 8 below); `</s>`
+   *is* in the training distribution as stage 10's document separator, so removing it silently
+   would change a distribution rather than fix a framing. `scripts/sample.py` sweeps it, the
+   number is in the report, and the decision is on the record instead of in a default.
+
+5. **Finding AP — A3 runs backwards.** §4.4 sweeps 8/16/32/64 denoising steps expecting quality to
+   buy time. With `</s>` forbidden so AO is out of the way, on the unconditional set:
+
+   | `lm/free`, confidence | 8 | 16 | 32 | 64 |
+   |---|---|---|---|---|
+   | distinct-1 | 0.244 | 0.242 | 0.141 | **0.069** |
+   | repetition | 0.082 | 0.123 | 0.450 | **0.687** |
+   | longest repeated run | 5.7 | 5.8 | 13.0 | **21.0** |
+
+   Monotone, on every axis, in the direction §4.4 expected to be an improvement. At 64 steps the
+   sample is one clause on a loop. The effect scales with how much of the canvas is unconstrained
+   — mild on `lm/continue`, absent on `infill`, where both sides are pinned. The reading is that
+   confidence-first unmasking is self-reinforcing and more steps give it more chances to
+   reinforce. **Directional, one seed per prompt**, but it is the opposite of the default
+   assumption and A3's table must not be written as "more steps, better" and then measured.
+
+6. **A4: random beats confidence on every repetition measure at every step count** — repetition
+   0.000 against up to 0.687, longest run ~2 against up to 21, and flat in the step count.
+   **Which does not make its output good**, and §7 is the difference.
+
+7. **§8.3's generation metrics cannot separate fluent Urdu from Urdu-shaped noise, and that is
+   worth knowing now.** AR `lm/continue` reads script 0.995 / distinct-1 0.770 / rep 0.001; DIFF
+   `lm/continue` under random reads 0.979 / 0.680 / 0.001. Nearly the same numbers; not nearly the
+   same text — the diffusion sample is script-consistent, non-repetitive, correctly punctuated and
+   made substantially of **non-words**, which §7's byte fallback will spell as happily as real
+   ones. The three metrics are a floor: they catch a sample that stopped being Urdu and a sample
+   that is four phrases on a loop, and they are blind to the failure that actually separates these
+   two arms. **§8.4's human evaluation is the only instrument in the plan that can tell those two
+   rows apart**, which makes open question 3's three annotators load-bearing rather than a nicety.
+
+8. **Two defects the decoder only had because it was run.** Both are the class this project keeps
+   recording, and both were found by output rather than by a test:
+   - **The diffusion decoder could commit `<mask>` itself**, leaving positions undecoded — a
+     "finished" canvas with holes in it. `sample_diffusion` now forces its own absorbing state
+     into `forbid` regardless of the caller, and a terminating assertion refuses to return a
+     canvas with a mask left standing. The AR arm has no equivalent because it has no absorbing
+     state.
+   - **Forbidding happened *after* top-p, which is a latent NaN.** Where the nucleus had already
+     narrowed to forbidden tokens, striking them left an all-`-inf` row — on CUDA a device-side
+     assert inside `multinomial` naming `input[0] != 0` and nothing else. Order reversed: strike
+     first, then filter, which is also what a caller asking for top-p 0.95 meant — 95% of the mass
+     it is *choosing between*. Found by forbidding `</s>` for Finding AO, pinned by a test.
+
+9. **Finding AQ — §4.2's AR FIM framing never taught the model where a middle ends, and this is
+   the expensive one.** `_frame_infill`'s AR branch builds `<infill> <fim_prefix> prefix
+   <fim_suffix> suffix <fim_middle> middle` and the middle runs to the end of the 512-token
+   sequence. **There is no terminator after it.** Published FIM puts one there precisely so the
+   model learns to stop. Measured over 12 infill prompts with a 32-token hole, `</s>` allowed as a
+   stop: it stopped **5/12**, median length **200** (the budget — it did not stop), and when it did
+   stop the lengths were 33, 86, 124, 127, 152 against a 32-token hole. The 5/12 is not a learned
+   terminator; it is stage 10's document separator turning up at its corpus rate — the same 4/12
+   appears on `lm/free`, which has no middle at all.
+
+   Three consequences. (a) **§8.3's infill exact-match is not computable for the AR arm as
+   trained** — any stopping rule is imposed after the fact by whoever computes the metric.
+   (b) It compounds the length asymmetry: the diffusion arm is *given* the span width because its
+   canvas is fixed, and the AR arm has to infer one it was never taught, so an infill metric
+   scored this way inflates **toward diffusion** — the opposite direction from the one A2 exists
+   to quantify. (c) **The fix is a training-side change and it is cheap exactly now**: a
+   terminator after the middle, reusing one of §7's twelve framing pieces, which costs no
+   parameters and breaks no §4.1 matching. It costs a pilot re-run today and six core runs later.
+   **Decide before Week 9**, together with open question 5 — they are the same conversation about
+   whether Ravaan-AR is a fair FIM baseline or a straw one.
+
+10. **The inference-side asymmetry §4.1 cannot match, written down before it turns up inside a
+    results table.** A diffusion decode is handed the width of its answer before its first forward
+    pass; an AR decode chooses its own and stops at EOS. That is a property of the factorization,
+    not a defect of either implementation — and it means every conditional metric in §8.3 scored
+    against a gold string of known length gives the diffusion arm a hint the AR arm has to infer.
+    `Prompt.hinted_length` records the size of the hint so the report can carry it.
+
+**Two things this session got wrong first, both worth the note**
+
+- **The first sampling run used one seed for all six prompts**, so `lm/free` — which has no prompt
+  — produced six identical samples and the summary averaged one sample six times. Visible only
+  because six metrics matched to sixteen decimal places. Fixed to seed + prompt index.
+- **The first reading of the DIFF collapse blamed the canvas width.** The diffusion arm has only
+  ever seen 512-token sequences and was being decoded on a 161-token one, which is a real
+  difference and was the obvious suspect. Tested: at 512 the collapse is *worse* (repetition 0.68
+  against 0.33). Ruling it out is what made Finding AO findable — the alternative explanation had
+  to go before the measurement was worth taking.
+
+**Noted, not done**
+
+- **`ravaan/console.py`'s class fix covered the twelve console entry points and not the drivers.**
+  Ten of sixteen `scripts/*.py` still inline the same three lines of `reconfigure`; only
+  `substitutions.py` and `sample.py` call `pin_utf8_streams()`. This is the shape session 14's
+  note warned about in its own words — "a prescription that names three of twelve members is the
+  same bug returning" — and it is mechanical, ten files, three lines each. Left out of this
+  session because the deliverable was the sampler and ten unrelated drivers is risk this session
+  did not need to take.
+
 ---
 
 ## Open questions for you
@@ -3413,13 +3574,19 @@ already being recorded in JSON. **The fourteen fraction checkpoints were kept de
    - Unchanged and still true: **free RAM ~2 GB of 16 GB**, so this machine cannot stage a large
      intermediate and is **not** a candidate for the freeze's 32 GB CPU pass.
 
-5. **The infilling share — the last open design question, and it now blocks Week 6.** PRD §4.2 sets
-   10%; reported FIM practice is 50–90% with no left-to-right degradation (review §6). If 10% leaves
-   Ravaan-AR genuinely bad at infilling, ablation A2 loses its meaning — the *fair* baseline would
-   also be undertrained, and §4.1's whole fairness argument weakens. **Decide before the task
-   mixture is frozen ahead of Stage C**, i.e. before the training code is written. Carried in the
-   list below since session 4 and never answered; promoted here because Week 6 is next after the
-   freeze and this is the one thing that cannot be deferred past it.
+5. **The infilling share, and now Finding AQ with it — one conversation, due before Week 9.** PRD
+   §4.2 sets the infilling share at 10%; reported FIM practice is 50–90% with no left-to-right
+   degradation (review §6). If 10% leaves Ravaan-AR genuinely bad at infilling, ablation A2 loses
+   its meaning — the *fair* baseline would also be undertrained, and §4.1's whole fairness argument
+   weakens. Carried unanswered since session 4.
+   **Session 22 found the second half of the same question.** §4.2's AR FIM framing has no
+   terminator after the middle, so the model was never taught where an infill *ends*: it stopped on
+   5 of 12 prompts and its median generation was the budget, against a 32-token hole (Finding AQ).
+   §8.3's infill exact-match is therefore not computable for the AR arm as trained, and scored
+   anyway it inflates toward diffusion.
+   Both are the same question — *is Ravaan-AR a fair FIM baseline or a straw one* — and both are
+   one framing token and a pilot re-run today against six core runs later. **Decide them together,
+   before the first core run.**
 
 6. **Does PRD §6.2's Roman-Urdu-Parl warning get amended for Finding AE?** *Your call — the PRD is
    the spec and v2.3 was cut the same day.* Nothing in the design changes and no number in the PRD
@@ -3467,11 +3634,20 @@ already being recorded in JSON. **The fourteen fraction checkpoints were kept de
 
 **START HERE. The corpus freeze has one pass left, and it needs a rented Linux box — not Colab,
 not Kaggle, not this machine.** Everything else in stages 6+7 is done and on disk. This was true at
-the end of session 17 and it is still true: sessions 18 through 21 could not move it, so they took
-the work that does not depend on it. **That work is now done and committed** — Weeks 5–7 are
-complete, §4.1's matched pair is implemented and running on real Urdu, and G3's resume half passes
-on both arms. **The freeze is the only thing left.** Steps 1–5 below are unchanged; step 6 has
-moved a long way.
+the end of session 17 and it is still true: sessions 18 through 22 could not move it, so they took
+the work that does not depend on it. **That work is now finished** — Weeks 5–8 are complete, §4.1's
+matched pair trains on real Urdu, and both halves of G3 are answered. **The freeze is the only
+thing left that is blocked on you.** Steps 1–5 below are unchanged; step 6 is closed and replaced
+by step 7, which is a decision rather than a task.
+
+> **⚠️ Session 22 put two things on the critical path that were not on it before, and both are
+> cheap now and expensive after Week 9 starts.** Read step 7 before renting anything.
+> **(a) Finding AQ — §4.2's AR FIM framing has no middle terminator**, so the AR arm cannot know
+> where an infill ends and §8.3's infill exact-match is not computable for it as trained. One
+> framing token, one pilot re-run now; six core runs later.
+> **(b) G3's coherence half FAILS.** The pilot diffusion arm does not produce coherent Urdu under
+> any of 16 decoder settings. That is a statement about 368M training tokens and not about masked
+> diffusion, and §11 still has to be told.
 
 > **⚠️ Two hosting facts changed in session 21 and they are the first thing to read.**
 > **(a) Kaggle is out for anything needing a GPU (Finding AL)** — phone verification gates
@@ -3596,68 +3772,100 @@ Filtering on the eight confirmed words alone is cheap (2.77% of surviving rows) 
 Filtering on the full 225-candidate screen needs the native-speaker pass first, or it deletes
 `فروری`→`feb` along with `کرتے`→`baghaawat`. **Do not filter on the screen unadjudicated.**
 
-### 6. The pilots (G3) — half done, and the remaining half is one command
+### 6. The pilots (G3) — ✅ closed in session 22, and the verdict is split
 
-> **✅ The run completed on 2026-09-13. G3's resume half PASSES on both arms.** 25M, both arms,
-> 50 epochs, 5,614 steps over 367,919,104 tokens each — AR 2.843 h, DIFF 2.61 h on the 4060.
-> `runs/pilot/pilot_results.json` and `reports/.pilot_g3.log` hold it; the seven fraction
-> checkpoints per arm are in `runs/pilot/pilot-{ar,diff}/` and **§4.3's curve infrastructure
-> therefore works end to end**, which was never separately checked.
+> **Resume half: PASS on both arms** (session 21). 25M, 50 epochs, 5,614 steps over 367,919,104
+> tokens each — AR 2.843 h, DIFF 2.61 h on the 4060. The seven fraction checkpoints per arm are in
+> `runs/pilot/pilot-{ar,diff}/`, so **§4.3's curve infrastructure works end to end** too.
 >
-> **⚠️ The coherence half is still open and cannot be closed yet: `ravaan/sampling/` is a one-line
-> stub.** There is no sampler. Writing one is the cheapest remaining piece of modelling work and
-> it needs `ar_f1.pt` / `diff_f1.pt`, both kept for that purpose.
+> **Coherence half: FAIL** (session 22). AR produces fluent Urdu; **DIFF does not, under any of the
+> 16 decoder settings measured.** [`reports/pilot_coherence.md`](reports/pilot_coherence.md) is the
+> writeup, [`reports/pilot_samples.md`](reports/pilot_samples.md) the text, and
+> `reports/pilot_samples.jsonl` the 306 records behind both.
 
+**Do not read the FAIL as a result about masked diffusion.** It is 25M parameters at 368M training
+tokens on a 7.36M-token pilot corpus — G3 is a go/no-go on the *pipeline*, and the pipeline works:
+both arms train, checkpoint, resume exactly, and decode. What the failure earns is the three
+decoder findings in §7 below, which *are* properties of the procedure and do carry forward.
 
-G3 asks two things: *"20M pilot DIFF produces coherent Urdu after 50 epochs; both models resume
-from checkpoint correctly."* **The resume half is answered and it PASSES on both arms** — the
-kernel trains, saves, reloads into a fresh model and asserts every parameter is identical, and it
-did. The coherence half needs the full 50-epoch run and a reader.
-
-Kernel 10 now runs on this machine (Finding AL — it never could have run on Kaggle):
+Re-run the samples any time with:
 
 ```
-RAVAAN_EPOCHS=50 RAVAAN_SIZE=25M python -u kaggle/train_10_pilot.py
+python scripts/sample.py --checkpoint runs/pilot/pilot-ar/ar_f1.pt \
+    --checkpoint runs/pilot/pilot-diff/diff_f1.pt \
+    --corpus data/packed-pilot --out reports/pilot_samples --samples 6 --new-tokens 160
 ```
 
-**~5.5 h for both arms** at 37k tok/s on the 4060 (7,358,976 train tokens × 50 × 2 arms). Use
-`python -u` — the early prints have no `flush=True`, so a redirected run looks hung for the first
-several minutes otherwise. `RAVAAN_OUT` moves the checkpoints off `runs/pilot`.
+~8 minutes on the 4060. Re-run the pilot itself with
+`RAVAAN_EPOCHS=50 RAVAAN_SIZE=25M python -u kaggle/train_10_pilot.py` (~5.5 h, both arms) — and
+`python -u`, because the early prints have no `flush=True` and a redirected run looks hung.
+**Read the realized mixture the driver prints, not the loss**: Finding AJ's starved mixture showed
+up there and nowhere else, and Finding AN's bare objective showed up in neither.
 
-Three things this kernel was wrong about until it was actually run, all now fixed and all worth
-knowing because the *class* recurs:
+⚠️ Session 19's Finding AG still applies hardest here: **the diffusion arm's per-step loss is a far
+noisier estimator than AR's** — inside the noise at 300 steps of four sequences, clear at 1,200. A
+flat diffusion curve in a short pilot is not evidence of anything.
 
-* **⚠️ It never built §4.2's task mixture at all (Finding AN).** `Trainer(tasks=None)` is a valid
-  call, so it trained plain LM and the loss curve gave no sign — the pilot would have answered G3
-  about an objective the experiment does not use. `build_tasks` has moved from `scripts/train.py`
-  into `ravaan.training.tasks` so every caller reaches the same one, it has tests for the first
-  time, and the kernel now prints the realized shares. **Read that block, not the loss.**
+### 7. ⚠️ Two decisions session 22 put on the table, both due before Week 9
 
-* **It measured its second arm under the first arm's VRAM.** DIFF read 14,546 tok/s inside the
-  kernel against 40,575 standalone — a 2.8× penalty that falls on whichever arm runs second, and
-  would have made the only in-kernel comparison of the two arms an ordering artefact. It now drops
-  the previous arm before building the next.
-* **Its G2 line printed a PASS against the pilot's budget.** `throughput` derives `hours_per_run`
-  from `config.tokens_processed`, and the kernel had overridden that to epochs-over-the-pilot — so
-  it reported 0.05 h per "§4.3 run" and `$0.11 for 6 (PASS)`. A gate reporting pass on the wrong
-  quantity is Finding U's shape exactly. The measurement now takes `TrainingConfig()`'s real 9.9B
-  and only the training takes the pilot's.
+Neither is a task. Both get *more* expensive the moment the core runs start, and both are about
+§4.1's fairness argument rather than about the corpus — which is why they do not wait on the
+freeze.
 
-⚠️ **Read the realized mixture the driver prints, not just the loss** — Finding AJ's starved
-mixture showed up there and nowhere else.
+**(a) Finding AQ — give the AR arm a FIM middle terminator, or don't.** `_frame_infill`'s AR branch
+builds `<infill> <fim_prefix> prefix <fim_suffix> suffix <fim_middle> middle` and the middle runs
+to the end of the sequence with **no terminator after it**. Measured: over 12 infill prompts with a
+32-token hole, the AR arm stopped 5/12 and its median generation was the 200-token budget; the
+stops it did make were 33, 86, 124, 127, 152 tokens long. The 5/12 is stage 10's document separator
+at its corpus rate — `lm/free`, which has no middle at all, stops 4/12.
 
-Two things to carry into it, both from session 20:
+So **§8.3's infill exact-match is not computable for the AR arm as trained**, and the metric as
+scored inflates *toward diffusion* — the opposite direction from the one A2 exists to quantify. The
+fix is one of §7's twelve framing pieces placed after the middle: no parameters, no §4.1 breakage,
+one pilot re-run. **After Week 9 it is six runs.**
 
-* **Pass `--tokenizer`.** §4.2's corruptions decode packed sequences back to text, so a run without
-  §7's model on the box falls back to nothing — `build_tasks` raises rather than quietly training
-  plain LM, but the kernel has to ship the tokenizer alongside the corpus for that not to fire.
-* **Read the realized mixture the driver prints, not just the loss.** Finding AJ's starved mixture
-  showed up there and nowhere else — the loss curve was entirely unremarkable while three of
-  §4.2's five objectives were at 0.00%.
+**(b) Open question 5, the infilling share, which this makes urgent rather than merely open.**
+§4.2 sets 10%; reported FIM practice is 50–90%. The two are one conversation: both decide whether
+Ravaan-AR is a fair FIM baseline or a straw one, and A2's entire meaning rides on the answer.
+**Decide them together, and before the first core run.**
 
-⚠️ And the standing warning from session 19's Finding AG applies hardest here: **the diffusion
-arm's per-step loss is a far noisier estimator than AR's**, inside the noise at 300 steps of four
-sequences and clear at 1,200. A flat diffusion curve in a short pilot is not evidence of anything.
+**And three things to carry into Week 12's eval, from the same session:**
+
+* **`</s>` must be forbidden when the diffusion arm decodes a fixed-width canvas (Finding AO).**
+  `scripts/sample.py --forbid-eos always`. The number that argues for it: 47% of the confidence
+  schedule's first 128 commits are `</s>`, and the Arabic-script share of the sample goes
+  0.000 → 1.000 when it is refused. Not defaulted, because `</s>` is genuinely in the training
+  distribution as stage 10's document separator — so the decision is stated in the report.
+* **A3's table must not be written as "more steps, better" (Finding AP).** At pilot scale the
+  confidence schedule degrades monotonically from 8 steps to 64 on every axis. One seed, one model
+  size — but it is the opposite of the default assumption, so measure before assuming.
+* **§8.3's three generation metrics cannot tell fluent Urdu from Urdu-shaped noise.** AR and DIFF
+  score within 0.09 of each other on all three while producing text a reader separates instantly.
+  **§8.4's human evaluation is the only instrument in the plan that can** — so open question 3's
+  three annotators are load-bearing, and they have weeks of lead time.
+
+### What session 22 settled, so it is not re-opened
+
+- **The diffusion collapse is not a canvas-width artefact.** The arm has only ever seen 512-token
+  sequences and was first decoded on a 161-token one, which is a real difference and was the
+  obvious suspect. Measured at 512: the collapse is **worse** (repetition 0.68 against 0.33). The
+  alternative explanation had to go before Finding AO's measurement was worth taking, and it is
+  gone — do not re-derive it.
+- **`</s>` is not hard-coded into the diffusion decoder, and that is the decision rather than an
+  omission.** It is genuinely in the training distribution as stage 10's document separator, so
+  forcing it out would change a distribution rather than fix a framing. `sample_diffusion` forces
+  only its own `<mask>`; everything else is `scripts/sample.py --forbid-eos`, swept and reported.
+- **There is no KV cache in the AR decoder and there should not be one yet.** It would add an
+  inference path through `Attention` that the diffusion arm cannot use and training never
+  exercises, and §4.1's matched pair is held together by there being exactly one attention
+  implementation. Revisit only if §8.4 needs thousands of generations — and then test the cached
+  path for bit-identical logits before believing anything it produces.
+- **A4's two schedules commit the same number of positions per step.** Drawing the count as well —
+  one Bernoulli per masked position, the exact ancestral sampler for this chain — would make the
+  schedules differ in two things at once and the ablation would not measure what it names. The cost
+  is that `random` is a fixed-count approximation rather than the process itself, which
+  `ravaan/sampling/diffusion.py` states and the report must carry, in the same way §4.3 carries
+  "the diffusion arm's number is a bound".
 
 ### What session 20 settled, so it is not re-opened
 
@@ -3712,6 +3920,13 @@ parallel passes are free in cores and are not free when they contend on one file
 with small outputs; packed arm A is ~200 MB. It fits, with no room for a second copy of anything.
 
 **Carried forward**
+
+- **⚠️ `ravaan/console.py`'s class fix covered the twelve console entry points and stopped there.**
+  Ten of sixteen `scripts/*.py` still inline the same three lines of `reconfigure`; only
+  `substitutions.py` and `sample.py` call `pin_utf8_streams()`. Session 14's own note names the
+  shape — "a prescription that names three of twelve members is the same bug returning" — and this
+  is that, one layer out. Ten files, three lines each, no behaviour change. Session 22 left it
+  because its deliverable was the sampler; take it the next time anything in `scripts/` is opened.
 
 - ~~**⚠️ The PRD has not been amended for Finding R.**~~ **Done in session 12 — PRD v2.2.** §0.2
   carries the changelog, §6.1 separates pool targets from arm budgets and states the mixture, §4.3

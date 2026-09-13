@@ -175,6 +175,15 @@ class SentencePieceTokenizer:
     def encode(self, text: str) -> list[int]:
         return list(self._sp.encode(text, out_type=int))
 
+    def decode(self, ids: Iterable[int]) -> str:
+        """Ids back to text. Stage 10 never needs this; §4.2's corruptions do.
+
+        The corruptions are text transforms, so a packed sequence has to come back to text before
+        it can be damaged. Not part of the :class:`Tokenizer` protocol above — that protocol is
+        what *this stage* needs, and widening it would make the seam claim more than it checks.
+        """
+        return str(self._sp.decode(list(ids)))
+
 
 def is_placeholder(tokenizer: Tokenizer) -> bool:
     return tokenizer.tokenizer_id.startswith(PLACEHOLDER_PREFIX)

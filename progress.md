@@ -79,8 +79,13 @@ first.**
   vowel-less Roman that tokenized at 1.80 tokens per native token and was fixed to 1.54 by
   inherent-vowel epenthesis; the mixture's apportionment **starved three of the five tasks to
   0.00% at every microbatch a host actually fits** (Finding AJ); and `evaluate` was rescaling the
-  two arms' bits-per-byte by different amounts (Finding AK). **The corpus freeze is now the only
-  thing left on the critical path, and it still needs one rented box.**
+  two arms' bits-per-byte by different amounts (Finding AK). **Session 21 committed all of it**,
+  and then answered the two hosting questions that had been open since Week 6: **Kaggle gates
+  accelerators as well as internet, so kernel 10 could never have run there (Finding AL)**, and
+  **this machine has had an RTX 4060 all along, behind a CPU-only torch wheel.** G2 is measured on
+  it — with **both arms within 2.2% of each other in wall-clock cost, matching their identical
+  parameter counts (Finding AM)** — and G3's resume half **passes on both arms**. **The corpus
+  freeze is now the only thing left on the critical path, and it still needs one rented box.**
 - **Gate G0:** ✅ **PASSED** 2026-08-03 — comparison confirmed unpublished. See
   [`reports/literature_review.md`](reports/literature_review.md).
 - **Design decision:** ✅ **Option 2 (two-point law) chosen** 2026-08-03. U ∈ {25M, 100M}; 3 seeds
@@ -228,9 +233,13 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | ↳ **Finding AJ** — fixed-tie-break apportionment starved 3 of 5 tasks at microbatch 4 | §4.2 | ✅ systematic sampling, unbiased at size 1 |
 | ↳ Finding AK — `evaluate` rescaled AR's BPB by L/(L−1); `LossOutput.scored` fixes it | §8.3 | ✅ and the framings need it far more |
 | ↳ synthetic Roman is 1.54 tokens per native token, not ~0.93 | §7, §8.2 | ⚠️ measured, in the report's caveats |
-| **G2** — measured throughput implies 6 runs ≤ $90 | §11 | ⬜ `train.py throughput --corpus` on the real GPU |
+| **G2** — measured throughput implies 6 runs ≤ $90 | §11 | 🟡 measured on a local 4060; the *rented* card decides it |
+| ↳ the requirement, in hardware terms: **64,162 tok/s**, against 37,236 at 25M here | §11 | ✅ session 21 |
+| ↳ Finding AM — both arms cost the same per token, within 2.2% | §4.1 | ✅ and it is the half that transfers |
 | ↳ §4.2's generator is ~180 ms of CPU per 256-sequence step — G2 must measure it | §11 | ✅ `throughput` builds tasks by default |
-| **G3** — 20M pilot, both arms, resume | §11 | 🟡 kernel 10 written, not yet pushed |
+| **G3** — 20M pilot, both arms, resume | §11 | 🟡 resume half **PASS** both arms; coherence needs the 50-epoch run |
+| ↳ Finding AL — Kaggle gates GPUs too, so kernel 10 runs locally | §9 | ✅ host-agnostic, Kaggle branch kept |
+| ↳ the kernel measured its second arm under the first arm's VRAM (2.8× penalty) | §4.1 | ✅ fixed, found by running it |
 | Core runs (W9–11, **G4**) → eval (W12) → human eval (W13, **G5**) → demo (W14) → report (W15–16) | | ⬜ |
 
 ---
@@ -3179,6 +3188,94 @@ python scripts/train.py run … --no-tasks                            # bare obj
 python scripts/train.py throughput --corpus data/packed-pilot …     # G2, with §4.2's CPU cost in it
 ```
 
+### Session 21 — 2026-09-13
+
+**Done**
+
+1. **Committed sessions 18–20.** Nine commits: §7's tokenizer and its artifacts, §5's backbone and
+   both arms, §4.2's corruptions and task mixture, Week 7's training loop, the pilot corpus and
+   kernel 10, and session 18's evidence — which the *instrument* had been committed without, the
+   same class of gap as Finding AD. All 792 tests green before and after.
+
+2. **A local GPU exists, which answers open question 4 with a "yes" nobody had checked.** RTX 4060
+   Laptop, Ada (8.9), 8.59 GB, native bf16 — §5's precision in hardware rather than emulated. The
+   installed torch was a **CPU-only build**, so the card had been sitting unused behind a wheel
+   choice. `torch==2.13.0+cu126` is the exact version the whole suite was written against, so only
+   the backend changed; the suite is still green on it.
+
+3. **Finding AL — Kaggle's accelerators are behind phone verification too, so kernel 10 could
+   never have run there.** Fixed by making the kernel host-agnostic, the way
+   `colab/freeze_colab.py` already was.
+
+4. **Finding AM — the two arms cost the same to train, measured rather than argued.**
+
+5. **G2 measured on this card, and the number that matters is the one it implies about a rented
+   one.** Below.
+
+#### Finding AL — phone verification gates Kaggle's GPUs, not just its network
+
+Finding Z′ (session 16) established that an unverified Kaggle account gets no notebook internet,
+and the conclusion drawn from it — carried in open question 2 and in the Week 8 row — was that
+**"Kaggle remains usable for the Week 8 pilots"**, on the reasoning that a validation run needs no
+network if its inputs are uploaded as datasets. That reasoning is sound and the conclusion is still
+wrong, because it answered the wrong half: the same verification gates **accelerators**. A pilot
+needs a GPU. So kernel 10 was written, reviewed and committed for a host that cannot run it.
+
+The error is worth naming precisely because the code was not at fault and the tests would never
+have caught it. Finding Z′ measured one capability, and the note generalised from it to a *host*
+being usable. The repair is the same shape as `colab/freeze_colab.py`, which was written for Colab
+and depends on nothing Colab provides: kernel 10's *logic* was already host-neutral and only its
+paths were not. `discover()` now falls back to the repo and `data/packed-pilot`, `working_dir()`
+to `runs/pilot`, both overridable by environment, and the Kaggle branch is untouched for the day
+the account is verified.
+
+**The sixth Windows text default, found in the first second of running it off Linux.** cp1252
+raises rather than mangles, and the kernel prints ⚠️ in its pilot-corpus warning, so the run died
+between the corpus summary and the first step. `ravaan.console.pin_utf8_streams` is session 14's
+class fix and it is *called* here rather than copied — which is the whole point of that session's
+note, and the first time the class fix has been reached for by something written outside `scripts/`.
+
+#### Finding AM — AR and DIFF cost the same per token, within 2.2%
+
+| arm | parameters | tokens/s | s/step | h per §4.3 run |
+|---|---|---|---|---|
+| AR | 69,975,680 | 14,128 | 0.5798 | 194.65 |
+| DIFF | 69,975,680 | 14,438 | 0.5674 | 190.47 |
+
+70M, microbatch 16, §4.2's generator in the loop, on the 4060. The parameter counts are *identical*
+— §5's "within 2%" is 0%, as `assert_matched` insists — and now the **wall-clock cost** is matched
+too, with diffusion marginally ahead because it builds no causal mask.
+
+This matters more than the absolute numbers and it is the half that transfers: a ratio measured on
+one card is a ratio on any card, while tokens/second is a property of this laptop. §4.1's fairness
+argument has so far rested on the two arms sharing a backbone, a config, a corpus and a task
+mixture. It now also rests on neither arm being able to buy an advantage by being cheaper to run at
+a fixed token budget — if DIFF had been 30% slower, an equal-token comparison would have been an
+unequal-compute one, and §4.3's curve would have needed a second x-axis.
+
+#### G2 on a proxy card, and the target it sets for a real one
+
+`throughput`'s docstring says "run it on the instance type you intend to rent, not on a proxy", and
+a 75 W laptop 4060 is a proxy. So the printed **FAIL** is not G2's verdict — it prices this card's
+throughput at an A10G-class spot rate, which is a question nobody asked. What the pass *does* buy
+is the requirement, stated in hardware terms:
+
+| rung | parameters | tokens/s here | h/run | **needed vs. this card** |
+|---|---|---|---|---|
+| 70M | 69,975,680 | 14,128 | 194.7 | **4.54×** |
+| 40M | 40,020,480 | 23,056 | 119.3 | **2.78×** |
+| 25M | 20,453,760 | 37,236 | 73.9 | **1.72×** |
+
+$90 for 6 runs at $0.35/hr is 42.9 h/run, which at §4.3's 9.9B tokens is **64,162 tokens/second**.
+No rung passes on this card — 25M is still 1.7× short — so the rented card decides G2 and the
+ladder decides how much card is needed. That turns "rent and measure" into a spec-sheet check made
+*before* money is spent, which is what G2 was for.
+
+⚠️ **8 GB is the binding constraint locally, not speed.** The 25M pilot at microbatch 32 sits at
+7.8 GB of 8.19 GB. The 70M rung will not fit at that batch size, and the G2 figures above are all
+at microbatch 16 for that reason.
+
+
 ---
 
 ## Open questions for you
@@ -3193,11 +3290,16 @@ python scripts/train.py throughput --corpus data/packed-pilot …     # G2, with
    - **Kaggle account: exists** (`awaisbinadil`), CLI authenticated by OAuth, and
      `kaggle/push.py` drives it end to end.
    - **But its notebooks get no internet**, because phone verification is not available on the
-     account (Finding Z′). That does **not** rule Kaggle out for §9's validation role — a validation
-     run needs no network if its inputs are uploaded as datasets, and the Week 8 pilots read packed
-     shards measured in hundreds of MB rather than the freeze's 7.7 GB. It does mean **no Kaggle job
-     can ever fetch anything**, so every input has to be uploaded from here or produced there.
-     Worth knowing before Week 6 plans around it.
+     account (Finding Z′). **No Kaggle job can ever fetch anything**, so every input has to be
+     uploaded from here or produced there.
+   - ~~That does not rule Kaggle out for §9's validation role.~~ **⚠️ It does, and session 21
+     measured why — Finding AL.** The same verification gates **accelerators**, not only the
+     network, so *no Kaggle job can ever have a GPU either*. The reasoning this bullet used to
+     carry — that a validation run needs no network if its inputs are uploaded — was sound and
+     answered the wrong half of the question. **Kaggle is out for every GPU role**: the Week 8
+     pilots, §9's validation, and Week 9's runs. It remains usable only for CPU work with uploaded
+     inputs, which after the freeze is nothing the project still needs.
+   - **✅ Which no longer costs anything, because there is a local GPU** — see question 4.
    - **⚠️ Now blocking, as of session 17: a rented CPU box.** This stopped being a Week 6 question.
      FineWeb2's stage 6+7 pass is the freeze's last outstanding step and Colab refused it on both
      time and memory, so **the corpus cannot be frozen until a 32 GB Linux box is rented for
@@ -3210,14 +3312,20 @@ python scripts/train.py throughput --corpus data/packed-pilot …     # G2, with
 3. **Annotators.** §8.4 needs 3 fluent Urdu speakers for ~2 hours each in Week 13, and §8.2 needs
    ~200 hand-written transliteration pairs. Both are favour-sized asks that take weeks of lead
    time. Worth lining up people now, not in Week 12.
-4. **Hardware here.** Is there a local GPU on this machine for the tiny pilots, or is everything
-   going to a free tier? Changes how the Week 6–7 throughput work gets set up. Measurements that
-   bear on it: **free disk ~8 GB** with `data/raw` at 7.8 GB, and **free RAM ~2 GB of 16 GB** — so
-   this machine can no longer stage a large intermediate, and a rented box or Colab's ~100 GB of
-   scratch is the project's largest spare resource. If the answer is "no local GPU", Colab is the
-   pilot host and its ~12.7 GB is the number Week 6's throughput work has to fit. **Kaggle remains
-   usable for the Week 8 pilots** despite Finding Z′ — a validation run needs no network if its
-   inputs are uploaded as datasets, and packed shards are hundreds of MB, not 7.7 GB.
+4. ~~**Hardware here.**~~ **Answered in session 21: yes — an RTX 4060 Laptop, 8.19 GB, Ada (8.9),
+   with native bf16, which is §5's precision in hardware rather than emulated.** It had been there
+   all along behind a CPU-only torch wheel; `torch==2.13.0+cu126` is the exact version the suite
+   was written against, so only the backend changed and all 792 tests still pass. **This machine
+   is the pilot host**, which given Finding AL is fortunate rather than merely convenient — the
+   alternative was Colab, since Kaggle cannot give a notebook a GPU at all.
+   - **The binding constraint is VRAM, not speed.** 25M at microbatch 32 sits at 7.8 GB of 8.19,
+     so the 70M rung does not fit at that batch size and every G2 figure is at microbatch 16.
+   - **It is a proxy for the rented card, never a substitute.** `throughput`'s docstring says to
+     measure on the instance you intend to rent; what this card establishes is the *requirement* —
+     64,162 tok/s to pass G2, against 37,236 at 25M here. See Finding AM and the ladder in the
+     session 21 log.
+   - Unchanged and still true: **free RAM ~2 GB of 16 GB**, so this machine cannot stage a large
+     intermediate and is **not** a candidate for the freeze's 32 GB CPU pass.
 
 5. **The infilling share — the last open design question, and it now blocks Week 6.** PRD §4.2 sets
    10%; reported FIM practice is 50–90% with no left-to-right degradation (review §6). If 10% leaves
@@ -3272,18 +3380,29 @@ python scripts/train.py throughput --corpus data/packed-pilot …     # G2, with
 ## Next session
 
 **START HERE. The corpus freeze has one pass left, and it needs a rented Linux box — not Colab,
-not this machine.** Everything else in stages 6+7 is done and on disk. This was true at the end of
-session 17 and it is still true: sessions 18, 19 and 20 could not move it, so they took the work
-that does not depend on it. **That work is now done** — Weeks 5–7 are complete and §4.1's matched
-pair is implemented, tested and running on real Urdu — so **the freeze is no longer merely next,
-it is the only thing left.** Steps 1–5 below are unchanged, and step 6 is new.
+not Kaggle, not this machine.** Everything else in stages 6+7 is done and on disk. This was true at
+the end of session 17 and it is still true: sessions 18 through 21 could not move it, so they took
+the work that does not depend on it. **That work is now done and committed** — Weeks 5–7 are
+complete, §4.1's matched pair is implemented and running on real Urdu, and G3's resume half passes
+on both arms. **The freeze is the only thing left.** Steps 1–5 below are unchanged; step 6 has
+moved a long way.
 
-> **What is *not* blocked, and is worth doing while the box is being rented:** G2. Run
-> `python scripts/train.py throughput --arm ar --size 70M --device cuda --corpus data/packed-pilot
-> --tokenizer data/tokenizer/ravaan-16k.model --microbatch 16` on whatever GPU is available —
-> including the free Kaggle T4, as long as the report says which card it was. It needs the pilot
-> corpus and not the frozen one, and **it must carry `--corpus` or the number leaves out §4.2's
-> generator**, which is ~180 ms of CPU per 256-sequence step against a step time of the same order.
+> **⚠️ Two hosting facts changed in session 21 and they are the first thing to read.**
+> **(a) Kaggle is out for anything needing a GPU (Finding AL)** — phone verification gates
+> *accelerators*, not only notebook internet, so kernel 10 could never have run there. Open
+> question 2's old "Kaggle remains usable for the Week 8 pilots" is struck.
+> **(b) There is a local GPU, and it had been there all along** — an RTX 4060 Laptop, 8.19 GB, Ada,
+> native bf16. The installed torch was a CPU-only wheel; `torch==2.13.0+cu126` fixed it without
+> moving a version the suite depends on. **This machine is the pilot host.**
+
+> **G2 is measured but not settled, and that is the correct state.** On this card, at 70M with
+> §4.2's generator in the loop: AR **14,128 tok/s**, DIFF **14,438** — 190–195 h per §4.3 run, so
+> the printed verdict is FAIL. **That verdict is not G2's**, because `throughput`'s own docstring
+> says to measure on the instance you intend to rent and a 75 W laptop card is a proxy. What the
+> measurement *does* settle is the requirement: **$90 for 6 runs at $0.35/hr is 42.9 h/run, which
+> at 9.9B tokens is 64,162 tok/s** — 4.54× this card at 70M, 2.78× at 40M, 1.72× at 25M. Check a
+> spec sheet against that *before* renting, which is what G2 was for. And note the real local
+> limit is **VRAM, not speed**: 25M at microbatch 32 already sits at 7.8 GB of 8.19.
 
 ### Where the freeze stands
 
@@ -3391,15 +3510,38 @@ Filtering on the eight confirmed words alone is cheap (2.77% of surviving rows) 
 Filtering on the full 225-candidate screen needs the native-speaker pass first, or it deletes
 `فروری`→`feb` along with `کرتے`→`baghaawat`. **Do not filter on the screen unadjudicated.**
 
-### 6. The pilots (G3), which no longer wait on anything
+### 6. The pilots (G3) — half done, and the remaining half is one command
 
-Everything G3 asks — "20M pilot DIFF produces coherent Urdu after 50 epochs; both models resume
-from checkpoint correctly" — is runnable now, on the pilot corpus and a free GPU. Kernel 10 is
-written and has never been pushed.
+G3 asks two things: *"20M pilot DIFF produces coherent Urdu after 50 epochs; both models resume
+from checkpoint correctly."* **The resume half is answered and it PASSES on both arms** — the
+kernel trains, saves, reloads into a fresh model and asserts every parameter is identical, and it
+did. The coherence half needs the full 50-epoch run and a reader.
+
+Kernel 10 now runs on this machine (Finding AL — it never could have run on Kaggle):
 
 ```
-python kaggle/push.py data && python kaggle/push.py push 10
+RAVAAN_EPOCHS=50 RAVAAN_SIZE=25M python -u kaggle/train_10_pilot.py
 ```
+
+**~5.5 h for both arms** at 37k tok/s on the 4060 (7,358,976 train tokens × 50 × 2 arms). Use
+`python -u` — the early prints have no `flush=True`, so a redirected run looks hung for the first
+several minutes otherwise. `RAVAAN_OUT` moves the checkpoints off `runs/pilot`.
+
+Two things this kernel was wrong about until it was actually run, both now fixed and both worth
+knowing because the *class* recurs:
+
+* **It measured its second arm under the first arm's VRAM.** DIFF read 14,546 tok/s inside the
+  kernel against 40,575 standalone — a 2.8× penalty that falls on whichever arm runs second, and
+  would have made the only in-kernel comparison of the two arms an ordering artefact. It now drops
+  the previous arm before building the next.
+* **Its G2 line printed a PASS against the pilot's budget.** `throughput` derives `hours_per_run`
+  from `config.tokens_processed`, and the kernel had overridden that to epochs-over-the-pilot — so
+  it reported 0.05 h per "§4.3 run" and `$0.11 for 6 (PASS)`. A gate reporting pass on the wrong
+  quantity is Finding U's shape exactly. The measurement now takes `TrainingConfig()`'s real 9.9B
+  and only the training takes the pilot's.
+
+⚠️ **Read the realized mixture the driver prints, not just the loss** — Finding AJ's starved
+mixture showed up there and nowhere else.
 
 Two things to carry into it, both from session 20:
 

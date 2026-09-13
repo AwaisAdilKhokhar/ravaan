@@ -26,6 +26,7 @@ schedule asks for.
 
 from __future__ import annotations
 
+import gc
 import json
 import os
 import sys
@@ -151,14 +152,33 @@ def main() -> int:
           f"{config.total_steps:,} steps of {tokens_per_step:,}")
 
     results = {}
+    previous: list = []
     for arm in ("ar", "diff"):
         print(f"\n{'=' * 68}\n{arm.upper()}\n{'=' * 68}", flush=True)
+        # Whatever the last arm left on the card goes before this one is built. Without it the
+        # second arm is measured against 8 GB minus the first arm's weights, optimizer state and
+        # the resume check's second copy — which showed up as DIFF at 14,546 tok/s inside this
+        # kernel against 40,575 standalone, a 2.8x penalty that falls on whichever arm runs
+        # second and would have made the in-kernel arm comparison pure ordering artefact.
+        previous.clear()
+        gc.collect()
+        if device == "cuda":
+            torch.cuda.empty_cache()
+            torch.cuda.reset_peak_memory_stats()
         model = RavaanAR(model_config) if arm == "ar" else RavaanDiffusion(mask_id, model_config)
 
         if device == "cuda":
-            speed = throughput(model, config, device=device, microbatch=microbatch, steps=10)
+            # §4.3's budget, not the pilot's. `config` below has `tokens_processed` set to
+            # epochs over the pilot corpus, and handing that to `throughput` makes
+            # `hours_per_run` a figure for a run nobody is costing — it printed 0.05 h and a
+            # G2 PASS at $0.11 for 6 runs. A gate that reports pass on the wrong quantity is
+            # Finding U's shape, so the measurement takes the default config and only the
+            # training below takes the pilot's.
+            speed = throughput(model, TrainingConfig(), device=device,
+                               microbatch=microbatch, steps=10)
             print(f"G2 throughput: {speed['tokens_per_second']:,} tok/s, "
-                  f"{speed['hours_per_run']} h per §4.3 run, "
+                  f"{speed['hours_per_run']} h per §4.3 run of "
+                  f"{TrainingConfig().tokens_processed:,.0f} tokens, "
                   f"${speed['usd_for_6_runs_at_0.35']} for 6 at $0.35/hr "
                   f"({'PASS' if speed['g2_passes_at_0.35'] else 'FAIL'})", flush=True)
             results[f"{arm}_throughput"] = speed
@@ -196,6 +216,7 @@ def main() -> int:
             for a, b in zip(model.state_dict().values(), fresh.state_dict().values(), strict=True)
         )
         results[arm]["resume_exact"] = bool(exact)
+        previous.extend((model, trainer, fresh, again))
         print(f"  resume round-trip exact: {exact}")
 
     (work / "pilot_results.json").write_text(json.dumps(results, indent=1), encoding="utf-8")

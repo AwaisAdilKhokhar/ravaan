@@ -1,0 +1,96 @@
+{
+ "ar_throughput": {
+  "device": "cuda",
+  "microbatch": 32,
+  "tasks": null,
+  "tokens_per_second": 38198,
+  "seconds_per_step": 0.4289,
+  "hours_per_run": 71.99,
+  "hours_for_6_runs": 432.0,
+  "usd_for_6_runs_at_0.35": 151.19,
+  "g2_passes_at_0.35": false
+ },
+ "ar": {
+  "steps": 5614,
+  "tokens": 367919104,
+  "hours": 2.843,
+  "evaluation": {
+   "all": {
+    "nats_per_token": 6.641257832050323,
+    "bits_per_token": 9.58130973956399,
+    "bits_per_byte": 1.5635436379223213,
+    "scored_tokens": 153300,
+    "sequences": 300
+   },
+   "code_switched": {
+    "nats_per_token": 8.145368754863739,
+    "bits_per_token": 11.751283108853828,
+    "bits_per_byte": 2.2371930027939477,
+    "scored_tokens": 4088,
+    "sequences": 8
+   },
+   "roman_urdu": {
+    "nats_per_token": 6.445501793514598,
+    "bits_per_token": 9.29889347354443,
+    "bits_per_byte": 2.2688366331379504,
+    "scored_tokens": 33726,
+    "sequences": 66
+   },
+   "urdu": {
+    "nats_per_token": 6.64518266019568,
+    "bits_per_token": 9.586972069665636,
+    "bits_per_byte": 1.419957903073955,
+    "scored_tokens": 115486,
+    "sequences": 226
+   }
+  },
+  "resume_exact": true
+ },
+ "diff_throughput": {
+  "device": "cuda",
+  "microbatch": 32,
+  "tasks": null,
+  "tokens_per_second": 40691,
+  "seconds_per_step": 0.4026,
+  "hours_per_run": 67.58,
+  "hours_for_6_runs": 405.5,
+  "usd_for_6_runs_at_0.35": 141.92,
+  "g2_passes_at_0.35": false
+ },
+ "diff": {
+  "steps": 5614,
+  "tokens": 367919104,
+  "hours": 2.61,
+  "evaluation": {
+   "all": {
+    "nats_per_token": 5.063776289025943,
+    "bits_per_token": 7.305484940348846,
+    "bits_per_byte": 1.1944919778048686,
+    "scored_tokens": 153600,
+    "sequences": 300
+   },
+   "code_switched": {
+    "nats_per_token": 4.954266130924225,
+    "bits_per_token": 7.147495178328532,
+    "bits_per_byte": 1.3633931099722285,
+    "scored_tokens": 4096,
+    "sequences": 8
+   },
+   "roman_urdu": {
+    "nats_per_token": 5.244574586550395,
+    "bits_per_token": 7.566321747588541,
+    "bits_per_byte": 1.8497192624777499,
+    "scored_tokens": 33792,
+    "sequences": 66
+   },
+   "urdu": {
+    "nats_per_token": 5.014853251982579,
+    "bits_per_token": 7.234903917421159,
+    "bits_per_byte": 1.0736824041797852,
+    "scored_tokens": 115712,
+    "sequences": 226
+   }
+  },
+  "resume_exact": true
+ }
+}

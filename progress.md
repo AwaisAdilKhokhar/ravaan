@@ -237,7 +237,9 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | ↳ the requirement, in hardware terms: **64,162 tok/s**, against 37,236 at 25M here | §11 | ✅ session 21 |
 | ↳ Finding AM — both arms cost the same per token, within 2.2% | §4.1 | ✅ and it is the half that transfers |
 | ↳ §4.2's generator is ~180 ms of CPU per 256-sequence step — G2 must measure it | §11 | ✅ `throughput` builds tasks by default |
-| **G3** — 20M pilot, both arms, resume | §11 | 🟡 resume half **PASS** both arms; coherence needs the 50-epoch run |
+| **G3** — 20M pilot, both arms, resume | §11 | 🟡 resume half **PASS**; coherence blocked on a sampler that does not exist |
+| ↳ 50-epoch run complete, both arms, §4.3's seven fraction checkpoints written | §4.3 | ✅ the curve infrastructure works |
+| ↳ `ravaan/sampling/` is a one-line stub — **nothing can sample a checkpoint** | §8 | ⬜ cheapest modelling work left |
 | ↳ Finding AL — Kaggle gates GPUs too, so kernel 10 runs locally | §9 | ✅ host-agnostic, Kaggle branch kept |
 | ↳ the kernel measured its second arm under the first arm's VRAM (2.8× penalty) | §4.1 | ✅ fixed, found by running it |
 | ↳ **Finding AN — the kernel trained the bare objective**; `build_tasks` now in the library | §4.2 | ✅ fixed + 3 tests |
@@ -3323,6 +3325,42 @@ live at the seams.** Every stage's library is tested to pinned hashes; what fail
 *composes* them, and "the driver builds a mixture and the kernel does not" is a composition fact
 that no unit test of either piece could see.
 
+#### G3's pilot, run in full — and the one number worth looking at twice
+
+**Resume is exact on both arms after 5,614 steps.** That is G3's second half, answered. The first
+half — "coherent Urdu" — cannot be answered at all yet, because `ravaan/sampling/` is a one-line
+stub and nothing can sample from a checkpoint. That is now the cheapest outstanding modelling
+task and it is the only thing between here and G3 closing.
+
+Held-out BPB on the same 300 sequences, same plain-LM scoring, same mixture in training — one
+epoch against fifty:
+
+| arm | 1 epoch | 50 epochs | |
+|---|---|---|---|
+| AR — exact NLL | 1.5223 | **1.5635** | +2.7% *worse* |
+| DIFF — ELBO, an upper bound | 1.7084 | **1.1945** | −30% better |
+
+AR starts ahead and finishes behind. Fifty epochs bought it nothing on held-out text while its
+training loss fell to 1.16, and the gap is **not** overfitting in the ordinary sense: `evaluate`
+scores plain LM for both arms deliberately (§4.5), while training loss is over §4.2's mixture,
+where three of five tasks are deterministic rules a model can learn exactly. The two are different
+quantities and the docstring says so. The 1-vs-50 comparison is the apples-to-apples one.
+
+**The direction is the project's own hypothesis, and the comparison is conservative in its
+favour** — DIFF's figure bounds its true NLL from above while AR's is exact, so the real gap is at
+least this large.
+
+**⚠️ It is not evidence and must not be cited as any.** Stage 8 has not run (Finding T projects
+~4.4% held-out contamination), the split is not stage 9's, *n* = 300 with `code_switched` at
+**8**, the corpus is 7.36M tokens against arm A's 25M unique, and one sampled *t* per sequence
+makes the ELBO a high-variance estimator — which is Finding AG's whole point. The manifest carries
+`is_frozen_corpus = false` so this cannot wander into a table. **What it establishes is that the
+primary endpoint is measurable, legible, and moves** — which is what a pilot is for.
+
+Housekeeping: the run wrote 4.2 GB and left C: at 173 MB. The two rolling and two resume-check
+checkpoints came out — 937 MB, housekeeping by `loop.py`'s own definition, the resume result
+already being recorded in JSON. **The fourteen fraction checkpoints were kept deliberately.**
+
 
 ---
 
@@ -3560,19 +3598,15 @@ Filtering on the full 225-candidate screen needs the native-speaker pass first, 
 
 ### 6. The pilots (G3) — half done, and the remaining half is one command
 
-> **⚠️ A run is in flight as of the end of session 21 — read its output before starting another.**
-> Launched 2026-09-13 after the fixes below, on this machine's 4060: 25M, both arms, 50 epochs,
-> **5,614 steps over 367,948,800 tokens**, ~6 h. Three places to look, in this order:
+> **✅ The run completed on 2026-09-13. G3's resume half PASSES on both arms.** 25M, both arms,
+> 50 epochs, 5,614 steps over 367,919,104 tokens each — AR 2.843 h, DIFF 2.61 h on the 4060.
+> `runs/pilot/pilot_results.json` and `reports/.pilot_g3.log` hold it; the seven fraction
+> checkpoints per arm are in `runs/pilot/pilot-{ar,diff}/` and **§4.3's curve infrastructure
+> therefore works end to end**, which was never separately checked.
 >
-> | | |
-> |---|---|
-> | `reports/.pilot_g3.log` | live progress, the realized-mixture block per arm, the G3 verdict |
-> | `runs/pilot/pilot_results.json` | held-out BPB by population, resume checks, throughput |
-> | `runs/pilot/pilot-{ar,diff}/` | checkpoints — **this is what the coherence half needs a reader for** |
->
-> If the log ends mid-run, the machine slept or the process was killed; the rolling checkpoint
-> makes that cheap to resume rather than restart. If it is complete, G3 is answerable in full and
-> the only thing left in the whole project is the freeze.
+> **⚠️ The coherence half is still open and cannot be closed yet: `ravaan/sampling/` is a one-line
+> stub.** There is no sampler. Writing one is the cheapest remaining piece of modelling work and
+> it needs `ar_f1.pt` / `diff_f1.pt`, both kept for that purpose.
 
 
 G3 asks two things: *"20M pilot DIFF produces coherent Urdu after 50 epochs; both models resume

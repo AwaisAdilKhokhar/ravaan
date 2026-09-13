@@ -1,0 +1,55 @@
+{
+ "chars_budget": 30000000,
+ "mixture": {
+  "urdu": 0.7058823529411765,
+  "roman_urdu": 0.23529411764705882,
+  "code_switched": 0.058823529411764705
+ },
+ "sources": [
+  {
+   "name": "urdu-wikipedia",
+   "sample_rate": null,
+   "limit": 1500
+  },
+  {
+   "name": "roman-urdu-parl",
+   "sample_rate": null,
+   "limit": 600000
+  },
+  {
+   "name": "fineweb2-urd_Arab",
+   "sample_rate": null,
+   "limit": 60000
+  }
+ ],
+ "exclusions": {
+  "lists": [
+   "reports/freeze/removals_67_wikipedia.txt",
+   "reports/freeze/removals_67_roman.txt"
+  ],
+  "ids": 4308036,
+  "hits": 395609
+ },
+ "documents_read": 235620,
+ "seconds": 8989.3,
+ "populations": {
+  "code_switched": {
+   "chars": 765272,
+   "budget": 1764705,
+   "documents": 250,
+   "filled": 0.4337
+  },
+  "roman_urdu": {
+   "chars": 7058859,
+   "budget": 7058823,
+   "documents": 141142,
+   "filled": 1.0
+  },
+  "urdu": {
+   "chars": 21190385,
+   "budget": 21176470,
+   "documents": 8744,
+   "filled": 1.0007
+  }
+ }
+}

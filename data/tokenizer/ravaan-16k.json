@@ -1,0 +1,37 @@
+{
+ "model": "ravaan-16k.model",
+ "sha256": "2855877c8ecd38c92fe108b0d1cc74ff68290618246d68914b52608b0ffbe48d",
+ "fingerprint": "2855877c8ecd38c9",
+ "vocab_size": 16384,
+ "model_type": "unigram",
+ "byte_fallback": true,
+ "character_coverage": 0.9995,
+ "normalization_rule_name": "identity",
+ "control_ids": {
+  "pad": 0,
+  "unk": 1,
+  "bos": 2,
+  "eos": 3
+ },
+ "special_tokens": {
+  "<mask>": 4,
+  "<sep>": 5,
+  "<fim_prefix>": 6,
+  "<fim_suffix>": 7,
+  "<fim_middle>": 8,
+  "<lm>": 9,
+  "<infill>": 10,
+  "<translit>": 11,
+  "<restore>": 12,
+  "<codeswitch>": 13,
+  "<ur>": 14,
+  "<rom>": 15
+ },
+ "input_bytes": 46080353,
+ "input_files": [
+  "sample_code_switched.txt",
+  "sample_roman_urdu.txt",
+  "sample_urdu.txt"
+ ],
+ "seconds": 147.4
+}

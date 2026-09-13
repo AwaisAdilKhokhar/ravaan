@@ -7,6 +7,21 @@
 /data/*
 !/data/.gitkeep
 !/data/manifest.json
+# ...and §7's tokenizer, which is an instrument rather than corpus — the sixth thing this file's
+# leading `/data/*` would have silently dropped. 302 KB of model, and the packed corpus is an
+# undecodable array of integers without it; §4.1 requires the *same* tokenizer for every model in
+# the comparison, so "which tokenizer was this" must never be a question about a local file.
+# Re-including a directory takes two lines, not one: `/data/*` excludes the `tokenizer` entry
+# itself, and git cannot re-include a file whose parent directory is excluded (same trap as
+# `/data/` vs `/data/*` above). So: re-include the directory, exclude its contents, then name the
+# artifacts. The 46 MB of `sample_*.txt` it was trained from stays out — that is corpus.
+# Verified with `git check-ignore -v data/tokenizer/ravaan-16k.model` (reports nothing) and
+# `git check-ignore -v data/tokenizer/sample_urdu.txt` (still ignored).
+!/data/tokenizer/
+/data/tokenizer/*
+!/data/tokenizer/*.model
+!/data/tokenizer/*.vocab
+!/data/tokenizer/*.json
 /data/raw/
 /checkpoints/
 /runs/
@@ -36,6 +51,12 @@ wandb/
 *.bin
 *.safetensors
 *.npy
+# §7's tokenizer, re-included *here* rather than beside the `/data/` block above, because the last
+# matching pattern wins and `*.model`/`*.vocab` are three lines up. Placing the negation next to
+# what it is arguing with is the seventh instance of this file's recurring bug and the first one
+# caught by its own verification line instead of by a missing file weeks later.
+!/data/tokenizer/*.model
+!/data/tokenizer/*.vocab
 
 # --- Python
 __pycache__/

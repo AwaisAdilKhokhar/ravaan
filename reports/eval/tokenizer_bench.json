@@ -1,0 +1,51 @@
+{
+ "model": "ravaan-16k.model",
+ "vocab_size": 16384,
+ "lines_per_file": 20000,
+ "populations": {
+  "code_switched": {
+   "tokens_per_word": 1.5445,
+   "chars_per_token": 3.2165,
+   "bytes_per_token": 4.9472,
+   "byte_fallback_rate": 0.017573,
+   "tokens": 237920
+  },
+  "roman_urdu": {
+   "tokens_per_word": 1.0826,
+   "chars_per_token": 4.5643,
+   "bytes_per_token": 4.5643,
+   "byte_fallback_rate": 0.000651,
+   "tokens": 215134
+  },
+  "script:arabic": {
+   "tokens_per_word": 1.2353,
+   "chars_per_token": 3.8203,
+   "bytes_per_token": 6.7753,
+   "byte_fallback_rate": 0.01033,
+   "tokens": 5505724
+  },
+  "script:latin": {
+   "tokens_per_word": 1.0826,
+   "chars_per_token": 4.5643,
+   "bytes_per_token": 4.5643,
+   "byte_fallback_rate": 0.000651,
+   "tokens": 215134
+  },
+  "script:mixed": {
+   "tokens_per_word": 1.5317,
+   "chars_per_token": 3.2689,
+   "bytes_per_token": 5.0282,
+   "byte_fallback_rate": 0.017163,
+   "tokens": 282065
+  },
+  "urdu": {
+   "tokens_per_word": 1.2369,
+   "chars_per_token": 3.8182,
+   "bytes_per_token": 6.7649,
+   "byte_fallback_rate": 0.010367,
+   "tokens": 5549869
+  }
+ },
+ "sequence_length_p95": 966,
+ "sequence_length_median": 12
+}

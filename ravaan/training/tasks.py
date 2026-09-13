@@ -70,6 +70,7 @@ import random
 from collections import Counter
 from collections.abc import Sequence
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Protocol, runtime_checkable
 
 import numpy as np
@@ -121,6 +122,7 @@ __all__ = [
     "TaskBatch",
     "TaskGenerator",
     "TextCodec",
+    "build_tasks",
 ]
 
 
@@ -658,3 +660,55 @@ class TaskGenerator:
             labels[position] = tokens[position]
             keep[position] = False
         return tokens, labels, keep, pad
+
+
+def build_tasks(
+    arm: str,
+    corpus,
+    config,
+    tokenizer_path: str | Path | None = None,
+) -> TaskGenerator:
+    """§4.2's mixture over §7's tokenizer — the one way to assemble one, for every caller.
+
+    This lived in `scripts/train.py` until session 21, where kernel 10 was found to have trained
+    the **bare objective** for want of it: `Trainer(tasks=None)` is a valid call, so a caller that
+    simply never built a generator got plain LM and a loss curve that looked entirely reasonable.
+    That is Finding AJ's shape — the mixture is not visible in the loss — and the fix is the same
+    one `ravaan/console.py` records: a thing every caller needs belongs where every caller can
+    reach it, not in whichever driver needed it first.
+
+    Two guards, both of which protect a *correctness* property rather than a convenience:
+
+    * **The tokenizer file is required.** The corruptions are text transforms, so a packed sequence
+      has to decode before it can be damaged. There is no sensible fallback — training the bare
+      objective instead would silently drop four of §4.2's five tasks.
+    * **Its fingerprint must match the corpus manifest's.** A mismatch produces tasks whose source
+      half is in one vocabulary and whose target half is in another, inside a single sequence, and
+      nothing downstream would report it.
+
+    Raises `FileNotFoundError` and `ValueError` respectively; the drivers turn those into their
+    own exit messages, because a library that calls `SystemExit` cannot be used from a notebook.
+    """
+    name = Path(str(corpus.tokenizer["id"])).name.split(":")[-1]
+    path = Path(tokenizer_path) if tokenizer_path else Path("data/tokenizer") / name
+    if not path.exists():
+        raise FileNotFoundError(
+            f"§4.2's task generator needs §7's tokenizer to decode packed sequences back to "
+            f"text, and {path} is not there. Training the bare objective instead is not the "
+            "experiment — §4.1 requires both arms see all five tasks"
+        )
+    codec = SentencePieceCodec(str(path))
+    if codec.tokenizer.fingerprint() != corpus.tokenizer.get("fingerprint"):
+        raise ValueError(
+            f"{path} fingerprints {codec.tokenizer.fingerprint()} and the corpus was packed with "
+            f"{corpus.tokenizer.get('fingerprint')} — the corruption tasks would mix two "
+            "vocabularies inside one sequence"
+        )
+    return TaskGenerator(
+        codec,
+        FramingTokens.from_manifest(corpus.tokenizer),
+        arm=arm,
+        sequence_length=config.sequence_length,
+        seed=config.seed,
+        corruption=CorruptionConfig(),
+    )

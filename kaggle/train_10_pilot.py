@@ -109,6 +109,7 @@ def main() -> int:
     from ravaan.training.config import TrainingConfig
     from ravaan.training.data import PackedCorpus
     from ravaan.training.loop import Trainer, throughput
+    from ravaan.training.tasks import build_tasks
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"\ntorch {torch.__version__} on {device}")
@@ -128,6 +129,20 @@ def main() -> int:
             manifest["pilot"]["not_run"]
         ))
     mask_id = int(manifest["tokenizer"]["special_tokens"]["<mask>"])
+
+    # §4.2's generator decodes packed sequences back to text, so it needs the tokenizer the
+    # corpus was packed with — mounted beside the shards on Kaggle, `data/tokenizer` here.
+    name = Path(str(manifest["tokenizer"]["id"])).name.split(":")[-1]
+    tokenizer_path = next(
+        (q for q in (corpus_dir / name, code / "data" / "tokenizer" / name) if q.exists()),
+        None,
+    )
+    if tokenizer_path is None:
+        raise SystemExit(
+            f"§7's tokenizer ({name}) is beside neither the corpus nor data/tokenizer. "
+            "§4.2's five tasks cannot be built without it, and training the bare objective "
+            "instead is not the experiment (§4.1)."
+        )
 
     size = os.environ.get("RAVAAN_SIZE", "25M")
     model_config = LADDER[size]
@@ -183,14 +198,33 @@ def main() -> int:
                   f"({'PASS' if speed['g2_passes_at_0.35'] else 'FAIL'})", flush=True)
             results[f"{arm}_throughput"] = speed
 
+        # §4.2's five objectives. Without this the Trainer runs the bare objective quite
+        # happily — which is what this kernel did until session 21, and the loss curve gave
+        # no sign of it. `build_tasks` moved into the library so that "the driver built a
+        # mixture and the kernel did not" stops being a thing that can happen.
+        tasks = build_tasks(arm, train, config, tokenizer_path)
         out = work / f"pilot-{arm}"
         trainer = Trainer(model, train, config, out_dir=out, device=device,
-                          microbatch=microbatch, run_name=arm)
+                          microbatch=microbatch, run_name=arm,
+                          tasks=tasks)
         started = time.time()
         trainer.train(on_log=lambda r: print(
             f"  step {r['step']:>6,}  {r['fraction']:6.2%}  loss {r['loss']:7.4f}  "
             f"bpt {r['bits_per_token']:6.3f}  lr {r['lr']:.2e}  "
             f"{r['tokens_per_second']:,} tok/s", flush=True))
+
+        # ⚠️ Finding AJ: a starved mixture is invisible in the loss and visible only here —
+        # three of the five objectives sat at 0.00% while the curve looked unremarkable.
+        print("\n  §4.2's mixture as built (target in brackets):")
+        for task, share in tasks.realized_shares().items():
+            short = (tasks.counts.get(f"shortfall/{task}", 0)
+                     + tasks.counts.get(f"fallback/{task}", 0))
+            note = f"   {short:,} unplaceable" if short else ""
+            print(f"    {task:<12} {share:6.2%}  [{tasks.shares[task]:.0%}]{note}")
+        padded = tasks.counts.get("pad_tokens", 0)
+        print(f"    padding      {padded:,} tokens "
+              f"({padded / max(trainer.state.tokens, 1):.4%} of tokens processed)",
+              flush=True)
 
         evaluation = trainer.evaluate(val, limit=512)
         results[arm] = {
@@ -209,7 +243,8 @@ def main() -> int:
         checkpoint = trainer.save(out / f"{arm}-resume-check.pt")
         fresh = RavaanAR(model_config) if arm == "ar" else RavaanDiffusion(mask_id, model_config)
         again = Trainer(fresh, train, config, out_dir=out, device=device,
-                        microbatch=microbatch, run_name=f"{arm}-resumed")
+                        microbatch=microbatch, run_name=f"{arm}-resumed",
+                        tasks=tasks)
         again.load(checkpoint)
         exact = again.state.step == trainer.state.step and all(
             torch.equal(a, b)

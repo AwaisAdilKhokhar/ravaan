@@ -240,6 +240,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | **G3** — 20M pilot, both arms, resume | §11 | 🟡 resume half **PASS** both arms; coherence needs the 50-epoch run |
 | ↳ Finding AL — Kaggle gates GPUs too, so kernel 10 runs locally | §9 | ✅ host-agnostic, Kaggle branch kept |
 | ↳ the kernel measured its second arm under the first arm's VRAM (2.8× penalty) | §4.1 | ✅ fixed, found by running it |
+| ↳ **Finding AN — the kernel trained the bare objective**; `build_tasks` now in the library | §4.2 | ✅ fixed + 3 tests |
 | Core runs (W9–11, **G4**) → eval (W12) → human eval (W13, **G5**) → demo (W14) → report (W15–16) | | ⬜ |
 
 ---
@@ -3275,6 +3276,53 @@ ladder decides how much card is needed. That turns "rent and measure" into a spe
 7.8 GB of 8.19 GB. The 70M rung will not fit at that batch size, and the G2 figures above are all
 at microbatch 16 for that reason.
 
+#### Finding AN — kernel 10 trained the bare objective, and the loss curve looked fine
+
+The worst of the three, and it was found by reading the log for the *mixture* rather than for the
+loss — which is exactly what session 20's handoff said to do, one line after a warning that was
+itself about this kernel. **The kernel never built a `TaskGenerator` at all.** It never mentioned
+tasks: `Trainer(..., tasks=None)` is a perfectly valid call and runs plain next-token prediction,
+so a 50-epoch pilot would have answered G3 about an objective the experiment does not use, and
+nothing in its output would have said so. The loss fell from 8.78 to 6.67 exactly as it should.
+
+Three things made it possible and all three are now closed:
+
+1. **`build_tasks` lived in `scripts/train.py`**, which is not a package, so the kernel could not
+   have imported it even had it tried. It is now `ravaan.training.tasks.build_tasks` — the driver
+   calls it through a thin shim that turns its exceptions into exit messages, which is the only
+   part of it that was ever a command line. This is the `ravaan/console.py` lesson a second time:
+   **a thing every caller needs belongs where every caller can reach it.**
+2. **Nothing tested it.** It is the `scripts/` coverage gap progress.md has flagged since session
+   14, and the guards it carries are correctness properties, not conveniences: a missing tokenizer
+   silently drops four of five tasks, and a fingerprint mismatch mixes two vocabularies inside one
+   sequence. Three tests now pin both, plus the happy path so they cannot pass vacuously.
+3. **The kernel did not print the realized mixture.** It printed the *population* mixture — urdu /
+   roman_urdu / code_switched — which looks like the same kind of line and is not. It now prints
+   §4.2's five shares against their targets with the unplaceable counts beside them, the same
+   format `scripts/train.py` uses, which is where Finding AJ became visible.
+
+**Verified after the fix**, at 25M / microbatch 32 / one epoch — the mixture the kernel now prints,
+against §4.2's table:
+
+| task | realized | target |
+|---|---|---|
+| lm | 65.07% | 65% |
+| infill | 9.93% | 10% |
+| translit | 9.90% | 10% |
+| restore | 8.11% | 8% |
+| codeswitch | 6.99% | 7% |
+
+No unplaceable counts on any task and padding at 0.6045% of tokens processed, so **Finding AJ's
+starvation does not reproduce at this microbatch** — worth stating because that finding is the
+reason to read this block at all. Throughput falls from 38,997 tok/s bare to ~34,000 with the
+generator in the path, which is the ~13% CPU cost §4.2 was always going to charge and is itself
+the cheapest evidence that the tasks are actually running.
+
+**The general lesson is the one Finding W already taught and this is its second instance: the bugs
+live at the seams.** Every stage's library is tested to pinned hashes; what fails is the code that
+*composes* them, and "the driver builds a mixture and the kernel does not" is a composition fact
+that no unit test of either piece could see.
+
 
 ---
 
@@ -3527,8 +3575,14 @@ RAVAAN_EPOCHS=50 RAVAAN_SIZE=25M python -u kaggle/train_10_pilot.py
 `python -u` — the early prints have no `flush=True`, so a redirected run looks hung for the first
 several minutes otherwise. `RAVAAN_OUT` moves the checkpoints off `runs/pilot`.
 
-Two things this kernel was wrong about until it was actually run, both now fixed and both worth
+Three things this kernel was wrong about until it was actually run, all now fixed and all worth
 knowing because the *class* recurs:
+
+* **⚠️ It never built §4.2's task mixture at all (Finding AN).** `Trainer(tasks=None)` is a valid
+  call, so it trained plain LM and the loss curve gave no sign — the pilot would have answered G3
+  about an objective the experiment does not use. `build_tasks` has moved from `scripts/train.py`
+  into `ravaan.training.tasks` so every caller reaches the same one, it has tests for the first
+  time, and the kernel now prints the realized shares. **Read that block, not the loss.**
 
 * **It measured its second arm under the first arm's VRAM.** DIFF read 14,546 tok/s inside the
   kernel against 40,575 standalone — a 2.8× penalty that falls on whichever arm runs second, and

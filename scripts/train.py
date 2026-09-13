@@ -39,18 +39,14 @@ for _stream in (sys.stdout, sys.stderr):
 
 import torch  # noqa: E402
 
-from ravaan.data.corruption import CorruptionConfig  # noqa: E402
 from ravaan.models.ar import RavaanAR  # noqa: E402
 from ravaan.models.config import LADDER, ModelConfig, assert_matched, parameter_count  # noqa: E402
 from ravaan.models.diffusion import RavaanDiffusion  # noqa: E402
 from ravaan.training.config import PROVENANCE, TrainingConfig  # noqa: E402
 from ravaan.training.data import PackedCorpus  # noqa: E402
 from ravaan.training.loop import Trainer, throughput  # noqa: E402
-from ravaan.training.tasks import (  # noqa: E402
-    FramingTokens,
-    SentencePieceCodec,
-    TaskGenerator,
-)
+from ravaan.training.tasks import TaskGenerator  # noqa: E402
+from ravaan.training.tasks import build_tasks as _build_tasks  # noqa: E402
 
 
 def _mask_id(corpus: PackedCorpus | None, override: int | None) -> int:
@@ -74,35 +70,17 @@ def _mask_id(corpus: PackedCorpus | None, override: int | None) -> int:
 def build_tasks(
     arm: str, corpus: PackedCorpus, config: TrainingConfig, tokenizer_path: str | None
 ) -> TaskGenerator:
-    """§4.2's mixture, over §7's tokenizer.
+    """`ravaan.training.tasks.build_tasks`, with its exceptions as operator-facing exits.
 
-    The tokenizer file is needed and not optional: the corruptions are text transforms, so a
-    packed sequence has to decode before it can be damaged. The manifest names which tokenizer
-    the corpus was written with, and this refuses a mismatch rather than producing tasks whose
-    source half is in one vocabulary and target half in another.
+    The guards belong in the library — kernel 10 needs them just as much — and the exit codes
+    belong here, which is the only part of this that is a command line.
     """
-    path = tokenizer_path or f"data/tokenizer/{Path(corpus.tokenizer['id']).name.split(':')[-1]}"
-    if not Path(path).exists():
-        raise SystemExit(
-            f"§4.2's task generator needs §7's tokenizer to decode packed sequences back to "
-            f"text, and {path} is not there. Pass --tokenizer, or --no-tasks to train the bare "
-            "objective (which is not the experiment — §4.1 requires both arms see all five tasks)"
-        )
-    codec = SentencePieceCodec(path)
-    if codec.tokenizer.fingerprint() != corpus.tokenizer.get("fingerprint"):
-        raise SystemExit(
-            f"{path} fingerprints {codec.tokenizer.fingerprint()} and the corpus was packed with "
-            f"{corpus.tokenizer.get('fingerprint')} — the corruption tasks would mix two "
-            "vocabularies inside one sequence"
-        )
-    return TaskGenerator(
-        codec,
-        FramingTokens.from_manifest(corpus.tokenizer),
-        arm=arm,
-        sequence_length=config.sequence_length,
-        seed=config.seed,
-        corruption=CorruptionConfig(),
-    )
+    try:
+        return _build_tasks(arm, corpus, config, tokenizer_path)
+    except FileNotFoundError as exc:
+        raise SystemExit(f"{exc}. Pass --tokenizer, or --no-tasks to accept that") from exc
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
 
 
 def build_model(arm: str, config: ModelConfig, corpus: PackedCorpus | None, mask_id: int | None):

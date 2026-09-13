@@ -32,6 +32,7 @@ from ravaan.training.tasks import (
     TASK_SHARES,
     FramingTokens,
     TaskGenerator,
+    build_tasks,
 )
 
 CLEAN = (
@@ -366,3 +367,87 @@ def test_the_real_tokenizer_round_trips_through_the_framing():
     batch = generator.build(sequences, ["urdu"] * 8, step=0)
     assert batch.tokens.shape == (8, 512)
     assert isinstance(batch.counts, Counter)
+
+
+# ---------------------------------------------------------------------------
+# build_tasks — the guards that stop a run from quietly training the wrong thing.
+#
+# These had no test at all while the function lived in `scripts/train.py`, which is the coverage
+# gap progress.md names: every stage's *library* is tested to pinned hash values and the drivers
+# that compose them had nothing. Session 21 is what that costs — kernel 10 never called this and
+# trained the bare objective for it, invisibly, because `Trainer(tasks=None)` is a valid call.
+# ---------------------------------------------------------------------------
+
+
+class _Corpus:
+    """Just the surface `build_tasks` reads: a corpus is its tokenizer manifest here."""
+
+    def __init__(self, manifest):
+        self.tokenizer = manifest
+
+
+class _Config:
+    sequence_length = 64
+    seed = 0
+
+
+def _manifest(fingerprint="deadbeefdeadbeef"):
+    return {
+        "id": "sentencepiece:ravaan-16k.model",
+        "fingerprint": fingerprint,
+        "special_tokens": {
+            "<mask>": 4, "<sep>": 5, "<fim_prefix>": 6, "<fim_suffix>": 7, "<fim_middle>": 8,
+            "<lm>": 9, "<infill>": 10, "<translit>": 11, "<restore>": 12, "<codeswitch>": 13,
+            "<ur>": 14, "<rom>": 15,
+        },
+        "control_ids": {"pad": 0, "unk": 1, "bos": 2, "eos": 3},
+    }
+
+
+def test_build_tasks_refuses_a_missing_tokenizer(tmp_path):
+    """No tokenizer means no way back to text, and the bare objective is not the experiment."""
+    with pytest.raises(FileNotFoundError) as excinfo:
+        build_tasks("ar", _Corpus(_manifest()), _Config(), tmp_path / "absent.model")
+    # The message has to say what is missing and why, not just that a path does not exist —
+    # the operator's next move is to pass a tokenizer, not to wonder what wanted one.
+    assert "not there" in str(excinfo.value)
+    assert "§4.1" in str(excinfo.value)
+
+
+def test_build_tasks_refuses_a_tokenizer_the_corpus_was_not_packed_with(tmp_path, monkeypatch):
+    """A fingerprint mismatch would mix two vocabularies inside one sequence, silently."""
+    model = tmp_path / "other.model"
+    model.write_bytes(b"not a real sentencepiece model")
+
+    class _Stub:
+        def __init__(self, path):
+            self.tokenizer = self
+
+        def fingerprint(self):
+            return "0123456789abcdef"
+
+    monkeypatch.setattr("ravaan.training.tasks.SentencePieceCodec", _Stub)
+    with pytest.raises(ValueError) as excinfo:
+        build_tasks("ar", _Corpus(_manifest("deadbeefdeadbeef")), _Config(), model)
+    assert "0123456789abcdef" in str(excinfo.value)
+    assert "deadbeefdeadbeef" in str(excinfo.value)
+
+
+def test_build_tasks_returns_a_generator_when_the_fingerprint_matches(tmp_path, monkeypatch):
+    """The happy path, so the guards above are not passing for the wrong reason."""
+    model = tmp_path / "ravaan-16k.model"
+    model.write_bytes(b"not a real sentencepiece model")
+
+    class _Stub:
+        def __init__(self, path):
+            self.tokenizer = self
+
+        def fingerprint(self):
+            return "deadbeefdeadbeef"
+
+    monkeypatch.setattr("ravaan.training.tasks.SentencePieceCodec", _Stub)
+    tasks = build_tasks("diff", _Corpus(_manifest()), _Config(), model)
+    assert isinstance(tasks, TaskGenerator)
+    assert tasks.arm == "diff"
+    # §4.2's table, unmodified — a generator built through this path is the experiment's mixture.
+    assert tasks.shares == TASK_SHARES

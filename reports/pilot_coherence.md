@@ -1,5 +1,13 @@
 # G3's coherence half — the pilot checkpoints, read
 
+> **⚠️ Amended 2026-09-14 (session 23). §0's verdict is narrower than it was written.**
+> "Does not produce coherent Urdu under any of the 16 decoder settings measured" is still true of
+> those sixteen settings, and the sixteen were **the wrong grid**: §4.4's A3 stops at 64 steps,
+> and A4 offers only the two endpoints of what is really a one-parameter family. A setting outside
+> the grid — the `gumbel` schedule at scale 2, 160 steps — gets **real Urdu words in
+> grammatical clauses** out of this same checkpoint. §10 is the measurement and §11 is what
+> it costs the reasoning in §9. **Nothing about the model changed; this is a decoder result.**
+
 **Gate G3 (PRD §11):** *"20M pilot DIFF produces coherent Urdu after 50 epochs; both models resume
 from checkpoint correctly."*
 
@@ -248,6 +256,111 @@ only because one re-pilot would have covered both.
 
 ---
 
+## 10. Finding AR — A4's two schedules are the endpoints of a family, and the middle is readable
+
+§3 to §6 above measure `confidence` and `random` and find that both fail. They fail in
+**opposite** directions, which is the part that was worth another look:
+
+| | what it commits | what comes out |
+|---|---|---|
+| `confidence` | the position it is most sure of | real words, one clause on a loop (rep up to 0.69) |
+| `random` | a uniformly-drawn position | no repetition at all (rep 0.000), and **non-words** |
+
+Committing the most-certain position first means committing the most *predictable* token first, and
+each such commit makes its neighbours more predictable in the same direction. Committing a
+uniformly-drawn position means committing a token the model had no opinion about, and every position
+decoded afterwards is conditioned on that scaffolding — bidirectionally, so there is no part of
+the canvas it does not reach.
+
+Neither is a choice between two options. They are the two limits of ranking by
+
+```
+log p(chosen token)  +  s · Gumbel(0, 1)        s annealed linearly to 0 over the decode
+```
+
+which is MaskGIT's schedule. At `s = 0` the ranking is `confidence` **exactly** — `log` is
+monotone, and `tests/test_sampling.py` asserts the two produce bit-identical output at both
+temperatures rather than taking it on trust. As `s → ∞` the noise swamps the
+log-probability and the ranking is `random`. A4 measured the two ends of a dial and reported that
+neither end works.
+
+**What the middle produces**, from `runs/pilot/pilot-diff/diff_f1.pt` — the same checkpoint
+§0 calls incoherent — at `gumbel` 2, 160 steps, `</s>` forbidden, temperature 0.9,
+top-p 0.95. Unconditional:
+
+```
+کیا جاتا ہے، اس منشیات کو استعمال کیا جاتا ہے، منشیات کے خلاف منشیات کو منشیات کے استعمال سے متاثر ہونے کا خطرہ ہوتا ہے، تاہم، اس کے برعکس اس منشیات کے جسم میں بہت زیادہ ہوتا ہے
+```
+
+and continuing a real validation prefix:
+
+```
+امر کی ہے کہ وہ قرآن اور اس کی زبان میں بیان کرتا ہے ۔ اور اس نے اس جرہن میں بیان کی ہے ۔ اس کے بارے میں اس کی بات ہے ۔ امام ابن بثی نے فرمایا ہے کہ ان میں سے ایک چیز ہے ۔
+```
+
+These are Urdu words in Urdu clauses. They are topic-locked and thin, which is what a 20M model at
+368M training tokens should be. They are **not** §6's `چارائیانہ` /
+`وبشہیاب` / `کہفالرخانہ`, and they are not §4's one clause
+repeated twenty-one times.
+
+### A3's ceiling was doing as much work as A3's contents
+
+The same shape of problem, one axis over. §4.4 sweeps 8/16/32/64 steps. On a 160-position canvas
+64 steps still commits 2–3 positions per step **from independent marginals**, and on the
+512-wide canvas the arm trained at it commits 8. The natural reference point — one position per
+step, which is the exact any-order ancestral sampler for this chain — is 160 steps, outside the
+grid. Under `random` at 160 steps this checkpoint produces substantially real Urdu where at 64 it
+produced non-words, and **§8.3's three metrics register almost none of that difference**,
+exactly as §6 says they would not. A3's flat `random` row from 8 to 64 was read as "steps do not
+matter for this schedule"; it is better read as "the metrics cannot see what changed".
+
+`scripts/sample.py` now sweeps 160 alongside §4.4's four rungs, and `--schedule gumbel --gumbel
+S`. Nothing above the masked-position count does anything — those steps commit nothing and the
+loop skips them — so 160 is the top of the axis for a 160-token canvas rather than an arbitrary
+number.
+
+### What generalises, and what does not
+
+This is a **decoding** result, and decoding results are the class §0 says carries forward: a
+property of the procedure rather than of this checkpoint. Three qualifications belong with it.
+
+1. **The scale is a hyperparameter and it is not tuned here.** 1 and 2 were swept and 2 is better on
+   this checkpoint. §4.4's ablations are preregistered and this is a third arm of A4, so it is
+   reported as one rather than quietly adopted as the default the other two are compared against.
+2. **It does not make the pilot diffusion arm good.** The unconditional samples still fall into
+   Roman Urdu — `roman_urdu` is 23.53% of arm A and on a context-free canvas nothing holds the
+   script — and the Urdu that does come out is topic-locked. §12 is a separate run about that.
+3. **§6 still stands and is now the load-bearing paragraph in this file.** The metrics did not
+   separate `random` at 64 steps from `random` at 160, and they do not separate `gumbel` 2 from
+   `random` on script or repetition either. Every judgement in this section is a reader's.
+   §8.4's three annotators are the instrument, and they are still open question 3.
+
+---
+
+## 11. What this costs §9's reasoning
+
+§9 records G3's coherence half as unmet and lets Week 9 proceed, on the argument that the gate's
+premise was wrong rather than the code — that 368M training tokens over a 7.36M-token corpus is
+below the scale at which coherent Urdu is reachable. **That argument survives. One of its supports
+does not.**
+
+The support that fails: *"three separate decoder defects were found and fixed without moving the
+verdict"* was offered as evidence that the decoder had been exhausted. It had not been. A fourth
+decoder change moved the verdict further than any of the three.
+
+What this does **not** change: the AR control still holds — same corpus, same loop, same code,
+fluent — so there is still no evidence of a defect in anything the two arms share. And the
+decoder change does not make the pilot diffusion arm coherent, only legible.
+
+What it adds is a caution for §4.4. **An ablation grid can be wrong at its edges as well as in
+its interior**, and both of §4.4's diffusion axes were. A3's top rung and A4's two schedules were
+each chosen before anything had been decoded, which is what preregistration is for and is also why
+they could not have been informed by output. The honest handling is the one this file already uses
+for `</s>`: sweep past the edge, report the number, and put the decision in the report rather than
+in a default.
+
+---
+
 ## 8. Reproducing this
 
 ```bash
@@ -256,6 +369,18 @@ python scripts/sample.py \
     --checkpoint runs/pilot/pilot-diff/diff_f1.pt \
     --corpus data/packed-pilot --out reports/pilot_samples \
     --samples 6 --new-tokens 160
+```
+
+§0 to §7 are that command as it stood in session 22 — A3's four rungs, A4's two schedules,
+both `</s>` settings. §10's sweep adds the third schedule and the 160-step rung, and forbids
+`</s>`, which §3 settled:
+
+```bash
+python scripts/sample.py \
+    --checkpoint runs/pilot/pilot-ar/ar_f1.pt \
+    --checkpoint runs/pilot/pilot-diff/diff_f1.pt \
+    --corpus data/packed-pilot --out reports/pilot_samples \
+    --samples 6 --new-tokens 160 --forbid-eos always
 ```
 
 ~8 minutes of decoding on the 4060 (7.5 min summed over the 306 generations). The AR

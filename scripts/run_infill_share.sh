@@ -8,8 +8,9 @@
 set -u
 
 LOG=logs/train_ar_fim50.log
+# Survives being reaped: if this script is restarted after the training run has already
+# finished, the grep is true immediately and it goes straight on to the measurement.
 until grep -q "held-out (" "$LOG" 2>/dev/null; do
-    if ! grep -q "step" "$LOG" 2>/dev/null; then sleep 30; continue; fi
     sleep 30
 done
 echo "TRAIN-DONE $(date -Is)"
@@ -30,6 +31,6 @@ python -u scripts/infill_eval.py \
     --checkpoint runs/urdu-ar-fim50/ar-s0_f1.pt \
     --checkpoint runs/urdu-diff/diff-s0_f1.pt \
     --corpus data/packed-urdu --split validation \
-    --items 64 --spans 4 8 16 32 64 \
+    --items 64 --spans 1 2 4 8 16 32 64 \
     --out reports/infill_share
 echo "INFILL-DONE $(date -Is)"

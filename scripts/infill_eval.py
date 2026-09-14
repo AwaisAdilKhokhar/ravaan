@@ -67,9 +67,18 @@ from ravaan.training.tasks import SentencePieceCodec  # noqa: E402
 #: what it does not do is put any mass low enough for exact-match to be a live number.
 SPANS = (8, 16, 32, 64)
 
-#: How much of each validation sequence the prompt is built from. Fixed rather than the full 512
-#: so that the AR arm's prompt plus its generation budget fits inside §5's context at every span.
-CONTENT = 256
+#: How much of each validation sequence the prompt is built from.
+#:
+#: `_frame_infill` trains at the full 512 with the middle at the very *end* of the sequence, so a
+#: short eval window puts the `<fim_middle>` marker somewhere the AR arm never saw it. 476 keeps the
+#: prompt near that training position while leaving the AR arm room to run past the hole — which it
+#: needs, because `exact_untruncated` exists to measure how far past the hole it runs, and a budget
+#: of exactly `span` would answer that question by construction.
+#:
+#: ⚠️ **Measured, not assumed, and the effect is small.** At 256 the 10%-infill AR checkpoint scores
+#: token-F1 0.042 / 0.062 at spans 4 / 8; at 476 it scores 0.052 / 0.099. Closer to the training
+#: framing and better for it, but the window is not what makes the AR arm's infill numbers low.
+CONTENT = 476
 
 #: The diffusion arm's schedules. `confidence` is §4.4's preregistered A4 setting; `gumbel` is the
 #: third arm session 23 added between A4's two after both endpoints were measured and both failed
@@ -88,6 +97,14 @@ def build_arguments() -> argparse.ArgumentParser:
     p.add_argument("--out", default="reports/infill_share", help="written as .jsonl and .md")
     p.add_argument("--items", type=int, default=64, help="validation sequences per span")
     p.add_argument("--spans", type=int, nargs="+", default=list(SPANS))
+    p.add_argument(
+        "--content",
+        type=int,
+        default=CONTENT,
+        help="tokens of each validation sequence the prompt is built from. `_frame_infill` trains "
+        "at the full 512 with the middle at the very end, so a short window is off-distribution; "
+        "a long one leaves the AR arm no room to overrun and hands it the gold length for free",
+    )
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--device", default="auto")
     p.add_argument(
@@ -162,7 +179,7 @@ def main(argv: list[str] | None = None) -> int:
                 rng = np.random.default_rng(args.seed * 1_000_003 + span)
                 items: list[InfillItem] = []
                 for index, sequence in enumerate(sequences):
-                    content = [int(t) for t in sequence[:CONTENT]]
+                    content = [int(t) for t in sequence[:args.content]]
                     carved = carve(content, span, rng)
                     if carved is None:
                         continue
@@ -267,7 +284,7 @@ def main(argv: list[str] | None = None) -> int:
                 "items_requested": args.items,
                 "spans": args.spans,
                 "decode": config.to_dict(),
-                "content_tokens": CONTENT,
+                "content_tokens": args.content,
                 "scores": scores,
             },
             indent=1,

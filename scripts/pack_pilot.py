@@ -38,9 +38,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-for _stream in (sys.stdout, sys.stderr):
-    if hasattr(_stream, "reconfigure"):
-        _stream.reconfigure(encoding="utf-8", errors="replace")
+from ravaan.console import pin_utf8_streams  # noqa: E402
+
+pin_utf8_streams()
 
 from ravaan.data.packing import (  # noqa: E402
     PackedWriter,
@@ -62,6 +62,11 @@ def main(argv: list[str] | None = None) -> int:
         help="sequences per population held out. Stage 9's job, approximated (see the docstring)",
     )
     parser.add_argument("--arm", default="A")
+    parser.add_argument(
+        "--purpose",
+        default="PRD §11 Gate G3 — implementation and resume check at 20M params",
+        help="what this corpus is for; travels in the manifest beside is_frozen_corpus=false",
+    )
     args = parser.parse_args(argv)
 
     tokenizer = SentencePieceTokenizer(args.tokenizer)
@@ -125,11 +130,14 @@ def main(argv: list[str] | None = None) -> int:
     manifest = writer.manifest()
     # The warning travels with the corpus. A manifest that looked like stage 10's and was not
     # would be exactly the confusion this whole file exists to prevent.
+    # `source` and `purpose` are read off the invocation rather than written in, because this
+    # driver has now packed two different corpora and a manifest that names the wrong one is the
+    # exact confusion the rest of this file exists to prevent.
     manifest["pilot"] = {
         "is_frozen_corpus": False,
-        "purpose": "PRD §11 Gate G3 — implementation and resume check at 20M params",
+        "purpose": args.purpose,
         "not_run": ["stage 8 decontamination", "FineWeb2 stage 6+7", "stage 9 split assignment"],
-        "source": "data/tokenizer/sample_*.txt, written by scripts/tokenizer.py sample",
+        "source": f"{args.sample}/sample_*.txt, written by scripts/tokenizer.py sample",
         "populations": totals,
     }
     # Stage 10's own manifest names the tokenizer; this adds the piece ids the objectives and

@@ -52,10 +52,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-# Urdu on a Windows console is cp1252 by default, which raises rather than mangles.
-for _stream in (sys.stdout, sys.stderr):
-    if hasattr(_stream, "reconfigure"):
-        _stream.reconfigure(encoding="utf-8", errors="replace")
+from ravaan.console import pin_utf8_streams  # noqa: E402
+
+pin_utf8_streams()
 
 from ravaan.data.shards import ShardReader  # noqa: E402
 
@@ -197,6 +196,14 @@ def cmd_sample(args: argparse.Namespace) -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     budgets = {pop: int(args.chars * share) for pop, share in MIXTURE.items()}
+    for override in args.population_chars or ():
+        pop, _, value = override.partition("=")
+        if pop not in budgets or not value.isdigit():
+            raise SystemExit(
+                f"--population-chars {override}: expected <population>=<chars> with population "
+                f"one of {sorted(budgets)}"
+            )
+        budgets[pop] = int(value)
     handles = {pop: (out_dir / f"sample_{pop}.txt").open("w", encoding="utf-8") for pop in MIXTURE}
     written = dict.fromkeys(MIXTURE, 0)
     documents = Counter()
@@ -242,6 +249,13 @@ def cmd_sample(args: argparse.Namespace) -> int:
                     file=sys.stderr,
                     flush=True,
                 )
+            if args.max_seconds and seen % 2_000 == 0 and time.time() - started >= args.max_seconds:
+                print(
+                    f"  --max-seconds {args.max_seconds:,} reached — stopping short",
+                    file=sys.stderr,
+                    flush=True,
+                )
+                break
             if label not in budgets or written[label] >= budgets[label]:
                 continue
             # One line per document. SentencePiece treats a line as a sentence for the purposes
@@ -256,6 +270,13 @@ def cmd_sample(args: argparse.Namespace) -> int:
             if all(written[p] >= budgets[p] for p in budgets):
                 print("  every population at budget — stopping", file=sys.stderr, flush=True)
                 break
+            if args.max_seconds and time.time() - started >= args.max_seconds:
+                print(
+                    f"  --max-seconds {args.max_seconds:,} reached — stopping short",
+                    file=sys.stderr,
+                    flush=True,
+                )
+                break
     finally:
         for handle in handles.values():
             handle.close()
@@ -263,6 +284,11 @@ def cmd_sample(args: argparse.Namespace) -> int:
     report = {
         "chars_budget": args.chars,
         "mixture": MIXTURE,
+        "population_chars_override": list(args.population_chars or ()),
+        "max_seconds": args.max_seconds,
+        "stopped_early": bool(
+            args.max_seconds and time.time() - started >= args.max_seconds
+        ),
         "sources": [{"name": n, "sample_rate": r, "limit": lim} for n, r, lim in sources],
         "exclusions": {
             "lists": [str(p) for p in args.exclude],
@@ -286,7 +312,12 @@ def cmd_sample(args: argparse.Namespace) -> int:
     print(f"\nread {seen:,} documents in {report['seconds']:.0f}s", file=sys.stderr)
     for pop in sorted(budgets):
         entry = report["populations"][pop]
-        short = "" if entry["filled"] and entry["filled"] >= 0.999 else "  ← SHORT"
+        # `filled` is None for a population `--population-chars` set to zero, which is a
+        # population deliberately not sampled rather than one that came up short.
+        if entry["filled"] is None:
+            print(f"  {pop:<14} {'not sampled (budget 0)':>32}", file=sys.stderr)
+            continue
+        short = "" if entry["filled"] >= 0.999 else "  ← SHORT"
         print(
             f"  {pop:<14} {entry['chars']:>12,} chars  {entry['documents']:>9,} docs  "
             f"{entry['filled']:.1%}{short}",
@@ -523,6 +554,28 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=300_000_000,
         help="total characters to sample, split at §6.1's mixture (default 300M)",
+    )
+    s.add_argument(
+        "--population-chars",
+        action="append",
+        metavar="POP=CHARS",
+        help=(
+            "override one population's share of --chars. §6.1's mixture is the default and is "
+            "what a tokenizer sample wants; a *corpus* sample may not be able to afford it, "
+            "because the populations do not cost the same per character — measured on this "
+            "machine, FineWeb2 runs at 321k chars/s through stages 2-5 and Roman-Urdu-Parl at "
+            "1.1k, a factor of 280 that falls entirely on document count. Whatever this is set "
+            "to lands in sample.json, so the realized mixture is never inferred"
+        ),
+    )
+    s.add_argument(
+        "--max-seconds",
+        type=float,
+        help=(
+            "stop and write what has been collected. Without it the loop runs until every "
+            "population is at budget or every reader is exhausted, and one slow population can "
+            "hold the other two hostage for hours after they finished"
+        ),
     )
     s.add_argument("--out", default=str(DEFAULT_SAMPLE_DIR))
     s.set_defaults(func=cmd_sample)

@@ -33,9 +33,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-for _stream in (sys.stdout, sys.stderr):
-    if hasattr(_stream, "reconfigure"):
-        _stream.reconfigure(encoding="utf-8", errors="replace")
+from ravaan.console import pin_utf8_streams  # noqa: E402
+
+pin_utf8_streams()
 
 import torch  # noqa: E402
 
@@ -99,13 +99,29 @@ def _device(requested: str) -> str:
 
 def cmd_run(args: argparse.Namespace) -> int:
     model_config = LADDER[args.size]
-    training = TrainingConfig(seed=args.seed)
-    if args.tokens_per_step:
-        training = TrainingConfig.from_dict(
-            {**training.to_dict(), "tokens_per_step": args.tokens_per_step}
-        )
-
     corpus = PackedCorpus(args.corpus, split="train", arm=args.corpus_arm)
+
+    # The budget, before anything else reads it. §4.3's 9.9e9 is the default because it is the
+    # commitment; `--tokens` and `--epochs` exist because a diagnostic run is not that run, and
+    # until session 23 the only way to shorten one was `--steps`, which stops the loop without
+    # moving `total_steps` — so a "short run" trained its whole length at near-peak learning
+    # rate and never decayed. That is a silent difference in the one hyperparameter
+    # preregistration §6 is most careful about, so the two flags set the budget properly and
+    # `--steps` keeps its meaning of "stop early, on purpose".
+    overrides: dict = {"seed": args.seed}
+    if args.tokens_per_step:
+        overrides["tokens_per_step"] = args.tokens_per_step
+    if args.warmup_steps is not None:
+        overrides["warmup_steps"] = args.warmup_steps
+    if args.log_every:
+        overrides["log_every"] = args.log_every
+    if args.tokens and args.epochs:
+        raise SystemExit("--tokens and --epochs both set the same budget; pass one")
+    if args.tokens:
+        overrides["tokens_processed"] = float(args.tokens)
+    elif args.epochs:
+        overrides["tokens_processed"] = float(args.epochs) * corpus.tokens
+    training = TrainingConfig.from_dict({**TrainingConfig().to_dict(), **overrides})
     held_out = PackedCorpus(args.corpus, split=args.eval_split, arm=None) if args.evaluate else None
 
     model = build_model(args.arm, model_config, corpus, args.mask_id)
@@ -291,7 +307,35 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--device", default="auto")
     r.add_argument("--microbatch", type=int, help="sequences per forward; the rest is accumulated")
     r.add_argument("--tokens-per-step", type=int, help="override §4.3's step size")
-    r.add_argument("--steps", type=int, help="stop early — pilots and smoke tests")
+    r.add_argument(
+        "--warmup-steps",
+        type=int,
+        help=(
+            "§4.3's 750 is ~1%% of a 9.9e9-token run and is 13%% of a 368e6 one. A shortened "
+            "budget that keeps the default spends a tenth of itself ramping, so set this "
+            "alongside --tokens or --epochs"
+        ),
+    )
+    r.add_argument("--log-every", type=int, help="steps between log lines")
+    r.add_argument(
+        "--tokens",
+        type=float,
+        help="§4.3's budget is 9.9e9; override it for a diagnostic run. Moves the cosine too",
+    )
+    r.add_argument(
+        "--epochs",
+        type=float,
+        help="the budget as passes over this corpus. Mutually exclusive with --tokens",
+    )
+    r.add_argument(
+        "--steps",
+        type=int,
+        help=(
+            "stop early without moving the budget — a smoke test. ⚠️ the learning rate still "
+            "follows the full schedule, so a run stopped this way never decayed; use --tokens "
+            "or --epochs for a short run that is meant to be read"
+        ),
+    )
     r.add_argument("--resume", help="a checkpoint to continue from")
     r.add_argument("--mask-id", type=int, help="§7's <mask> id, if the manifest lacks it")
     r.add_argument("--tokenizer", help="§7's .model file; §4.2's corruptions decode through it")

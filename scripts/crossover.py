@@ -29,6 +29,11 @@ from __future__ import annotations
 import argparse
 import math
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from ravaan.console import pin_utf8_streams  # noqa: E402
 
 # Fitted constants from arXiv:2507.15857 Figure 6. U in raw tokens, C in FLOPs.
 SLOPE = 0.460
@@ -109,12 +114,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--no-unit-check", action="store_true")
     args = parser.parse_args(argv)
 
-    # Windows picks cp1252 for a redirected stdout, and this script prints "≈", "→" and "×".
-    # reports/splits.md §1 tells the reader to run this command; piping it to a file must not be
-    # the thing that breaks it. Same class as session 4's CRLF bug: a platform default reaching
-    # output the pipeline is expected to produce.
-    if hasattr(sys.stdout, "reconfigure"):
-        sys.stdout.reconfigure(encoding="utf-8")
+    # reports/splits.md §1 tells the reader to run this command and pipe it to a file; this
+    # script prints "≈", "→" and "×", and cp1252 raises rather than mangles.
+    pin_utf8_streams()
 
     if not args.no_unit_check:
         unit_check()

@@ -47,11 +47,9 @@ from urllib.parse import urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-# Urdu on a Windows console is cp1252 by default, which raises rather than mangles. The probe
-# writes Urdu to both streams, so pin them before anything is printed.
-for _stream in (sys.stdout, sys.stderr):
-    if hasattr(_stream, "reconfigure"):
-        _stream.reconfigure(encoding="utf-8", errors="replace")
+from ravaan.console import pin_utf8_streams  # noqa: E402
+
+pin_utf8_streams()
 
 from ravaan.data.encoding import EncodingConfig, EncodingLog, validate_text  # noqa: E402
 from ravaan.data.langid import LangIDConfig, LangIDLog, classify  # noqa: E402

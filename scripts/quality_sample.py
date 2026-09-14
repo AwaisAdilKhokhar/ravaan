@@ -46,9 +46,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-for _stream in (sys.stdout, sys.stderr):
-    if hasattr(_stream, "reconfigure"):
-        _stream.reconfigure(encoding="utf-8", errors="replace")
+from ravaan.console import pin_utf8_streams  # noqa: E402
+
+pin_utf8_streams()
 
 from ravaan.data.encoding import EncodingConfig, validate_text  # noqa: E402
 from ravaan.data.langid import LangIDConfig, classify  # noqa: E402

@@ -13,7 +13,8 @@ Four pieces, and the split follows what is shared rather than what is convenient
   measuring the decoders.
 * :mod:`ravaan.sampling.ar` — left to right until EOS or the context ends.
 * :mod:`ravaan.sampling.diffusion` — iterative unmasking, carrying §4.4's A3 (steps) and A4
-  (random vs. confidence) as two arguments.
+  (random vs. confidence) as two arguments, plus the ``gumbel`` schedule session 23 added between
+  A4's two after both were measured and both failed, in opposite directions.
 * :mod:`ravaan.sampling.prompts` — §4.2's five framings, rebuilt for inference. A model trained on
   `<lm>`-prefixed sequences and prompted with bare text is being asked a question it was never
   taught.
@@ -57,6 +58,7 @@ def generate(
     max_new_tokens: int | None = None,
     steps: int = 32,
     schedule: str = "confidence",
+    gumbel: float = 1.0,
     forbid: Sequence[int] = (),
     eos_id: int | None = None,
     generator: torch.Generator | None = None,
@@ -65,9 +67,9 @@ def generate(
 
     The dispatch is on ``prompt.arm`` rather than on the model, so a prompt framed for one arm and
     handed to the other raises here instead of producing a plausible-looking sample of the wrong
-    experiment. ``steps`` and ``schedule`` are ignored by the AR arm and ``max_new_tokens`` by the
-    diffusion one — each is meaningless on the other side, and silently accepting both is what
-    lets an ablation sweep a knob that is not connected to anything.
+    experiment. ``steps``, ``schedule`` and ``gumbel`` are ignored by the AR arm and
+    ``max_new_tokens`` by the diffusion one — each is meaningless on the other side, and silently
+    accepting both is what lets an ablation sweep a knob that is not connected to anything.
     """
     arm = "ar" if getattr(getattr(model, "config", None), "causal", True) else "diff"
     if arm != prompt.arm:
@@ -94,6 +96,7 @@ def generate(
         locked=torch.tensor([list(prompt.locked)], dtype=torch.bool),
         steps=steps,
         schedule=schedule,
+        gumbel=gumbel,
         config=config,
         forbid=forbid,
         generator=generator,

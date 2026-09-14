@@ -151,7 +151,7 @@ def test_ar_seeds_actually_change_the_sample():
     assert not torch.equal(a.tokens, b.tokens)
 
 
-@pytest.mark.parametrize("schedule", ["random", "confidence"])
+@pytest.mark.parametrize("schedule", ["random", "confidence", "gumbel"])
 def test_diffusion_is_bit_identical_under_one_seed(schedule):
     model = diff_model()
     canvas = torch.full((2, 16), MASK)
@@ -187,7 +187,7 @@ def test_ar_never_rewrites_its_prompt():
     assert out.locked[:, :4].all() and not out.locked[:, 4:].any()
 
 
-@pytest.mark.parametrize("schedule", ["random", "confidence"])
+@pytest.mark.parametrize("schedule", ["random", "confidence", "gumbel"])
 def test_diffusion_never_writes_a_locked_position(schedule):
     model = diff_model()
     canvas = torch.arange(16).unsqueeze(0) % 60 + 16
@@ -217,6 +217,38 @@ def test_unmask_counts_sum_to_the_total_and_finish():
             assert len(counts) == steps
             assert sum(counts) == total
             assert all(c >= 0 for c in counts)
+
+
+def test_gumbel_zero_is_the_confidence_schedule_exactly():
+    """The family has to contain its own limit, or `gumbel` is a fourth thing rather than a knob.
+
+    `log` is monotone, so adding zero noise to `log p` leaves the ranking `confidence` produces —
+    which makes A4's confidence arm reachable from this schedule rather than merely similar to it.
+    Asserted at both temperatures because greedy takes a different branch in `sample_ids`.
+    """
+    model = diff_model()
+    canvas = torch.full((1, 24), MASK)
+    canvas[:, 0] = 9
+    for temperature in (1.0, 0.0):
+        config = SamplingConfig(temperature=temperature, top_p=0.95, seed=11)
+        strict = sample_diffusion(model, canvas, steps=6, schedule="confidence", config=config)
+        limit = sample_diffusion(
+            model, canvas, steps=6, schedule="gumbel", gumbel=0.0, config=config
+        )
+        assert torch.equal(strict.tokens, limit.tokens), temperature
+
+
+def test_gumbel_noise_changes_the_order_and_is_recorded():
+    model = diff_model()
+    canvas = torch.full((1, 24), MASK)
+    canvas[:, 0] = 9
+    config = SamplingConfig(seed=11)
+    strict = sample_diffusion(model, canvas, steps=6, schedule="confidence", config=config)
+    noisy = sample_diffusion(model, canvas, steps=6, schedule="gumbel", gumbel=3.0, config=config)
+    assert not torch.equal(strict.tokens, noisy.tokens)
+    # An ablation row that does not carry the knob cannot be read back.
+    assert noisy.detail["gumbel"] == 3.0
+    assert strict.detail["gumbel"] is None
 
 
 def test_diffusion_refuses_a_schedule_it_does_not_have():

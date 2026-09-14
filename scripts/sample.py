@@ -68,12 +68,23 @@ from ravaan.sampling import SamplingConfig, generate, load_arm, prompts  # noqa:
 from ravaan.training.data import PackedCorpus  # noqa: E402
 from ravaan.training.tasks import SentencePieceCodec  # noqa: E402
 
-#: §4.4's A3 rung. Swept for the diffusion arm only; the AR arm has no step count to vary.
-A3_STEPS = (8, 16, 32, 64)
-#: §4.4's A4 rung.
-A4_SCHEDULES = ("confidence", "random")
+#: §4.4's A3 rung, extended past its top. Swept for the diffusion arm only; the AR arm has no
+#: step count to vary. §4.4 stops at 64, which on a 160-position canvas still commits 2-3
+#: positions per step from independent marginals; the grid's ceiling was doing as much work as
+#: its contents, so 160 — one position per step, the exact any-order ancestral sampler — is here
+#: as the reference point the four rungs are read against. Nothing above the number of masked
+#: positions does anything, since those steps commit nothing.
+A3_STEPS = (8, 16, 32, 64, 160)
+#: §4.4's A4 rung, plus the schedule session 23 added between them — see
+#: `ravaan.sampling.diffusion`. Swept together because A4's two turned out to be the endpoints of
+#: the family the third one parameterizes, and reporting only the endpoints is what hid the fact
+#: that a readable setting sits between them.
+A4_SCHEDULES = ("confidence", "random", "gumbel")
 #: Not in §4.4, and swept anyway — see `--forbid-eos`.
 EOS_CHOICES = ("never", "always", "both")
+
+#: The `gumbel` schedule's one knob. Swept rather than picked, for the reason A3 and A4 are.
+GUMBEL_SCALES = (1.0, 2.0)
 
 
 def build_arguments() -> argparse.ArgumentParser:
@@ -115,6 +126,16 @@ def build_arguments() -> argparse.ArgumentParser:
             "docstring"
         ),
     )
+    parser.add_argument(
+        "--gumbel",
+        type=float,
+        action="append",
+        help=(
+            "noise scale for the `gumbel` schedule, annealed to zero over the decode; repeatable. "
+            f"Defaults to {GUMBEL_SCALES}. 0 reproduces `confidence` exactly, so the sweep does "
+            "not need to include it"
+        ),
+    )
     parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     return parser
 
@@ -147,6 +168,7 @@ def main(argv: list[str] | None = None) -> int:
     args = build_arguments().parse_args(argv)
     steps = tuple(args.steps or A3_STEPS)
     schedules = tuple(args.schedule or A4_SCHEDULES)
+    gumbels = tuple(args.gumbel or GUMBEL_SCALES)
 
     corpus = PackedCorpus(
         args.corpus, split="validation", arm=None, populations=(args.population,)
@@ -180,10 +202,19 @@ def main(argv: list[str] | None = None) -> int:
         print(arm.describe())
 
         eos_axis = {"never": (False,), "always": (True,), "both": (False, True)}[args.forbid_eos]
+        # `gumbel` is the only schedule with a scale, so the other two take it once rather than
+        # once per value — otherwise the sweep silently doubles them and the summary averages a
+        # setting twice.
         settings = (
-            [(None, None, False)]
+            [(None, None, None, False)]
             if arm.arm == "ar"
-            else [(s, sched, e) for s in steps for sched in schedules for e in eos_axis]
+            else [
+                (s, sched, g if sched == "gumbel" else None, e)
+                for s in steps
+                for sched in schedules
+                for g in (gumbels if sched == "gumbel" else (None,))
+                for e in eos_axis
+            ]
         )
 
         for index, sequence in enumerate(prefixes):
@@ -226,7 +257,7 @@ def main(argv: list[str] | None = None) -> int:
             ]
 
             for task, prompt in plans:
-                for step_count, schedule, forbid_eos in settings:
+                for step_count, schedule, gumbel, forbid_eos in settings:
                     started = time.time()
                     out = generate(
                         arm.model,
@@ -235,6 +266,7 @@ def main(argv: list[str] | None = None) -> int:
                         max_new_tokens=args.new_tokens,
                         steps=step_count or 32,
                         schedule=schedule or "confidence",
+                        gumbel=1.0 if gumbel is None else gumbel,
                         forbid=(*arm.forbidden, arm.eos_id) if forbid_eos else arm.forbidden,
                         eos_id=arm.eos_id if task != "infill" else None,
                     )
@@ -254,6 +286,7 @@ def main(argv: list[str] | None = None) -> int:
                             "hinted_length": prompt.hinted_length,
                             "steps": step_count,
                             "schedule": schedule,
+                            "gumbel": gumbel,
                             "forbid_eos": forbid_eos,
                             "seed": config.seed + index,
                             "forwards": out.forwards,
@@ -267,7 +300,11 @@ def main(argv: list[str] | None = None) -> int:
                     axis = (
                         ""
                         if step_count is None
-                        else f"{step_count:3d} {schedule:10s} eos{'-' if forbid_eos else '+'}"
+                        else (
+                            f"{step_count:4d} {schedule:10s}"
+                            f"{'' if gumbel is None else f' g{gumbel:g}':>4s}"
+                            f" eos{'-' if forbid_eos else '+'}"
+                        )
                     )
                     print(
                         f"  {arm.arm:4s} {task:12s} #{index} {axis} "
@@ -305,12 +342,13 @@ def render(records: list[dict], config: SamplingConfig, args) -> str:  # noqa: A
         "",
         "`script` is the Arabic-script share of letters, `rep` is 1 − distinct-4, and `run` is the",
         "longest repeated word run. A diffusion row carries the A3 step count and A4 schedule it",
-        "was decoded under; an AR row has neither, because that arm has no such dial.",
+        "was decoded under — with the noise scale, where the schedule is `gumbel` — and an AR row",
+        "has neither, because that arm has no such dial.",
         "",
         "## Summary",
         "",
-        "| arm | task | steps | schedule | `</s>` | n | script | distinct-1 | rep | run |",
-        "|---|---|---|---|---|---|---|---|---|---|",
+        "| arm | task | steps | schedule | n | script | distinct-1 | rep | run |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
 
     groups: dict[tuple, list[dict]] = {}
@@ -320,6 +358,7 @@ def render(records: list[dict], config: SamplingConfig, args) -> str:  # noqa: A
             record["task"],
             record["steps"],
             record["schedule"],
+            record["gumbel"],
             record["forbid_eos"],
         )
         groups.setdefault(key, []).append(record)
@@ -333,20 +372,26 @@ def render(records: list[dict], config: SamplingConfig, args) -> str:  # noqa: A
             values.append(float(value))
         return sum(values) / len(values) if values else 0.0
 
-    for (arm, task, steps, schedule, forbid_eos), rows in groups.items():
-        allowed = "" if steps is None else ("forbidden" if forbid_eos else "allowed")
+    def describe(schedule: str | None, gumbel: float | None, forbid_eos: bool) -> str:
+        """The decoder axes as one cell. `gumbel` has a scale and the other two do not."""
+        if schedule is None:
+            return ""
+        scale = "" if gumbel is None else f" {gumbel:g}"
+        return f"{schedule}{scale}, `</s>` " + ("forbidden" if forbid_eos else "allowed")
+
+    for (arm, task, steps, schedule, gumbel, forbid_eos), rows in groups.items():
         lines.append(
-            f"| {arm} | {task} | {steps or ''} | {schedule or ''} | {allowed} | {len(rows)} "
+            f"| {arm} | {task} | {steps or ''} | {describe(schedule, gumbel, forbid_eos)} "
+            f"| {len(rows)} "
             f"| {mean(rows, 'script_consistency'):.3f} | {mean(rows, 'distinct', '1'):.3f} "
             f"| {mean(rows, 'repetition'):.3f} | {mean(rows, 'longest_repeat'):.1f} |"
         )
 
     lines += ["", "## Samples", ""]
-    for (arm, task, steps, schedule, forbid_eos), rows in groups.items():
+    for (arm, task, steps, schedule, gumbel, forbid_eos), rows in groups.items():
         head = f"### {arm.upper()} — {task}"
         if steps:
-            head += f" — {steps} steps, {schedule}, `</s>` "
-            head += "forbidden" if forbid_eos else "allowed"
+            head += f" — {steps} steps, {describe(schedule, gumbel, forbid_eos)}"
         lines += [head, ""]
         for row in rows:
             stats = row["stats"]

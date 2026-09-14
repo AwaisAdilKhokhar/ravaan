@@ -10,6 +10,17 @@ live here and nowhere else:
   length. One forward pass per step, so cost is linear in it and independent of sequence length.
 * **A4 — unmasking schedule (random vs. confidence-based).** ``schedule``.
 
+**A third schedule, ``gumbel``, added in session 23 because A4's two are the endpoints of a family
+rather than the family.** Both of §4.4's options were measured on the pilot checkpoint and both
+fail, in opposite directions: ``confidence`` commits the most predictable token first, which is
+self-reinforcing and converges the canvas onto one clause (Finding AP), while ``random`` commits
+early tokens the model had no opinion about and scaffolds the rest of the canvas on noise, giving
+script-consistent non-words. Ranking by ``log p(chosen) + s * Gumbel(0,1)`` with *s* annealed to
+zero over the run — MaskGIT's schedule — is the one-parameter family whose limits they are:
+``gumbel=0`` reproduces ``confidence`` exactly (the log is monotone, so the order is unchanged) and
+``gumbel → ∞`` reproduces ``random``. It is a decoder change, not a model change, and it is what
+first got readable Urdu out of the pilot diffusion checkpoint — see `reports/pilot_coherence.md`.
+
 **Why both schedules unmask the same number of positions per step.** The linear absorbing schedule
 leaves ``L * t`` positions masked at time *t*, so walking *t* from 1 to 0 in ``steps`` equal
 decrements fixes how many positions are outstanding after each step; what A4 varies is *which*
@@ -35,7 +46,12 @@ from torch import Tensor, nn
 
 from ravaan.sampling.decoding import Generation, SamplingConfig, build_generator, sample_ids
 
-SCHEDULES = ("random", "confidence")
+SCHEDULES = ("random", "confidence", "gumbel")
+
+#: Clamp for the two logs `gumbel` takes. A committed probability can underflow to exactly 0 under
+#: top-p and a uniform draw can come back as exactly 0 or 1; either would put an inf in the
+#: ranking and decide the schedule by whatever `argsort` does with it.
+_LOG_FLOOR = 1e-20
 
 
 def unmask_counts(total: int, steps: int) -> list[int]:
@@ -64,6 +80,7 @@ def sample_diffusion(
     *,
     steps: int = 32,
     schedule: str = "confidence",
+    gumbel: float = 1.0,
     locked: Tensor | None = None,
     config: SamplingConfig | None = None,
     forbid: Sequence[int] = (),
@@ -142,7 +159,7 @@ def sample_diffusion(
 
     forwards = 0
     try:
-        for take in schedule_counts:
+        for index, take in enumerate(schedule_counts):
             if take <= 0 or not bool(masked.any()):
                 continue
             logits = model(tokens)
@@ -150,10 +167,20 @@ def sample_diffusion(
             ids, confidence = sample_ids(logits, config, generator=generator, forbid=forbid)
 
             if schedule == "confidence":
-                score = confidence.masked_fill(~masked, float("-inf"))
+                score = confidence
+            elif schedule == "gumbel":
+                # log p, so the noise is added on the scale the Gumbel-max trick is defined on;
+                # monotone in p, so `gumbel=0` is `confidence` and not an approximation of it.
+                score = confidence.clamp_min(_LOG_FLOOR).log()
+                scale = gumbel * (1.0 - (index + 1) / len(schedule_counts))
+                if scale > 0:
+                    draw = torch.rand(
+                        tokens.shape, device=device, generator=generator
+                    ).clamp(_LOG_FLOOR, 1.0 - _LOG_FLOOR)
+                    score = score + scale * -(-draw.log()).log()
             else:
-                draw = torch.rand(tokens.shape, device=device, generator=generator)
-                score = draw.masked_fill(~masked, float("-inf"))
+                score = torch.rand(tokens.shape, device=device, generator=generator)
+            score = score.masked_fill(~masked, float("-inf"))
 
             order = score.argsort(dim=-1, descending=True)
             rank = torch.empty_like(order)
@@ -189,6 +216,7 @@ def sample_diffusion(
         detail={
             "steps": steps,
             "schedule": schedule,
+            "gumbel": gumbel if schedule == "gumbel" else None,
             "masked_positions": int(per_row.max().item()),
             **config.to_dict(),
         },

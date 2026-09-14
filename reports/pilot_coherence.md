@@ -7,6 +7,14 @@
 > the grid — the `gumbel` schedule at scale 2, 160 steps — gets **real Urdu words in
 > grammatical clauses** out of this same checkpoint. §10 is the measurement and §11 is what
 > it costs the reasoning in §9. **Nothing about the model changed; this is a decoder result.**
+>
+> **⚠️ And the other half of §9's support does not hold either.** The AR arm this file calls fluent
+> was **memorizing** the pilot corpus — +4.94 nats of train-versus-held-out gap against the
+> diffusion arm's +0.17 — so "AR is fluent on the same corpus, the same loop and the same code" is
+> not evidence that the shared code is sound, because the two arms were not doing the same thing.
+> **§12** is the measurement and what replaces it: a matched pair on a corpus neither arm can
+> memorize, where no diffusion-specific defect appears. The verdict in this table stands; the
+> reasoning under it changed twice in one day, and the report must carry both changes.
 
 **Gate G3 (PRD §11):** *"20M pilot DIFF produces coherent Urdu after 50 epochs; both models resume
 from checkpoint correctly."*
@@ -348,9 +356,13 @@ The support that fails: *"three separate decoder defects were found and fixed wi
 verdict"* was offered as evidence that the decoder had been exhausted. It had not been. A fourth
 decoder change moved the verdict further than any of the three.
 
-What this does **not** change: the AR control still holds — same corpus, same loop, same code,
-fluent — so there is still no evidence of a defect in anything the two arms share. And the
-decoder change does not make the pilot diffusion arm coherent, only legible.
+What this does **not** change: the decoder change does not make the pilot diffusion arm coherent,
+only legible.
+
+⚠️ What it *did* leave standing, and should not have: this section, written on 2026-09-14, said
+"the AR control still holds — same corpus, same loop, same code, fluent — so there is still no
+evidence of a defect in anything the two arms share." **Measured the same day, it does not hold.**
+§12 is that measurement.
 
 What it adds is a caution for §4.4. **An ablation grid can be wrong at its edges as well as in
 its interior**, and both of §4.4's diffusion axes were. A3's top rung and A4's two schedules were
@@ -394,12 +406,20 @@ held together by there being only one.
 ## 9. What was decided, 2026-09-13
 
 **G3 is recorded unmet, and the core runs proceed.** The gate's kill criterion is "implementation
-bug — debug, do not scale", and no implementation bug was found. The control is §2: Ravaan-AR is
-fluent on the same corpus, through the same loop, in the same code, so a defect in anything the
-arms share would show in both. Three decoder defects *were* found and fixed during this session and
-none of them moved the verdict. The judgement is that a 25M model at 368M training tokens over a
-7.36M-token pilot corpus is below the scale at which coherent Urdu is reachable at all — the gate's
-premise is wrong rather than the code.
+bug — debug, do not scale", and no implementation bug was found. The control offered at the time
+was §2: Ravaan-AR is fluent on the same corpus, through the same loop, in the same code, so a
+defect in anything the arms share would show in both. Three decoder defects *were* found and fixed
+during this session and none of them moved the verdict.
+
+⚠️ **Corrected 2026-09-14, and both of those supports are weaker than they read. See §11 and §12.**
+A fourth decoder defect moved the verdict further than the three (Finding AR, §10), and the AR
+control was **memorizing** — +4.94 nats of train-versus-held-out gap against the diffusion arm's
++0.17 (Finding AS). The conclusion survives on evidence that did not exist when it was written; the
+sentence below is left as it stood, and §12 is what now carries it.
+
+The judgement is that a 25M model at 368M training tokens over a 7.36M-token pilot corpus is below
+the scale at which coherent Urdu is reachable at all — the gate's premise is wrong rather than the
+code.
 
 The alternative considered and declined was a re-pilot at the 40M rung (~8 h on the 4060, at a
 reduced microbatch because 8.19 GB is tight), which would have converted the judgement into a
@@ -412,3 +432,68 @@ rather than only for the crossover.
 
 **The technical report must carry the verdict and this reasoning, and must not describe G3 as
 passed.**
+
+---
+
+## 12. Finding AS — the control was reciting the corpus, and what replaces it
+
+§9's decision was supported by two sentences. §10 and §11 weakened the first. This section is the
+measurement that removes the second, and the reason the decision is nonetheless in better shape
+than it was when it was taken.
+
+**The claim under test.** "Ravaan-AR is fluent on the same corpus, the same loop and the same code,
+so a defect in anything the arms share would show in both arms." The inference is sound. Its
+premise — that the two arms were doing the same thing — is not.
+
+**Measured** with `scripts/memorization.py`: plain-LM scoring, the same objective, the same
+denominator and the same code path, over a spaced sample of each split.
+
+| corpus | checkpoint | epochs | arm | train | held-out | **gap** |
+|---|---|---|---|---|---|---|
+| 7.36M | `ar_fp25` | 12.5 | AR | 3.406 | 4.502 | **+1.096** |
+| 7.36M | `ar_f1` | 50 | AR | 1.705 | 6.641 | **+4.935** |
+| 7.36M | `diff_fp25` | 12.5 | DIFF | 5.547 | 5.608 | **+0.062** |
+| 7.36M | `diff_f1` | 50 | DIFF | 4.796 | 4.966 | **+0.170** |
+| 186.9M | `ar-s0_f1` | 2 | AR | 3.734 | 3.781 | **+0.047** |
+| 186.9M | `diff-s0_f1` | 2 | DIFF | 4.344 | 4.408 | **+0.064** |
+
+At 50 epochs over 7.36M unique tokens a 20M-parameter AR model **recites the corpus**. The
+diffusion arm, on identical data, parameters, epochs, loop and code, barely moves — and over the
+second half of the run the AR gap goes +1.10 → +4.93 while the diffusion gap goes +0.06 → +0.17, so
+it is a curve rather than a point. On the plentiful corpus, where two passes make memorization
+impossible, **both gaps are ~0.05**: the control that says the instrument measures what it claims.
+
+**So §2's fluency is not evidence that the shared code is sound.** One arm memorized 7.36M tokens
+and looked fluent; the other did not memorize, and at that data scale not memorizing means not
+having enough Urdu to learn Urdu from. A shared defect would still show in both arms — that half of
+the inference stands — but "AR is fluent here" no longer establishes that there was nothing to see.
+
+**What replaces it is stronger, and it is a different run.** Session 23's matched pair trains both
+arms on 186.9M unique tokens for 2 epochs — same rung, same §4.2 mixture, same optimizer, same seed,
+the same 367,919,104 tokens processed — on a corpus neither arm can memorize. **No
+diffusion-specific defect appears**, and the two arms separate in the direction §4.3 predicts:
+diffusion ahead in the repeated regime, AR ahead in the plentiful one.
+[`reports/diffusion_scale.md`](reports/diffusion_scale.md) is that writeup, including the four
+reasons it is corroboration rather than a result — chief among them that the two regimes are two
+different corpora, so composition is confounded with repetition.
+
+**And it is the mechanism §4.3's primary endpoint is about.** Arm A repeats 25M unique tokens ~396
+times; the crossover is predicted *because* the two objectives are expected to degrade differently
+under repetition. Why an AR model can memorize this and a masked-diffusion model cannot is not
+mysterious: AR sees the same factorization every epoch, and MDLM draws a fresh masking rate and a
+fresh mask per sequence, so the same text presents an effectively non-repeating task distribution.
+
+**What the report owes.** The G3 section must carry this correction and not only the conclusion.
+A methods section that quotes the original control — "Ravaan-AR is fluent on the same corpus" —
+without saying that the arm was reciting the corpus is the kind of thing a reviewer finds, and the
+honest version is better for the paper anyway: the decision now rests on a matched pair rather than
+on an asymmetric one.
+
+**Reproduce:**
+
+```bash
+python scripts/memorization.py --corpus data/packed-pilot --sequences 384 \
+    --checkpoint runs/pilot/pilot-ar/ar_f1.pt \
+    --checkpoint runs/pilot/pilot-diff/diff_f1.pt \
+    --out reports/eval/memorization_pilot.json
+```

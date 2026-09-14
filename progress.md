@@ -3852,9 +3852,10 @@ instruments at questions nobody had asked them.
 
 **START HERE. The next task is the corpus. Nothing else is on the critical path, and the modelling
 work that could be done without it has now all been done** — Weeks 5–8 are complete, §4.1's matched
-pair trains on real Urdu, both halves of G3 are answered, and session 23 established that the
-diffusion arm can be made to produce readable Urdu at all. **The freeze is the only thing left that
-is blocked on you**, and it has been since session 17.
+pair trains on real Urdu, both halves of G3 are answered, and session 23 ran the first matched
+pair this project has that is **actually** matched — both arms on a corpus neither could memorize,
+where the AR/DIFF sign flips the way §4.3 predicts. **The freeze is the only thing left that is
+blocked on you**, and it has been since session 17.
 
 ### The three steps, in this order
 
@@ -3887,11 +3888,20 @@ first core runs are for.**
 > **⚠️ One planning fork worth settling before Week 9, raised 2026-09-14: the crossover experiment
 > and a publishable checkpoint want opposite things from U.** Arm A caps U at **25M unique tokens
 > and ~396 epochs on purpose** — that is what puts it 1.79× past C_crit, and it is the whole point
-> of §4.3. It also makes a poor model to hand anyone. Session 23's evidence is that unique tokens
-> are the axis that moves diffusion output quality, so a checkpoint meant for §2's deliverable 1
+> of §4.3. It also makes a poor model to hand anyone: a checkpoint meant for §2's deliverable 1
 > should be trained on the **whole ~170M-token pool** (or more — §6.1 records that 5–6B tokens of
 > Urdu exist and that capping is a *design decision*), not on arm A's 25M subsample. Same code,
-> same budget, different U; one extra run. **Decide deliberately, and make sure the report and the
+> same budget, different U; one extra run.
+>
+> ⚠️ **Corrected 2026-09-14, after the run this paragraph was written before.** This used to argue
+> from "unique tokens are the axis that moves diffusion output quality", and session 23 measured
+> that only half. Going 7.36M → 186.9M unique tokens **fixed the script collapse** (Arabic-script
+> share 0.250 → 1.000 unprompted) and **did not fix the slot-looping** — the diffusion arm still
+> writes well-formed Urdu clauses that repeat a phrase, and on that corpus the AR arm's exact
+> likelihood beats the diffusion arm's bound. The fork survives on the weaker and sufficient
+> argument: **arm A's U is capped to land past C_crit, which is a property nobody downloading a
+> model wants.** What the extra data buys a released checkpoint is an open question, not a
+> measured one. **Decide deliberately, and make sure the report and the
 > model card say which checkpoint is which** — the paper's artifact and the hub's artifact should
 > not silently be the same file.
 >

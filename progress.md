@@ -3638,13 +3638,59 @@ already being recorded in JSON. **The fourteen fraction checkpoints were kept de
 
 ## Next session
 
-**START HERE. The corpus freeze has one pass left, and it needs a rented Linux box — not Colab,
-not Kaggle, not this machine.** Everything else in stages 6+7 is done and on disk. This was true at
-the end of session 17 and it is still true: sessions 18 through 22 could not move it, so they took
-the work that does not depend on it. **That work is now finished** — Weeks 5–8 are complete, §4.1's
-matched pair trains on real Urdu, and both halves of G3 are answered. **The freeze is the only
-thing left that is blocked on you.** Steps 1–5 below are unchanged; step 6 is closed and replaced
-by step 7, which is a decision rather than a task.
+**START HERE. The next task is the corpus. Nothing else is on the critical path, and the modelling
+work that could be done without it has now all been done** — Weeks 5–8 are complete, §4.1's matched
+pair trains on real Urdu, both halves of G3 are answered, and session 23 established that the
+diffusion arm can be made to produce readable Urdu at all. **The freeze is the only thing left that
+is blocked on you**, and it has been since session 17.
+
+### The three steps, in this order
+
+**1. Finish the corpus.** FineWeb2's stage 6+7 pass needs a **rented 32 GB CPU box, ~14 h, $2–4** —
+not Colab, not Kaggle, not this machine. Then stages **9 → 8 → 10** run locally and cheaply. Three
+things fall out of that, in order, and each is written up below:
+
+  - **the G1 re-check** (§3) — arm A's `roman_urdu` margin is ~1.53× and that is a *pre*-stage-8
+    number; stage 8 will eat some of it, and G1's remaining fallback is "below 25M → stop";
+  - **the stage-9 re-solve** (§4) — one command, with the measured chars/token, and it has to land
+    **before the corpus is written**;
+  - **the Finding AE decision** (§5) — filter the 2.77% wrong-lexicon Roman rows, or train as-is
+    and state the rate. It waits on the same number the G1 re-check waits on.
+
+**2. Then compute.** §4.3's run is 70M params × 9.9B tokens. To fit **6 runs in $90 at $0.35/hr you
+need ~64,200 tok/s at the 70M rung**. This 4060 does ~14,400 — **4.5× short** — which is exactly why
+G2's own docstring says to measure on the instance you intend to rent *before* renting it. A
+4090-class spot is the assumption; **verify it, do not trust the spec sheet.** Set the provider
+spending limit when the account is created, which is what PRD §9 wanted on day one anyway, and the
+same account answers step 1's rented-CPU question.
+
+**3. Then the runs.** 6 core (2 arms × 3 seeds) plus A1 and A2 at 1 seed each. Resume is proven
+exact on both arms (G3's resume half), so spot preemption is survivable and §9's checkpoint-every-
+500-steps control is already in the loop.
+
+Sections 1–5 below are the detail for step 1 and are unchanged. Step 6 is closed; step 7 holds what
+session 22's two decisions oblige; **step 8 is new and holds what session 23 changed.**
+
+> **⚠️ One planning fork worth settling before Week 9, raised 2026-09-14: the crossover experiment
+> and a publishable checkpoint want opposite things from U.** Arm A caps U at **25M unique tokens
+> and ~396 epochs on purpose** — that is what puts it 1.79× past C_crit, and it is the whole point
+> of §4.3. It also makes a poor model to hand anyone. Session 23's evidence is that unique tokens
+> are the axis that moves diffusion output quality, so a checkpoint meant for §2's deliverable 1
+> should be trained on the **whole ~170M-token pool** (or more — §6.1 records that 5–6B tokens of
+> Urdu exist and that capping is a *design decision*), not on arm A's 25M subsample. Same code,
+> same budget, different U; one extra run. **Decide deliberately, and make sure the report and the
+> model card say which checkpoint is which** — the paper's artifact and the hub's artifact should
+> not silently be the same file.
+>
+> Three things a release needs that the PRD does not yet cover. **(a) Inference code ships with the
+> weights.** `RavaanDiffusion` is not a `transformers` architecture, and a user with `AutoModel` and
+> no `sample_diffusion` has nothing — from outside the model, the schedule, the step count and
+> forbidding `</s>` *are* the model (Findings AO and AR). **(b) The model card carries the
+> ELBO-is-a-bound caveat, G3's verdict, and the failure modes**, in the same words §4.3 and §11
+> require of the report. **(c) Urdu Wikipedia is CC-BY-SA** and `data/manifest.json` already flags
+> it in `share_alike_sources`; whether share-alike reaches model weights is worth settling *before*
+> publishing, not after. §2.4's "no raw text redistribution" means the corpus ships as code,
+> manifest and checksums either way.
 
 > **✅ Session 22's two open decisions were taken on 2026-09-13, and both are now record rather
 > than question.** Step 7 holds what each one obliges the report to say.

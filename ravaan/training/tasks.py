@@ -68,7 +68,7 @@ from __future__ import annotations
 import math
 import random
 from collections import Counter
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol, runtime_checkable
@@ -123,6 +123,7 @@ __all__ = [
     "TaskGenerator",
     "TextCodec",
     "build_tasks",
+    "rebalance_shares",
 ]
 
 
@@ -662,11 +663,66 @@ class TaskGenerator:
         return tokens, labels, keep, pad
 
 
+def rebalance_shares(pinned: Mapping[str, float]) -> dict[str, float]:
+    """§4.2's table with some shares pinned and ``lm`` absorbing the difference.
+
+    Open question 5 asks whether §4.2's 10% infilling share leaves the AR arm bad enough at
+    infilling that ablation A2 stops meaning anything — reported FIM practice is 50-90%. Answering
+    it is a comparison, and a comparison is only readable if **one** thing moved.
+
+    So the residual comes out of ``lm`` alone rather than being spread over the unpinned tasks in
+    proportion to their shares. Spreading it would take `translit`, `restore` and `codeswitch` down
+    with it — four changes, and a difference in infill quality could then be any of them. Plain LM
+    is the bulk and the only task in §4.2's table that is not a hypothesis about a specific
+    capability, so it is the one that can give mass up without the run becoming a different
+    experiment.
+
+    Raises ``ValueError`` rather than clamping: a negative ``lm`` share means the caller asked for
+    a mixture §4.2 cannot express, and silently renormalizing it would produce a run whose config
+    records shares nobody chose.
+    """
+    unknown = set(pinned) - set(TASK_SHARES)
+    if unknown:
+        raise ValueError(
+            f"§4.2's table has no task named {sorted(unknown)!r}; it is "
+            f"{sorted(TASK_SHARES)!r}"
+        )
+    for task, value in pinned.items():
+        if not 0.0 <= value <= 1.0:
+            raise ValueError(f"share for {task!r} must be in [0, 1], got {value}")
+    if not pinned:
+        # The identity case is exact rather than approximately exact: 1 - sum(the rest) drifts to
+        # 0.6499999999999999, and these shares are written into a run's config.json. A run that
+        # pinned nothing should record §4.2's table, character for character.
+        return dict(TASK_SHARES)
+    shares = dict(TASK_SHARES)
+    shares.update(pinned)
+    if "lm" in pinned:
+        total = sum(shares.values())
+        if abs(total - 1.0) > 1e-9:
+            raise ValueError(
+                f"'lm' was pinned explicitly, so nothing is left to absorb the residual and the "
+                f"shares must sum to 1 on their own; they sum to {total:.6f}"
+            )
+        return shares
+    rest = sum(value for task, value in shares.items() if task != "lm")
+    shares["lm"] = 1.0 - rest
+    if shares["lm"] < -1e-9:
+        raise ValueError(
+            f"the pinned shares total {rest:.6f}, which leaves 'lm' at {shares['lm']:.6f}. §4.2's "
+            "other tasks have to fit inside 1 with plain LM"
+        )
+    shares["lm"] = max(shares["lm"], 0.0)
+    return shares
+
+
 def build_tasks(
     arm: str,
     corpus,
     config,
     tokenizer_path: str | Path | None = None,
+    *,
+    shares: Mapping[str, float] | None = None,
 ) -> TaskGenerator:
     """§4.2's mixture over §7's tokenizer — the one way to assemble one, for every caller.
 
@@ -710,5 +766,6 @@ def build_tasks(
         arm=arm,
         sequence_length=config.sequence_length,
         seed=config.seed,
+        shares=dict(shares) if shares is not None else None,
         corruption=CorruptionConfig(),
     )

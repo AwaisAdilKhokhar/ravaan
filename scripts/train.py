@@ -45,7 +45,7 @@ from ravaan.models.diffusion import RavaanDiffusion  # noqa: E402
 from ravaan.training.config import PROVENANCE, TrainingConfig  # noqa: E402
 from ravaan.training.data import PackedCorpus  # noqa: E402
 from ravaan.training.loop import Trainer, throughput  # noqa: E402
-from ravaan.training.tasks import TaskGenerator  # noqa: E402
+from ravaan.training.tasks import TaskGenerator, rebalance_shares  # noqa: E402
 from ravaan.training.tasks import build_tasks as _build_tasks  # noqa: E402
 
 
@@ -67,8 +67,31 @@ def _mask_id(corpus: PackedCorpus | None, override: int | None) -> int:
     )
 
 
+def parse_shares(pairs: list[str] | None) -> dict[str, float] | None:
+    """`--task-share NAME=FRAC`, repeatable. `lm` absorbs the residual — see `rebalance_shares`."""
+    if not pairs:
+        return None
+    pinned: dict[str, float] = {}
+    for pair in pairs:
+        name, sep, value = pair.partition("=")
+        if not sep:
+            raise SystemExit(f"--task-share wants NAME=FRACTION, got {pair!r}")
+        try:
+            pinned[name.strip()] = float(value)
+        except ValueError as exc:
+            raise SystemExit(f"--task-share {pair!r}: {value!r} is not a number") from exc
+    try:
+        return rebalance_shares(pinned)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+
+
 def build_tasks(
-    arm: str, corpus: PackedCorpus, config: TrainingConfig, tokenizer_path: str | None
+    arm: str,
+    corpus: PackedCorpus,
+    config: TrainingConfig,
+    tokenizer_path: str | None,
+    shares: dict[str, float] | None = None,
 ) -> TaskGenerator:
     """`ravaan.training.tasks.build_tasks`, with its exceptions as operator-facing exits.
 
@@ -76,7 +99,7 @@ def build_tasks(
     belong here, which is the only part of this that is a command line.
     """
     try:
-        return _build_tasks(arm, corpus, config, tokenizer_path)
+        return _build_tasks(arm, corpus, config, tokenizer_path, shares=shares)
     except FileNotFoundError as exc:
         raise SystemExit(f"{exc}. Pass --tokenizer, or --no-tasks to accept that") from exc
     except ValueError as exc:
@@ -125,7 +148,12 @@ def cmd_run(args: argparse.Namespace) -> int:
     held_out = PackedCorpus(args.corpus, split=args.eval_split, arm=None) if args.evaluate else None
 
     model = build_model(args.arm, model_config, corpus, args.mask_id)
-    tasks = None if args.no_tasks else build_tasks(args.arm, corpus, training, args.tokenizer)
+    shares = parse_shares(getattr(args, "task_share", None))
+    tasks = (
+        None
+        if args.no_tasks
+        else build_tasks(args.arm, corpus, training, args.tokenizer, shares)
+    )
     counts = parameter_count(model.config)
     device = _device(args.device)
 
@@ -339,6 +367,14 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--resume", help="a checkpoint to continue from")
     r.add_argument("--mask-id", type=int, help="§7's <mask> id, if the manifest lacks it")
     r.add_argument("--tokenizer", help="§7's .model file; §4.2's corruptions decode through it")
+    r.add_argument(
+        "--task-share",
+        action="append",
+        metavar="NAME=FRACTION",
+        help="pin one of §4.2's task shares; `lm` absorbs the residual. ⚠️ the table "
+        "is frozen (§4.2: 'not tuned afterwards'), so this is for a named experiment — "
+        "open question 5's infilling share — and the value lands in the run's config.json",
+    )
     r.add_argument(
         "--no-tasks",
         action="store_true",

@@ -3528,6 +3528,143 @@ already being recorded in JSON. **The fourteen fraction checkpoints were kept de
 
 ---
 
+### Session 23 — 2026-09-14
+
+**The session was asked for one thing — "run training for the diffusion LLM, I want to see it
+generate Urdu" — and the first hour of it produced two findings that change how session 22's
+verdict should be read.** Neither needed a training run. Both were found by pointing existing
+instruments at questions nobody had asked them.
+
+**Done**
+
+1. **Finding AR — A4's two unmasking schedules are the two *limits* of one dial, and both limits
+   fail while the interior does not.** §4.4 offers `random` and `confidence`; session 22 measured
+   both and reported that neither produces coherent Urdu. They fail in **opposite** directions,
+   which is what was worth another look. `confidence` commits the position it is most certain of,
+   which is the most *predictable* token, which makes its neighbours more predictable in the same
+   direction — one clause on a loop, rep up to 0.687. `random` commits a uniformly-drawn position,
+   which is a token the model had no opinion about, and because attention is bidirectional every
+   position decoded afterwards is conditioned on that scaffolding — script-consistent,
+   non-repetitive **non-words**.
+
+   Ranking by `log p(chosen) + s·Gumbel(0,1)` with *s* annealed to zero over the decode — MaskGIT's
+   schedule — is the family whose limits they are. `s = 0` reproduces `confidence` **exactly**, and
+   that is asserted in `tests/test_sampling.py` at both temperatures rather than claimed; `s → ∞`
+   reproduces `random`. At `s = 2`, 160 steps, `</s>` forbidden, **the same `diff_f1.pt` that
+   `pilot_coherence.md` §0 calls incoherent produces real Urdu words in grammatical clauses.**
+   Topic-locked and thin, which is what a 20M model at 368M training tokens should be — but not
+   `چارائیانہ`, and not one clause twenty-one times.
+
+   **A3 had the same defect at its ceiling.** §4.4 stops at 64 steps, which on a 160-position
+   canvas still commits 2–3 positions per step from independent marginals. One position per step —
+   the exact any-order ancestral sampler for this chain — is 160 steps, outside the grid, and it is
+   visibly better while **§8.3's three metrics register almost none of the difference**. A3's flat
+   `random` row from 8 to 64 was read as "steps do not matter here"; it is better read as "the
+   metrics cannot see what changed", which is what §6 of that same report says they cannot do.
+
+   Both are inference-only, both are logged as a deviation in `reports/preregistration.md` §8, and
+   both original rows are still measured and still reported. PRD §4.4 carries a pointer and §11's
+   G3 verdict row is narrowed: still a FAIL on the gate's wording, because the arm is topic-locked
+   and drifts to Roman Urdu unprompted, but "under any of 16 decoder settings" was a statement
+   about §4.4's grid rather than about decoding.
+
+2. **⚠️ Finding AS — the AR arm memorized the pilot corpus, and G3's control is that model.** The
+   pilot's own logs have said so since session 21 and nothing read them together: AR finished at
+   **~1.2 nats of training loss against 6.64 held-out**, and DIFF at 4.66 against 5.06. Measured
+   properly with `scripts/memorization.py` — plain-LM scoring, same objective, same denominator,
+   same code path, run over a spaced sample of each split:
+
+   | | train | held-out | gap |
+   |---|---|---|---|
+   | **Ravaan-AR** `ar_f1.pt` | 1.645 nats | 6.105 | **+4.46** |
+   | **Ravaan-DIFF** `diff_f1.pt` | 4.654 | 4.679 | **+0.03** |
+
+   At 50 epochs over 7.36M unique tokens, a 20M-parameter AR model **recites the corpus**. The
+   diffusion arm, on identical data, parameters, epochs, loop and code, has essentially no
+   generalization gap at all.
+
+   **This is why "AR is fluent and DIFF is not" was never evidence that DIFF was broken.** Session
+   22's decision to proceed rests on the sentence *"the control is that Ravaan-AR is fluent on the
+   same corpus, the same loop and the same code — a defect in anything shared would show in both
+   arms."* The first half of that is intact: a shared defect would indeed show in both. The second
+   half is not the comparison it reads as, because **the two arms were not doing the same thing**.
+   One memorized 7.36M tokens and looked fluent; the other did not memorize and, at a data scale
+   that small, not memorizing means not having enough Urdu to learn Urdu from.
+
+   **And it is the mechanism §4.3's primary endpoint is about.** Arm A repeats 25M unique tokens
+   ~396 times. The crossover is predicted *because* the two objectives are expected to degrade
+   differently under repetition. At 50 epochs the AR arm has already spent its generalization and
+   the diffusion arm has not moved — which is the predicted direction, measured on this pipeline,
+   before anything is paid for. It is one seed at one scale on a corpus that is not the freeze, so
+   it is corroboration of a mechanism and not a result; but it is the first evidence the project
+   has that its central bet behaves the way the literature says it should.
+
+   Why an AR model can memorize this and a masked-diffusion model cannot is not mysterious: AR sees
+   the same factorization every epoch, and MDLM draws a fresh masking rate and a fresh mask per
+   sequence, so the same text presents an effectively non-repeating task distribution. **The
+   diffusion arm's resistance to repetition may be a property of the objective rather than of its
+   capacity**, and §4.3 is the experiment that would say.
+
+3. **A corpus 25× the pilot's, built locally in 25 minutes, after measuring why the last one took
+   2.5 hours.** The Week 5 tokenizer sample read 30M chars in 8,989 s, and the cost was assumed to
+   be the stage 2→5 pipeline. Measured: through the same `Pipeline`, **FineWeb2 runs at 321,533
+   urdu chars/s and Roman-Urdu-Parl at 1,141** — a factor of **280**, and it is document count, not
+   characters, because Roman-Urdu-Parl's rows are ~50-character sentences and every one pays full
+   langid, quality and PII cost. Week 5's 2.5 hours were spent almost entirely on the 141,142 Roman
+   rows and on hunting `code_switched` at an 11% hit rate.
+
+   So `scripts/tokenizer.py sample` gained `--population-chars POP=CHARS` and `--max-seconds`, both
+   recorded in `sample.json` so a realized mixture is never inferred, and
+   **`data/packed-urdu`** holds ~185M tokens of native Urdu from Urdu Wikipedia and FineWeb2
+   against the pilot's 7.36M. It is **not** the frozen corpus and its manifest says so in the same
+   words `pack_pilot.py` has always used.
+
+   ⚠️ **The first attempt was Wikipedia-only and was thrown away.** With both sources uncapped and
+   Wikipedia listed first, the 353M-char budget filled from 157k of Wikipedia's 200,154 rows and
+   **never reached FineWeb2** — which would have changed the domain as well as the size, on the
+   source the freeze will actually be dominated by. Caught by checking the sample against the pilot
+   corpus for overlap and finding only 2 of 5 probe documents. 25 minutes of GPU lost; the run was
+   restarted against both sources.
+
+4. **`scripts/train.py` could not express a shortened run, and the way it appeared to be able to
+   was a trap.** `tokens_processed` was fixed at §4.3's 9.9e9 and the only lever was `--steps`,
+   which stops the loop **without moving `total_steps`** — so every short run this project has made
+   followed the full cosine and never decayed, training at near-peak learning rate throughout. That
+   is a silent difference in the hyperparameter preregistration §6 is most careful about.
+   `--tokens`, `--epochs` and `--warmup-steps` fix it; `--steps` keeps its meaning of "stop early,
+   on purpose" and now says so.
+
+5. **Session 14's class fix, finished at the layer it stopped one short of.** Ten of sixteen
+   `scripts/*.py` still inlined the three `reconfigure` lines and `crossover.py` inlined a
+   stdout-only variant that would not have covered a traceback. All sixteen now call
+   `pin_utf8_streams()`. Carried forward since session 22, and the handoff asked for it the next
+   time anything in `scripts/` was opened.
+
+**Two things this session got wrong first**
+
+- **The Wikipedia-only corpus**, above. The lesson is the one Finding AJ already taught in a
+  different costume: **read what the driver actually did, not what it was asked to do.** `sample:
+  2 sources` was printed; which of the two supplied the characters was not, and the run took 12
+  minutes rather than the hours a FineWeb2 pass should have taken, which was the visible tell.
+- **Two argparse bugs shipped into a detached chain and cost a restart each.** `--warmup-steps`'s
+  help string contained a literal `%`, which argparse `%`-formats, so `train.py --help` raised —
+  and the chained pipeline reached the training step four seconds before the fix landed. And
+  `--population-chars POP=0` made `filled` `None`, which the sampler's summary formatted anyway.
+  Both were in code written this session and both were found by running it, not by reading it.
+
+**Noted, not done**
+
+- **The AR control on `data/packed-urdu` is queued rather than planned.** At 2 epochs over ~185M
+  unique tokens neither arm can memorize, so it is the first run where "the same corpus" means the
+  same thing for both — which is what G3's comparison was supposed to be. ~2.8 h, and the card is
+  otherwise idle.
+- **`reports/pilot_samples.md` still carries session 22's grid.** The amendment in
+  `pilot_coherence.md` §10 points at the new settings and `reports/pilot_samples_v2.*` holds a
+  three-prompt sweep with them; the full six-prompt regeneration was left for whoever next has the
+  card free.
+
+---
+
 ## Open questions for you
 
 1. ~~**Config format.**~~ **Decided in session 4: JSON, for the whole data pipeline.** Three

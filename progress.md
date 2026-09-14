@@ -263,7 +263,13 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | ↳ so "AR is fluent and DIFF is not" is not evidence DIFF is broken — different tasks | §11 | ⚠️ session 22's decision survives; one of its supports does not |
 | ↳ and it is the mechanism §4.3 is *about*: arm A repeats 25M tokens ~396× | §4.3 | ✅ predicted direction, measured before anything is rented |
 | ↳ `scripts/memorization.py` — plain-LM scoring on both splits, same code path | §4.3 | ✅ session 23; nothing measured this before |
-| **Data-scale diagnostic** — DIFF at ~185M unique tokens against the pilot's 7.36M | §11 | 🟡 session 23, `runs/urdu-diff`; the AR control is queued |
+| **The first matched pair that is actually matched** — both arms, 186.9M unique × 2 epochs | §4.1 | ✅ session 23, [`diffusion_scale.md`](reports/diffusion_scale.md) |
+| ↳ both memorization gaps ~0.05, so neither arm could cheat | §4.3 | ✅ the control that makes the pair readable |
+| ↳ **the AR/DIFF sign flips between the two regimes** — §4.5's primary endpoint, at pilot scale | §4.5 | ✅ diffusion ahead repeated, AR ahead plentiful |
+| ↳ ⚠️ a bound can prove a *diffusion* win and never an AR one — half the table is one-directional | §4.3 | ⚠️ the report must carry this beside the table |
+| ↳ ⚠️ two regimes are two *corpora*, so composition is confounded with repetition | §6.1 | ⚠️ the clean design needs the freeze |
+| ↳ the extra data fixed the script collapse (0.250 → 1.000) — mixture effect as much as scale | §6.1 | ⚠️ `packed-urdu` is urdu-only |
+| ↳ the loop the extra data did **not** fix: well-formed Urdu clauses repeating a slot | §8.4 | ⚠️ and §8.3's metrics cannot see it |
 | ↳ stage 2–5 throughput measured: FineWeb2 **321k chars/s**, Roman-Urdu-Parl **1.1k** | §6.3 | ✅ a 280× gap, and it is document count |
 | ↳ `--population-chars` / `--max-seconds`, both recorded in `sample.json` | §6.3 | ✅ a corpus sample cannot afford §6.1's mixture on this hardware |
 | ↳ ⚠️ `data/packed-urdu` is **urdu-only** and **not the freeze** — its manifest says so | §6.1 | ⚠️ no number from it goes in a results table |
@@ -3589,14 +3595,22 @@ instruments at questions nobody had asked them.
    properly with `scripts/memorization.py` — plain-LM scoring, same objective, same denominator,
    same code path, run over a spaced sample of each split:
 
-   | | train | held-out | gap |
-   |---|---|---|---|
-   | **Ravaan-AR** `ar_f1.pt` | 1.645 nats | 6.105 | **+4.46** |
-   | **Ravaan-DIFF** `diff_f1.pt` | 4.654 | 4.679 | **+0.03** |
+   | corpus | checkpoint | epochs | arm | train | held-out | **gap** |
+   |---|---|---|---|---|---|---|
+   | 7.36M | `ar_fp25` | 12.5 | AR | 3.406 | 4.502 | **+1.096** |
+   | 7.36M | `ar_f1` | 50 | AR | 1.705 | 6.641 | **+4.935** |
+   | 7.36M | `diff_fp25` | 12.5 | DIFF | 5.547 | 5.608 | **+0.062** |
+   | 7.36M | `diff_f1` | 50 | DIFF | 4.796 | 4.966 | **+0.170** |
+   | 186.9M | `ar-s0_f1` | 2 | AR | 3.734 | 3.781 | **+0.047** |
+   | 186.9M | `diff-s0_f1` | 2 | DIFF | 4.344 | 4.408 | **+0.064** |
 
    At 50 epochs over 7.36M unique tokens, a 20M-parameter AR model **recites the corpus**. The
-   diffusion arm, on identical data, parameters, epochs, loop and code, has essentially no
-   generalization gap at all.
+   diffusion arm, on identical data, parameters, epochs, loop and code, barely moves.
+
+   **And it is a curve rather than a point**, which is what makes it a mechanism: over the second
+   half of the repeated run the AR gap goes **+1.10 → +4.93** while the diffusion gap goes
+   **+0.06 → +0.17**. On the plentiful corpus, where two passes make memorization impossible,
+   **both gaps are ~0.05** — the control that says the instrument measures what it claims to.
 
    **This is why "AR is fluent and DIFF is not" was never evidence that DIFF was broken.** Session
    22's decision to proceed rests on the sentence *"the control is that Ravaan-AR is fluent on the
@@ -3655,6 +3669,49 @@ instruments at questions nobody had asked them.
    `pin_utf8_streams()`. Carried forward since session 22, and the handoff asked for it the next
    time anything in `scripts/` was opened.
 
+6. **The run the session was asked for, and it is the first matched pair this project has that
+   is actually matched.** Same 25M rung, same §4.2 mixture, same optimizer, same seed, same
+   **367,919,104 tokens processed** — over **186,931,200 unique tokens at 2 epochs** instead of
+   7.36M at 50. Both arms, 2.7 h each on the 4060 at ~39,000 tok/s. Both memorization gaps come out
+   ~0.05 (item 2), so neither arm could cheat.
+
+   **Held-out bits-per-byte, native Urdu:**
+
+   | data regime | Ravaan-AR (exact NLL) | Ravaan-DIFF (ELBO) | ahead |
+   |---|---|---|---|
+   | 7.36M unique × 50 epochs | 1.4200 | **≤ 1.0737** | **diffusion, provably** |
+   | 186.9M unique × 2 epochs | **0.8154** | ≤ 0.9703 | AR, on the bound |
+
+   **The sign flips, and it flips the way §4.3 predicts** — diffusion ahead where data is repeated,
+   AR ahead where data is plentiful. That is §4.5's primary endpoint, the *sign* of the crossover,
+   appearing at pilot scale before anything has been rented. Arm A's entire design is to sit in the
+   repeat regime for exactly this reason.
+
+   ⚠️ **And the table's asymmetry has to survive into the report.** §4.3 already requires the
+   diffusion figure to be called a bound; the consequence that is easy to lose is that **a bound
+   can prove a diffusion win and can never prove an AR one.** Row one is a result — the bound sits
+   0.35 bpb below the AR arm's exact likelihood and the true value is lower still. **Row two is
+   consistent with an AR win and does not establish one**; Ravaan-DIFF's true NLL could be anywhere
+   at or below 0.9703. What carries row two is the text, not the number.
+
+   [`reports/diffusion_scale.md`](reports/diffusion_scale.md) is the writeup, with the four reasons
+   this is corroboration rather than a result — chief among them that **the two regimes are two
+   different corpora, not one corpus at two budgets**, so composition is confounded with repetition.
+
+7. **What the text says, which is the half the metrics cannot.** At 2 epochs the AR arm writes
+   connected Urdu news prose across sentences — real entities, real syntax, topic held for a
+   paragraph. The diffusion arm at its best decoder setting (`gumbel` 2, 160 steps, `</s>`
+   forbidden) writes well-formed Urdu clauses that **loop on a slot**: `سالگرہ` eight times in one
+   sample, `آپ کو استعمال کرتا ہے` four times in another. Both are real Urdu words in grammatical
+   order; they are not the same thing to read; and **§8.3's three metrics score them within a few
+   hundredths of each other** — `pilot_coherence.md` §6's blindness, showing up again on a
+   different pair of checkpoints.
+
+   The one thing the extra data plainly fixed is **the script collapse**: the repeated corpus's
+   unconditional samples fall into Roman Urdu (Arabic-script share **0.250** at fraction 1.0), the
+   plentiful corpus's do not (**0.999–1.000**). That has a second explanation — the plentiful
+   corpus is urdu-only — so it is a mixture effect as much as a scale one.
+
 **Two things this session got wrong first**
 
 - **The Wikipedia-only corpus**, above. The lesson is the one Finding AJ already taught in a
@@ -3669,10 +3726,13 @@ instruments at questions nobody had asked them.
 
 **Noted, not done**
 
-- **The AR control on `data/packed-urdu` is queued rather than planned.** At 2 epochs over ~185M
-  unique tokens neither arm can memorize, so it is the first run where "the same corpus" means the
-  same thing for both — which is what G3's comparison was supposed to be. ~2.8 h, and the card is
-  otherwise idle.
+- **A native speaker has still not seen any of this.** Every judgement in items 2, 6 and 7 is
+  Claude's, in the same words `quality_validation.md` uses. This is now the *third* place a claim
+  rests on a fluent reader who has not been lined up — stage 5's 29 disagreements and §8.4's three
+  annotators are the other two, and open question 3 has not moved since session 22.
+  [The annotation page](https://claude.ai/code/artifact/92e617de-5364-4273-8584-8ff1cc95dea2)
+  renders all 243 samples in nastaliq and records a verdict per sample per annotator, so the
+  instrument now exists and only the people are missing.
 - **`reports/pilot_samples.md` still carries session 22's grid.** The amendment in
   `pilot_coherence.md` §10 points at the new settings and `reports/pilot_samples_v2.*` holds a
   three-prompt sweep with them; the full six-prompt regeneration was left for whoever next has the
@@ -3821,7 +3881,8 @@ exact on both arms (G3's resume half), so spot preemption is survivable and §9'
 500-steps control is already in the loop.
 
 Sections 1–5 below are the detail for step 1 and are unchanged. Step 6 is closed; step 7 holds what
-session 22's two decisions oblige; **step 8 is new and holds what session 23 changed.**
+session 22's two decisions oblige; **step 8 holds what session 23 changed, and it changes what the
+first core runs are for.**
 
 > **⚠️ One planning fork worth settling before Week 9, raised 2026-09-14: the crossover experiment
 > and a publishable checkpoint want opposite things from U.** Arm A caps U at **25M unique tokens
@@ -4066,6 +4127,52 @@ substantive open design question in the project.
   place a claim rests on a native speaker who has not been lined up yet; stage 5's 29 disagreements
   are the first.
 
+### 8. What session 23 changed, and the one run it makes cheap
+
+Three things, and the third is a suggestion rather than an obligation.
+
+**(a) G3's reasoning is weaker than it read, and its conclusion is stronger.** The verdict row in
+PRD §11 and §9 of [`pilot_coherence.md`](reports/pilot_coherence.md) both rested partly on *"three
+separate decoder defects were found and fixed without moving the verdict"* and on *"Ravaan-AR is
+fluent on the same corpus"*. A fourth decoder defect (Finding AR) moved the verdict further than
+the three, and the AR control turns out to have been **memorizing** (Finding AS, +4.94 nats against
+the diffusion arm's +0.17). Both sentences are now qualified in place. What replaces them is
+better: a matched pair on a corpus neither arm can memorize, where **no diffusion-specific defect
+appears** and the arms separate the way §4.3 predicts. **The report must carry the correction, not
+just the conclusion** — a G3 section that quotes the original control without saying it was
+reciting the corpus is the kind of thing a methods reviewer finds.
+
+**(b) Two things every A3/A4 table and every §8.3 number now has to say.**
+
+* **A4 has three arms and A3 has a fifth rung**, logged as a deviation in
+  [`preregistration.md`](reports/preregistration.md) §8. `gumbel=0` is `confidence` bit-for-bit, so
+  the family contains its own limit and the two preregistered settings are still measured and still
+  reported.
+* **The diffusion ELBO is one-directional evidence.** §4.3 already requires the word "bound"; the
+  consequence to state *beside every table* is that the bound can establish a diffusion win and can
+  never establish an AR one. Session 23's own table has one row of each kind and the difference
+  matters more than the numbers.
+
+**(c) ⚠️ The cheap run that is now obvious, and it is not in §10's schedule.** Session 23's two
+regimes are **two different corpora**, so repetition is confounded with composition. Once the
+freeze lands, the clean version costs **one extra run and no new data**: arm A at its 25M unique
+tokens is already the repeat regime, so train one diffusion arm on **the same frozen corpus at the
+same 9.9B budget drawn from the full ~170M-token pool** and the pair brackets the crossover on one
+corpus with one variable moved. That is the experiment §4.3 describes, made cheaper by the fact
+that the pool already exists. **Do not let it displace arm A's three seeds** — §9 is explicit that
+those carry the primary endpoint alone — but it is worth ~$8 of the contingency, and it is the same
+run that answers the publishable-checkpoint fork above.
+
+**And one thing that has not moved in three sessions.** Open question 3's annotators. Every Urdu
+judgement in `quality_validation.md`, `pilot_coherence.md` and `diffusion_scale.md` is Claude's, and
+§8.4's human evaluation is now the only instrument in the plan that can separate the two arms at
+all — §8.3's three metrics score fluent prose and slot-looping clauses within a few hundredths of
+each other, twice, on two different pairs of checkpoints.
+[The annotation page](https://claude.ai/code/artifact/92e617de-5364-4273-8584-8ff1cc95dea2) renders
+all 243 samples in nastaliq and records a verdict per sample per annotator, so **the instrument
+exists and only the people are missing.** It has weeks of lead time and it has had weeks of lead
+time since session 22.
+
 ### What session 22 settled, so it is not re-opened
 
 - **The diffusion collapse is not a canvas-width artefact.** The arm has only ever seen 512-token
@@ -4137,6 +4244,16 @@ Tracked background jobs in this environment were killed three times under ~14 mi
 foreground calls cap at 10. `nohup … &` as a detached process works — sessions 9, 10 and 11 confirm
 it. Two concurrent passes over the *same* parquet file took ~50 minutes where either alone is ~20:
 parallel passes are free in cores and are not free when they contend on one file.
+
+⚠️ **Harness-tracked background waiters get killed under memory pressure and `nohup` ones do
+not.** Session 23 lost three pollers to "system is running low on memory" while a 2.7 h training
+run and its three chained successors — all started with `nohup … &` from inside a detached shell —
+ran to completion untouched. Chain the work itself; poll it as little as possible.
+
+⚠️ **And chain on a condition the producer actually writes.** Session 23's first chain used
+`pgrep`, which Git Bash does not have, so the wait fell through and packing started on a half-written
+corpus. `until grep -q "<the producer's own completion line>" <log>; do sleep 15; done` is the form
+that worked.
 
 **Disk here is tight** — 8 GB free on C:, with `data/raw` at 7.8 GB. Stages 9 and 8 are read-only
 with small outputs; packed arm A is ~200 MB. It fits, with no room for a second copy of anything.

@@ -1,0 +1,81 @@
+{
+ "corpus": "data/packed-pilot",
+ "rows": [
+  {
+   "checkpoint": "runs/pilot/pilot-ar/ar_fp25.pt",
+   "arm": "ar",
+   "fraction": 0.25,
+   "train": {
+    "nats_per_token": 3.4060831610113382,
+    "bits_per_token": 4.913939285246463,
+    "bits_per_byte": 0.808964944626298,
+    "sequences": 384
+   },
+   "held_out": {
+    "nats_per_token": 4.501897373994192,
+    "bits_per_token": 6.494865016052468,
+    "bits_per_byte": 1.0598764835959897,
+    "sequences": 300
+   },
+   "gap_nats": 1.0958142129828534,
+   "gap_ratio": 1.3217226829709827
+  },
+  {
+   "checkpoint": "runs/pilot/pilot-ar/ar_f1.pt",
+   "arm": "ar",
+   "fraction": 1.0,
+   "train": {
+    "nats_per_token": 1.705530885917445,
+    "bits_per_token": 2.4605609511960584,
+    "bits_per_byte": 0.40507369710696683,
+    "sequences": 384
+   },
+   "held_out": {
+    "nats_per_token": 6.640763834317525,
+    "bits_per_token": 9.580597051484672,
+    "bits_per_byte": 1.563427336608354,
+    "sequences": 300
+   },
+   "gap_nats": 4.93523294840008,
+   "gap_ratio": 3.8936637789149757
+  },
+  {
+   "checkpoint": "runs/pilot/pilot-diff/diff_fp25.pt",
+   "arm": "diff",
+   "fraction": 0.25,
+   "train": {
+    "nats_per_token": 5.546959271654487,
+    "bits_per_token": 8.002570633228984,
+    "bits_per_byte": 1.320013865749181,
+    "sequences": 384
+   },
+   "held_out": {
+    "nats_per_token": 5.608447232445081,
+    "bits_per_token": 8.09127900933595,
+    "bits_per_byte": 1.322974168826526,
+    "sequences": 300
+   },
+   "gap_nats": 0.061487960790594265,
+   "gap_ratio": 1.0110849850844956
+  },
+  {
+   "checkpoint": "runs/pilot/pilot-diff/diff_f1.pt",
+   "arm": "diff",
+   "fraction": 1.0,
+   "train": {
+    "nats_per_token": 4.795600716819536,
+    "bits_per_token": 6.9185893722391025,
+    "bits_per_byte": 1.1412125329902372,
+    "sequences": 384
+   },
+   "held_out": {
+    "nats_per_token": 4.965857505400976,
+    "bits_per_token": 7.164217996803227,
+    "bits_per_byte": 1.171393958690179,
+    "sequences": 300
+   },
+   "gap_nats": 0.17025678858144033,
+   "gap_ratio": 1.035502703130455
+  }
+ ]
+}

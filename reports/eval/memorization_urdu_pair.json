@@ -1,0 +1,43 @@
+{
+ "corpus": "data/packed-urdu",
+ "rows": [
+  {
+   "checkpoint": "runs/urdu-ar/ar-s0_f1.pt",
+   "arm": "ar",
+   "fraction": 1.0,
+   "train": {
+    "nats_per_token": 3.7339529648112753,
+    "bits_per_token": 5.386955425245869,
+    "bits_per_byte": 0.810706916348084,
+    "sequences": 384
+   },
+   "held_out": {
+    "nats_per_token": 3.7808499416957297,
+    "bits_per_token": 5.454613461229756,
+    "bits_per_byte": 0.833311459848841,
+    "sequences": 384
+   },
+   "gap_nats": 0.04689697688445449,
+   "gap_ratio": 1.0125596056850237
+  },
+  {
+   "checkpoint": "runs/urdu-diff/diff-s0_f1.pt",
+   "arm": "diff",
+   "fraction": 1.0,
+   "train": {
+    "nats_per_token": 4.3434684332460165,
+    "bits_per_token": 6.266300368901784,
+    "bits_per_byte": 0.9448889398794059,
+    "sequences": 384
+   },
+   "held_out": {
+    "nats_per_token": 4.407554952699381,
+    "bits_per_token": 6.358757672704987,
+    "bits_per_byte": 0.9733403106566612,
+    "sequences": 384
+   },
+   "gap_nats": 0.06408651945336441,
+   "gap_ratio": 1.0147546875125948
+  }
+ ]
+}

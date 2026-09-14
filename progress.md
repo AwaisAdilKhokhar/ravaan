@@ -245,6 +245,7 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | ↳ §8.1's locked-token and determinism invariants, asserted on both arms | §8.1 | ✅ untestable before this |
 | ↳ §8.3's generation metrics — script consistency, distinct-n, repetition | §8.3 | ✅ `ravaan/evaluation/generation.py` |
 | ↳ 306 generations read → [`reports/pilot_coherence.md`](reports/pilot_coherence.md) | §11 | ✅ AR fluent; DIFF not, under any of 16 settings |
+| ↳ ⚠️ **both halves of that sentence were narrowed on 2026-09-14** — see Findings AR and AS | §11 | ⚠️ the grid had no interior, and "fluent" was recall |
 | ↳ **Finding AO — `</s>` on a context-free canvas**: 47% of first commits, script 0.00 → 1.00 | §8 | ✅ measured, swept, not defaulted |
 | ↳ **Finding AP — A3 runs backwards**: 64 steps repeats more than 8, monotonically | §4.4 | ⚠️ directional, 1 seed |
 | ↳ A4: random beats confidence on every repetition measure, at every step count | §4.4 | ⚠️ directional, 1 seed |
@@ -254,6 +255,20 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | ↳ Finding AL — Kaggle gates GPUs too, so kernel 10 runs locally | §9 | ✅ host-agnostic, Kaggle branch kept |
 | ↳ the kernel measured its second arm under the first arm's VRAM (2.8× penalty) | §4.1 | ✅ fixed, found by running it |
 | ↳ **Finding AN — the kernel trained the bare objective**; `build_tasks` now in the library | §4.2 | ✅ fixed + 3 tests |
+| ↳ **Finding AR — A4's two schedules are the *limits* of a family, not the family** | §4.4 | ✅ `gumbel` added; `s=0` is `confidence` bit-for-bit, asserted |
+| ↳ and the interior gets **real Urdu clauses** out of the checkpoint §0 called incoherent | §11 | ✅ decoder change only; no model, corpus or objective moved |
+| ↳ A3's 64-step ceiling still commits 2–3 positions per step from independent marginals | §4.4 | ✅ one-position-per-step swept; deviation logged |
+| ↳ …and §8.3's metrics register almost none of that difference, as §6 said they would not | §8.3, §8.4 | ⚠️ every judgement here is a reader's |
+| **⚠️ Finding AS — the pilot AR arm memorized the corpus, and it is G3's control** | §11, §4.3 | ✅ measured: AR gap **+4.46 nats**, DIFF **+0.03** |
+| ↳ so "AR is fluent and DIFF is not" is not evidence DIFF is broken — different tasks | §11 | ⚠️ session 22's decision survives; one of its supports does not |
+| ↳ and it is the mechanism §4.3 is *about*: arm A repeats 25M tokens ~396× | §4.3 | ✅ predicted direction, measured before anything is rented |
+| ↳ `scripts/memorization.py` — plain-LM scoring on both splits, same code path | §4.3 | ✅ session 23; nothing measured this before |
+| **Data-scale diagnostic** — DIFF at ~185M unique tokens against the pilot's 7.36M | §11 | 🟡 session 23, `runs/urdu-diff`; the AR control is queued |
+| ↳ stage 2–5 throughput measured: FineWeb2 **321k chars/s**, Roman-Urdu-Parl **1.1k** | §6.3 | ✅ a 280× gap, and it is document count |
+| ↳ `--population-chars` / `--max-seconds`, both recorded in `sample.json` | §6.3 | ✅ a corpus sample cannot afford §6.1's mixture on this hardware |
+| ↳ ⚠️ `data/packed-urdu` is **urdu-only** and **not the freeze** — its manifest says so | §6.1 | ⚠️ no number from it goes in a results table |
+| **`scripts/train.py` could not express a shortened run** — `--steps` never moved the cosine | §4.3 | ✅ `--tokens` / `--epochs` / `--warmup-steps` |
+| **`pin_utf8_streams()` reaches all sixteen drivers** — session 14's fix, finished | — | ✅ carried forward since session 22 |
 | **Ablations A3/A4** — inference only, and now runnable | §4.4 | 🟡 pilot-scale sweep done; core-run sweep is Week 12 |
 | Core runs (W9–11, **G4**) → eval (W12) → human eval (W13, **G5**) → demo (W14) → report (W15–16) | | ⬜ |
 

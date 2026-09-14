@@ -275,6 +275,19 @@ Legend: ✅ done · 🟡 in progress · ⬜ not started · ⛔ blocked
 | ↳ ⚠️ `data/packed-urdu` is **urdu-only** and **not the freeze** — its manifest says so | §6.1 | ⚠️ no number from it goes in a results table |
 | **`scripts/train.py` could not express a shortened run** — `--steps` never moved the cosine | §4.3 | ✅ `--tokens` / `--epochs` / `--warmup-steps` |
 | **`pin_utf8_streams()` reaches all sixteen drivers** — session 14's fix, finished | — | ✅ carried forward since session 22 |
+| **§8.3's infill exact-match + token-F1 — `ravaan/evaluation/infill.py`** | §8.3, §4.5 | ✅ session 24, 20 tests |
+| ↳ preregistration §8's truncation rule had no implementation until this | §4.5 | ✅ named in every score it produces |
+| ↳ ⚠️ exact-match is **0.000 at every span but one** for the AR arm | §4.5 | ⚠️ a secondary endpoint that cannot separate AR checkpoints |
+| **`--task-share` — §4.2's table stays frozen; the override lands in `config.json`** | §4.2 | ✅ residual out of `lm` alone |
+| **Open question 5 answered — keep §4.2's 10%** | §4.2 | ✅ [`infilling_share.md`](reports/infilling_share.md) |
+| ↳ 50% costs **+0.0374 held-out bpb** and buys **+0.02–0.04 token-F1** | §4.2 | ✅ matched pair, one variable, gaps ~0.04 |
+| ↳ **⚠️ Finding AT — the FIM framing loses ~37× in rank at the middle's *first* token** | §4.2, §4.4 | ⚠️ `<lm>` rank 2 against `<fim_middle>` rank 74 |
+| ↳ one position wide: d0 117 → d1 11 → d4 3.5, which is its own plain-LM rank | §4.2 | ✅ `scripts/infill_probe.py`, teacher-forced |
+| ↳ not the decoder, not the span distribution, not the window, not the share | §4.2 | ✅ each explanation killed by its own control |
+| ↳ **A2 measures §4.2's FIM layout, not "AR without FIM"** — MARIA reports the opposite | §4.4 | ⚠️ the report must say so |
+| ↳ ⚠️ **new evidence on Finding AQ's settled decision** — the framing call is live again | §4.2 | ⬜ **open question 5, and it is yours** |
+| **The microbatch that reproduces session 23's runs is 32** — nothing recorded it | §4.1 | ✅ identified from `pad_tokens` 11039 |
+| **G3's record corrected — PRD §11, `pilot_coherence.md` §9/§11, and §12 written** | §11 | ✅ session 23's handoff said this was done; it was not |
 | **Ablations A3/A4** — inference only, and now runnable | §4.4 | 🟡 pilot-scale sweep done; core-run sweep is Week 12 |
 | Core runs (W9–11, **G4**) → eval (W12) → human eval (W13, **G5**) → demo (W14) → report (W15–16) | | ⬜ |
 
@@ -3740,6 +3753,111 @@ instruments at questions nobody had asked them.
 
 ---
 
+### Session 24 — 2026-09-14
+
+**The critical path is still the corpus and still blocked on you, so this session took the last
+substantive open design question instead — open question 5, the infilling share. It answers it, and
+on the way it found a larger defect in the same framing.**
+[`reports/infilling_share.md`](reports/infilling_share.md) is the writeup.
+
+**Done**
+
+1. **§8.3's infill exact-match and token-F1 exist**, in `ravaan/evaluation/infill.py` with 20 tests.
+   §4.5 makes infill exact-match one of three Holm-corrected secondary endpoints and nothing in the
+   repository could compute it. Worse: **preregistration §8 fixed the rule it is scored under on
+   2026-09-13** — the AR arm's generation cut to the gold span's token length — and that was a
+   promise nobody had checked was keepable. Three things are in the numbers rather than left to a
+   caller: `truncated` (where the rule bit), `exact_untruncated` (the metric with the rule off — a
+   diagnostic, because reporting only the favourable half of a rule you chose is how a
+   preregistration stops meaning anything), and `locked_preserved`, §8.1's invariant as the rate
+   §8.3 asks for. `scripts/infill_eval.py` points it at checkpoints.
+
+2. **`--task-share NAME=FRACTION`** on `scripts/train.py`, over `rebalance_shares`. §4.2's table
+   stays a frozen module constant; the override lands in the run's `config.json` so a checkpoint
+   says which mixture made it. The residual comes out of **`lm` alone** — spreading it over the
+   unpinned tasks would move four things at once and a difference in infill quality could then be
+   any of them.
+
+3. **A matched pair, one variable.** Ravaan-AR at infill 50% against §4.2's 10%: same rung, seed,
+   optimizer, corruption fingerprint and **367,919,104 tokens** over 186.9M unique at 2 epochs.
+   2.72 h on the 4060. The only other difference in either `config.json` is `log_every`. The
+   microbatch was identified empirically rather than guessed — **32**, because `pad_tokens` 11039
+   and the realized mixture reproduce session 23's run to the token. Nothing recorded it; the
+   status board now says so.
+
+4. **The answer: keep §4.2's 10%.** 50% costs **+0.0374 held-out bpb (0.8154 → 0.8528, 4.6%)** and
+   buys **+0.02 to +0.04 token-F1**. Both memorization gaps are ~0.04, so none of this is recall.
+
+5. **⚠️ Finding AT — §4.2's AR FIM framing loses ~37× in rank at the *first* token of the middle,
+   and the share is not the variable that governs it.** The first reading was that greedy decoding
+   had collapsed the arm (`کے` on 32 of 64 items at span 1). That reading is wrong, and
+   `scripts/infill_probe.py` — teacher-forced, one forward per item, no decoder — is what shows it.
+
+   | `urdu-ar/ar-s0_f1`, span 4 | median rank | P(gold) | top-1 |
+   |---|---|---|---|
+   | under `<lm>` — plain left-to-right | **2** | 0.373 | 0.484 |
+   | under `<fim_middle>` — §4.2's FIM | **74** | 0.007 | 0.031 |
+
+   Same checkpoint, same sequence, same position, same gold token. The arm *knows* it; asked
+   through the FIM framing, which hands it strictly **more** information, it collapses. Not the
+   span distribution either — the rank fails to recover anywhere in `_frame_infill`'s own 5–50%
+   range (spans 16/64/128/200 give 172/117/284/79). And the damage is **one position wide**:
+
+   | depth into middle, span 64 | d0 | d1 | d2 | d4 | d8 | d16 | d32 |
+   |---|---|---|---|---|---|---|---|
+   | AR infill 10% | **117.0** | 11.0 | 6.5 | 3.5 | 2.5 | 4.0 | 4.0 |
+   | AR infill 50% | **77.5** | 6.5 | 5.5 | 3.5 | 3.5 | 4.0 | 4.0 |
+
+   The arm infills competently from the second token on, at its own plain-LM rank. To predict
+   `middle[0]` it must reach back past the entire suffix to where the prefix ended, and at 20M
+   parameters it does not. The diffusion arm never faces this — its canvas keeps the hole **in
+   place**, both neighbours adjacent, attention bidirectional — and sits at rank 1–6 at every span.
+
+6. **The G3 correction session 23's handoff says was made.** It records both of §9's supports as
+   "qualified in place". One was. The AR-control sentence was qualified in neither document, and
+   **PRD §11's edit moved the decision's weight onto it** — in the same stroke that weakened the
+   other support, on the same day Finding AS measured that control arm at +4.94 nats. Fixed in the
+   PRD and in `pilot_coherence.md` §9 and §11, and **§12 now exists** — three places already pointed
+   at a section session 23 never wrote.
+
+**What this obliges**
+
+- **A2 does not measure what its name says.** It compares a framing crippled at one position
+  against no framing at all, so whatever it returns is a statement about §4.2's FIM *layout*.
+  **MARIA (arXiv:2502.06901), session 2's prior-art flag, reports properly-equipped AR beating
+  discrete diffusion at infilling** — this result is the opposite, and the honest reading is that
+  our AR arm is not properly equipped, which is the exact hazard §4.1's fairness argument exists
+  to guard against.
+- **§4.5's infill exact-match is a near-constant zero for the AR arm** — 0.000 at every span but
+  one. A preregistered secondary endpoint that cannot separate two AR checkpoints at this scale.
+  The truncation rule is not the cause; the first token is the broken one either way.
+- **⚠️ New evidence on a decision already taken — see open question 5.** Finding AQ was decided
+  *not fixed* on 2026-09-13, knowing the framing had no **end** marker. It was not known that the
+  same framing loses ~37× at its **start**. A terminator does not fix the start, so this is not
+  AQ's decision returning; it is a second and larger defect in the same layout.
+
+**Got wrong first, and corrected by measuring**
+
+- **The eval window.** Prompts were first built from a 256-token window while `_frame_infill`
+  trains at the full 512 with the middle at the very *end* — a good reason to suspect the window
+  for the AR arm's low scores. Probed rather than rewritten: token-F1 0.042/0.062 at spans 4/8 on
+  256, 0.052/0.099 on 476. Closer to training and better for it, so 476 is the default — **but the
+  window was not the explanation**, and the module says so with the numbers.
+- **The scoring chain was reaped twice**, empty log, no process, under the same memory pressure
+  that killed a throwaway probe. The 2.72 h `nohup` training run was untouched, exactly as session
+  23 describes. It is the bash `sleep` loop that dies; the Python does not. Relaunched detached via
+  `Start-Process`, and the chain is now restartable.
+
+**Noted, not done**
+
+- `pilot_samples.md` still carries session 22's grid — unchanged from session 23's handoff.
+- A native speaker has still not seen any of this. **Fourth** session running.
+- `scripts/memorization.py`'s console table prints checkpoint basenames, so two runs whose files
+  are both `ar-s0_f1.pt` are indistinguishable in it. The JSON carries full paths; only the
+  human-readable half is ambiguous.
+
+---
+
 ## Open questions for you
 
 1. ~~**Config format.**~~ **Decided in session 4: JSON, for the whole data pipeline.** Three
@@ -3801,10 +3919,33 @@ instruments at questions nobody had asked them.
    cost moves to scoring — infill exact-match cuts the AR arm's generation to the gold span's
    length, which is the symmetric repair because the diffusion arm is already given that length,
    and the rule is logged in `reports/preregistration.md` §8 before any result exists.
-   **The share itself is still open**, and it was only ever bundled with AQ because one pilot
-   re-run would have covered both. With no re-run happening it is its own question again — and
-   still the last substantive open design question in the project. It costs a re-pilot whenever it
-   is answered, and six core runs once they have started.
+   **✅ The share itself was measured and answered in session 24 — keep §4.2's 10%.**
+   [`reports/infilling_share.md`](reports/infilling_share.md). A matched Ravaan-AR pair at 50%
+   against 10%, one variable, both memorization gaps ~0.04: **50% costs +0.0374 held-out bpb
+   (4.6%) and buys +0.02–0.04 token-F1.** A poor trade on its own terms, and §3 of that report is
+   why it is worse than it looks.
+
+   **⚠️ But the measurement found Finding AT, and it puts a *new* question on the table that is
+   not this one.** The AR arm's infill deficit is not a data-budget shortfall. Under `<lm>` it ranks
+   the gold token **2**; under `<fim_middle>`, same checkpoint, same position, strictly *more*
+   information, it ranks it **74** — and the damage is **one position wide** (d0 rank 117, d1 rank
+   11, d4 rank 3.5, which is its own plain-LM rank). 5× the share moves d0 from 117 to 78 and
+   leaves it 20× worse than d1.
+
+   **So the live decision is now about the framing, not the share, and it is yours.** Finding AQ was
+   decided *not fixed* on 2026-09-13 — the framing keeps its missing terminator, cost paid at
+   scoring. That was decided knowing the layout had no **end** marker. It was not known that the
+   same layout loses ~37× in rank at its **start**, and a terminator does not fix the start. Three
+   options, and the cost of all of them rises steeply after Week 9 starts:
+   - **(a) Change nothing.** Defensible: the report states the defect, and A2's result is read as a
+     statement about §4.2's FIM layout rather than about AR infilling in general. Costs nothing now
+     and costs the paper a weaker A2.
+   - **(b) Re-pilot one framing change** (~2.7 h on the 4060, $0) — a middle terminator, or the SPM
+     ordering, which puts the middle adjacent to the prefix and is the variant that directly
+     addresses a reach-past-the-suffix failure. One run says whether it closes d0.
+   - **(c) Decide it is out of scope** and cut A2 from §4.4 rather than report an ablation whose
+     name overclaims what it measured.
+   **This is the last substantive open design question, and it changed shape rather than closing.**
 
 6. **Does PRD §6.2's Roman-Urdu-Parl warning get amended for Finding AE?** *Your call — the PRD is
    the spec and v2.3 was cut the same day.* Nothing in the design changes and no number in the PRD
@@ -3852,10 +3993,22 @@ instruments at questions nobody had asked them.
 
 **START HERE. The next task is the corpus. Nothing else is on the critical path, and the modelling
 work that could be done without it has now all been done** — Weeks 5–8 are complete, §4.1's matched
-pair trains on real Urdu, both halves of G3 are answered, and session 23 ran the first matched
-pair this project has that is **actually** matched — both arms on a corpus neither could memorize,
-where the AR/DIFF sign flips the way §4.3 predicts. **The freeze is the only thing left that is
-blocked on you**, and it has been since session 17.
+pair trains on real Urdu, both halves of G3 are answered, session 23 ran the first matched
+pair this project has that is **actually** matched, and **session 24 closed open question 5, the
+last substantive open design question.** **The freeze is the only thing left that is blocked on
+you**, and it has been since session 17.
+
+> **⚠️ Session 24 answered open question 5 and replaced it with a sharper one that is also yours.**
+> The share is settled — **keep §4.2's 10%**; 50% costs +0.0374 held-out bpb and buys +0.02–0.04
+> token-F1 ([`infilling_share.md`](reports/infilling_share.md)). But the measurement found
+> **Finding AT**: §4.2's AR FIM framing loses **~37× in rank at the middle's first token** — `<lm>`
+> ranks the gold token 2, `<fim_middle>` ranks it 74, same checkpoint and same position — and the
+> damage is **one position wide** (d0 117, d1 11, d4 3.5). It is not the decoder, the span
+> distribution, the eval window, memorization or the share; each of those has its own control in §3
+> of that report. **This is new evidence on a decision already taken** — Finding AQ was closed on
+> 2026-09-13 knowing the layout had no *end* marker, not knowing it barely learns the *start* — and
+> **a framing re-pilot costs 2.7 h and $0 today against six core runs after Week 9 starts.** The
+> three options are written out under open question 5.
 
 ### The three steps, in this order
 

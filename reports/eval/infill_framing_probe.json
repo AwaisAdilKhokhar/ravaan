@@ -1,0 +1,321 @@
+{
+ "corpus": "data/packed-urdu",
+ "split": "validation",
+ "items": 64,
+ "content_tokens": 476,
+ "depth_span": 64,
+ "checkpoints": {
+  "urdu-ar/ar-s0_f1": {
+   "arm": "ar",
+   "span": {
+    "1": {
+     "items": 64,
+     "median_rank": 89.0,
+     "mean_probability": 0.00627167554097241,
+     "top1": 0.0,
+     "top10": 0.1875
+    },
+    "2": {
+     "items": 64,
+     "median_rank": 101.0,
+     "mean_probability": 0.007415741517885266,
+     "top1": 0.078125,
+     "top10": 0.234375
+    },
+    "4": {
+     "items": 64,
+     "median_rank": 73.5,
+     "mean_probability": 0.006983351786232106,
+     "top1": 0.03125,
+     "top10": 0.3125
+    },
+    "16": {
+     "items": 64,
+     "median_rank": 171.5,
+     "mean_probability": 0.005770894519677938,
+     "top1": 0.015625,
+     "top10": 0.1875
+    },
+    "64": {
+     "items": 64,
+     "median_rank": 117.0,
+     "mean_probability": 0.006368051526777663,
+     "top1": 0.03125,
+     "top10": 0.171875
+    },
+    "128": {
+     "items": 64,
+     "median_rank": 283.5,
+     "mean_probability": 0.004812124636558224,
+     "top1": 0.015625,
+     "top10": 0.1875
+    },
+    "200": {
+     "items": 64,
+     "median_rank": 78.5,
+     "mean_probability": 0.008487188466006046,
+     "top1": 0.0625,
+     "top10": 0.25
+    }
+   },
+   "depth": {
+    "0": {
+     "median_rank": 117.0
+    },
+    "1": {
+     "median_rank": 11.0
+    },
+    "2": {
+     "median_rank": 6.5
+    },
+    "4": {
+     "median_rank": 3.5
+    },
+    "8": {
+     "median_rank": 2.5
+    },
+    "16": {
+     "median_rank": 4.0
+    },
+    "32": {
+     "median_rank": 4.0
+    }
+   },
+   "plain_lm": {
+    "1": {
+     "items": 64,
+     "median_rank": 2.0,
+     "mean_probability": 0.292192704418369,
+     "top1": 0.421875,
+     "top10": 0.71875
+    },
+    "2": {
+     "items": 64,
+     "median_rank": 3.0,
+     "mean_probability": 0.17067971831070317,
+     "top1": 0.328125,
+     "top10": 0.734375
+    },
+    "4": {
+     "items": 64,
+     "median_rank": 2.0,
+     "mean_probability": 0.37305760188911563,
+     "top1": 0.484375,
+     "top10": 0.8125
+    },
+    "16": {
+     "items": 64,
+     "median_rank": 3.0,
+     "mean_probability": 0.25637576196064393,
+     "top1": 0.375,
+     "top10": 0.671875
+    },
+    "64": {
+     "items": 64,
+     "median_rank": 3.0,
+     "mean_probability": 0.21112481228010793,
+     "top1": 0.34375,
+     "top10": 0.640625
+    },
+    "128": {
+     "items": 64,
+     "median_rank": 3.5,
+     "mean_probability": 0.24578464297030678,
+     "top1": 0.359375,
+     "top10": 0.65625
+    },
+    "200": {
+     "items": 64,
+     "median_rank": 2.0,
+     "mean_probability": 0.2323613899220618,
+     "top1": 0.40625,
+     "top10": 0.65625
+    }
+   }
+  },
+  "urdu-ar-fim50/ar-s0_f1": {
+   "arm": "ar",
+   "span": {
+    "1": {
+     "items": 64,
+     "median_rank": 48.5,
+     "mean_probability": 0.009191285381120906,
+     "top1": 0.03125,
+     "top10": 0.21875
+    },
+    "2": {
+     "items": 64,
+     "median_rank": 108.0,
+     "mean_probability": 0.00651671857777103,
+     "top1": 0.03125,
+     "top10": 0.203125
+    },
+    "4": {
+     "items": 64,
+     "median_rank": 47.0,
+     "mean_probability": 0.013020100812468627,
+     "top1": 0.078125,
+     "top10": 0.328125
+    },
+    "16": {
+     "items": 64,
+     "median_rank": 94.5,
+     "mean_probability": 0.012035107918279664,
+     "top1": 0.0625,
+     "top10": 0.203125
+    },
+    "64": {
+     "items": 64,
+     "median_rank": 77.5,
+     "mean_probability": 0.006358857442442911,
+     "top1": 0.0,
+     "top10": 0.21875
+    },
+    "128": {
+     "items": 64,
+     "median_rank": 218.0,
+     "mean_probability": 0.006370467219682041,
+     "top1": 0.03125,
+     "top10": 0.234375
+    },
+    "200": {
+     "items": 64,
+     "median_rank": 53.0,
+     "mean_probability": 0.012301557322956569,
+     "top1": 0.078125,
+     "top10": 0.296875
+    }
+   },
+   "depth": {
+    "0": {
+     "median_rank": 77.5
+    },
+    "1": {
+     "median_rank": 6.5
+    },
+    "2": {
+     "median_rank": 5.5
+    },
+    "4": {
+     "median_rank": 3.5
+    },
+    "8": {
+     "median_rank": 3.5
+    },
+    "16": {
+     "median_rank": 4.0
+    },
+    "32": {
+     "median_rank": 4.0
+    }
+   },
+   "plain_lm": {
+    "1": {
+     "items": 64,
+     "median_rank": 2.0,
+     "mean_probability": 0.28042154891949167,
+     "top1": 0.390625,
+     "top10": 0.734375
+    },
+    "2": {
+     "items": 64,
+     "median_rank": 3.0,
+     "mean_probability": 0.18045896822188734,
+     "top1": 0.359375,
+     "top10": 0.71875
+    },
+    "4": {
+     "items": 64,
+     "median_rank": 2.0,
+     "mean_probability": 0.3576129327549893,
+     "top1": 0.46875,
+     "top10": 0.828125
+    },
+    "16": {
+     "items": 64,
+     "median_rank": 3.0,
+     "mean_probability": 0.28345817135482054,
+     "top1": 0.421875,
+     "top10": 0.671875
+    },
+    "64": {
+     "items": 64,
+     "median_rank": 4.0,
+     "mean_probability": 0.2146852030955131,
+     "top1": 0.296875,
+     "top10": 0.625
+    },
+    "128": {
+     "items": 64,
+     "median_rank": 4.0,
+     "mean_probability": 0.2267806368193419,
+     "top1": 0.375,
+     "top10": 0.65625
+    },
+    "200": {
+     "items": 64,
+     "median_rank": 3.0,
+     "mean_probability": 0.2381711587052564,
+     "top1": 0.375,
+     "top10": 0.6875
+    }
+   }
+  },
+  "urdu-diff/diff-s0_f1": {
+   "arm": "diff",
+   "span": {
+    "1": {
+     "items": 64,
+     "median_rank": 1.0,
+     "mean_probability": 0.416019721028988,
+     "top1": 0.515625,
+     "top10": 0.828125
+    },
+    "2": {
+     "items": 64,
+     "median_rank": 3.5,
+     "mean_probability": 0.1966203496729122,
+     "top1": 0.28125,
+     "top10": 0.65625
+    },
+    "4": {
+     "items": 64,
+     "median_rank": 2.0,
+     "mean_probability": 0.26528824682714003,
+     "top1": 0.40625,
+     "top10": 0.75
+    },
+    "16": {
+     "items": 64,
+     "median_rank": 6.0,
+     "mean_probability": 0.15264553810597725,
+     "top1": 0.28125,
+     "top10": 0.5625
+    },
+    "64": {
+     "items": 64,
+     "median_rank": 6.0,
+     "mean_probability": 0.11126855957434145,
+     "top1": 0.234375,
+     "top10": 0.546875
+    },
+    "128": {
+     "items": 64,
+     "median_rank": 6.0,
+     "mean_probability": 0.1547400702827133,
+     "top1": 0.203125,
+     "top10": 0.59375
+    },
+    "200": {
+     "items": 64,
+     "median_rank": 6.5,
+     "mean_probability": 0.16747289933755383,
+     "top1": 0.296875,
+     "top10": 0.578125
+    }
+   },
+   "depth": {},
+   "plain_lm": {}
+  }
+ }
+}

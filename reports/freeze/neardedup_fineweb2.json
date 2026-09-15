@@ -1,0 +1,2297 @@
+{
+  "minhash_version": "1.0.0",
+  "config_fingerprint": "fa0cfb0cc236",
+  "config": {
+    "num_bins": 128,
+    "bands": 32,
+    "rows": 4,
+    "shingle_size": 5,
+    "shingle_unit": "word",
+    "min_shingles": 8,
+    "similarity_threshold": 0.8,
+    "retain_pairs_above": 0.5,
+    "max_index_entries": 8000000,
+    "max_retained_pairs": 40000000,
+    "max_candidate_pairs": 20000000,
+    "seed": 0
+  },
+  "band_threshold": 0.4204,
+  "candidate_probability_at_threshold": 1.0,
+  "indexed": 4649073,
+  "eligible": 4649073,
+  "skipped_short": 0,
+  "dropped_before_build": 136,
+  "shingles_total": 2497774570,
+  "mean_shingles": 537.26,
+  "candidate_pairs": 814341,
+  "verified_pairs": 4184,
+  "retained_pairs": 271971,
+  "band_precision": 0.005138,
+  "clusters": 4153,
+  "duplicate_documents": 4182,
+  "duplicate_rate": 0.0009,
+  "largest_cluster": 8,
+  "cross_source_clusters": 0,
+  "cross_source_pairs": {},
+  "documents_kept": 4644891,
+  "documents_removed": 4182,
+  "keep_rate": 0.9991,
+  "chars_in": 12028140741,
+  "chars_kept": 12018729206,
+  "char_keep_rate": 0.999218,
+  "by_source": {
+    "fineweb2-urd_Arab": 4649073
+  },
+  "kept_by_source": {
+    "fineweb2-urd_Arab": 4644891
+  },
+  "removed_by_source": {
+    "fineweb2-urd_Arab": 4182
+  },
+  "removed_cross_source_by_source": {},
+  "similarity_histogram": {
+    "0.50-0.55": 100424,
+    "0.55-0.60": 61936,
+    "0.60-0.65": 50656,
+    "0.65-0.70": 27957,
+    "0.70-0.75": 16998,
+    "0.75-0.80": 9816,
+    "0.80-0.85": 3130,
+    "0.85-0.90": 828,
+    "0.90-0.95": 139,
+    "0.95-1.00": 87
+  },
+  "containment_histogram": {
+    "0.65-0.70": 19676,
+    "0.70-0.75": 52105,
+    "0.75-0.80": 51000,
+    "0.80-0.85": 38250,
+    "0.85-0.90": 27578,
+    "0.90-0.95": 24308,
+    "0.95-1.00": 59054
+  },
+  "distinct_documents": 4644891,
+  "top_clusters": [
+    {
+      "cluster": 0,
+      "size": 8,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:77dc1b17-83fc-400d-a197-dbf56ec8c522>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:7aa3cd2d-c69b-40f5-9339-455f115498bd>",
+        "fineweb2-urd_Arab:<urn:uuid:e42237df-badf-4175-8a31-0b2859d60265>",
+        "fineweb2-urd_Arab:<urn:uuid:4ba721a8-3b67-4e37-8cc4-3fc80e6a385d>",
+        "fineweb2-urd_Arab:<urn:uuid:9c02841c-3e76-494c-9e47-803d67877ce4>"
+      ]
+    },
+    {
+      "cluster": 1,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:cfeaa987-7205-462a-94df-dbef5786c80f>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:c5ba00b9-ed89-4392-92af-c582c9fa8f37>",
+        "fineweb2-urd_Arab:<urn:uuid:c916178c-2b04-4e27-bc17-33c65fe6db82>"
+      ]
+    },
+    {
+      "cluster": 2,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:2fa6bb6c-59c4-4c02-aa60-9b1f6e3df720>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:f81fc9da-c492-4598-9008-ec49fac1189a>",
+        "fineweb2-urd_Arab:<urn:uuid:f999247e-4ff6-456e-a9b1-adaf462e9df3>"
+      ]
+    },
+    {
+      "cluster": 3,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:8e3937f7-6d56-4247-93e9-b86e21aa92c4>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:9530de4a-caf8-45dd-80ac-b0b117b49d5d>",
+        "fineweb2-urd_Arab:<urn:uuid:1e81ef45-e434-483a-8bbe-792bcd9d7482>"
+      ]
+    },
+    {
+      "cluster": 4,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:870f8931-480d-4b18-91ba-f51e22bf5be5>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:6d64502d-0905-432a-b478-66302c1ecd43>",
+        "fineweb2-urd_Arab:<urn:uuid:a8fcfa55-4271-4573-8f5b-bf85a5502ef1>"
+      ]
+    },
+    {
+      "cluster": 5,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:7dbbbd0c-7bd2-4295-ac0b-40da19f1763c>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:c57cfae2-283c-42be-bd6a-568bef365be2>",
+        "fineweb2-urd_Arab:<urn:uuid:81a60087-b902-486c-aa35-cb43de309fa0>"
+      ]
+    },
+    {
+      "cluster": 6,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:8fa62ccd-e169-48fc-a760-5f609126eff9>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:0745d235-35c2-4c22-934e-a699a3e2871a>",
+        "fineweb2-urd_Arab:<urn:uuid:516f5755-9e57-4754-96bf-fe2202a7170a>"
+      ]
+    },
+    {
+      "cluster": 7,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:c23b496b-32e6-4a2d-8328-9089049c9c07>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:2a3bf86a-9c3c-42a5-b877-a5f5c2a2725a>",
+        "fineweb2-urd_Arab:<urn:uuid:7a83ac57-ca91-4158-a770-ebe6a992ff40>"
+      ]
+    },
+    {
+      "cluster": 8,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:20666ca7-d337-4cfe-b29c-46c27526bcd7>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:dbe959ab-2efb-4f99-b614-d9acb265c727>",
+        "fineweb2-urd_Arab:<urn:uuid:8a90765d-c0b0-450b-82e3-8deac1056ff0>"
+      ]
+    },
+    {
+      "cluster": 9,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:8dacc81c-1118-46e9-9c2c-1e41d1b16884>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:972e8087-4620-4b5c-92ce-0406e968c70a>",
+        "fineweb2-urd_Arab:<urn:uuid:093cc5ca-e51a-41e6-8e97-bfc951245cc8>"
+      ]
+    },
+    {
+      "cluster": 10,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:15bbfd51-1274-415e-8d4b-17d3ab9aea50>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:bbe9b0f4-6004-4985-a90c-82448b17d2d8>",
+        "fineweb2-urd_Arab:<urn:uuid:e579ec65-2944-48e2-984c-8ad42a13fffa>"
+      ]
+    },
+    {
+      "cluster": 11,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:d784f477-283b-4503-ab95-e717de01caf0>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:c318ed66-f67d-4b23-aeb4-9db026bbfe97>",
+        "fineweb2-urd_Arab:<urn:uuid:3025fa94-1d26-4e62-b1ed-55b79fc6c499>"
+      ]
+    },
+    {
+      "cluster": 12,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:ca9c4c36-f6e1-47ee-aa63-6fcb2f02755b>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:5601cac2-6a71-41d4-9b41-3d8f1e1b8277>",
+        "fineweb2-urd_Arab:<urn:uuid:f04da8da-0e8c-4cd1-9be6-247fa956febc>"
+      ]
+    },
+    {
+      "cluster": 13,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:c137226c-5a36-49d0-a71c-3b41f9a029e8>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:e3266a86-cc65-4bf5-941d-7a46e17e196a>",
+        "fineweb2-urd_Arab:<urn:uuid:cb924cb4-6620-4f67-85e6-a4c3833702e6>"
+      ]
+    },
+    {
+      "cluster": 14,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:45572b82-6a03-4619-815b-e4f8bc1119c5>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:d9c2609f-f09c-4dd7-82ba-701def2b4046>",
+        "fineweb2-urd_Arab:<urn:uuid:0b237bd2-49ae-46f8-81d9-0e835dbc47f0>"
+      ]
+    },
+    {
+      "cluster": 15,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:4224b681-3460-4a7b-b83d-b79e89819994>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:7837e056-3a2c-4b61-a3a0-9c09739ae449>",
+        "fineweb2-urd_Arab:<urn:uuid:fb6765c3-9bb8-4f51-894e-ae8a8a019901>"
+      ]
+    },
+    {
+      "cluster": 16,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:1886a867-1982-41ae-9a90-5c2037fdd923>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:655fffb6-0178-482b-8b50-32d42f0dc069>",
+        "fineweb2-urd_Arab:<urn:uuid:7ad0a14f-e060-405b-8138-8e8f41b4df9f>"
+      ]
+    },
+    {
+      "cluster": 17,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:33b220eb-24b2-4def-ae57-6a261762c2b7>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:1fa03577-e726-4d10-8a84-b120ca3d41e3>",
+        "fineweb2-urd_Arab:<urn:uuid:e0dbc685-b69f-43f2-b7a9-4b75fd958cda>"
+      ]
+    },
+    {
+      "cluster": 18,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:535d5555-2472-4f33-a81f-822d63990d59>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:60759637-18ad-458d-858e-93f6715fd5d2>",
+        "fineweb2-urd_Arab:<urn:uuid:796b342d-3e68-45fd-9b1c-d2ab47097263>"
+      ]
+    },
+    {
+      "cluster": 19,
+      "size": 3,
+      "sources": [
+        "fineweb2-urd_Arab"
+      ],
+      "kept": "fineweb2-urd_Arab:<urn:uuid:b4e0945e-0fb0-4c69-b8f1-e7c50de2ac72>",
+      "duplicates": [
+        "fineweb2-urd_Arab:<urn:uuid:99b2d900-2009-4de9-8f59-42b0b8f83353>",
+        "fineweb2-urd_Arab:<urn:uuid:f0200dd2-811f-4106-a78d-ea54281c181d>"
+      ]
+    }
+  ],
+  "pair_examples": [
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:58f6371f-1c95-477b-9e11-1ca59f1480dd>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:27b81ce0-aa66-40f3-86d4-d84c7c5599a6>",
+      "similarity": 0.9766,
+      "containment": 1.0,
+      "left_shingles": 354,
+      "right_shingles": 342,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:2c223ed1-6e18-4c57-a849-cc67469aa1e5>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:19fb73dd-5fec-46a8-8db9-16efb72b1e00>",
+      "similarity": 0.9688,
+      "containment": 0.9989,
+      "left_shingles": 299,
+      "right_shingles": 308,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:ba37e495-f4d9-4102-acae-96f3fa4a85d3>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:5d0a3a31-37e5-43d0-9c28-9915267e8531>",
+      "similarity": 0.9609,
+      "containment": 0.9926,
+      "left_shingles": 320,
+      "right_shingles": 312,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:e22686a9-6d0a-4a57-a145-91d12b6fb657>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:6216d129-06e5-45f8-8f6c-3ee1d06b4a53>",
+      "similarity": 0.9766,
+      "containment": 0.9941,
+      "left_shingles": 166,
+      "right_shingles": 168,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:1037e561-5ae9-423e-9f5a-fa4b2f00130a>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:de0e8e11-25f6-4876-9261-f115eaeb49c4>",
+      "similarity": 0.9531,
+      "containment": 0.9761,
+      "left_shingles": 4483,
+      "right_shingles": 4482,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:0911b5d6-a643-48aa-8307-eec6cb7a1097>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:73c8b784-aea5-43c1-9515-8de4a938d21c>",
+      "similarity": 1.0,
+      "containment": 1.0,
+      "left_shingles": 4638,
+      "right_shingles": 4640,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:71befc2b-78c7-4379-bc67-2cd32825579f>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:284cde14-9125-4593-8bdc-f7804850f598>",
+      "similarity": 0.9688,
+      "containment": 0.99,
+      "left_shingles": 168,
+      "right_shingles": 170,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:9786edf3-540b-4f47-980a-c186c8c3a70d>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:f45e3b45-8c3c-45f8-ab03-1d44088eb36e>",
+      "similarity": 0.9922,
+      "containment": 1.0,
+      "left_shingles": 436,
+      "right_shingles": 431,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:864436c6-f796-415d-9133-aa128b527b09>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:9c6c4476-66a2-4c79-93d8-605d8377befe>",
+      "similarity": 0.9531,
+      "containment": 1.0,
+      "left_shingles": 93,
+      "right_shingles": 101,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:5bdb1d55-678a-4a33-8a9b-1e7790b20389>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:0696151d-bf3f-45bc-abca-37f5ded4bafb>",
+      "similarity": 0.9531,
+      "containment": 0.9901,
+      "left_shingles": 484,
+      "right_shingles": 498,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:b2a2b3b8-4083-4a3f-b76f-f06afea3832d>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:682ca654-7b6b-49e4-b378-1c76938a3d7c>",
+      "similarity": 0.9922,
+      "containment": 1.0,
+      "left_shingles": 99,
+      "right_shingles": 97,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:ecf445c5-7f5a-4aac-8437-970673e8bc1a>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:15873dd4-ff26-4df0-b8fc-ea86d57f707a>",
+      "similarity": 1.0,
+      "containment": 1.0,
+      "left_shingles": 205,
+      "right_shingles": 203,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:34a6f3ef-994c-42b7-a8c9-b2d66c75ee67>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:3dd35242-25a3-406b-8067-95aab4c02415>",
+      "similarity": 0.9219,
+      "containment": 0.9727,
+      "left_shingles": 108,
+      "right_shingles": 111,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:c6e8d816-d56d-4c79-ac16-392306a07c7d>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:2954965b-8e01-497d-9f5d-b854d4cec7a5>",
+      "similarity": 0.9141,
+      "containment": 1.0,
+      "left_shingles": 682,
+      "right_shingles": 763,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:b059484b-b61d-4761-8573-b0a6f12f6ea2>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:0894b642-0c8c-43f5-ad27-531d032caade>",
+      "similarity": 0.9453,
+      "containment": 0.9993,
+      "left_shingles": 142,
+      "right_shingles": 150,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:e7acade9-e55c-47fe-abed-23074583096d>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:71402979-cac1-4904-a604-c0c06aac3d13>",
+      "similarity": 0.9453,
+      "containment": 0.9783,
+      "left_shingles": 4810,
+      "right_shingles": 4873,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:0749a688-3fa2-423e-8e13-add6aa3fa7ba>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:895c79cd-4f18-4bf3-9715-2a9aa91cd5b1>",
+      "similarity": 0.9062,
+      "containment": 0.9818,
+      "left_shingles": 180,
+      "right_shingles": 169,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:b43e9403-bdb2-468f-9821-7ff0b9529f8e>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:0d8bccd8-1b36-45b1-8977-9abc38e5035a>",
+      "similarity": 0.9375,
+      "containment": 1.0,
+      "left_shingles": 135,
+      "right_shingles": 153,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:6559f6cb-f1da-493f-b44b-33438dcef1b5>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:13ee3ccd-22a6-41cd-bcef-567d665d2937>",
+      "similarity": 0.9062,
+      "containment": 0.9568,
+      "left_shingles": 1197,
+      "right_shingles": 1212,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:79db04b3-14dd-4eb4-b194-eacd0de6170e>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:66f69271-2cf5-48c0-aa0a-4d1af9e70151>",
+      "similarity": 0.9062,
+      "containment": 0.9609,
+      "left_shingles": 1408,
+      "right_shingles": 1438,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:114b887c-1900-430d-b127-73a4557756d0>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:69bf8209-039b-4e5d-8f3d-81f1c354ce3f>",
+      "similarity": 0.9297,
+      "containment": 0.9877,
+      "left_shingles": 567,
+      "right_shingles": 540,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:4440200c-d29f-4347-9195-451ab56b85d3>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:1f9cc003-131a-4c66-8f07-dc6205314368>",
+      "similarity": 0.9062,
+      "containment": 1.0,
+      "left_shingles": 451,
+      "right_shingles": 510,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:f4f35c5a-07c4-4f20-8868-bf805e2193a2>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:b816d52f-72c7-4aa0-9565-745a6d2ad0d1>",
+      "similarity": 0.9062,
+      "containment": 0.9521,
+      "left_shingles": 1132,
+      "right_shingles": 1129,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:cc3cb43d-959c-44af-8924-678bcc4576a5>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:030907de-c76b-41cc-98f1-79ef96a172ed>",
+      "similarity": 0.9375,
+      "containment": 0.9814,
+      "left_shingles": 320,
+      "right_shingles": 329,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:5995a4e4-c901-46cc-a68b-1ca5c63c3c8a>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:df54f0ec-ec79-4368-ae57-b64b194265d0>",
+      "similarity": 0.8672,
+      "containment": 1.0,
+      "left_shingles": 166,
+      "right_shingles": 139,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:b511ab68-1709-49bb-9c5c-c09a41574d81>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:ae303f8c-c60b-487a-a3de-23b2d92f2087>",
+      "similarity": 0.875,
+      "containment": 1.0,
+      "left_shingles": 266,
+      "right_shingles": 219,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:1165c6df-7427-4a8f-9dbd-399531adaf2a>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:bc1a5930-66b8-4656-81bc-170ced12bbff>",
+      "similarity": 0.8516,
+      "containment": 0.9932,
+      "left_shingles": 207,
+      "right_shingles": 240,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:5c44a83f-2f08-4c8c-9e18-68f59b967ba8>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:8e86edfb-1036-4082-ab54-1444827f9365>",
+      "similarity": 0.8516,
+      "containment": 0.9351,
+      "left_shingles": 391,
+      "right_shingles": 404,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:cc58a757-f24e-423d-9874-9f296a62793d>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:419e2c11-846b-4d45-8281-c07ad6652987>",
+      "similarity": 0.8672,
+      "containment": 0.9393,
+      "left_shingles": 455,
+      "right_shingles": 445,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:31b0494a-96ae-4221-86c2-9d45973d637c>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:103542d0-345b-4613-865b-ff5179c26ed9>",
+      "similarity": 0.8516,
+      "containment": 1.0,
+      "left_shingles": 167,
+      "right_shingles": 204,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:9d2f7d6b-b866-4082-bdb5-2b7f7e48f384>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:9285ed40-9c3d-4a37-b851-5869dd9de226>",
+      "similarity": 0.8516,
+      "containment": 1.0,
+      "left_shingles": 89,
+      "right_shingles": 113,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:8ae5086f-f475-4108-ab4f-ae17dbdb9c61>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:07a6a707-36f8-4892-910b-69ad70a813d6>",
+      "similarity": 0.875,
+      "containment": 1.0,
+      "left_shingles": 545,
+      "right_shingles": 654,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:4466602b-2919-4836-95ba-939a491409ba>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:75a84e10-08bf-47cb-897d-390461f49729>",
+      "similarity": 0.8516,
+      "containment": 0.933,
+      "left_shingles": 609,
+      "right_shingles": 592,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:d8c3879d-901f-4da9-aee2-c8d190d387db>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:1383ece8-ffda-4894-b96f-bf27c8554166>",
+      "similarity": 0.8594,
+      "containment": 0.9247,
+      "left_shingles": 1580,
+      "right_shingles": 1579,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:7f730967-2dad-42c1-98f5-604208fce4e3>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:5225eef0-6a22-4f95-8fe0-e9ac35a50d3a>",
+      "similarity": 0.8672,
+      "containment": 1.0,
+      "left_shingles": 155,
+      "right_shingles": 121,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:210e9182-67f0-45d4-97dc-e74d34c2144e>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:a8af160f-9051-4f26-b3b6-6ccd7d32da1c>",
+      "similarity": 0.8672,
+      "containment": 1.0,
+      "left_shingles": 160,
+      "right_shingles": 137,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:f61358a6-ea00-467e-b5e5-2f3158838c0c>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:e263c72a-1499-4797-afe5-bf828414b179>",
+      "similarity": 0.8125,
+      "containment": 1.0,
+      "left_shingles": 120,
+      "right_shingles": 157,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:7ea2169f-30a2-4c40-9a91-7681dab31696>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:f0167e30-43bd-4db3-be0a-13137f23d79f>",
+      "similarity": 0.8359,
+      "containment": 1.0,
+      "left_shingles": 90,
+      "right_shingles": 115,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:d784f477-283b-4503-ab95-e717de01caf0>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:3025fa94-1d26-4e62-b1ed-55b79fc6c499>",
+      "similarity": 0.8438,
+      "containment": 1.0,
+      "left_shingles": 158,
+      "right_shingles": 128,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:42c42545-c991-4143-8207-8e560bafc5e5>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:88c3fa2e-d2cb-4b9b-a34b-53aaf530569a>",
+      "similarity": 0.8203,
+      "containment": 0.9102,
+      "left_shingles": 979,
+      "right_shingles": 960,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:8c522916-69d3-4673-a0e5-697790badfed>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:fcc63b43-35dc-495a-80bf-f5e5c6cd21e6>",
+      "similarity": 0.8047,
+      "containment": 0.9059,
+      "left_shingles": 912,
+      "right_shingles": 884,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:6ae33f5d-3dfe-482d-abdb-e44418063d18>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:7df56b70-2938-4e6f-8206-c771aab80dca>",
+      "similarity": 0.8359,
+      "containment": 0.94,
+      "left_shingles": 93,
+      "right_shingles": 99,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:22f8aec0-c267-4918-a9aa-08a5c2190f64>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:ea5daec8-6902-4ab3-89b1-6c62bd316c09>",
+      "similarity": 0.8047,
+      "containment": 1.0,
+      "left_shingles": 355,
+      "right_shingles": 281,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:fc1c1439-96ca-4327-9208-3db3fc39a467>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:bf3ea4bb-b381-49e1-916b-96ff6ef78851>",
+      "similarity": 0.8203,
+      "containment": 0.9732,
+      "left_shingles": 189,
+      "right_shingles": 163,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:8c1c9f9c-51f8-4f41-803b-b602e10ac44b>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:01bf1785-0d1c-403f-9186-49138c3014ca>",
+      "similarity": 0.8281,
+      "containment": 0.9157,
+      "left_shingles": 186,
+      "right_shingles": 190,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:e6ae952f-396a-4deb-8e83-4d1d4a26213e>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:b6ab56c0-d922-4c05-bf5c-3bb9adfd1af3>",
+      "similarity": 0.8281,
+      "containment": 1.0,
+      "left_shingles": 91,
+      "right_shingles": 117,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:dd6f8e02-4108-4779-a031-fbfd34e79536>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:b5036b34-1d01-4b51-b6bb-5e5aafbd66d0>",
+      "similarity": 0.8125,
+      "containment": 0.9938,
+      "left_shingles": 166,
+      "right_shingles": 202,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:0266f7ca-50e9-47d9-8c6a-fd38d36e1e77>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:48b4e1bd-7211-497e-9870-e7b7162cc1e1>",
+      "similarity": 0.8438,
+      "containment": 0.9762,
+      "left_shingles": 668,
+      "right_shingles": 757,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:e2f2c900-f875-4037-8086-d41b8abba025>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:b9d20889-adad-4d39-a24d-49a11a3d3ceb>",
+      "similarity": 0.7969,
+      "containment": 0.9931,
+      "left_shingles": 234,
+      "right_shingles": 290,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:f0b6fc48-40e8-4236-bb4a-d3b3f81b7939>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:1302d29e-c2a2-4fdf-aece-7252189a5e96>",
+      "similarity": 0.7656,
+      "containment": 0.8718,
+      "left_shingles": 289,
+      "right_shingles": 286,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:fb33ce2f-ac55-434c-8c29-a9f6b31aed38>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:8734622b-96c0-4e34-ab7f-8a35a8ad114b>",
+      "similarity": 0.7656,
+      "containment": 0.9964,
+      "left_shingles": 131,
+      "right_shingles": 170,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:6760097b-c1de-4505-a252-bb4a8887d796>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:2426c967-1666-49f5-8fde-9ef0603e2b00>",
+      "similarity": 0.7578,
+      "containment": 0.8999,
+      "left_shingles": 160,
+      "right_shingles": 174,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:1af4ec54-53f0-4619-9527-fa862dff3b53>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:ddcfdf45-2c68-4b41-85e6-2f5999c0733c>",
+      "similarity": 0.7891,
+      "containment": 0.916,
+      "left_shingles": 967,
+      "right_shingles": 898,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:ae424b22-0eb2-481c-885a-359cc9c67caa>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:e84ab963-e937-4a6a-85a7-36a6db51da9a>",
+      "similarity": 0.7969,
+      "containment": 0.9239,
+      "left_shingles": 143,
+      "right_shingles": 132,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:253a14ee-817c-4e0d-adaf-3a637fe1ebb9>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:29511c1a-3c2f-4f79-8216-d8eaca3b4bfd>",
+      "similarity": 0.7656,
+      "containment": 1.0,
+      "left_shingles": 114,
+      "right_shingles": 161,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:69a4f96e-af4c-4e0d-b434-c32e5bb2d5e2>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:db5d4f7b-5a8a-49c5-b3e5-5219da6ed626>",
+      "similarity": 0.7656,
+      "containment": 1.0,
+      "left_shingles": 308,
+      "right_shingles": 228,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:5ae197ae-6709-4394-ac22-a426d48885c7>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:5a8c529b-d0d0-445e-a9b0-ea972ba8132b>",
+      "similarity": 0.7656,
+      "containment": 0.9605,
+      "left_shingles": 172,
+      "right_shingles": 209,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:27b87869-9378-4f12-adb0-5f9c3423498d>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:8eab8b85-38c8-455c-8cc8-ae0757981b35>",
+      "similarity": 0.7578,
+      "containment": 0.8771,
+      "left_shingles": 120,
+      "right_shingles": 116,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:defe2eed-bc96-483a-8d1c-ab2b874bacd9>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:fa76aac8-1b61-4eed-9baf-6043a43ddd55>",
+      "similarity": 0.7969,
+      "containment": 0.9489,
+      "left_shingles": 212,
+      "right_shingles": 186,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:18206a0d-6dc2-4a46-936c-20ddfc4cc475>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:46abcc12-072f-4adc-a954-ef35c195ea40>",
+      "similarity": 0.7812,
+      "containment": 0.9775,
+      "left_shingles": 145,
+      "right_shingles": 118,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:4f28396b-21bb-4ff5-a161-1008063123d1>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:dc8494c5-3182-436b-bf3f-621f44ad2a53>",
+      "similarity": 0.7109,
+      "containment": 0.9578,
+      "left_shingles": 338,
+      "right_shingles": 259,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:efd2febc-38f5-41ec-baa9-bcb84b614241>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:ca33faa6-a477-4b01-a7dd-4e7abf70b75a>",
+      "similarity": 0.7109,
+      "containment": 0.9533,
+      "left_shingles": 154,
+      "right_shingles": 119,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:68b18340-86e5-48b1-8266-a17874a3f8cc>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:d922052d-822b-4a3c-b7a0-277c8f8482eb>",
+      "similarity": 0.7031,
+      "containment": 0.947,
+      "left_shingles": 160,
+      "right_shingles": 207,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:89cfe579-9c71-4ed6-9312-ca14b4215f49>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:f0634290-ffe1-4da6-946f-09df9ea60913>",
+      "similarity": 0.7031,
+      "containment": 1.0,
+      "left_shingles": 712,
+      "right_shingles": 498,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:c60e7c27-be9e-4106-927b-c837d747ec24>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:d9461948-8a10-439b-a643-b6f7f224de1e>",
+      "similarity": 0.7266,
+      "containment": 1.0,
+      "left_shingles": 118,
+      "right_shingles": 171,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:ecfaa324-b2fa-4c65-a9c3-9a049d5c4918>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:21633923-0476-4d59-b88d-0f6cc93a0ab1>",
+      "similarity": 0.7188,
+      "containment": 0.9184,
+      "left_shingles": 153,
+      "right_shingles": 183,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:18bd2155-6365-4cec-95cf-324895c47f39>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:b59c66d6-2358-4788-bc3e-1e9265651f15>",
+      "similarity": 0.7266,
+      "containment": 1.0,
+      "left_shingles": 619,
+      "right_shingles": 419,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:b547f643-3d27-4afd-97ae-4cc117dd8a0d>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:9b9fe6d3-30be-4c0d-96f9-11b75089dcbf>",
+      "similarity": 0.7109,
+      "containment": 0.9453,
+      "left_shingles": 160,
+      "right_shingles": 204,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:a4eaed37-46e7-467d-adb1-7ee0aaae2a71>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:02b8cd37-c321-4e5f-aac2-1408bec2eaed>",
+      "similarity": 0.7344,
+      "containment": 1.0,
+      "left_shingles": 183,
+      "right_shingles": 128,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:1bec5144-7bd2-49df-a255-8658a1f337d3>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:81adf8c7-0f54-4dd4-b81e-de23e3001c4d>",
+      "similarity": 0.7188,
+      "containment": 0.9953,
+      "left_shingles": 321,
+      "right_shingles": 443,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:e38158b8-6edd-47ae-973b-47980936d155>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:257e058b-ee6a-4498-af9b-c31547559937>",
+      "similarity": 0.7188,
+      "containment": 0.9691,
+      "left_shingles": 220,
+      "right_shingles": 167,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:d339e7ae-36e5-41c2-b278-fc3086278900>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:9ac7ea75-0499-4cf4-90f8-422c5000b8bc>",
+      "similarity": 0.7188,
+      "containment": 1.0,
+      "left_shingles": 1769,
+      "right_shingles": 1264,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:0e3db76f-ad23-4c56-93bd-3c1ad866ab91>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:7f6b80b3-ab7b-4827-9289-9124fdb9adda>",
+      "similarity": 0.6875,
+      "containment": 0.8495,
+      "left_shingles": 188,
+      "right_shingles": 204,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:aa21650a-954d-4649-8f8d-041c2f806b2f>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:18717c38-6898-4cfb-b346-b65001881eb5>",
+      "similarity": 0.6719,
+      "containment": 0.8135,
+      "left_shingles": 296,
+      "right_shingles": 289,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:aabbf6b3-e1ad-4d0b-96b2-33d543a00f3d>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:d0bb5b71-8d82-4b7a-aac5-d9ce55952f5a>",
+      "similarity": 0.6562,
+      "containment": 0.9824,
+      "left_shingles": 169,
+      "right_shingles": 250,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:fef0a7d8-ae7a-4d0f-87e6-64d87924a570>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:679e5cfd-5064-4176-9b1b-f416c7e42e8a>",
+      "similarity": 0.6797,
+      "containment": 0.8118,
+      "left_shingles": 332,
+      "right_shingles": 330,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:621f1d4d-a6fc-4179-b4b8-5bdd5c711979>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:9dbf23c7-b158-407d-9d80-dbfc84b5ace2>",
+      "similarity": 0.6562,
+      "containment": 1.0,
+      "left_shingles": 85,
+      "right_shingles": 133,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:bd26718c-540e-4fdf-b7fe-dff970e2e216>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:9e7230d9-2524-4d17-8a56-701f61349b33>",
+      "similarity": 0.6562,
+      "containment": 0.7955,
+      "left_shingles": 132,
+      "right_shingles": 133,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:a9e652b9-6a87-43db-be1f-ec55586c030e>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:7c666fbd-c08c-4a25-b198-a3557b3bc07f>",
+      "similarity": 0.6562,
+      "containment": 0.7974,
+      "left_shingles": 809,
+      "right_shingles": 799,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:9a5db963-6779-4629-8572-bdbc8a474bb4>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:7e79a44f-5c0b-4bb3-84bf-835cd8e41e8c>",
+      "similarity": 0.6562,
+      "containment": 1.0,
+      "left_shingles": 681,
+      "right_shingles": 410,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:d696fcb9-6283-4c71-8ec5-739df30f4987>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:b036e6f6-a1ac-42b5-be26-a65716b1cdad>",
+      "similarity": 0.6562,
+      "containment": 0.7945,
+      "left_shingles": 589,
+      "right_shingles": 586,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:bf1c683f-e2f0-420f-be01-da6494484b87>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:548c7f91-0825-4e8d-ab13-df8c16e7ac9b>",
+      "similarity": 0.6641,
+      "containment": 0.8001,
+      "left_shingles": 995,
+      "right_shingles": 990,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:1250e84e-e0dc-41fb-9587-a418ef48951d>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:81ccb966-112a-474b-8b41-87f6b80eff5f>",
+      "similarity": 0.6641,
+      "containment": 1.0,
+      "left_shingles": 218,
+      "right_shingles": 137,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:2fce2b5d-6e05-4de8-b6f8-704b28d62a61>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:6fdad383-fa26-478b-a417-a53eb1189954>",
+      "similarity": 0.6797,
+      "containment": 0.8524,
+      "left_shingles": 282,
+      "right_shingles": 312,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:a8bb17d0-6c43-4bbd-b6f3-c4cf808e9e3d>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:7022e200-b3d8-4bef-9c0f-7b6bda6b860b>",
+      "similarity": 0.6484,
+      "containment": 0.8085,
+      "left_shingles": 362,
+      "right_shingles": 382,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:ba7bff47-5d48-44c8-b28e-99c611490b4b>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:8521aa99-9ee1-4cda-9ff1-88ee7fca817c>",
+      "similarity": 0.625,
+      "containment": 0.7855,
+      "left_shingles": 246,
+      "right_shingles": 236,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:13ea345b-a9b6-4ec9-abd5-4007c239e514>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:1cdd6cda-54c6-4ea4-995b-d66d200963a0>",
+      "similarity": 0.6328,
+      "containment": 0.8692,
+      "left_shingles": 206,
+      "right_shingles": 256,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:ff590de0-8897-450d-ae9a-d20a7fa53bd0>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:a7b0b9dd-69da-48b5-b08a-28e1db1ac458>",
+      "similarity": 0.6016,
+      "containment": 0.8772,
+      "left_shingles": 161,
+      "right_shingles": 215,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:ac00156a-2a0d-4c89-a5bd-ff207cdde033>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:3aa58b3d-cff0-4fdb-9538-194d7ac1e82e>",
+      "similarity": 0.6016,
+      "containment": 0.9373,
+      "left_shingles": 166,
+      "right_shingles": 111,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:3927ab3b-c883-40f0-9ebf-07b47a7d90cf>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:fe398694-8233-42d7-87d5-a50d707bd9ff>",
+      "similarity": 0.6172,
+      "containment": 0.9736,
+      "left_shingles": 147,
+      "right_shingles": 228,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:e8a06df0-21e7-4426-a791-7a46e194fdb3>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:2e3337bf-549e-48e6-b231-d1790750d27c>",
+      "similarity": 0.6172,
+      "containment": 0.7924,
+      "left_shingles": 254,
+      "right_shingles": 236,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:28825acd-3d0a-43c8-88d8-8f5bb9af9589>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:630feb21-460b-46a2-9fca-6782dcab1b59>",
+      "similarity": 0.6328,
+      "containment": 0.9794,
+      "left_shingles": 148,
+      "right_shingles": 226,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:38e849ca-4954-440c-a22e-5cab43b0443f>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:9bbe447b-668e-492b-8851-fd8d80926b68>",
+      "similarity": 0.6484,
+      "containment": 0.7922,
+      "left_shingles": 2923,
+      "right_shingles": 2964,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:5696c4a5-1cd3-48a0-a676-eb0885fde434>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:dc3cba63-3e63-47cc-94d5-a4e3f400cf6b>",
+      "similarity": 0.6016,
+      "containment": 0.7563,
+      "left_shingles": 150,
+      "right_shingles": 148,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:89edbfe5-b658-4cff-9ef6-e55ed773d4c0>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:6b7d2d6a-e5b3-43ca-8fa6-a39c5666306e>",
+      "similarity": 0.6484,
+      "containment": 0.9518,
+      "left_shingles": 174,
+      "right_shingles": 247,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:b157b1c7-b0af-4799-ba88-d2f3faf94edb>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:63d90b20-9e29-49fb-8fd7-431ddf996696>",
+      "similarity": 0.6484,
+      "containment": 0.9158,
+      "left_shingles": 340,
+      "right_shingles": 256,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:542702ab-22be-451b-b4db-31cc69dde17c>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:913163a7-cff1-4a73-a5df-4f086d1a9825>",
+      "similarity": 0.5859,
+      "containment": 0.8222,
+      "left_shingles": 435,
+      "right_shingles": 355,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:b13240e3-5640-4529-aea7-c924ea7a7c5f>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:837ba022-c297-4069-8662-f1e9fc98b186>",
+      "similarity": 0.5625,
+      "containment": 0.9183,
+      "left_shingles": 118,
+      "right_shingles": 183,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:820d36dc-d7b4-457f-b3d1-a276ed341e1c>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:e244b10c-a50b-4de5-a061-a8602bd4be74>",
+      "similarity": 0.5859,
+      "containment": 0.9647,
+      "left_shingles": 638,
+      "right_shingles": 396,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:aba964b7-54a3-4c7b-b8fd-c848f00db2ab>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:6aa8c0f0-b7ae-4636-8c3a-ce69c6e6393d>",
+      "similarity": 0.5547,
+      "containment": 0.9786,
+      "left_shingles": 305,
+      "right_shingles": 175,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:2ee35f8e-ee1c-4738-9538-57bddd34a18b>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:fe66e2bd-6138-42fe-b4de-9272720499a7>",
+      "similarity": 0.5859,
+      "containment": 0.7503,
+      "left_shingles": 134,
+      "right_shingles": 130,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:29cdc678-827c-4b40-9de0-57f4dd498469>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:d82fa15d-fad1-430f-83e5-97ba90eb8046>",
+      "similarity": 0.5938,
+      "containment": 0.7617,
+      "left_shingles": 1009,
+      "right_shingles": 966,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:f2a4f614-c7c7-43ae-9cbd-4334aaad824e>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:dea254b0-6a33-4b38-a428-0ac7bb283f7c>",
+      "similarity": 0.5703,
+      "containment": 0.8635,
+      "left_shingles": 151,
+      "right_shingles": 208,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:e95ef7f0-b99b-4f8c-8f32-bbeb60273037>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:c815e237-223d-43a3-a0f2-7d92b4c46aa5>",
+      "similarity": 0.5547,
+      "containment": 0.7136,
+      "left_shingles": 115,
+      "right_shingles": 115,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:9b707633-adb7-469d-a78b-3b36f6710a68>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:953d33e9-9e4a-4f27-8636-07a4e016f33f>",
+      "similarity": 0.5781,
+      "containment": 0.8422,
+      "left_shingles": 478,
+      "right_shingles": 368,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:8eace0e4-574f-4694-8dcd-3762d701cdc1>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:23e38c8d-49e8-4c89-b03f-73af5d9ae20b>",
+      "similarity": 0.5938,
+      "containment": 1.0,
+      "left_shingles": 652,
+      "right_shingles": 367,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:a228e206-43cd-40e0-b57e-bea3f216bb87>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:6ecd155c-24bf-4412-9554-3b63fa745674>",
+      "similarity": 0.5547,
+      "containment": 0.8474,
+      "left_shingles": 187,
+      "right_shingles": 136,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:9ed7332d-b727-4803-a2ad-a3197064836d>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:dddb39b0-f2c2-409c-baaa-7f0a57660b17>",
+      "similarity": 0.5625,
+      "containment": 0.724,
+      "left_shingles": 91,
+      "right_shingles": 92,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:f0a866ec-e313-4cfc-a5ab-9c53eeb665d6>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:2b2653a2-4f20-46b8-a8f1-001c06bd728a>",
+      "similarity": 0.5,
+      "containment": 0.6778,
+      "left_shingles": 401,
+      "right_shingles": 388,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:72c34d66-afcc-4683-a77a-83dbcb487b17>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:2cd2ffd5-9006-4af4-91c4-351f564fa7a0>",
+      "similarity": 0.5391,
+      "containment": 0.8797,
+      "left_shingles": 260,
+      "right_shingles": 172,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:039d237c-4584-4085-bb19-18eabca7ca4e>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:1ba171b4-3c31-42dd-bf14-2991559983ba>",
+      "similarity": 0.5156,
+      "containment": 0.743,
+      "left_shingles": 364,
+      "right_shingles": 431,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:7f6c0373-693e-4bc2-b264-cc530ca457a0>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:c7909e83-afa9-48ec-9319-f6769e791088>",
+      "similarity": 0.5,
+      "containment": 0.7233,
+      "left_shingles": 475,
+      "right_shingles": 406,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:cfb374fa-184a-42cc-9084-a95d7cae8d49>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:601acaf6-3d2c-4b72-8d65-2d266c9baaf4>",
+      "similarity": 0.5078,
+      "containment": 0.8891,
+      "left_shingles": 369,
+      "right_shingles": 225,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:660c4a75-ff3e-4085-a96c-62652f0318dd>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:7f2a13d3-4641-49ab-8716-1d10d5b09a57>",
+      "similarity": 0.5469,
+      "containment": 0.7111,
+      "left_shingles": 261,
+      "right_shingles": 264,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:7eb0c235-cb05-448f-9724-8b9e367b58ef>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:8246d897-4b90-4272-a3a3-70b305aa4059>",
+      "similarity": 0.5234,
+      "containment": 1.0,
+      "left_shingles": 450,
+      "right_shingles": 214,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:8c89c404-bd5e-49df-975b-f91bf04c564a>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:cee3fd84-d1cf-4bb6-9ba4-7865220d6633>",
+      "similarity": 0.5156,
+      "containment": 0.9522,
+      "left_shingles": 734,
+      "right_shingles": 408,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:909fcde8-c3a3-4275-8c67-71334429673d>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:51cb6446-c10e-49b6-b523-853c6d91cd91>",
+      "similarity": 0.5,
+      "containment": 0.7628,
+      "left_shingles": 104,
+      "right_shingles": 134,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:9e9ca818-2ca6-4478-98d7-a5721c2ebc02>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:f313b148-892e-445e-8dbf-59e6dcd66b94>",
+      "similarity": 0.5078,
+      "containment": 0.726,
+      "left_shingles": 230,
+      "right_shingles": 199,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:4a0f6346-a858-421b-b5ab-5ded07daf082>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:9fbfe274-b4f5-4bec-9d7e-07875e071745>",
+      "similarity": 0.5469,
+      "containment": 0.7181,
+      "left_shingles": 193,
+      "right_shingles": 199,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    },
+    {
+      "left": "fineweb2-urd_Arab:<urn:uuid:aae33688-87f7-4f61-9a12-c9206ee429a1>",
+      "right": "fineweb2-urd_Arab:<urn:uuid:196a1d74-6665-42a8-8294-a13fed1561c4>",
+      "similarity": 0.5156,
+      "containment": 0.6804,
+      "left_shingles": 97,
+      "right_shingles": 97,
+      "left_source": "fineweb2-urd_Arab",
+      "right_source": "fineweb2-urd_Arab",
+      "cross_source": false
+    }
+  ],
+  "sources": [
+    "fineweb2-urd_Arab"
+  ],
+  "limit": 0,
+  "sample_rate": null,
+  "host_filters": {},
+  "host_filtered_out": {},
+  "seed": 0,
+  "quality_filtered": true,
+  "exact_deduplicated": true,
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 4809542,
+    "documents_accepted": 4809090,
+    "documents_rejected": 452,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.999906,
+    "bytes_in": 21400072163,
+    "chars_out": 12074221739,
+    "replacement_chars": 8538,
+    "mojibake_chars": 1614,
+    "control_chars": 3,
+    "verdicts": {
+      "mojibake": 37,
+      "ok": 4809090,
+      "replacement_heavy": 415
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 4809090,
+    "documents_kept": 4809060,
+    "keep_rate": 0.999994,
+    "documents_by_prior": 3,
+    "prior_rate": 1e-06,
+    "mixed_documents": 133391,
+    "letters": 9191020555,
+    "labels": {
+      "code_switched": 22656,
+      "english": 3,
+      "other": 27,
+      "urdu": 4786404
+    },
+    "letters_by_label": {
+      "code_switched": 39372471,
+      "english": 156003,
+      "other": 29122,
+      "urdu": 9151462959
+    },
+    "segment_letters": {
+      "arabic": 467227,
+      "code_switched": 5048050,
+      "english": 27882691,
+      "hindi": 307112,
+      "other": 8961083,
+      "persian": 61252,
+      "roman_urdu": 1694989,
+      "urdu": 166461679
+    }
+  },
+  "stage5_quality": {
+    "fineweb2-urd_Arab": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "53d04d3fd079",
+      "config": {
+        "min_chars": 400,
+        "min_words": 40,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 0.5,
+        "max_top_ngram_ratio": {
+          "3": 0.26,
+          "4": 0.22
+        },
+        "max_dup_ngram_ratio": {
+          "5": 0.6,
+          "6": 0.58,
+          "7": 0.56,
+          "8": 0.54,
+          "9": 0.52,
+          "10": 0.5
+        },
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 4809090,
+      "documents_kept": 4649209,
+      "documents_rejected": 159881,
+      "keep_rate": 0.966754,
+      "chars_in": 12084425754,
+      "chars_kept": 12029331953,
+      "char_keep_rate": 0.995441,
+      "rejections": {
+        "html_residue": 8,
+        "repetition:dup_10gram": 16,
+        "repetition:dup_5gram": 8,
+        "repetition:dup_6gram": 12,
+        "repetition:dup_7gram": 12,
+        "repetition:dup_8gram": 13,
+        "repetition:dup_9gram": 15,
+        "repetition:dup_lines": 2,
+        "repetition:top_3gram": 1,
+        "repetition:top_4gram": 5,
+        "script_ratio": 1845,
+        "too_short": 158216
+      },
+      "families": {
+        "html_residue": 8,
+        "repetition": 23,
+        "script_ratio": 1845,
+        "too_short": 158216
+      },
+      "sole_rejections": {
+        "html_residue": 8,
+        "repetition": 20,
+        "script_ratio": 1637,
+        "too_short": 158005
+      },
+      "by_label": {
+        "code_switched": 22656,
+        "english": 3,
+        "other": 27,
+        "urdu": 4786404
+      },
+      "kept_by_label": {
+        "code_switched": 20207,
+        "english": 2,
+        "other": 20,
+        "urdu": 4628980
+      },
+      "chars_kept_by_label": {
+        "code_switched": 50280612,
+        "english": 202785,
+        "other": 34387,
+        "urdu": 11978814169
+      },
+      "truncated_documents": 0
+    }
+  },
+  "pii": {
+    "pii_version": "1.0.0",
+    "config_fingerprint": "ac44c4eb5021",
+    "config": {
+      "redact_emails": true,
+      "redact_phones": true,
+      "email_placeholder": "[@]",
+      "phone_placeholder": "[#]",
+      "min_national_digits": 10,
+      "min_national_digits_unseparated": 11,
+      "max_national_digits": 12,
+      "min_international_digits": 10,
+      "max_international_digits": 13,
+      "max_shapes": 200
+    },
+    "documents": 4649209,
+    "documents_redacted": 44578,
+    "chars_in": 12029331953,
+    "chars_out": 12028355699,
+    "chars_removed": 976254,
+    "counts": {
+      "email": 31786,
+      "phone": 32729
+    },
+    "distinct_shapes": 200,
+    "shapes_dropped": 2196,
+    "shapes": {
+      "email:xxxxx@xxxxxxx.xxx": 15894,
+      "email:xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx": 15582,
+      "phone:ddddddddddd": 9614,
+      "phone:dddddddddddddd": 3997,
+      "phone:dddd-ddddddd": 3923,
+      "phone:ddd-dddddddd": 1083,
+      "phone:ddd-ddddddd": 865,
+      "phone:+dddddddddddd": 843,
+      "phone:dddd-dd-dddddddd": 834,
+      "phone:dddd-ddd-ddddddd": 832,
+      "phone:+d-ddd-ddd-dddd": 569,
+      "phone:+dddddddddd-dd": 539,
+      "phone:dddd ddd dddd": 475,
+      "phone:dddddddddddd": 420,
+      "phone:dddd ddd ddddddd": 337,
+      "phone:+d ddd ddd dddd": 317,
+      "phone:ddddddddddddd": 317,
+      "phone:+dd ddd ddddddd": 317,
+      "phone:dddd ddddddd": 260,
+      "phone:+ddddddddddd": 243,
+      "phone:dddd-dddddd": 232,
+      "phone:ddddd dddddd": 191,
+      "phone:+dd ddddddddddd": 184,
+      "phone:+dd-ddd-dd-dd-ddd": 154,
+      "phone:+dd–dd-dd-dd-dd-dd": 152,
+      "phone:+ddd-dddd-ddddd": 152,
+      "phone:+ddddddddddddd": 137,
+      "phone:ddddd-dddddd": 125,
+      "phone:+dd-ddd-ddddddd": 121,
+      "phone:ddddddddddddddd": 119,
+      "phone:+ddd ddd ddd ddd": 116,
+      "phone:+dd ddd ddd dddd": 113,
+      "phone:+dd-dd-dd-dd-dd-dd": 108,
+      "phone:+dd dddddddddd": 103,
+      "phone:+d ddd-ddd-dddd": 99,
+      "phone:ddd dddd dddd": 96,
+      "phone:ddd-ddd-ddd-ddd": 89,
+      "phone:dddd ddd ddd": 85,
+      "phone:dddd-dddddddddd": 84,
+      "phone:+dd ddd ddd dd dd": 84,
+      "phone:+dd-dddddddddd": 83,
+      "phone:dddd-dddddddd": 64,
+      "phone:dddd dddd ddd": 62,
+      "phone:dddd-ddddddddddd": 62,
+      "phone:dddd-ddddddd-d": 61,
+      "phone:+dd ddd dd dd ddd": 61,
+      "phone:+dd-dd-dddddddd": 60,
+      "phone:dddd ddddddddddd": 58,
+      "phone:+dd dd dddd dddd": 54,
+      "phone:+dd d ddd dddd": 53,
+      "phone:+dd ddddddddd": 50,
+      "phone:+dd-ddddddddddd": 50,
+      "phone:+ddd dddd dddd": 46,
+      "phone:ddddd ddd ddd": 45,
+      "phone:dddd–dddd–dddd": 44,
+      "phone:dddd-ddd-dddd": 43,
+      "phone:+dd ddd dddd dddd": 42,
+      "phone:+dd-dd-dddd-dddd": 42,
+      "phone:+dd dd ddd dddd": 42,
+      "phone:ddddd-ddd-ddd": 38,
+      "phone:+dd ddd dd dd dd": 38,
+      "phone:+dd dd ddddddd": 38,
+      "phone:+dd dd dddddddd": 35,
+      "phone:ddd-ddddddd-dd": 35,
+      "phone:dddd dddd dddd": 35,
+      "phone:ddd ddddddd": 34,
+      "phone:+dd-d-dddd-dddd": 33,
+      "phone:dddd ddd dd dd": 32,
+      "phone:+dd (d) ddd ddd dddd": 32,
+      "phone:dddd-dd dd ddd": 31,
+      "phone:+ddd d-ddd-dddd": 31,
+      "phone:+dd dddd dddddd": 30,
+      "phone:ddd-dddddddd-d": 29,
+      "phone:ddd-dddd-dddd": 29,
+      "phone:+ddddd-ddddddd": 28,
+      "phone:(ddd) dddddddd": 27,
+      "phone:+dd-dd)ddd-ddd-ddd": 26,
+      "phone:+dd dd ddd dd dd": 26,
+      "phone:+dd (d) ddd dddd ddd": 23,
+      "phone:ddd dddddddd": 23,
+      "phone:+ddd (d) ddddddd": 22,
+      "phone:+dd-ddd-dddd-dddd": 21,
+      "phone:dddddd-dddddd": 21,
+      "phone:+dd (d) dddd dddddd": 21,
+      "phone:+dd-ddd-dddddddd": 21,
+      "phone:dddd dddddddddd": 21,
+      "phone:ddd-ddddddd-d": 21,
+      "phone:dddd dd dd ddd": 21,
+      "phone:+d (ddd) ddd dddd": 21,
+      "phone:+dd dd-dddd-dddd": 20,
+      "phone:+ddd dddddddd": 16,
+      "phone:+ddd) ddd ddd ddd": 16,
+      "phone:+dd ddd dddd ddd": 16,
+      "phone:+dd d dddd dddd": 16,
+      "phone:+d (ddd) ddd-dddd": 16,
+      "phone:dddd dddddd": 15,
+      "phone:ddddddd- dddd": 15,
+      "phone:+dd-dd-ddd-dd-dd": 15,
+      "phone:dddd-dddd-dddd": 15,
+      "phone:+dd dddd ddd ddd": 14,
+      "phone:+d (ddd) ddd-dd-dd": 14,
+      "phone:dddd- ddddddd": 13,
+      "phone:dddd dd dd dd": 13,
+      "phone:+dd (d) dddd ddd ddd": 13,
+      "phone:+dd(d)dddd-ddd-ddd": 13,
+      "phone:+dd (d) ddd dd dd dd": 12,
+      "phone:ddddd-ddd-dddd-d": 12,
+      "phone:+dd (dd) ddddddd": 12,
+      "phone:+dd(d)ddd-ddd-dddd": 12,
+      "phone:+d ddd ddd-dd-dd": 11,
+      "phone:ddddddd-dddd": 11,
+      "phone:+dd d ddddddd": 11,
+      "phone:ddd- dddddddd": 11,
+      "phone:+ddd-d-ddd-dddd": 10,
+      "phone:ddddd (ddd) ddd": 9,
+      "phone:+dd(d)dddd-dddddd": 9,
+      "phone:+dd-dd-dddddddd-d": 9,
+      "phone:(ddd) ddddddd": 8,
+      "phone:+dd (d) d dd dd dd dd": 8,
+      "phone:+dd dd dd dd dd": 8,
+      "phone:ddddddd-ddd": 8,
+      "phone:+dddd ddd dddd": 8,
+      "phone:+dd-d-ddd-dddd": 8,
+      "phone:+dddd dddd ddd": 8,
+      "phone:ddd ddd ddd ddd": 8,
+      "phone:+dd (d) dd ddd ddd": 8,
+      "phone:+dd(d)ddddddddd": 8,
+      "phone:dddd dd ddd dd": 7,
+      "phone:+dd-dddd-dddddd": 7,
+      "phone:+dd (d)dd dddd dddd": 7,
+      "phone:+dd (d) ddd-dd-dd": 7,
+      "phone:ddd-ddd ddd ddd": 7,
+      "phone:ddd ddd ddd dddd": 6,
+      "phone:+dd(d)ddd ddd dddd": 6,
+      "phone:+dd-dd) ddd-ddd-ddd": 6,
+      "phone:+dd-dd) dddddddd": 6,
+      "phone:+dd ddd-ddd-dddd": 5,
+      "phone:(dddd) ddd dd dd": 5,
+      "phone:+dd-ddddd ddddd": 5,
+      "phone:+ddd-d-dddd-dddd": 5,
+      "phone:+ddd ddd dddd": 4,
+      "phone:(ddd) dddd dddd": 4,
+      "phone:dddd-ddd-dddd-d": 4,
+      "email:xxxxxx.xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx": 4,
+      "phone:(dddd-dd)dddddddd": 4,
+      "phone:+ddd-ddd-ddd-ddd": 4,
+      "phone:+dd dd-ddd-dddd": 4,
+      "phone:+dd (d) ddd ddd ddd": 3,
+      "phone:+ddd ddd ddddd": 3,
+      "phone:ddd-ddddddd d": 3,
+      "phone:+dd-ddd-dddd dddd": 3,
+      "phone:+dddddd dddddd": 3,
+      "email:xxxxxxx@xxxxxxxxxxxx.xxx": 3,
+      "phone:+dd-(d)ddd-ddd-ddd": 3,
+      "phone:dddd-dd-dd-ddd": 3,
+      "phone:+dd (d) d dddd dddd": 3,
+      "phone:dddd-dddd-ddddddd": 3,
+      "phone:+dd-dd-ddddddd-d": 3,
+      "phone:dddd ddd dddd dddd": 3,
+      "phone:+d-dddddddddd": 2,
+      "phone:dddd dd ddd ddd": 2,
+      "phone:+d-dd-ddd-dddd": 2,
+      "email:xxxx@xxxxxxxxxxx.xxx": 2,
+      "phone:+dd (d)-dd-dddddddd": 2,
+      "phone:+dd) ddd-ddddd": 2,
+      "phone:+dd) ddd-ddddd-d": 2,
+      "phone:ddddddddddd d": 2,
+      "phone:+dd) dddd ddd dddd": 2,
+      "phone:dddd dddd dd (d": 2,
+      "phone:ddddd dd dddd": 2,
+      "phone:dddddd-dddddddd": 2,
+      "phone:dddddd dddddddd": 2,
+      "phone:dddd (d) ddd dd dd dd": 2,
+      "phone:+dd(d)dd-ddddddd": 2,
+      "email:xxxxxxxxxxxxxxxxxxx@xxxxx.xxx": 2,
+      "email:xxxxxxx@xxxxxxx.xxx.xx": 1,
+      "phone:+dd dddd-ddddddd": 1,
+      "phone:+dd dd ddddddd-dd": 1,
+      "phone:+dddd-ddddddddd": 1,
+      "phone:+d-(ddd)-ddd-dddd": 1,
+      "email:xxxxxxxxxxxxxxx@xxx.xxx.xx": 1,
+      "phone:+dddd-ddddddd": 1,
+      "phone:ddddddd dd dd ddd": 1,
+      "phone:+dd-ddd ddddddd": 1,
+      "phone:+dd dd dd dd ddd": 1,
+      "phone:+dd-dd dddddddd": 1,
+      "phone:+dd (ddd)ddddddd": 1,
+      "phone:+ddd (d) dddddddd": 1,
+      "email:xxxxxxx@xxxxxxx.xx": 1,
+      "phone:dddd-dddd(dd)ddddd": 1,
+      "phone:dddd dd d dddd": 1,
+      "phone:+dddd-dddddd": 1,
+      "phone:ddd dddd ddd dd": 1,
+      "phone:ddddddddd-d": 1,
+      "phone:+dd(d)d-dddddddd": 1,
+      "phone:dddddd ddd ddd": 1,
+      "phone:+dd-ddd-dd-ddddd": 1,
+      "phone:+dd (d) dd-ddd dd dd": 1,
+      "phone:+dd-ddd-ddd-ddd-d": 1,
+      "email:x@xxxxxxx.xxx": 1
+    }
+  },
+  "single_pass": true,
+  "stage6_exact": {
+    "dedup_version": "1.0.0",
+    "config_fingerprint": "ba02bfe0afd5",
+    "config": {
+      "hash_bits": 128,
+      "collapse_whitespace": true,
+      "casefold": true,
+      "variant": "normalized",
+      "measure_alternate": true,
+      "paragraph_mode": "off",
+      "min_paragraph_chars": 60,
+      "paragraph_min_documents": 2,
+      "max_index_entries": 40000000
+    },
+    "indexed": 4649209,
+    "duplicate_groups": 136,
+    "duplicate_documents": 136,
+    "duplicate_rate": 2.9e-05,
+    "largest_group": 2,
+    "variant": "normalized",
+    "alternate_variant": "raw",
+    "alternate_duplicate_documents": 0,
+    "cross_source_groups": 0,
+    "cross_source_pairs": {},
+    "documents": 0,
+    "documents_kept": 0,
+    "documents_removed": 0,
+    "keep_rate": 0.0,
+    "chars_in": 0,
+    "chars_kept": 0,
+    "char_keep_rate": 0.0,
+    "by_source": {},
+    "kept_by_source": {},
+    "removed_by_source": {},
+    "removed_cross_source_by_source": {},
+    "paragraph_mode": "off",
+    "paragraph_units": 0,
+    "paragraph_distinct": 0,
+    "paragraph_duplicate_units": 0,
+    "paragraph_chars": 0,
+    "paragraph_chars_duplicated": 0,
+    "paragraph_chars_removable": 0,
+    "paragraph_removable_share": 0.0,
+    "paragraph_documents_changed": 0,
+    "paragraphs_removed": 0,
+    "paragraph_chars_removed": 0,
+    "paragraph_documents_emptied": 0,
+    "distinct_documents": 4649073,
+    "top_groups": [
+      {
+        "group": "043bdd291c0815fc",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "051eb277051c4ada",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "05c4f8c0489f3b16",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "060781021cedf810",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "0611c5cf317416fb",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "07fe399d4786b629",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "0c2692e8ce517a72",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "0de80cb408e7af53",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "0df5ebf3e84021fc",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "0f898c5adf39c004",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "11cd77b8228e53aa",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "144215319675c95c",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "14e8c80d7c086d96",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "185212461383f41c",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "1877afe471ea9c9f",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "1a2963c24cd07fa1",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "1bf5724bd8202c2b",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "1c207e3d57274b07",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "1c54bf8b7c454c95",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      },
+      {
+        "group": "1ee97b2f258762e8",
+        "size": 2,
+        "sources": [
+          "fineweb2-urd_Arab"
+        ],
+        "kept": "",
+        "duplicates": []
+      }
+    ],
+    "phase2_measured": false,
+    "removed": 136
+  },
+  "sweep": [
+    {
+      "threshold": 0.7,
+      "verified_pairs": 30998,
+      "clusters": 29476,
+      "duplicate_documents": 30783,
+      "largest_cluster": 50,
+      "keep_rate": 0.993379
+    },
+    {
+      "threshold": 0.8,
+      "verified_pairs": 4184,
+      "clusters": 4153,
+      "duplicate_documents": 4182,
+      "largest_cluster": 8,
+      "keep_rate": 0.9991
+    },
+    {
+      "threshold": 0.9,
+      "verified_pairs": 226,
+      "clusters": 226,
+      "duplicate_documents": 226,
+      "largest_cluster": 2,
+      "keep_rate": 0.999951
+    }
+  ]
+}

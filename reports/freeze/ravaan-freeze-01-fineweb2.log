@@ -1,0 +1,70 @@
+[{"stream_name":"stdout","time":0.801015669,"data":"code dataset: /kaggle/input/datasets/awaisbinadil/ravaan-code\n"}
+,{"stream_name":"stdout","time":6.603110507,"data":"corpus dataset: /kaggle/input/notebooks/awaisbinadil/ravaan-freeze-00-fetch-and-trial\n"}
+,{"stream_name":"stdout","time":6.606676737,"data":"corpus linked: /kaggle/working/data/raw -\u003e /kaggle/input/notebooks/awaisbinadil/ravaan-freeze-00-fetch-and-trial/data/raw\n"}
+,{"stream_name":"stdout","time":6.606732857,"data":"$ /usr/bin/python3 /kaggle/input/datasets/awaisbinadil/ravaan-code/scripts/neardedup.py --source fineweb2-urd_Arab --split train --limit 0 --single-pass --sweep 0.7 0.8 0.9 --removals reports/freeze/removals_67_fineweb2.txt --pairs-out reports/freeze/pairs_67_fineweb2.jsonl --json reports/freeze/neardedup_fineweb2.json\n"}
+,{"stream_name":"stderr","time":6.93387988,"data":"reading fineweb2-urd_Arab: plan 54b744f92e3949f8 over 2 file(s)\n"}
+,{"stream_name":"stderr","time":6.93789656,"data":"stage 6 phase 1: indexing + stage 7 sketching\n"}
+,{"stream_name":"stderr","time":24802.729339096,"data":"  4,649,209 documents, 4,649,073 distinct, 136 exact duplicate groups\n"}
+,{"stream_name":"stderr","time":24810.91523845,"data":"stage 6: dropped 136 exact duplicates from stage 7's index (stage 6's phase-2 counters are not measured in this mode)\n"}
+,{"stream_name":"stderr","time":24810.91528102,"data":"stage 7: sketching done — 4,649,073 documents (0 below min_shingles), banding\n"}
+,{"stream_name":"stderr","time":24972.310696533,"data":"\n"}
+,{"stream_name":"stderr","time":24972.310742863,"data":"stage 7: kept 4,644,891/4,649,073 = 99.91% of documents, 99.92% of characters\n"}
+,{"stream_name":"stderr","time":24972.310747403,"data":"  4,153 clusters, largest 8, 4,182 documents removed\n"}
+,{"stream_name":"stderr","time":24972.310750633,"data":"  banding proposed 814,341 candidate pairs at threshold 0.420; 4,184 verified at 0.80 (precision 0.005); 271,971 retained for the sweep\n"}
+,{"stream_name":"stderr","time":24972.310753773,"data":"  mean shingles per eligible document: 537.3\n"}
+,{"stream_name":"stderr","time":24972.310757083,"data":"  cross-source clusters: 0\n"}
+,{"stream_name":"stderr","time":24972.310759993,"data":"  fineweb2-urd_Arab        4,644,891/4,649,073 = 99.91% kept  (4,182 internal + 0 cross-source)\n"}
+,{"stream_name":"stderr","time":24972.310763063,"data":"\n"}
+,{"stream_name":"stderr","time":24972.310765863,"data":"  similarity of retained pairs\n"}
+,{"stream_name":"stderr","time":24972.310768753,"data":"    0.95-1.00  jaccard       87   containment   59,054\n"}
+,{"stream_name":"stderr","time":24972.310771613,"data":"    0.90-0.95  jaccard      139   containment   24,308\n"}
+,{"stream_name":"stderr","time":24972.310774473,"data":"    0.85-0.90  jaccard      828   containment   27,578\n"}
+,{"stream_name":"stderr","time":24972.310777313,"data":"    0.80-0.85  jaccard    3,130   containment   38,250\n"}
+,{"stream_name":"stderr","time":24972.310780213,"data":"    0.75-0.80  jaccard    9,816   containment   51,000\n"}
+,{"stream_name":"stderr","time":24972.310783103,"data":"    0.70-0.75  jaccard   16,998   containment   52,105\n"}
+,{"stream_name":"stderr","time":24972.310785973,"data":"    0.65-0.70  jaccard   27,957   containment   19,676\n"}
+,{"stream_name":"stderr","time":24972.310788813,"data":"    0.60-0.65  jaccard   50,656   containment        0\n"}
+,{"stream_name":"stderr","time":24972.310791653,"data":"    0.55-0.60  jaccard   61,936   containment        0\n"}
+,{"stream_name":"stderr","time":24972.310794493,"data":"    0.50-0.55  jaccard  100,424   containment        0\n"}
+,{"stream_name":"stderr","time":24972.310797343,"data":"\n"}
+,{"stream_name":"stderr","time":24972.310800113,"data":"  largest clusters\n"}
+,{"stream_name":"stderr","time":24972.310819923,"data":"    #0     x8      fineweb2-urd_Arab\n"}
+,{"stream_name":"stderr","time":24972.310822223,"data":"      kept fineweb2-urd_Arab:\u003curn:uuid:77dc1b17-83fc-400d-a197-dbf56ec8c522\u003e  e.g. fineweb2-urd_Arab:\u003curn:uuid:7aa3cd2d-c69b-40f5-9339-455f115498bd\u003e, fineweb2-urd_Arab:\u003curn:uuid:e42237df-badf-4175-8a31-0b2859d60265\u003e\n"}
+,{"stream_name":"stderr","time":24972.310826663,"data":"    #1     x3      fineweb2-urd_Arab\n"}
+,{"stream_name":"stderr","time":24972.310828683,"data":"      kept fineweb2-urd_Arab:\u003curn:uuid:cfeaa987-7205-462a-94df-dbef5786c80f\u003e  e.g. fineweb2-urd_Arab:\u003curn:uuid:c5ba00b9-ed89-4392-92af-c582c9fa8f37\u003e, fineweb2-urd_Arab:\u003curn:uuid:c916178c-2b04-4e27-bc17-33c65fe6db82\u003e\n"}
+,{"stream_name":"stderr","time":24972.310831633,"data":"    #2     x3      fineweb2-urd_Arab\n"}
+,{"stream_name":"stderr","time":24972.310833603,"data":"      kept fineweb2-urd_Arab:\u003curn:uuid:2fa6bb6c-59c4-4c02-aa60-9b1f6e3df720\u003e  e.g. fineweb2-urd_Arab:\u003curn:uuid:f81fc9da-c492-4598-9008-ec49fac1189a\u003e, fineweb2-urd_Arab:\u003curn:uuid:f999247e-4ff6-456e-a9b1-adaf462e9df3\u003e\n"}
+,{"stream_name":"stderr","time":24972.310835993,"data":"    #3     x3      fineweb2-urd_Arab\n"}
+,{"stream_name":"stderr","time":24972.310839013,"data":"      kept fineweb2-urd_Arab:\u003curn:uuid:8e3937f7-6d56-4247-93e9-b86e21aa92c4\u003e  e.g. fineweb2-urd_Arab:\u003curn:uuid:9530de4a-caf8-45dd-80ac-b0b117b49d5d\u003e, fineweb2-urd_Arab:\u003curn:uuid:1e81ef45-e434-483a-8bbe-792bcd9d7482\u003e\n"}
+,{"stream_name":"stderr","time":24972.310841413,"data":"    #4     x3      fineweb2-urd_Arab\n"}
+,{"stream_name":"stderr","time":24972.310843353,"data":"      kept fineweb2-urd_Arab:\u003curn:uuid:870f8931-480d-4b18-91ba-f51e22bf5be5\u003e  e.g. fineweb2-urd_Arab:\u003curn:uuid:6d64502d-0905-432a-b478-66302c1ecd43\u003e, fineweb2-urd_Arab:\u003curn:uuid:a8fcfa55-4271-4573-8f5b-bf85a5502ef1\u003e\n"}
+,{"stream_name":"stderr","time":24972.310845653,"data":"    #5     x3      fineweb2-urd_Arab\n"}
+,{"stream_name":"stderr","time":24972.310847533,"data":"      kept fineweb2-urd_Arab:\u003curn:uuid:7dbbbd0c-7bd2-4295-ac0b-40da19f1763c\u003e  e.g. fineweb2-urd_Arab:\u003curn:uuid:c57cfae2-283c-42be-bd6a-568bef365be2\u003e, fineweb2-urd_Arab:\u003curn:uuid:81a60087-b902-486c-aa35-cb43de309fa0\u003e\n"}
+,{"stream_name":"stderr","time":24972.310849833,"data":"    #6     x3      fineweb2-urd_Arab\n"}
+,{"stream_name":"stderr","time":24972.310851713,"data":"      kept fineweb2-urd_Arab:\u003curn:uuid:8fa62ccd-e169-48fc-a760-5f609126eff9\u003e  e.g. fineweb2-urd_Arab:\u003curn:uuid:0745d235-35c2-4c22-934e-a699a3e2871a\u003e, fineweb2-urd_Arab:\u003curn:uuid:516f5755-9e57-4754-96bf-fe2202a7170a\u003e\n"}
+,{"stream_name":"stderr","time":24972.310854093,"data":"    #7     x3      fineweb2-urd_Arab\n"}
+,{"stream_name":"stderr","time":24972.310855993,"data":"      kept fineweb2-urd_Arab:\u003curn:uuid:c23b496b-32e6-4a2d-8328-9089049c9c07\u003e  e.g. fineweb2-urd_Arab:\u003curn:uuid:2a3bf86a-9c3c-42a5-b877-a5f5c2a2725a\u003e, fineweb2-urd_Arab:\u003curn:uuid:7a83ac57-ca91-4158-a770-ebe6a992ff40\u003e\n"}
+,{"stream_name":"stderr","time":24972.310858323,"data":"    #8     x3      fineweb2-urd_Arab\n"}
+,{"stream_name":"stderr","time":24972.310860203,"data":"      kept fineweb2-urd_Arab:\u003curn:uuid:20666ca7-d337-4cfe-b29c-46c27526bcd7\u003e  e.g. fineweb2-urd_Arab:\u003curn:uuid:dbe959ab-2efb-4f99-b614-d9acb265c727\u003e, fineweb2-urd_Arab:\u003curn:uuid:8a90765d-c0b0-450b-82e3-8deac1056ff0\u003e\n"}
+,{"stream_name":"stderr","time":24972.310862513,"data":"    #9     x3      fineweb2-urd_Arab\n"}
+,{"stream_name":"stderr","time":24972.310864433,"data":"      kept fineweb2-urd_Arab:\u003curn:uuid:8dacc81c-1118-46e9-9c2c-1e41d1b16884\u003e  e.g. fineweb2-urd_Arab:\u003curn:uuid:972e8087-4620-4b5c-92ce-0406e968c70a\u003e, fineweb2-urd_Arab:\u003curn:uuid:093cc5ca-e51a-41e6-8e97-bfc951245cc8\u003e\n"}
+,{"stream_name":"stderr","time":24975.268077272,"data":"\n"}
+,{"stream_name":"stderr","time":24975.268119342,"data":"  threshold sweep (exact, from the retained pairs of this one pass)\n"}
+,{"stream_name":"stderr","time":24975.268124412,"data":"      thr      pairs   clusters    removed  largest\n"}
+,{"stream_name":"stderr","time":24975.268128442,"data":"     0.70     30,998     29,476     30,783       50\n"}
+,{"stream_name":"stderr","time":24975.268131792,"data":"     0.80      4,184      4,153      4,182        8\n"}
+,{"stream_name":"stderr","time":24975.268135362,"data":"     0.90        226        226        226        2\n"}
+,{"stream_name":"stderr","time":24975.274131162,"data":"\n"}
+,{"stream_name":"stderr","time":24975.274169042,"data":"wrote 4,318 removed ids to reports/freeze/removals_67_fineweb2.txt\n"}
+,{"stream_name":"stderr","time":24975.278177472,"data":"wrote measured pair examples to reports/freeze/pairs_67_fineweb2.jsonl\n"}
+,{"stream_name":"stdout","time":24977.915375388,"data":"\n"}
+,{"stream_name":"stdout","time":24977.915417478,"data":"completed in 6.94 h, peak child RSS 6.65 GB\n"}
+,{"stream_name":"stdout","time":24977.915421818,"data":"\n"}
+,{"stream_name":"stdout","time":24977.915426428,"data":"Check `largest_cluster` in the report above. Nothing caps a component's size; the only reason to believe 0.80 does not chain is a measurement on Wikipedia (23). A source with heavier templating can chain, and that is the number that would say the threshold does not transfer.\n"}
+,{"stream_name":"stderr","time":24980.127334045,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":24980.127376035,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":24980.459461407,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":24980.459504067,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":24981.227946509,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":24982.598389956,"data":"[NbConvertApp] Writing 293269 bytes to __results__.html\n"}
+]

@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "acquisition_version": "1.0.0",
+  "sources_fingerprint": "54ecc5bd1163",
+  "written_at": "2026-09-15T12:38:28+00:00",
+  "files": [
+    {
+      "source": "fineweb2-urd_Arab",
+      "repo_id": "HuggingFaceFW/fineweb-2",
+      "revision": "af9c13333eb981300149d5ca60a8e9d659b276b9",
+      "license": "ODC-By-1.0",
+      "path": "data/urd_Arab/test/000_00000.parquet",
+      "local_path": "data/raw/fineweb2-urd_Arab/data/urd_Arab/test/000_00000.parquet",
+      "sha256": "277ecdeebc1b9327a684243897afc3a8acd1a44774b5c6cc67afc6899298e058",
+      "size": 71344862,
+      "split": "test",
+      "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-2/resolve/af9c13333eb981300149d5ca60a8e9d659b276b9/data/urd_Arab/test/000_00000.parquet",
+      "verified_at": "2026-09-15T12:36:34+00:00"
+    },
+    {
+      "source": "fineweb2-urd_Arab",
+      "repo_id": "HuggingFaceFW/fineweb-2",
+      "revision": "af9c13333eb981300149d5ca60a8e9d659b276b9",
+      "license": "ODC-By-1.0",
+      "path": "data/urd_Arab/train/000_00000.parquet",
+      "local_path": "data/raw/fineweb2-urd_Arab/data/urd_Arab/train/000_00000.parquet",
+      "sha256": "a3e64b92cb606bca9ef522bb82d15828beef4825e8998bb43f6e142cc947338d",
+      "size": 4844148326,
+      "split": "train",
+      "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-2/resolve/af9c13333eb981300149d5ca60a8e9d659b276b9/data/urd_Arab/train/000_00000.parquet",
+      "verified_at": "2026-09-15T12:38:02+00:00"
+    },
+    {
+      "source": "fineweb2-urd_Arab",
+      "repo_id": "HuggingFaceFW/fineweb-2",
+      "revision": "af9c13333eb981300149d5ca60a8e9d659b276b9",
+      "license": "ODC-By-1.0",
+      "path": "data/urd_Arab/train/001_00000.parquet",
+      "local_path": "data/raw/fineweb2-urd_Arab/data/urd_Arab/train/001_00000.parquet",
+      "sha256": "a356fe5d478be9bbb3887cbc1ca338f8455e071041352f2023ac7a54799375e2",
+      "size": 2024610997,
+      "split": "train",
+      "url": "https://huggingface.co/datasets/HuggingFaceFW/fineweb-2/resolve/af9c13333eb981300149d5ca60a8e9d659b276b9/data/urd_Arab/train/001_00000.parquet",
+      "verified_at": "2026-09-15T12:36:32+00:00"
+    },
+    {
+      "source": "roman-urdu-parl",
+      "repo_id": "Mavkif/Roman-Urdu-Parl-split",
+      "revision": "b9ef670661582b5f17eff68b4e65fbe25f3cb0b9",
+      "license": "Apache-2.0",
+      "path": "test_set.csv",
+      "local_path": "data/raw/roman-urdu-parl/test_set.csv",
+      "sha256": "c8c39f7b6e364abb6f7a0ef802a5e99794083ba8ad69e713888df471b523155b",
+      "size": 1846199,
+      "split": "test",
+      "url": "https://huggingface.co/datasets/Mavkif/Roman-Urdu-Parl-split/resolve/b9ef670661582b5f17eff68b4e65fbe25f3cb0b9/test_set.csv",
+      "verified_at": "2026-09-15T12:38:04+00:00"
+    },
+    {
+      "source": "roman-urdu-parl",
+      "repo_id": "Mavkif/Roman-Urdu-Parl-split",
+      "revision": "b9ef670661582b5f17eff68b4e65fbe25f3cb0b9",
+      "license": "Apache-2.0",
+      "path": "train_set.csv",
+      "local_path": "data/raw/roman-urdu-parl/train_set.csv",
+      "sha256": "e35eef8de7871c70fe54b2f605bfdd64df26244fe40f4d0dc638f8cbd115f00b",
+      "size": 1189435308,
+      "split": "train",
+      "url": "https://huggingface.co/datasets/Mavkif/Roman-Urdu-Parl-split/resolve/b9ef670661582b5f17eff68b4e65fbe25f3cb0b9/train_set.csv",
+      "verified_at": "2026-09-15T12:38:24+00:00"
+    },
+    {
+      "source": "roman-urdu-parl",
+      "repo_id": "Mavkif/Roman-Urdu-Parl-split",
+      "revision": "b9ef670661582b5f17eff68b4e65fbe25f3cb0b9",
+      "license": "Apache-2.0",
+      "path": "validation_set.csv",
+      "local_path": "data/raw/roman-urdu-parl/validation_set.csv",
+      "sha256": "fa4ab3c419da5b51a77caa2d1ed4779618f62440cf804fb70e0c4bc8b8957ef9",
+      "size": 1825822,
+      "split": "validation",
+      "url": "https://huggingface.co/datasets/Mavkif/Roman-Urdu-Parl-split/resolve/b9ef670661582b5f17eff68b4e65fbe25f3cb0b9/validation_set.csv",
+      "verified_at": "2026-09-15T12:38:05+00:00"
+    },
+    {
+      "source": "urdu-wikipedia",
+      "repo_id": "wikimedia/wikipedia",
+      "revision": "b04c8d1ceb2f5cd4588862100d08de323dccfbaa",
+      "license": "CC-BY-SA-3.0",
+      "path": "20231101.ur/train-00000-of-00001.parquet",
+      "local_path": "data/raw/urdu-wikipedia/20231101.ur/train-00000-of-00001.parquet",
+      "sha256": "f711c56af77a88ea8036282c9c49243d0319fe0ddf08ea4e88800d0482d6f8d0",
+      "size": 167627869,
+      "split": "train",
+      "url": "https://huggingface.co/datasets/wikimedia/wikipedia/resolve/b04c8d1ceb2f5cd4588862100d08de323dccfbaa/20231101.ur/train-00000-of-00001.parquet",
+      "verified_at": "2026-09-15T12:38:28+00:00"
+    }
+  ],
+  "total_bytes": 8300839383,
+  "attribution": [
+    "fineweb2-urd_Arab — FineWeb2, HuggingFaceFW (ODC-By-1.0, https://opendatacommons.org/licenses/by/1-0/)",
+    "roman-urdu-parl — Roman-Urdu-Parl (Mavkif/Roman-Urdu-Parl-split) (Apache-2.0, https://www.apache.org/licenses/LICENSE-2.0)",
+    "urdu-wikipedia — Urdu Wikipedia contributors, dump 20231101 (CC-BY-SA-3.0, https://creativecommons.org/licenses/by-sa/3.0/)"
+  ],
+  "share_alike_sources": [
+    "urdu-wikipedia"
+  ]
+}

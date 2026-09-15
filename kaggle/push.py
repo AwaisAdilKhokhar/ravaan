@@ -153,6 +153,44 @@ def username() -> str:
     output = kaggle("config", "view", capture=True)
     for line in output.splitlines():
         if "username" in line.lower():
+            # Finding AU, measured 2026-09-15 and then fixed. When this line reads
+            # `- username: del=c0b94e0932cd8e95` the CLI has authenticated down its **access-token**
+            # path, and that path does not read the username from any file — it asks the server to
+            # introspect the token and takes `response.username` (`_introspect_token`, and
+            # `_authenticate_with_access_token` above it). For this account that call answers with
+            # the `del=` string, so the wrong owner is the *server's*, not a parse error here.
+            #
+            # `authenticate()` tries access token -> legacy api key -> OAuth credentials, in that
+            # order, and only the third reads `~/.kaggle/credentials.json`, which `auth login`
+            # writes and which holds the correct `awaisbinadil`. So the whole failure is decided by
+            # which file exists: with `~/.kaggle/access_token` present the bad path wins.
+            #
+            # What the bad owner costs, all measured before the cause was found: `datasets create`
+            # uploads the file and then refuses ("Dataset url's dataset slugs and hashlink are all
+            # null" under the real slug, "Invalid Owner Id" under `del=`); `kernels push` reports
+            # success and lands the kernel at an address unreachable from BOTH refs — Finding Y's
+            # shape again — which `kernels delete` then 403s on, so the orphan needs the web UI;
+            # and both `--mine` listings answer "Not found". `quota` answers normally throughout,
+            # which is why the token looks fine. Neither `config set -n username`, nor
+            # re-authenticating, nor CLI 2.2.4 changes any of it, and KAGGLE_USERNAME does not
+            # either: it fixes the refs this file builds and not the owner Kaggle records.
+            if "del=" in line:
+                raise SystemExit(
+                    "the kaggle CLI is authenticating by access token, and for this account the\n"
+                    f"server introspects that token to the wrong owner:\n  {line.strip()}\n"
+                    "\n"
+                    "Uploads then fail after the bytes are sent, and pushed kernels land at an\n"
+                    "address nothing can reach. Move the access token aside so the CLI falls\n"
+                    "through to the OAuth credentials, which carry the right username:\n"
+                    "\n"
+                    "  mv ~/.kaggle/access_token ~/.kaggle/access_token.unused\n"
+                    "\n"
+                    "`kaggle config view` should then report your real slug and\n"
+                    "`auth_method: OAUTH`. If `credentials.json` is missing, run\n"
+                    f"`{kaggle_exe()} auth login` first — it writes that file.\n"
+                    "Do NOT paste a new API token into ~/.kaggle/access_token: a fresh token\n"
+                    "restores the broken path rather than fixing it (Finding AU)."
+                )
             parts = line.replace(":", " ").replace("=", " ").split()
             if parts:
                 return parts[-1].strip()

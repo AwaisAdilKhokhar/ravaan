@@ -175,7 +175,11 @@ def trial(code: Path, label: str, extra: list[str], documents: int, total: int) 
 def read_plan(code: Path, source: str, split: str | None) -> str:
     """The read-plan fingerprint for one source, from a one-document pass.
 
-    `neardedup.py` prints it on its first line — `reading <source>: plan <hex> over N file(s)`.
+    `neardedup.py` writes `reading <source>: plan <hex> over N file(s)` to **stderr**, with its
+    progress narration; stdout carries only the JSON config block. Session 25 searched stdout
+    alone, which cost a kernel: the fetch and the verify both passed, and the run then died on
+    "no plan fingerprint in urdu-wikipedia's output" with the correct corpus on disk. Search both
+    streams, because which one a diagnostic lands on is not this file's to assume.
     """
     argv = [
         sys.executable,
@@ -188,11 +192,13 @@ def read_plan(code: Path, source: str, split: str | None) -> str:
     if split:
         argv += ["--split", split]
     result = subprocess.run(argv, cwd=WORKING, check=True, capture_output=True, text=True)
-    match = re.search(r"plan ([0-9a-f]{16})", result.stdout)
+    combined = (result.stderr or "") + (result.stdout or "")
+    match = re.search(r"plan ([0-9a-f]{16})", combined)
     if not match:
         raise SystemExit(
-            f"no plan fingerprint in {source}'s output — the driver's first line has changed:\n"
-            f"{result.stdout[:400]}"
+            f"no plan fingerprint in {source}'s output — the line `reading {source}: plan <hex>` "
+            "is missing from both streams, so the driver's output has changed:\n"
+            f"--- stderr ---\n{result.stderr[:400]}\n--- stdout ---\n{result.stdout[:400]}"
         )
     return match.group(1)
 

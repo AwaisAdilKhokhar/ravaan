@@ -1,0 +1,17 @@
+reading urdu-wikipedia: plan 8743e78c000775aa over 1 file(s)
+reading fineweb2-urd_Arab: plan 54b744f92e3949f8 over 2 file(s)
+reading roman-urdu-parl: plan db3a15522463a364 over 1 file(s)
+excluding 4,312,354 documents removed by earlier stages
+  removals from stage(s) 6+7
+  fineweb2-urd_Arab        covered
+  roman-urdu-parl          covered
+  urdu-wikipedia           covered
+stage 9 phase 1: measuring
+  measured 6,463,060 documents into 100,000 buckets
+wrote the plan to reports/freeze/plan.json
+
+stage 9 phase 1 — pool totals, before any assignment
+    urdu            12,148,533,439 chars measured     12148.5M scaled  ~ 3471.01M tokens  unmet_arms=()
+    roman_urdu          75,880,888 chars measured        75.9M scaled  ~   18.07M tokens  unmet_arms=('B',)
+    code_switched       54,554,056 chars measured        54.6M scaled  ~   14.36M tokens  unmet_arms=()
+exclusions: applied 4,312,354 of 4,312,354 removed ids

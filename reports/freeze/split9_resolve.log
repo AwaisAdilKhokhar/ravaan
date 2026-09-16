@@ -1,0 +1,15 @@
+<frozen runpy>:130: RuntimeWarning: 'ravaan.data.splits' found in sys.modules after import of package 'ravaan.data', but prior to execution of 'ravaan.data.splits'; this may result in unpredictable behaviour
+urdu
+  total 12,148,533,439 chars   train 12,134,612,483   validation  6,954,597   test  6,966,359
+  arm A: buckets [0, 569)     68,644,514 chars =   17.63M tokens (target 17.65M)
+  arm B: buckets [0, 2,277)    274,710,235 chars =   70.56M tokens (target 70.59M)
+roman_urdu
+  total     75,880,888 chars   train     70,830,436   validation  2,525,284   test  2,525,168
+  arm A: buckets [0, 32,534)     24,662,979 chars =    5.88M tokens (target 5.88M)
+  arm B: buckets [0, 93,351)     70,830,436 chars =   16.89M tokens (target 23.53M)  UNMET
+code_switched
+  total     54,554,056 chars   train     53,575,608   validation    486,147   test    492,301
+  arm A: buckets [0, 9,011)      4,781,745 chars =    1.46M tokens (target 1.47M)
+  arm B: buckets [0, 35,944)     19,267,753 chars =    5.88M tokens (target 5.88M)
+
+wrote reports/freeze/plan_resolved.json

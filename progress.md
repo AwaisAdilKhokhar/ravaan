@@ -12,33 +12,49 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 
 ## State of play
 
-- **Started** 2026-08-03 (Week 1 of 16). **PRD v2.3** (2026-09-10). **Spend $0.00 of $150.**
+- **Started** 2026-08-03 (Week 1 of 16). **PRD v2.4** (2026-09-16). **Spend $0.00 of $150.**
+- **⏱ Priority, set 2026-09-16 and it governs every choice below: time to a reported result.**
+  The project ships **two training runs — one AR, one diffusion, one seed each** (PRD §0.4).
+  Seeds 2–3 and ablations **A1/A2 are dropped**; A3/A4 are inference-only and survive. Budget
+  ~$118 → **~$55**, and **cost stops being the binding constraint — wall-clock is.** What it costs
+  is one thing and the report must carry it: **the primary endpoint is a single paired comparison
+  with no estimate of seed variance**, so a measured AR/DIFF gap cannot be separated from one
+  initialization draw. This is PRD §10's own pre-committed minimum viable cut, taken deliberately.
 - **Weeks 1–2 complete. Weeks 5–8 complete ahead of them.** §7's tokenizer, §5's model, both
   objectives, the training loop, §4.2's five-task generator, §8's decoders, and both halves of G3.
-- **Weeks 3–4 — stage 6+7 is finished for all three sources** (2026-09-16, on Kaggle, **$0**).
-  The pass that had been blocked since session 17 ran in 6.94 h. What remains of the freeze is
-  **stages 9 → 8 → 10**, all local and all cheap, and the **G1 re-check** that falls out of stage 8.
-- **Two live design questions**, both yours, both due before Week 9: **the FIM framing**
-  (open question 5, reopened by Finding AT) and **whether to filter `roman_urdu` on Finding AE**
-  (waits on stage 8's numbers, with the G1 re-check).
+- **Weeks 3–4 — the freeze is nearly done.** Stage 6+7 ✅ all three sources (2026-09-16, Kaggle,
+  6.94 h, $0). **Stage 9 ✅ complete 2026-09-16**, both phases, local, $0 — **arm A is fully funded
+  at 24.97M of 25M tokens** and `data/freeze/heldout.jsonl` exists (106,195 documents). **Stage 8 is
+  running**; **stage 10 is chained behind it** and should land the packed corpus overnight. After
+  that the corpus is finished and the only remaining blocker is a GPU.
+- **One live design question left, and it is yours: the FIM framing** (open question 5, Finding AT).
+  ✅ **Finding AE is decided 2026-09-16 — do not filter, disclose the rate**; open question 6 is
+  folded into PRD v2.4 as a §6.2/§8.2 wording amendment.
 
 ### Gates
 
 | Gate | PRD | Status |
 |---|---|---|
 | **G0** — comparison unpublished | §11 | ✅ **PASS** 2026-08-03 — [`literature_review.md`](reports/literature_review.md) |
-| **G1** — clean corpus ≥ 100M tokens, per-population | §11 | ⛔ **FAIL on `roman_urdu` (0.44×)** → arm B dropped, single-arm. **Re-check due after stage 8** |
-| **G2** — throughput implies 6 runs ≤ $90 | §11 | 🟡 requirement known (**64,162 tok/s** at 70M); the *rented* card decides it |
+| **G1** — clean corpus ≥ 100M tokens, per-population | §11 | ⛔ **FAIL on `roman_urdu` (0.44×)** → arm B dropped, single-arm. **Stage 9 measured arm A's own margin 2026-09-16: `roman_urdu` 2.55×** (not the ~1.53× this file carried), `code_switched` 9.40×, `urdu` 146.8×. Stage 8 must remove **>60.8%** of the `roman_urdu` pool to break arm A. **Re-check still due when stage 8 lands** |
+| **G2** — throughput implies **2** runs ≤ $90 | §11 | 🟡 **v2.4 slashed the bar to ~21,400 tok/s** (was 64,162 at six runs). This 4060 does ~14,200 — **1.5× short, not 4.5×**. The gate now answers *how long will this take*, not *can I afford it*; still measured on the instance, never off a spec sheet |
 | **G3** — 20M pilot, both arms, resume | §11 | 🟡 resume **PASS**; coherence **FAIL**, recorded unmet on its own terms, Week 9 proceeds |
-| **G4** — arm A's curves at 50% of tokens | §11 | ⬜ Week 9–11 |
-| **G5** — human evaluation | §11 | ⬜ Week 13, and the annotators are not lined up |
+| **G4** — arm A's curves at 50% of tokens | §11 | ⬜ Week 9–11. ⚠️ **v2.4 leaves it no lever on the run list** — "complete arm A's 3 seeds" is spent along with "cut arm B" — so it acts only on the write-up, *and* it is now the project's sole early warning for a diffusion-only defect |
+| **G5** — human evaluation | §11 | ⬜ Week 13, and the annotators are not lined up. ⚠️ **PRD §10's cut order puts human evaluation *above* the seeds already dropped** — so the ladder is currently being climbed out of order. Open decision, due before Week 12 (PRD §0.4) |
 
 ### Record
 
 - **Design decision** ✅ Option 2 (two-point law) chosen 2026-08-03 — U ∈ {25M, 100M}, 3 seeds at
   25M, 1 at 100M; PRD v2.1. **Superseded 2026-09-10 by v2.3**: arm B is unbuildable, so the design
-  that shipped is effectively option 1 — **U = 25M, ~396 epochs, 3 seeds, 6 core runs, ~$118**,
+  that shipped is effectively option 1 — U = 25M, ~396 epochs, 3 seeds, 6 core runs, ~$118,
   with P2 withdrawn in the preregistration's deviation log and its text above unedited.
+  **Superseded again 2026-09-16 by v2.4 — U = 25M, ~396 epochs, *1 seed per arm*, 2 core runs,
+  ~$55.** ⚠️ **This one is different in kind from every amendment before it: it is a schedule
+  decision, not a measurement.** v2.1–v2.3 were forced by data; this is a deliberate trade of
+  statistical support for wall-clock, logged in the preregistration on 2026-09-16 **before the
+  training corpus existed** — stage 10 had not packed it — so it cannot have been informed by any
+  result. P1/P3/P4 stand as written; what changed is the evidence that will resolve them.
+  **Ablations A1 and A2 are withdrawn with the seeds; A3/A4 are inference-only and stand.**
 - **Preregistration** ✅ [`reports/preregistration.md`](reports/preregistration.md) — 4 falsifiable
   predictions, committed before any training. §8 carries the deviation log: the infill truncation
   rule (2026-09-13), A4's third arm and A3's fifth rung (2026-09-14).
@@ -83,18 +99,24 @@ cp1252 hole as a class, and all sixteen drivers now call `pin_utf8_streams()`.
 | Remaining item | PRD | Status |
 |---|---|---|
 | **Freeze run: stage 6+7, FineWeb2 both shards** | §6.3.7 | ✅ **done 2026-09-16 on Kaggle, $0.** All three sources are now frozen through stage 7 |
-| One unsampled stage-9 pass over **all** sources together | §6.3.9 | ⬜ deferred to freeze |
-| Stage 8 complete (not sampled) over FineWeb2 | §6.3.8 | ⬜ deferred to freeze — Finding T makes it load-bearing |
-| Stage 10's writing pass | §6.3.10 | ⬜ after the stage-9 re-solve |
-| **G1 re-check after stage 8** — arm A's `roman_urdu` margin is ~1.53× *pre*-stage-8 | §11 | ⬜ **load-bearing**; the remaining fallback is "below 25M → stop" |
-| **Stage-9 re-solve against measured fertility** — one command, before the corpus is *written* | §6.3.9, §7 | ⬜ |
-| **Finding AE decision** — filter `roman_urdu`'s 2.77% wrong-lexicon rows, or train as-is and state the rate | §6.1 | ⬜ decide with the G1 re-check |
-| Native-speaker pass: stage 5's 29 disagreements, stage 7's sampled pairs, the PII ambiguous match, the 225-candidate substitution screen | §6.3.5 | ⬜ one sitting, ~1–2 h, **never lined up** |
+| One unsampled stage-9 pass over **all** sources together | §6.3.9 | ✅ **done 2026-09-16, local, $0.** Phase 1 (measure) + phase 2 (assign) with the re-solve between them. 6,463,060 documents measured, 6,242,081 assigned, 220,979 outside the budgeted populations. `reports/freeze/split9_{measure,assign}.json`, `plan{,_resolved}.json`, `configs/data/splits_resolved.json` |
+| Stage 8 complete (not sampled) over all three sources | §6.3.8 | 🟡 **running 2026-09-16**, unsampled, `--both-columns`. Indexes 138,677 eval items / 3,203,208 distinct shingles: the stage-9 held-out split **split by population** (`urdu` + `code_switched` word-unit at 0.80; `roman_urdu` sentence-unit, char 5-grams at 0.90 — its items are median 42 chars and 94% under 100, so word shingling would have dropped nearly all of them) plus **both columns** of `roman-urdu-parl:test`. Finding T makes it load-bearing |
+| Stage 10's writing pass | §6.3.10 | 🟡 **chained behind stage 8**, runs unattended. `--plan-in plan_resolved.json` (pack.py takes the splits config from the plan, so it needs no `--splits-config`) |
+| **G1 re-check after stage 8** — arm A's `roman_urdu` margin is **2.55×** *pre*-stage-8 | §11 | 🟡 **much safer than this file feared.** Stage 9 measured it at 2.55×, not ~1.53×: supply 18.10M against arm A's 7.09M (5.88M corpus + 1.20M held-out). **Stage 8 would have to remove >60.8% of the pool** before the "below 25M → stop" fallback is live. Re-run the arithmetic when stage 8's removals land |
+| **Stage-9 re-solve against measured fertility** | §6.3.9, §7 | ✅ **done 2026-09-16, and it had to land *before* the held-out split was written, not after stage 8** — `chars_per_token` sets `heldout_chars`, which sets `test_from`/`validation_from`, so the plan this file sketched would have put documents in train that the eval set also contains. Measured fertility came in close: urdu 4.71 chars/word → 1.21 tok/word, roman_urdu 4.92 → 1.17, code_switched 5.04 → 1.54 |
+| **Finding AE decision** | §6.1 | ✅ **decided 2026-09-16: do not filter.** Train on the corpus as it is and state the 2.77% wrong-lexicon rate (3.95% pre-dedup, inside 23.53% of arm A's tokens) in the report. Filtering the eight confirmed words cannot reach the unscreened tail without a native-speaker pass, and disclosure costs no time. **PRD v2.4 amends §6.2 and §8.2 accordingly** — open question 6 resolved as its option (b) |
+| Native-speaker pass: stage 5's 29 disagreements, stage 7's sampled pairs, the PII ambiguous match, the 225-candidate substitution screen | §6.3.5 | ⬜ **downgraded 2026-09-16 — not a training blocker.** One sitting, ~1–2 h, never lined up. It can happen while the runs are in flight, or not at all; nothing in the freeze or either run waits on it. ⚠️ It *is* still what the Finding AE filter would have needed, and Finding AE is now disclosed rather than filtered, so this is the pass that would let the disclosure be narrowed |
 | Corpus manifest + per-stage statistics | §6.3 | 🟡 acquisition manifest done; stage stats pending |
 | `neardedup.py` resumability | §6.3.7 | ⬜ not needed if FineWeb2 runs on a rented box |
 
 **Closed, and not to be re-opened:** the Colab path for FineWeb2 (refused on both time and
-memory); arm B (Findings AA/AB, PRD v2.3); stage 7's threshold at 0.80.
+memory); arm B (Findings AA/AB, PRD v2.3); stage 7's threshold at 0.80; **the stage-10 fertility
+re-verification** (`pack.py --measure-only --resolve-plan`) — skipped 2026-09-16 because it costs a
+full corpus pass and stage 10 reports measured fertility *as it packs*, so a bad `code_switched`
+ratio is visible after the fact and re-packable; that population is 5.88% of the mixture, so a 20%
+error moves arm A by ~1%. **Premise, written next to the verdict** per the Kaggle lesson below: this
+holds only while the priority is wall-clock and while stage 10's reported fertility stays close to
+3.8935 / 4.1928 / 3.2758. If stage 10 reports a large move, re-open it.
 
 > **⚠️ The Kaggle entry used to sit in that list and has been removed, because its premise was an
 > account property rather than a fact.** Phone verification was done 2026-09-15 and it lifted both
@@ -131,7 +153,7 @@ memory); arm B (Findings AA/AB, PRD v2.3); stage 7's threshold at 0.80.
 | ↳ 50% costs **+0.0374 held-out bpb** and buys **+0.02–0.04 token-F1**; memorization gaps ~0.04 | §4.2 | ✅ matched pair, one variable |
 | ↳ ⚠️ but it found **Finding AT**, and the *framing* call is live again | §4.2, §4.4 | ⬜ **open question 5 — and it is yours** |
 | **`--task-share`** — §4.2's table stays frozen; the override lands in `config.json` | §4.2 | ✅ residual out of `lm` alone |
-| **G2** — measured on a local 4060; the **rented** card decides it | §11 | 🟡 requirement: **64,162 tok/s** at 70M, against 14,128 (AR) / 14,438 (DIFF) here |
+| **G2** — measured on a local 4060; the **rented** card decides it | §11 | 🟡 **v2.4: requirement is ~21,400 tok/s** at 70M for two runs ≤ $90 (was 64,162 at six), against 14,128 (AR) / 14,438 (DIFF) here |
 | ↳ the ladder: 70M **4.54×** short · 40M **2.78×** · 25M **1.72×** (37,236 tok/s) | §11 | ✅ s21 — check a spec sheet against this *before* renting |
 | ↳ Finding AM — both arms cost the same per token, within 2.2% | §4.1 | ✅ and it is the half that transfers to another card |
 | ↳ §4.2's generator is ~180 ms of CPU per 256-sequence step, so `throughput` builds tasks by default | §11 | ✅ ~13% of throughput, and the cheapest evidence the tasks are running |
@@ -141,7 +163,7 @@ memory); arm B (Findings AA/AB, PRD v2.3); stage 7's threshold at 0.80.
 | ↳ 306 generations read → [`pilot_coherence.md`](reports/pilot_coherence.md), text in [`pilot_samples.md`](reports/pilot_samples.md) | §11 | ✅ **both halves of its headline were narrowed on 2026-09-14 — Findings AR and AS** |
 | ↳ **G3's record corrected** — PRD §11, `pilot_coherence.md` §9/§11, and §12 written | §11 | ✅ s24; session 23's handoff said this was done, and it was not |
 | **Ablations A3/A4** — inference only | §4.4 | 🟡 pilot-scale sweep done; the core-run sweep is Week 12 |
-| ↳ ⚠️ **A2 measures §4.2's FIM layout, not "AR without FIM"** — MARIA reports the opposite | §4.4 | ⚠️ the report must say so |
+| ↳ ⚠️ **A2 measures §4.2's FIM layout, not "AR without FIM"** — MARIA reports the opposite | §4.4 | ⚠️ **A2 cut in v2.4** — Finding AT becomes a stated limitation; the report must say so |
 | **The microbatch that reproduces session 23's runs is 32** — nothing recorded it | §4.1 | ✅ identified from `pad_tokens` 11039 |
 | **`scripts/train.py --tokens / --epochs / --warmup-steps`** — `--steps` never moved the cosine | §4.3 | ✅ s23; every earlier short run trained at near-peak LR throughout |
 | **`pin_utf8_streams()` reaches all sixteen drivers** — session 14's class fix, finished | — | ✅ s23 |
@@ -369,7 +391,8 @@ fingerprinted into the manifest. Revisit only if training configs get unwieldy.
 bf16, which had been behind a CPU-only torch wheel all along. `torch==2.13.0+cu126` is the version
 the suite was written against, so only the backend changed. See "Settled → Hosting".
 
-**2. Compute account — 🟡 no longer blocking the freeze; still open for Week 9's GPU.**
+**2. Compute account — ⚠️ as of 2026-09-16 this is THE blocker. Nothing else is.** The freeze
+finishes itself overnight; after that the only thing between here and a result is a rented GPU.
 
 - **Kaggle is open** (`awaisbinadil`, phone verified 2026-09-15) and the freeze is running there.
   Notebooks have internet, `kaggle quota` reports GPU 30 h / TPU 20 h, and the code dataset
@@ -380,10 +403,19 @@ the suite was written against, so only the backend changed. See "Settled → Hos
   (`/proc/meminfo`, not a Colab API).
 - **Set the provider spending limit when the account is created**, which is what PRD §9 wanted on
   day one, and the same account then answers the spot-GPU question for Week 9.
-- **Budget context:** $0 of $150 spent, and v2.3 dropped two core runs, so the plan is ~$118. This
-  box is a rounding error against it.
+- **Budget context, rewritten by v2.4:** $0 of $150 spent and the plan is now **~$55**, so there is
+  roughly 3× headroom. ⚠️ **This inverts how to pick the instance: choose for throughput, not
+  price.** Two runs at the old 64,162 tok/s target are ~86 GPU-hours — **~3.6 days, ~$30**. The same
+  two runs on this 4060 at ~14,200 tok/s are ~387 hours — **~16 days, $0**. Renting is the answer
+  while the priority is time, and a *faster* card than a 4090-class one is now affordable where it
+  was not at six runs. **The rule that does not change: measure throughput on the instance before
+  committing the budget** (`scripts/train.py throughput`), which is exactly why G2 exists.
 
-**3. Annotators — ⚠️ has not moved in four sessions, and it is now load-bearing in four places.**
+**3. Annotators — 🟡 downgraded 2026-09-16: not a training blocker, and its fate is an open
+decision.** Nothing in the freeze or either run waits on a native speaker. But PRD §10's cut order
+puts **human evaluation above the seeds that v2.4 already dropped**, so keeping §8.4 while cutting
+seeds climbs the ladder out of order — that is the decision due before Week 12 (PRD §0.4). What
+follows is what is at stake if it is kept.
 
 §8.4 needs 3 fluent Urdu speakers for ~2 hours each in Week 13, and §8.2 needs ~200 hand-written
 transliteration pairs. Both are favour-sized asks with weeks of lead time. What now rests on a
@@ -435,7 +467,27 @@ of them rises steeply once Week 9 begins:
 - **(c) Decide it is out of scope** and cut A2 from §4.4 rather than report an ablation whose name
   overclaims what it measured.
 
-**6. Does PRD §6.2's Roman-Urdu-Parl warning get amended for Finding AE?** *Your call.* Nothing in
+> **⚠️ v2.4 took half of (c) for an unrelated reason, so this question has changed shape.** A2 is
+> **cut** — it cost a training run and the project now ships two — but it was cut on schedule
+> grounds, not because the ablation was judged to overclaim. So the naming problem (c) worried about
+> is moot, and what is left is a straight (a)-vs-(b) choice about the *arm itself*:
+> **(a)** ship the AR arm on §4.2's layout as-is and carry Finding AT as a stated limitation — the
+> report says our AR arm may be under-equipped for infilling and that MARIA measured the effect
+> elsewhere; **(b)** spend ~2.7 h on the 4060, **$0**, to re-pilot one framing change (a middle
+> terminator, or SPM ordering) before Week 9 and find out whether d0 closes.
+> ⚠️ **(b) is cheap in money and is the last thing that can still delay the runs.** Under the
+> wall-clock priority (a) is the consistent answer; (b) is the answer if the infill secondary
+> endpoint is the one you care about. **This is the only open design question left.**
+
+**6. Does PRD §6.2's Roman-Urdu-Parl warning get amended for Finding AE? — ✅ RESOLVED 2026-09-16
+as option (b).** The argument for (a) was "do not bump the version for wording"; v2.4 bumps it
+anyway for the run-count change, so (b) became free and was taken. §6.2 now names the wrong lexicon,
+the eight words, the 52–93% occurrence rates and the **3.95% / 2.77%-after-dedup** figures; §8.2's
+reference row gains "4,500 distinct sentences across 16,241 rows, effective *n* = 2,978". The
+sibling decision — **filter or disclose** — was taken the same day: **disclose, do not filter.**
+Original text kept below for the record.
+
+Nothing in
 the design changes and no number in the PRD moves, which is why session 18 did not bump the version
 on its own. But §6.2 currently describes a *style* mismatch, and what was measured is a **wrong
 lexicon** at 3.95% of rows.
@@ -450,7 +502,7 @@ lexicon** at 3.95% of rows.
   until session 18.
 
 Either way, **§4.5's bootstrap must resample sentences, not rows** — that is not a wording question
-and it holds regardless.
+and it holds regardless. ✅ **Now written into PRD §4.5 as a v2.4 bullet**, with the effective *n*.
 
 ---
 
@@ -538,11 +590,13 @@ work that could be done without the corpus had already been done — Weeks 5–8
 halves of G3 are answered, session 23 ran the first matched pair this project has that is
 *actually* matched, and session 24 closed the infilling share.
 
-> **⚠️ Two decisions are yours, they are now the only things waiting on you, and both get more
-> expensive once Week 9 starts.**
-> **(a) The FIM framing** — open question 5, reopened by Finding AT. A re-pilot costs 2.7 h and $0
-> today, against six core runs later.
-> **(b) The publishable-checkpoint fork** — below, under step 2.
+> **⚠️ As of 2026-09-16 exactly two things wait on you, and only one is a design decision.**
+> **(a) Rent the GPU.** This is the blocker; the corpus finishes itself overnight. See step 2.
+> **(b) The FIM framing** — open question 5, reopened by Finding AT. A re-pilot costs 2.7 h and $0
+> today, and it is the last thing that can still delay the runs. Under the wall-clock priority the
+> consistent answer is to ship as-is and carry Finding AT as a stated limitation.
+> ~~**(c) The publishable-checkpoint fork**~~ — resolved by v2.4: two runs, no extras, so arm A's
+> checkpoint *is* the release and the model card must say what it is. See step 2.
 
 ### 1. Finish the corpus
 
@@ -580,93 +634,146 @@ verdict, `push 01`, `pull 01`. ⚠️ Kernel 00's output is the corpus mount for
 into that file, which is exactly what Kaggle's Settings page tells you to do.
 
 
-**Then stages 9 → 8 → 10, all local, all cheap:**
+**Stages 9 → 8 → 10 — 9 is done, 8 is running, 10 is chained.** The freeze finishes itself.
 
+**✅ Stage 9, 2026-09-16, local, $0.** It is *two* passes, not one, and five things in the sketch
+this file used to carry would each have failed. Recorded so they are not rediscovered:
+
+```bash
+# phase 1 — measure.  ~4.6 h
+python -u scripts/split.py --source urdu-wikipedia --source fineweb2-urd_Arab \
+    --source roman-urdu-parl --split train --limit 0 --measure-only \
+    --exclude reports/freeze/removals_67_{wikipedia,fineweb2,roman}.txt \
+    --plan-out reports/freeze/plan.json --json reports/freeze/split9_measure.json
+# re-solve — 1 s.  the flag REPEATS; it is action="append", not nargs="+"
+python -u -m ravaan.data.splits reports/freeze/plan.json \
+    --chars-per-token urdu=3.8935 --chars-per-token roman_urdu=4.1928 \
+    --chars-per-token code_switched=3.2758 -o reports/freeze/plan_resolved.json
+# phase 2 — assign + write the held-out split.  ~4.3 h
+python -u scripts/split.py --source … --split train --limit 0 \
+    --config configs/data/splits_resolved.json --plan-in reports/freeze/plan_resolved.json \
+    --exclude … --heldout-out data/freeze/heldout.jsonl --json reports/freeze/split9_assign.json
 ```
-9   split.py --source ALL --limit 0 --measure-only --exclude <each 6+7 list>
-              --plan-out reports/freeze/plan.json --heldout-out data/freeze/heldout.jsonl
-8   decontaminate.py --source ALL --limit 0 --exclude <each 6+7 list>
-              --removals reports/freeze/removals_8.txt
-10  pack.py --source ALL --limit 0 --plan-in plan_resolved.json
-              --exclude <each 6+7 list> --exclude removals_8.txt --out data/packed
-```
 
-- **Stage 9 must come after 7**, or the held-out split can contain near-duplicates of training
-  documents. Stage 8 catches the cross-source case and structurally cannot catch that one.
-- **Stage 8 must run complete, not sampled** (Finding T).
-- **Only step 10's *writing* pass is blocked on the re-solve.** Stages 9 and 8 can complete first.
+1. ⚠️ **`--split train` is mandatory.** The stage 6+7 lists were computed under it and their
+   read-plan fingerprints only match under it — `roman-urdu-parl` is `db3a15522463a364` restricted
+   against `3bcab08f4248f2fa` unrestricted, `fineweb2-urd_Arab` `54b744f92e3949f8` against
+   `28e188b3d1cad629`. Without the flag stage 9 exits 1 on arrival. Wikipedia's fingerprint is
+   identical either way, which is why a wikipedia-only test never caught it.
+2. ⚠️ **`--measure-only` and `--heldout-out` cannot be combined** — `main()` returns after phase 1,
+   so the held-out file is silently never written.
+3. ⚠️ **The re-solve must precede the held-out write, not follow stage 8.** `chars_per_token` feeds
+   `heldout_chars` → `test_from`/`validation_from`. urdu 3.5 → 3.8935 widens the held-out band ~11%,
+   and documents in that sliver are *train* under the old bands and *held-out* under the new ones —
+   so writing held-out first would hand stage 8 the wrong eval set and leave stage 10 training on
+   documents that eval set contains.
+4. ⚠️ **`--chars-per-token` is `action="append"`.** The one-liner with three values is an argparse
+   error.
+5. ⚠️ **`--plan-in` alone aborts phase 2.** `SplitAssigner.load_plan` refuses a config-fingerprint
+   mismatch and `split.py` builds its assigner from `SplitConfig()` unless `--config` is given —
+   default `23df13e0dfc3` against the re-solved `0f18ff46d95b`. The re-solved config is now written
+   to **`configs/data/splits_resolved.json`** and handed to phase 2. This one surfaces ~4 h in.
 
-**Three things fall out, in this order:**
+**What stage 9 produced.** 6,463,060 documents measured, 6,242,081 assigned, 220,979 outside the
+budgeted populations. **Arm A: 24.97M of 25M tokens, every population on target** — urdu
+17.63M/17.65M, roman_urdu 5.88M/5.88M, code_switched 1.46M/1.47M. `data/freeze/heldout.jsonl`,
+**106,195 documents, 46.5 MB**, counts verified against the log. Measured fertility landed close to
+the ratios it was solved with: urdu 4.71 chars/word → 1.21 tok/word, roman_urdu 4.92 → 1.17,
+code_switched 5.04 → 1.54.
 
-1. **⚠️ The G1 re-check, and it is load-bearing.** Arm A's `roman_urdu` margin is **~1.53×** and
-   that is a *pre*-stage-8 number. Stage 8 will remove more, including matches against
-   Roman-Urdu-Parl's own test split. If it eats a third of that margin arm A gets tight, and G1's
-   remaining fallback is **"below 25M → stop."** Re-run the gate the moment stage 8's numbers
-   exist; it is flagged in PRD §11's verdict row. Not a worry yet — a number to look at early.
+**The G1 re-check is in much better shape than this file feared.** The gate line stage 9 prints is
+against *arm B*; arm A's is computed separately and is what matters:
 
-2. **The stage-9 re-solve**, one command, and it must land **before the corpus is written**:
+| population | supply | arm A needs | margin | stage 8 could remove |
+|---|---|---|---|---|
+| urdu | 3120.21M | 21.26M | 146.8× | 99.3% |
+| **roman_urdu** | **18.10M** | **7.09M** | **2.55×** | **60.8%** |
+| code_switched | 16.65M | 1.77M | 9.40× | 89.4% |
 
-   ```
-   ravaan-splits <plan.json> --chars-per-token urdu=3.8935 roman_urdu=4.1928 code_switched=3.2758
-   ```
+This file carried ~1.53× for `roman_urdu`. It is **2.55×**, so stage 8 must eat 61% of the pool
+before "below 25M → stop" is live. Still pre-stage-8 — **re-run this table when stage 8 lands.**
 
-   The worst move against `configs/data/splits.json` is 11%, not the factor of two an earlier note
-   feared, and `roman_urdu` — the thinnest margin — was already right. ⚠️ `code_switched`'s 3.2758
-   is the least-supported of the three; re-measure it when stage 10 runs for real.
+**🟡 Stage 8, running.** Unsampled, `--both-columns`, 138,677 eval items / 3,203,208 distinct
+shingles / 20,883 below `min_shingles` (exact-only). ⚠️ **The held-out file is split by population
+before indexing, because the shingle unit is per test set**: `roman_urdu`'s items are median **42
+chars with 94% under 100**, so word-unit shingling would have dropped nearly all of them — they get
+`sentences` (char 5-grams, floor 25, 0.90) while `urdu` and `code_switched` (median ~1,300–1,450
+chars) get word unit at 0.80. Both columns of `roman-urdu-parl:test` are indexed, which is the
+cross-source case `decontamination.md` §7 says had never been measured. ✅ Verified before launch:
+`--both-columns` checks exclusions on the **bare row id** ahead of `_variants`, so the stage 6+7 list
+still applies, and `removals_8.txt` is written as row ids with the suffix stripped.
 
-3. **The Finding AE decision** (open question 6's sibling) — filter, or train as-is and state the
-   rate. Same number, second in line after the G1 re-check.
+**🟡 Stage 10, chained behind it**, unattended. `pack.py` takes its splits config from `--plan-in`
+(`pack.py:278`), so unlike `split.py` it needs no `--splits-config` and cannot hit defect 5 above.
+It writes only what the arms and the held-out split draw — not the 3.1B-token train pool — so the
+output is ~250 MB, not gigabytes.
 
-**⚠️ Disk here is tight** — 8 GB free on C:, with `data/raw` at 7.8 GB. Stages 9 and 8 are
-read-only with small outputs; packed arm A is ~200 MB. It fits, with no room for a second copy of
-anything.
+**Disk is fine now** — 20 GB free on C:, not the 8 GB this file used to warn about.
 
-### 2. Then compute
+### 2. Then compute — and this is now the only real blocker
 
-§4.3's run is 70M params × 9.9B tokens. **6 runs in $90 at $0.35/hr is 42.9 h/run, which is
-64,162 tok/s at the 70M rung.** This 4060 does ~14,100–14,400 — **4.5× short** — which is exactly
-why `throughput`'s own docstring says to measure on the instance you intend to rent *before*
-renting it. A 4090-class spot is the assumption; **verify it against the ladder, do not trust the
-spec sheet.** Set the provider spending limit when the account is created; the same account answers
-step 1's rented-CPU question.
+§4.3's run is 70M params × 9.9B tokens, and **v2.4 makes it two runs, not six.**
 
-> **⚠️ A planning fork to settle before Week 9: the crossover experiment and a publishable
-> checkpoint want opposite things from U.** Arm A caps U at 25M unique tokens and ~396 epochs *on
-> purpose* — that is what puts it 1.79× past C_crit and it is the whole point of §4.3. It also
-> makes a poor model to hand anyone. A checkpoint meant for §2's deliverable 1 should be trained on
-> the whole ~170M-token pool (or more — §6.1 records that 5–6B tokens of Urdu exist and that
-> capping is a *design decision*). Same code, same budget, different U; one extra run.
->
-> ⚠️ Session 23 measured the tempting version of this argument and only half of it held. Going
-> 7.36M → 186.9M unique tokens **fixed the script collapse** (Arabic-script share 0.250 → 1.000
-> unprompted) and **did not fix the slot-looping**. The fork survives on the weaker and sufficient
-> argument: **arm A's U is capped to land past C_crit, which is a property nobody downloading a
-> model wants.** Decide deliberately, and **make sure the report and the model card say which
-> checkpoint is which** — the paper's artifact and the hub's artifact should not silently be the
-> same file.
+| | tok/s needed | GPU-hours, 2 runs | wall clock | cost |
+|---|---|---|---|---|
+| **G2's bar at 2 runs ≤ $90** | **~21,400** | 257 | 10.7 d | $90 (the *ceiling*, not the plan) |
+| v2.3's old bar at 6 runs | 64,162 | — | — | — |
+| a 4090-class spot at 64,162 | — | **86** | **~3.6 d** | **~$30** |
+| **this 4060**, measured ~14,200 | — | 387 | **~16 d** | **$0** |
+
+**Renting is the answer while the priority is time**, and the interesting change is that at two runs
+the $150 cap has ~3× headroom — so **pick the instance for throughput, not price.** A card faster
+than a 4090-class one is affordable now in a way it was not at six runs, and every hour it saves is
+a day off the project. ⚠️ **What does not change: measure throughput on the instance before
+committing the budget** (`scripts/train.py throughput`, which has §4.2's CPU cost in it). That rule
+is the entire reason G2 exists, and a spec sheet has never been accepted here. Set the provider
+spending limit when the account is created.
+
+> **✅ The planning fork about U is resolved by v2.4, and not in the way it hoped.** The fork asked
+> whether to add a run trained on the full ~170M-token pool, because arm A caps U at 25M and ~396
+> epochs *on purpose* — that is what puts it 1.79× past C_crit and it is the whole point of §4.3 —
+> while also making a poor model to hand anyone. **v2.4 ships two runs and no extras, so there is no
+> separate publishable checkpoint.** The consequence must be stated rather than quietly absorbed:
+> **what gets released is arm A's checkpoint, and arm A is deliberately deep into the repeat
+> regime.** The model card must say so in plain words — this is a research artifact trained ~396
+> times over 25M tokens to sit past C_crit, not a general Urdu model — and must not be presented as
+> the best Urdu model the corpus could produce. Session 23 is the evidence for why that matters:
+> going 7.36M → 186.9M unique tokens **fixed the script collapse** (Arabic-script share 0.250 →
+> 1.000 unprompted) and **did not fix the slot-looping**.
 >
 > **Three things a release needs that the PRD does not yet cover.** (a) **Inference code ships with
 > the weights** — `RavaanDiffusion` is not a `transformers` architecture, and from outside the
 > model the schedule, the step count and forbidding `</s>` *are* the model (Findings AO, AR).
 > (b) **The model card carries the ELBO-is-a-bound caveat, G3's verdict and the failure modes**, in
-> the same words §4.3 and §11 require of the report. (c) **Urdu Wikipedia is CC-BY-SA** and
-> `data/manifest.json` flags it in `share_alike_sources`; whether share-alike reaches model weights
-> is worth settling *before* publishing. §2.4's "no raw text redistribution" means the corpus ships
-> as code, manifest and checksums either way.
+> the same words §4.3 and §11 require of the report — plus, new in v2.4, **the single-seed caveat**
+> and **Finding AE's 2.77% rate**. (c) **Urdu Wikipedia is CC-BY-SA** and `data/manifest.json` flags
+> it in `share_alike_sources`; whether share-alike reaches model weights is worth settling *before*
+> publishing. §2.4's "no raw text redistribution" means the corpus ships as code, manifest and
+> checksums either way.
 
-### 3. Then the runs
+### 3. Then the runs — two of them
 
-6 core (2 arms × 3 seeds) plus A1 and A2 at 1 seed each. Resume is proven exact on both arms, so
-spot preemption is survivable and §9's checkpoint-every-500-steps control is already in the loop.
+**One AR, one diffusion, one seed each, same corpus, same budget, same tasks** (PRD §0.4).
+Resume is proven exact on both arms, so spot preemption is survivable and §9's
+checkpoint-every-500-steps control is already in the loop.
 
-**⚠️ The cheap run that is now obvious, and it is not in §10's schedule.** Session 23's two regimes
-are two different *corpora*, so repetition is confounded with composition. Once the freeze lands the
-clean version costs **one extra run and no new data**: arm A at its 25M unique tokens is already the
-repeat regime, so train one diffusion arm on **the same frozen corpus at the same 9.9B budget drawn
-from the full ~170M-token pool**, and the pair brackets the crossover on one corpus with one
-variable moved. **Do not let it displace arm A's three seeds** — §9 is explicit that those carry the
-primary endpoint alone — but it is worth ~$8 of the contingency, and it is the same run that
-answers the publishable-checkpoint fork.
+**What v2.4 cut, and it is not coming back quietly:**
+
+- **Seeds 2 and 3** — the primary endpoint is now a single paired comparison. See the state of play.
+- **Ablations A1 and A2** — each cost a training run. A3 and A4 are inference-only, decode the
+  trained diffusion checkpoint, and **survive unchanged**.
+- ~~**The cheap crossover run**~~ — dropped 2026-09-16. It would have cost one extra run and no new
+  data to de-confound session 23's repetition-versus-composition comparison by training a second
+  diffusion arm on the *same* frozen corpus at the full ~170M-token pool. Worth ~$8 and a couple of
+  days; **cut because it is not the primary endpoint and the priority is time.** ⚠️ Recorded rather
+  than deleted: this is also the run that would have answered the publishable-checkpoint fork above,
+  so cutting it is what makes the model-card wording in §2 load-bearing.
+- ~~**A separate publishable checkpoint**~~ — same run, same decision.
+
+⚠️ **If one thing is ever added back, the highest-value single run is a second seed on the
+*diffusion* arm.** It does not make the endpoint seed-averaged, but it bounds the initialization
+noise the single comparison is exposed to — which is the one objection a reader will raise first.
+~43 GPU-hours, ~$15. Logged in PRD §0.4 so it is a known option, not a rediscovery.
 
 ### What the core runs and the eval are obliged to carry
 
@@ -675,9 +782,11 @@ answers the publishable-checkpoint fork.
   was found; a 25M model at 368M training tokens over a 7.36M-token corpus is judged plausibly
   below the scale at which coherent Urdu is reachable at all, so the gate's *premise* is judged
   wrong rather than the code. **The accepted risk, named rather than filed away:** if there is a
-  diffusion-only defect it now surfaces after six core runs are paid for. The cheapest early warning
-  is **G4** — arm A's curves at 50% of tokens — which should be read with this in mind and not only
-  for the crossover. ⚠️ And the report must carry the **correction**, not just the conclusion: the
+  diffusion-only defect it surfaces only after the core runs are paid for. ⚠️ **v2.4 moves this risk
+  in both directions at once** — two runs to lose instead of six, so discovery is cheaper; but **no
+  seed replication**, so a bad diffusion run is harder to *diagnose* when it appears. The cheapest
+  early warning is **G4** — arm A's curves at 50% of tokens — which should be read with this in mind
+  and not only for the crossover, and which v2.4 leaves with no lever except the write-up. ⚠️ And the report must carry the **correction**, not just the conclusion: the
   original verdict rested on "AR is fluent on the same corpus", and Finding AS measured that control
   arm at +4.94 nats of memorization. A G3 section that quotes the original control without saying it
   was reciting the corpus is what a methods reviewer finds.
@@ -695,9 +804,20 @@ answers the publishable-checkpoint fork.
 - **The diffusion ELBO is one-directional evidence.** §4.3 already requires the word "bound"; the
   consequence to state *beside every table* is that a bound can establish a diffusion win and can
   never establish an AR one.
-- **A2 measures §4.2's FIM layout, not "AR without FIM"** (Finding AT), and MARIA
-  (arXiv:2502.06901) reports the opposite result. The honest reading is that our AR arm is not
-  properly equipped — the exact hazard §4.1's fairness argument exists to guard against.
+- ~~**A2 measures §4.2's FIM layout, not "AR without FIM"**~~ — **A2 is cut in v2.4.** Finding AT
+  stands and now enters the report as a **stated limitation rather than a measured quantity**: our AR
+  arm may not be properly equipped for infilling under §4.2's layout — the exact hazard §4.1's
+  fairness argument exists to guard against — and **MARIA (arXiv:2502.06901) reports the opposite
+  result** on a properly-equipped AR model. Cite MARIA for the effect's existence and say plainly
+  that **Ravaan did not measure its size on Urdu.**
+- **The primary endpoint is one paired comparison and must be written as one** (v2.4). No
+  between-seed interval, no claim that the sign was replicated, and the paired bootstrap's intervals
+  labelled as resampling **eval items, not seeds**. Beside the result, not in a closing limitations
+  paragraph.
+- **Finding AE's 2.77% wrong-lexicon rate is disclosed, not filtered** (2026-09-16, PRD §6.2). Any
+  transliteration claim resting on the reference set is weaker than §6.2's original wording implied,
+  and the human-written set is the only instrument that can support one. **§4.5's bootstrap resamples
+  sentences, not rows**, on that set — effective *n* = 2,978, not 16,241.
 - **§8.3's three generation metrics are a floor.** They catch a sample that stopped being Urdu and
   one that is four phrases on a loop, and they are blind to what actually separates the arms.
 

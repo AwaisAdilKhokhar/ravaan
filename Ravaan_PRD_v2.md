@@ -1,12 +1,13 @@
 # Ravaan v2: Does Masked Diffusion Pay Off for a Genuinely Low-Resource Language?
 
-**Version:** 2.3
-**Status:** Amended 2026-09-10 at the corpus freeze, after Gate **G1 failed on the `roman_urdu` population** and arm B was dropped for a single-arm design. See §0.3. Previously amended 2026-08-05 (Finding R; see §0.2) and 2026-08-03 after the Week 1 literature review (Gate G0 — passed; see §0.1).
-**Supersedes:** v2.2 (August 5, 2026); v2.1 (August 3, 2026); v2.0 (August 3, 2026); v1.1 (August 2, 2026)
+**Version:** 2.4
+**Status:** Amended 2026-09-16 on a schedule decision: the project ships **two training runs — one AR, one diffusion**. Seeds 2–3 and ablations A1/A2 are dropped. This is §10's own "minimum viable cut", taken deliberately rather than forced by a measurement. See §0.4. Previously amended 2026-09-10 at the corpus freeze (Gate **G1 failed on the `roman_urdu` population**, arm B dropped for a single-arm design; see §0.3), 2026-08-05 (Finding R; see §0.2) and 2026-08-03 after the Week 1 literature review (Gate G0 — passed; see §0.1).
+**Supersedes:** v2.3 (September 10, 2026); v2.2 (August 5, 2026); v2.1 (August 3, 2026); v2.0 (August 3, 2026); v1.1 (August 2, 2026)
 **Project type:** Open-source NLP research and portfolio project
 **Development model:** Solo, part-time, rented spot GPUs
 **Hard compute cap:** USD 150
 **Target duration:** 16 weeks
+**Priority (v2.4):** **time to a reported result.** Where a choice trades breadth against wall-clock, breadth loses. This is a stated priority, not a discovered constraint, and §0.4 records what it costs.
 
 ---
 
@@ -108,6 +109,70 @@ mixture (§6.1), tokenizer (§7), evaluation (§8), the $150 cap (§9), and the 
 
 ---
 
+## 0.4 What changed in v2.4, and why
+
+**The project ships two training runs: one AR, one diffusion, one seed each.** Seeds 2 and 3 are
+dropped and ablations **A1 and A2** are dropped with them. Unlike v2.1–v2.3, this is **not forced by
+a measurement** — the corpus supports the six runs v2.3 planned. It is a schedule decision, taken
+with the stated priority of reaching a reported result as fast as possible, and it is exactly the cut
+§10 pre-committed to: *"the minimum viable cut, in order of what to drop: HF Space → human evaluation
+→ ablations A1/A2 → seeds 2 and 3. The epoch sweep on a single seed for both models is the
+irreducible core; below that there is no project."*
+
+| Area | v2.3 | v2.4 | Reason |
+|---|---|---|---|
+| Core runs | 6 (2 models × 3 seeds) | **2** (2 models × **1 seed**) | Schedule. §10 names seeds 2–3 as the last thing to drop, and this is that cut |
+| Ablation **runs** | A1, A2 — 1 training run each | **dropped** | §10's order puts ablations *ahead* of seeds; cutting seeds while keeping these would invert the project's own priority |
+| Ablations A3, A4 | inference-only | **unchanged** | They decode the trained diffusion checkpoint and cost no run |
+| What the primary endpoint supports | crossover **sign** at one U, seed-averaged | crossover **sign** at one U, **a single paired comparison** | One run per arm carries no estimate of initialization variance |
+| Budget | ~$118 | **~$55** | Four fewer training runs |
+| Binding constraint | cost | **wall-clock** | $150 against two runs is no longer tight; time is |
+| `roman_urdu` Finding AE rows | undecided | **not filtered — rate disclosed** | Filtering is shallow without a native-speaker pass; disclosure is honest and costs no time |
+| §6.2's Roman-Urdu-Parl warning | "machine-produced", a *style* mismatch | **a wrong lexicon, rate named** | Finding AE. Open question 6 resolved as its option (b) — the wording amendment is free now the version is bumping anyway |
+
+**What this costs, stated plainly and once.** §4.5's paired bootstrap still runs, but it resamples
+**eval items, not seeds**. With one run per arm there is no estimate of seed-to-seed variance, so a
+measured AR/DIFF gap in validation BPB **cannot be separated from a single initialization draw**.
+The report must present the primary endpoint as *one paired comparison* and must not describe it as
+a seed-averaged effect, quote a between-seed interval, or imply the sign was replicated. §10 already
+judged this survivable and that judgement — not a new one — is what is being relied on.
+
+**Losing A2 has a consequence worth naming.** §4.4 called it *"a more interesting paragraph than the
+result itself"*: it quantified how much the un-equipped AR baseline would have inflated the claim, on
+Urdu. Without it the report must cite MARIA (arXiv:2502.06901) for the effect's existence and state
+plainly that **Ravaan did not measure it**. §14's ship criterion naming A2 is amended to match, and
+Finding AT's concern — that our AR arm may not be properly equipped for infilling — now goes into the
+report as a stated limitation rather than a measured quantity.
+
+**Three smaller decisions taken with it, all in the same direction.** (a) **Finding AE's rows are
+not filtered** — §6.2 now names the wrong-lexicon rate (2.77% of rows after dedup, inside 23.53% of
+arm A's tokens) and the report discloses it instead of the corpus being edited to hide it; filtering
+only the eight confirmed words cannot reach the unscreened tail without a native-speaker pass.
+(b) **§6.2 and §8.2 gain the wording amendment** that open question 6 offered as its option (b),
+since the argument for deferring it was "do not bump the version for wording" and the version is
+bumping. (c) **The stage-10 fertility re-verification is skipped** — `pack.py --measure-only
+--resolve-plan` would cost a full corpus pass, and stage 10 reports measured fertility as it packs,
+so a bad `code_switched` ratio is visible after the fact and re-packable; that population is 5.88% of
+the mixture, so a 20% error moves arm A by ~1%.
+
+**The cheapest thing that partly restores the seed argument, if it is ever wanted:** re-run the
+*diffusion* arm alone at a second seed, one run, and report the within-arm spread beside the
+between-arm gap. It does not make the endpoint seed-averaged, but it bounds the noise the single
+comparison is exposed to. Recorded here so it is a known option rather than a rediscovery.
+
+**Open, and due before Week 12.** §10's cut order runs HF Space → human evaluation → ablations →
+seeds. Taking the seed cut implies the first two are already gone. They are **not** cut in this
+amendment, because that is a separate decision (G5 has a hard date in §11). Until it is taken the
+plan is internally inconsistent about its own stated priorities.
+
+**Unchanged, and this is the load-bearing part:** everything that makes the comparison *fair*. The
+matched pair (§4.1), the task mixture (§4.2), arm A's U and epoch count (§4.3), both objectives, the
+frozen corpus and its decontamination, the tokenizer (§7), the ELBO caveat, the preregistration's
+P1/P3/P4, the §8.1 invariants, and the $150 cap (§9). **Cutting seeds reduces what the result can
+support; it does not make the comparison unfair.**
+
+---
+
 ## 1. Research question
 
 **Primary.** Does the data-constrained crossover between masked diffusion and autoregression occur where the English scaling law predicts, when the training corpus is naturally noisy non-English Nastaliq-script web text rather than clean C4?
@@ -184,7 +249,7 @@ One arm, processing ~9.9B tokens:
 
 | Arm | Unique U | Epochs | Seeds | Predicted position |
 |---|---|---|---|---|
-| **A** (primary) | 25M | ~396 | 3 | **1.79× past** C_crit = 2.32 × 10¹⁸ FLOPs |
+| **A** (primary) | 25M | ~396 | **1** *(v2.4: was 3 — §0.4)* | **1.79× past** C_crit = 2.32 × 10¹⁸ FLOPs |
 | ~~**B** (bracket)~~ | ~~100M~~ | ~~99~~ | ~~1~~ | **Dropped in v2.3** — `roman_urdu` supply is 0.44× of its requirement. See §0.3 |
 
 At this compute the fitted law puts the crossover at **U = 33M**, so arm A's 25M sits on the side
@@ -195,7 +260,13 @@ where a crossover is predicted. Reproduce with `python scripts/crossover.py --pa
 
 Checkpoint at **1, 2, 5, 10, 25, 50, 100% of tokens processed** — identical fractions for both models and both arms, so the curves share a compute x-axis. Evaluate every checkpoint.
 
-This is the primary experiment and it costs one run per model per seed (**6 total**). Arm A is predicted to *cross*.
+This is the primary experiment and it costs one run per model per seed (**2 total** — v2.4, §0.4;
+was 6). Arm A is predicted to *cross*.
+
+> **v2.4: one seed per arm, so this is a single paired comparison.** The checkpoint fractions, the
+> token budget, U, the epoch count and both objectives are unchanged — what is gone is replication.
+> There is no between-seed interval to quote and no way to show the sign is not one initialization's
+> draw. **State this beside the result, not in a limitations paragraph at the end.**
 
 > **v2.3: this tests the sign, not the location.** With both arms it tested the crossover's location
 > against the English fit, because a cross in A paired with no cross in B brackets C_crit. Arm B is
@@ -215,23 +286,31 @@ Report **bits-per-byte**, not bits-per-token, so the comparison is tokenizer-ind
 
 | # | Ablation | Cost |
 |---|---|---|
-| A1 | DIFF without script-aware corruptions | 1 training run |
-| A2 | AR without FIM — i.e. v1's original baseline | 1 training run |
+| ~~A1~~ | ~~DIFF without script-aware corruptions~~ | ~~1 training run~~ — **dropped in v2.4 (§0.4)** |
+| ~~A2~~ | ~~AR without FIM — i.e. v1's original baseline~~ | ~~1 training run~~ — **dropped in v2.4 (§0.4)** |
 | A3 | Denoising steps: 8 / 16 / 32 / 64 | Inference only |
 | A4 | Unmasking schedule: random vs. confidence-based | Inference only |
 
 > **A3 and A4 were both extended on 2026-09-14, inference-only, and the deviation is logged in `reports/preregistration.md` §8.** A4's two settings turned out to be the two *limits* of one dial — ranking by `log p(chosen) + s·Gumbel(0,1)` with *s* annealed to zero — and both limits fail while the interior does not; A3's 64-step ceiling still commits 2–3 positions per step from independent marginals on a 160-position canvas, so the grid never contained one-position-per-step. Both rows above are still measured and reported. See `reports/pilot_coherence.md` §10.
 
-A2 is included deliberately. Running the broken baseline alongside the fair one lets you quantify exactly how much the unfair comparison would have inflated the result — which is a more interesting paragraph than the result itself.
+~~A2 is included deliberately. Running the broken baseline alongside the fair one lets you quantify exactly how much the unfair comparison would have inflated the result — which is a more interesting paragraph than the result itself.~~
+
+> **v2.4: A1 and A2 are dropped and the paragraph above is what is lost.** Both cost a training run
+> and the project now ships two. The report must therefore cite MARIA (below) for the *existence* of
+> the inflation and state that **Ravaan did not measure its size on Urdu** — the claim A2 existed to
+> make is withdrawn, not weakened. Finding AT's concern (our AR arm may be under-equipped for
+> infilling by §4.2's FIM layout) becomes a **stated limitation** rather than a measured quantity.
+> A3 and A4 are unaffected: they decode the trained diffusion checkpoint and cost no run.
 
 **Prior art, and a scope correction.** The FIM-matched comparison in §4.1 is *methodologically necessary but not novel*. MARIA (arXiv:2502.06901) already reports that a properly-equipped AR model outperforms discrete diffusion baselines at infilling across all mask rates. It must be cited, and A2 must be framed as quantifying the inflation on **Urdu**, not as discovering that the unfair baseline inflates results.
 
 ### 4.5 Statistical protocol
 
-- **3 seeds** per core config (AR, DIFF) in **arm A**, which is now the only arm (§0.3). Ablations get 1 seed and are reported as directional.
+- **1 seed** per core config (AR, DIFF) in **arm A**, which is the only arm (§0.3). *(v2.4: was 3 — §0.4. Two training runs total.)* Ablations A1/A2 are dropped; A3/A4 are inference-only and still reported as directional.
 - **Primary endpoint, preregistered:** the sign and compute-location of the AR/DIFF crossover in validation BPB across arm A's sweep. **Committed 2026-08-03 in `reports/preregistration.md`, before any training** — including four falsifiable predictions (P1–P4) and a committed reading for every outcome combination. *(v2.3: **P2 withdrawn** with arm B; P1, P3 and P4 stand. The withdrawal is in the deviation log, §8 — the preregistration's text above it is unedited, and no model had been trained when it was written.)*
 - **Secondary endpoints (3, Holm-corrected):** transliteration chrF on the human-written set, infill exact-match, OCR CER reduction on the real-OCR set.
-- Paired bootstrap confidence intervals on all task metrics. If a CI includes zero, say so in the abstract.
+- Paired bootstrap confidence intervals on all task metrics. If a CI includes zero, say so in the abstract. ⚠️ **v2.4: these resample *eval items*, not seeds.** With one run per arm there is **no estimate of initialization variance**, so an item-level CI that excludes zero still does not establish that the sign would survive a different seed. Report the CI, name what it does and does not cover, and never present the primary endpoint as seed-averaged.
+- ⚠️ **The paired bootstrap must resample *sentences*, not rows**, on the transliteration reference set: its 16,241 rows are 4,500 distinct sentences (effective *n* = 2,978), so resampling rows would treat ~5.4 duplicates of one sentence as independent draws and narrow every interval. *(v2.4; not a wording question — it holds regardless of how §6.2 is worded.)*
 - No metric is added to the results table after seeing results.
 
 ---
@@ -311,6 +390,19 @@ Arm A's 25M-token corpus is a **deterministic, seeded subsample** — not a sepa
 
 **Warning carried forward.** Roman-Urdu-Parl is substantially machine-produced — the source work crawled Urdu sentences and passed them through an automatic transliteration portal, with crowdsourcing added for spelling variation. Its ~6.37M pairs collapse to roughly 1.09M unique Urdu sentences. Two consequences: (a) dedup the native side hard before mixing it into pretraining, and (b) any transliteration claim evaluated only on this corpus means "matches that transliterator," not "transliterates well." The human-written test set in §8.2 exists solely to close this gap.
 
+> **v2.4 — the mismatch is narrower and worse than "machine-produced" suggests (Finding AE).**
+> Measured unsampled over the corpus: the transliterator renders **eight common Urdu words as fixed,
+> *unrelated* words** — کرتے → `baghaawat`, بس → `dehli`, گھر → `mamu` — at 52–93% of their
+> occurrences, with specificity 0.87–0.99. This is a **wrong lexicon**, not a style or spelling
+> variant, and it affects **3.95% of rows (2.77% after dedup)**, which sit inside **23.53% of arm A's
+> tokens**. **Decision, 2026-09-16: do not filter — train on the corpus as it is and state the rate
+> in the technical report.** Filtering the eight confirmed words is shallow (it cannot reach the
+> unscreened tail without a native-speaker pass over the 225-candidate list) and the priority is time
+> to a result; the honest alternative is disclosure, and the rate is small enough to disclose.
+> Consequence to carry: any transliteration claim resting on this corpus is weaker than §6.2's
+> original wording implies, and the human-written set in §8.2 is the only instrument that can support
+> one.
+
 ### 6.3 Pipeline
 
 Ten stages, down from twenty:
@@ -355,7 +447,7 @@ v1 listed the first two as success metrics at 100%. Locked-token preservation at
 | Set | Size | Construction |
 |---|---|---|
 | Held-out native Urdu | 5K sequences | Decontaminated **test** split — see §6.1. The separate 5K validation split is what G4 and the §8.3 curves read; the number reported here comes only from the test split |
-| Transliteration (reference) | Official split | Roman-Urdu-Parl test |
+| Transliteration (reference) | Official split | Roman-Urdu-Parl test — *(v2.4)* **4,500 distinct sentences across 16,241 rows, effective *n* = 2,978**; see `reports/eval/transliteration_reference_set.md`. Contains the Finding AE lexicon (§6.2) |
 | **Transliteration (human)** | ~200 pairs | Hand-written by native speakers — the only set that can support a real transliteration claim |
 | **Real OCR** | ~300 lines | Tesseract Urdu over scanned public-domain Nastaliq, gold hand-corrected (~8 hours of work) |
 | Infilling | 500 items | Random spans masked from held-out text |
@@ -378,16 +470,33 @@ Validation BPB by epoch and by script; transliteration CER/WER/chrF with named-e
 |---|---|---|
 | Debug and tiny pilots | Kaggle free tier | $0 |
 | Throughput tuning | 20 | $7 |
-| **6 core runs** (arm A: 2 models × 3 seeds) | 140 | $50 |
-| 2 ablation runs (A1, A2) | 45 | $16 |
+| **2 core runs** (arm A: 2 models × 1 seed) *(v2.4: was 6 — §0.4)* | 47 | $17 |
+| ~~2 ablation runs (A1, A2)~~ — **dropped in v2.4** | ~~45~~ 0 | ~~$16~~ $0 |
 | Evaluation sampling | 25 | $9 |
-| Failed runs and restarts | 60 | $21 |
+| Failed runs and restarts | 20 | $7 |
 | Storage | — | $15 |
-| **Total** | **~290** | **~$118** |
+| **Total** | **~112** | **~$55** |
 
-Per-run cost is unchanged from v2.0 — every run processes the same ~9.9B tokens. The count went 6 → 8 in v2.1 and back to **6** in v2.3, when arm B turned out to be unbuildable (§0.3). **If the contingency proves tight, cut ablation A1 — never cut arm A's 3 seeds**, which now carry the primary endpoint alone. The ~47 GPU-hours arm B released are *not* reallocated: they are contingency for the six runs that remain.
+Per-run cost is unchanged from v2.0 — every run processes the same ~9.9B tokens. The count went 6 → 8
+in v2.1, back to **6** in v2.3 when arm B turned out to be unbuildable (§0.3), and to **2** in v2.4 on
+a schedule decision (§0.4).
 
-**Hard cap: $150.** Assumes RTX 4090-class spot instances at ~$0.35/hr. Verify against live marketplace pricing in Week 6 before committing.
+⚠️ **There is nothing left to cut.** v2.3's advice ("cut ablation A1, never cut the seeds") is spent:
+A1 and A2 are gone and the seeds went with them. §10's ladder is down to its last rung — the two runs
+*are* the irreducible core, and dropping either ends the project rather than shrinking it. If the
+budget binds, the response is a cheaper instance or a smaller model (G2's lever), **never a run**.
+
+⚠️ **v2.4: cost is no longer the binding constraint — wall-clock is.** Two runs against the $150 cap
+leaves roughly 3× headroom, which inverts how the instance should be chosen: pick for **throughput,
+not price**, because the cheapest card that clears G2 is no longer the right pick when the priority
+is time to a result. At the G2 target of 64,162 tok/s two runs are ~86 GPU-hours (~3.6 days, ~$30);
+on this project's own RTX 4060 at ~14,200 tok/s they are ~387 hours (~16 days, $0). **The rule that
+does not change: throughput is measured on the instance before the budget is committed** — a spec
+sheet has never been accepted here and is not accepted now.
+
+**Hard cap: $150.** Pricing assumption was RTX 4090-class spot at ~$0.35/hr; with the constraint now
+on time rather than money, verify live marketplace pricing *and* measured throughput together before
+committing.
 
 Cost controls: provider spending limit set on day one; every configuration validated on Kaggle before it touches a paid instance; checkpoint every 500 steps with resume tested before any paid run (spot instances get preempted); cost recorded per experiment; no hyperparameter sweeps.
 
@@ -404,13 +513,18 @@ Roughly 250–320 person-hours across 16 weeks, or about 16–20 hrs/week.
 | 5 | Tokenizer training and benchmark | **Frozen tokenizer** + checksum |
 | 6–7 | Shared backbone, AR head, MDLM objective, tiny-model validation, throughput measurement | **Gate 1** |
 | 8 | Pilot runs at 20M params, all 4 configs, 1 seed | **Gate 2** |
-| 9–11 | 6 core runs + 2 ablation runs | **Gate 3** at midpoint |
+| 9–11 | **2 core runs** (1 AR, 1 DIFF) *(v2.4: was 6 core + 2 ablations — §0.4)* | **Gate 3** at midpoint |
 | 12 | Build test sets incl. real-OCR; run automatic evaluation | Results tables |
 | 13 | Human evaluation | Preference scores + kappa |
 | 14 | HF Space demo | Public demo |
 | 15–16 | Technical report, repo cleanup, release | **Ship** |
 
 **If only ~10 hrs/week are available:** this becomes 6–7 months. The minimum viable cut, in order of what to drop: HF Space → human evaluation → ablations A1/A2 → seeds 2 and 3. The epoch sweep on a single seed for both models is the irreducible core; below that there is no project.
+
+> **v2.4: the last two rungs of that ladder have been taken** — ablations A1/A2 and seeds 2–3 are
+> dropped (§0.4). ⚠️ **The first two have not**, so the ladder is currently being climbed out of
+> order: HF Space and human evaluation sit above the rungs already spent. That is an open decision,
+> due before Week 12, and until it is taken this schedule does not match its own priority.
 
 ---
 
@@ -423,10 +537,10 @@ Every gate below can actually fail. v1's Gate D ("script-aware improves at least
 | **G0** | End W2 | Literature review confirms the comparison is unpublished | Reframe or stop |
 | **G1** | End W4 | Clean corpus ≥ **100M** tokens **and** every population at or above arm B's share of it (§6.1: 70.59M / 23.53M / 5.88M) | 25–100M → run arm A only, report single-arm. Below 25M → stop. **A population short at the mixture is its own failure** — the aggregate can clear 100M several times over while arm B cannot be assembled |
 | ↳ **verdict, 2026-09-10** | | **FAILED on `roman_urdu` at 0.44×** — the aggregate cleared easily (`urdu` 46.66×) and the population did not, which is the case this row was rewritten for in v2.2 | **Fallback taken: arm A only, single-arm (§0.3).** Arm A's own `roman_urdu` margin is ~1.53× and has not yet been through stage 8 — **re-check this gate after decontamination** |
-| **G2** | End W7 | Measured throughput implies **6** core runs ≤ $90 *(v2.3: was 8)* | Shrink model, never epoch count |
+| **G2** | End W7 | Measured throughput implies **2** core runs ≤ $90 *(v2.4: was 6; v2.3: was 8)* — at $0.35/hr that is ~21,400 tok/s, against v2.3's 64,162 | Shrink model, never epoch count. ⚠️ **v2.4 inverts this gate's use:** at two runs almost any rentable card passes on cost, so the question it now answers is *how long will this take*, not *can I afford it*. Measure on the instance regardless |
 | **G3** | End W8 | 20M pilot DIFF produces coherent Urdu after 50 epochs; both models resume from checkpoint correctly | Implementation bug — debug, do not scale |
 | ↳ **verdict, 2026-09-13** | | **SPLIT.** Resume: **PASS** on both arms — 5,614 steps, 367,919,104 tokens each, reload asserted parameter-identical. Coherence: **FAIL** — Ravaan-AR is fluent, Ravaan-DIFF is not, under any of 16 decoder settings (`reports/pilot_coherence.md`, 306 generations). **Narrowed 2026-09-14:** the sixteen were §4.4's grid, and the grid was wrong at both of its diffusion edges — a setting outside it (`gumbel` 2, one position per step) gets real Urdu words in grammatical clauses from the same checkpoint. Still a FAIL on the gate's own wording, because the arm is topic-locked and drifts to Roman Urdu unprompted; but "exhausted the decoder" was not true when it was written | **Decision taken 2026-09-13: the gate is recorded unmet on its own terms and W9 proceeds.** This row's kill reads "implementation bug", and no implementation bug was found: both arms train, checkpoint, resume exactly and decode, and three separate decoder defects were found *and fixed* without moving the verdict (a fourth, on 2026-09-14, moved it further than any of the three — so this clause is weaker support than it read as). The control offered on 2026-09-13 was that **Ravaan-AR is fluent on the same corpus, the same loop and the same code**, so a defect in anything shared would show in both arms. ⚠️ **Corrected 2026-09-14: that control does not hold either, and the first version of this row leaned on it after the other support had already been weakened.** Finding AS measured the pilot AR arm's train-versus-held-out gap at **+4.94 nats** against the diffusion arm's **+0.17** — at 50 epochs over 7.36M unique tokens it was reciting the corpus, so the two arms were not doing the same thing and its fluency is not evidence the shared code is sound. **What the decision rests on instead is stronger**: session 23's matched pair at 186.9M unique tokens × 2 epochs, where both memorization gaps are ~0.05, no diffusion-specific defect appears, and the arms separate in the direction §4.3 predicts ([`reports/diffusion_scale.md`](reports/diffusion_scale.md)). The pilot is 25M parameters at 368M training tokens over a 7.36M-token corpus, which is plausibly below the scale at which "coherent Urdu" is reachable at all, so the gate's premise is judged wrong rather than the code. **The technical report must carry this verdict, this reasoning *and this correction*** — a G3 section that quotes the original control without saying it was reciting the corpus is what a methods reviewer finds — and must not describe G3 as passed |
-| **G4** | Mid W10 | Arm A curves are separating or converging in a legible way **by 50% of tokens processed** | No signal by then → complete arm A's 3 seeds and report the flat result as the primary finding per preregistration §7. *(v2.3: "cut arm B" is spent — it was cut at G1, so this gate's only remaining lever is the write-up, not the run list.)* |
+| **G4** | Mid W10 | Arm A curves are separating or converging in a legible way **by 50% of tokens processed** | No signal by then → complete both runs and report the flat result as the primary finding per preregistration §7. *(v2.3: "cut arm B" is spent — it was cut at G1. **v2.4: "complete arm A's 3 seeds" is spent too** — there is one seed per arm, so this gate has **no lever on the run list at all** and acts only on the write-up. It is also now the project's sole early warning for a diffusion-only defect, since G3 was recorded unmet and the six runs that would have averaged out a bad draw no longer exist — read it with that in mind.)* |
 | **G5** | W13 hard date | Automatic results are in hand | Cut human eval and demo, ship the report |
 
 ---
@@ -437,7 +551,7 @@ Every gate below can actually fail. v1's Gate D ("script-aware improves at least
 |---|---|
 | No crossover appears within budget | The primary endpoint is the *curve*, not the winner. Because arm A is placed **1.79× past** the predicted C_crit, "no crossover where the English law predicts one" is now a genuine falsification of transfer — a publishable, citable result. **This defence did not hold in v2.0**, where the design sat 124× short and the English law itself already predicted no crossover; confirming that would have been no finding at all |
 | Roman-Urdu-Parl is machine-generated | Human-written test set; scope the claim explicitly if it disagrees with the reference set |
-| Seed variance swamps the effect | 3 seeds, paired bootstrap CIs, report intervals not point estimates |
+| Seed variance swamps the effect | ~~3 seeds,~~ paired bootstrap CIs, report intervals not point estimates. ⚠️ **v2.4 removed this row's main mitigation and did not replace it.** With one run per arm the risk is **accepted, not mitigated**: a measured AR/DIFF gap cannot be separated from a single initialization draw, the surviving CIs resample *eval items* rather than seeds, and the report must say so beside the primary result (§0.4, §4.5). The cheapest partial restoration is one extra seed on the diffusion arm (~43 GPU-h, ~$15) |
 | Diffusion ELBO vs. AR exact NLL not directly comparable | Report both, state the bound, lead with downstream metrics |
 | Corpus smaller than expected after filtering | Model-size ladder in §5 |
 | Spot instance preemption | Checkpoint every 500 steps; resume tested before any paid run |
@@ -477,13 +591,14 @@ ravaan/
 **Ship criteria** — all must hold:
 
 - Both models trained from random initialization on identical data, tasks, and compute
-- Epoch sweep complete: 3 seeds per model in arm A (U=25M) *(v2.3: arm B dropped — §0.3; its absence is explained in the report, not omitted)*
+- Epoch sweep complete: **1 seed per model** in arm A (U=25M) *(v2.4: was 3 seeds — §0.4; v2.3: arm B dropped — §0.3. Both absences are explained in the report, not omitted)*
 - Preregistration committed before results were seen, and honoured
 - Real-OCR and human-written transliteration test sets built and used
 - Human evaluation completed or its absence explained
 - All §8.1 invariants passing in CI
 - Total spend under $150, with per-experiment costs recorded
-- Technical report includes negative results, failure examples, and the A2 comparison showing what the unfair baseline would have claimed
+- Technical report includes negative results and failure examples ~~and the A2 comparison showing what the unfair baseline would have claimed~~ *(v2.4: A2 is dropped — the report cites MARIA for the effect and states that Ravaan did not measure its size on Urdu; §0.4)*
+- **The primary endpoint is stated as a single paired comparison**, with no between-seed interval quoted and no implication that the sign was replicated (v2.4, §0.4)
 
 **Explicitly not a ship criterion:** that Ravaan-DIFF wins.
 

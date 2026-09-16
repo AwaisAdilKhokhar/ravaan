@@ -1,0 +1,22 @@
+{
+  "splits_version": "1.0.0",
+  "arm_tokens": {
+    "A": 25000000,
+    "B": 100000000
+  },
+  "population_targets": {
+    "urdu": 120000000,
+    "roman_urdu": 40000000,
+    "code_switched": 10000000
+  },
+  "chars_per_token": {
+    "urdu": 3.8935,
+    "roman_urdu": 4.1928,
+    "code_switched": 3.2758
+  },
+  "heldout_sequences": 5000,
+  "sequence_length": 512,
+  "buckets": 100000,
+  "salt": "ravaan/split/v1",
+  "pair_separator": "#"
+}

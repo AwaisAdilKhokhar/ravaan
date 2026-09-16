@@ -1,0 +1,2 @@
+wrote configs/data/splits_resolved.json at fingerprint 0f18ff46d95b
+chars_per_token: {'urdu': 3.8935, 'roman_urdu': 4.1928, 'code_switched': 3.2758}

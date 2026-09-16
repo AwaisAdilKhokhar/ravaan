@@ -1,0 +1,702 @@
+{
+  "measure_only": true,
+  "sources": [
+    "urdu-wikipedia",
+    "fineweb2-urd_Arab",
+    "roman-urdu-parl"
+  ],
+  "sample_rate": null,
+  "config_fingerprint": "23df13e0dfc3",
+  "pool_chars": {
+    "urdu": 12148533439,
+    "roman_urdu": 75880888,
+    "code_switched": 54554056
+  },
+  "bands": {
+    "code_switched": {
+      "population": "code_switched",
+      "buckets": 100000,
+      "test_from": 98907,
+      "validation_from": 98080,
+      "train_to": 98080,
+      "arm_cuts": {
+        "A": 10437,
+        "B": 41510
+      },
+      "total_chars": 54554056,
+      "chars_train": 53414233,
+      "chars_validation": 568376,
+      "chars_test": 571447,
+      "chars_by_arm": {
+        "A": 5587591,
+        "B": 22342596
+      },
+      "target_chars_validation": 572235.294117647,
+      "target_chars_test": 572235.294117647,
+      "target_chars_by_arm": {
+        "A": 5588235.294117646,
+        "B": 22352941.176470585
+      },
+      "unmet_arms": [],
+      "unmet_heldout": []
+    },
+    "roman_urdu": {
+      "population": "roman_urdu",
+      "buckets": 100000,
+      "test_from": 96674,
+      "validation_from": 93340,
+      "train_to": 93340,
+      "arm_cuts": {
+        "A": 32592,
+        "B": 93340
+      },
+      "total_chars": 75880888,
+      "chars_train": 70821868,
+      "chars_validation": 2529422,
+      "chars_test": 2529598,
+      "chars_by_arm": {
+        "A": 24705518,
+        "B": 70821868
+      },
+      "target_chars_validation": 2529882.352941177,
+      "target_chars_test": 2529882.352941177,
+      "target_chars_by_arm": {
+        "A": 24705882.352941178,
+        "B": 98823529.41176471
+      },
+      "unmet_arms": [
+        "B"
+      ],
+      "unmet_heldout": []
+    },
+    "urdu": {
+      "population": "urdu",
+      "buckets": 100000,
+      "test_from": 99946,
+      "validation_from": 99896,
+      "train_to": 99896,
+      "arm_cuts": {
+        "A": 513,
+        "B": 2043
+      },
+      "total_chars": 12148533439,
+      "chars_train": 12136015091,
+      "chars_validation": 6285284,
+      "chars_test": 6233064,
+      "chars_by_arm": {
+        "A": 61672107,
+        "B": 246984881
+      },
+      "target_chars_validation": 6324705.882352942,
+      "target_chars_test": 6324705.882352942,
+      "target_chars_by_arm": {
+        "A": 61764705.88235294,
+        "B": 247058823.52941176
+      },
+      "unmet_arms": [],
+      "unmet_heldout": []
+    }
+  },
+  "stage2_encoding": {
+    "encoding_version": "1.0.0",
+    "config_fingerprint": "ab527008ac3b",
+    "config": {
+      "strict_utf8": true,
+      "on_decode_error": "reject",
+      "strip_bom": true,
+      "repair_mojibake": true,
+      "max_repair_passes": 3,
+      "max_mojibake_rate": 0.001,
+      "max_replacement_rate": 0.001,
+      "strip_control_chars": true,
+      "max_control_rate": 0.001
+    },
+    "documents": 7030557,
+    "documents_accepted": 7030099,
+    "documents_rejected": 458,
+    "documents_repaired": 0,
+    "acceptance_rate": 0.999935,
+    "bytes_in": 21845744931,
+    "chars_out": 12368283750,
+    "replacement_chars": 8688,
+    "mojibake_chars": 1626,
+    "control_chars": 15,
+    "verdicts": {
+      "control_heavy": 1,
+      "mojibake": 38,
+      "ok": 7030099,
+      "replacement_heavy": 419
+    }
+  },
+  "stage3_langid": {
+    "langid_version": "1.0.0",
+    "config_fingerprint": "d5994b013004",
+    "config": {
+      "min_letters": 20,
+      "mixed_min_ratio": 0.1,
+      "min_margin": 0.02,
+      "min_evidence": 0.08,
+      "urdu_letter_weight": 4.0,
+      "arabic_letter_weight": 2.0,
+      "sentence_min_letters": 8,
+      "latin_running_text_rate": 0.5,
+      "code_switch_min_share": 0.1,
+      "alternation_min_share": 0.3,
+      "max_segments": 400
+    },
+    "documents": 7030099,
+    "documents_kept": 6507436,
+    "keep_rate": 0.925654,
+    "documents_by_prior": 58926,
+    "prior_rate": 0.008382,
+    "mixed_documents": 197087,
+    "letters": 9415841297,
+    "labels": {
+      "arabic": 122,
+      "code_switched": 33549,
+      "empty": 459300,
+      "english": 4310,
+      "other": 58926,
+      "persian": 5,
+      "roman_urdu": 1504190,
+      "urdu": 4969697
+    },
+    "letters_by_label": {
+      "arabic": 33333,
+      "code_switched": 44063979,
+      "empty": 6333347,
+      "english": 768145,
+      "other": 2459796,
+      "persian": 572,
+      "roman_urdu": 61439088,
+      "urdu": 9300743037
+    },
+    "segment_letters": {
+      "arabic": 529448,
+      "code_switched": 6242182,
+      "english": 30865013,
+      "hindi": 310799,
+      "other": 9921761,
+      "persian": 81890,
+      "roman_urdu": 1721167,
+      "urdu": 182651045
+    }
+  },
+  "stage5_quality": {
+    "fineweb2-urd_Arab": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "53d04d3fd079",
+      "config": {
+        "min_chars": 400,
+        "min_words": 40,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 0.5,
+        "max_top_ngram_ratio": {
+          "3": 0.26,
+          "4": 0.22
+        },
+        "max_dup_ngram_ratio": {
+          "5": 0.6,
+          "6": 0.58,
+          "7": 0.56,
+          "8": 0.54,
+          "9": 0.52,
+          "10": 0.5
+        },
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 4804772,
+      "documents_kept": 4644891,
+      "documents_rejected": 159881,
+      "keep_rate": 0.966725,
+      "chars_in": 12074798121,
+      "chars_kept": 12019704320,
+      "char_keep_rate": 0.995437,
+      "rejections": {
+        "html_residue": 8,
+        "repetition:dup_10gram": 16,
+        "repetition:dup_5gram": 8,
+        "repetition:dup_6gram": 12,
+        "repetition:dup_7gram": 12,
+        "repetition:dup_8gram": 13,
+        "repetition:dup_9gram": 15,
+        "repetition:dup_lines": 2,
+        "repetition:top_3gram": 1,
+        "repetition:top_4gram": 5,
+        "script_ratio": 1845,
+        "too_short": 158216
+      },
+      "families": {
+        "html_residue": 8,
+        "repetition": 23,
+        "script_ratio": 1845,
+        "too_short": 158216
+      },
+      "sole_rejections": {
+        "html_residue": 8,
+        "repetition": 20,
+        "script_ratio": 1637,
+        "too_short": 158005
+      },
+      "by_label": {
+        "code_switched": 22634,
+        "english": 3,
+        "other": 27,
+        "urdu": 4782108
+      },
+      "kept_by_label": {
+        "code_switched": 20185,
+        "english": 2,
+        "other": 20,
+        "urdu": 4624684
+      },
+      "chars_kept_by_label": {
+        "code_switched": 50196414,
+        "english": 202785,
+        "other": 34387,
+        "urdu": 11969270734
+      },
+      "truncated_documents": 0
+    },
+    "roman-urdu-parl": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "31a5a2d4805b",
+      "config": {
+        "min_chars": 20,
+        "min_words": 3,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 1.0,
+        "max_top_ngram_ratio": {
+          "2": 1.0
+        },
+        "max_dup_ngram_ratio": {},
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 2025367,
+      "documents_kept": 1724751,
+      "documents_rejected": 300616,
+      "keep_rate": 0.851575,
+      "chars_in": 86234505,
+      "chars_kept": 81791825,
+      "char_keep_rate": 0.948481,
+      "rejections": {
+        "too_short": 300616
+      },
+      "families": {
+        "too_short": 300616
+      },
+      "sole_rejections": {
+        "too_short": 300616
+      },
+      "by_label": {
+        "empty": 459095,
+        "english": 3536,
+        "other": 58550,
+        "roman_urdu": 1504186
+      },
+      "kept_by_label": {
+        "empty": 158534,
+        "english": 3536,
+        "other": 58496,
+        "roman_urdu": 1504185
+      },
+      "chars_kept_by_label": {
+        "empty": 3645706,
+        "english": 129922,
+        "other": 2206196,
+        "roman_urdu": 75810001
+      },
+      "truncated_documents": 0
+    },
+    "urdu-wikipedia": {
+      "quality_version": "1.0.0",
+      "config_fingerprint": "53d04d3fd079",
+      "config": {
+        "min_chars": 400,
+        "min_words": 40,
+        "min_urdu_script_ratio": 0.6,
+        "min_roman_script_ratio": 0.6,
+        "min_mixed_script_ratio": 0.9,
+        "max_dup_line_ratio": 0.5,
+        "max_top_ngram_ratio": {
+          "3": 0.26,
+          "4": 0.22
+        },
+        "max_dup_ngram_ratio": {
+          "5": 0.6,
+          "6": 0.58,
+          "7": 0.56,
+          "8": 0.54,
+          "9": 0.52,
+          "10": 0.5
+        },
+        "max_repetition_words": 100000,
+        "max_url_ratio": 0.3,
+        "max_html_ratio": 0.1,
+        "max_replacement_rate": 0.001
+      },
+      "documents": 199960,
+      "documents_kept": 93418,
+      "documents_rejected": 106542,
+      "keep_rate": 0.467183,
+      "chars_in": 215937412,
+      "chars_kept": 186183910,
+      "char_keep_rate": 0.862212,
+      "rejections": {
+        "html_residue": 104,
+        "repetition:dup_10gram": 85,
+        "repetition:dup_5gram": 121,
+        "repetition:dup_6gram": 104,
+        "repetition:dup_7gram": 103,
+        "repetition:dup_8gram": 80,
+        "repetition:dup_9gram": 80,
+        "repetition:dup_lines": 90,
+        "repetition:top_3gram": 2162,
+        "repetition:top_4gram": 1303,
+        "script_ratio": 625,
+        "too_short": 105635,
+        "url_density": 56
+      },
+      "families": {
+        "html_residue": 104,
+        "repetition": 3385,
+        "script_ratio": 625,
+        "too_short": 105635,
+        "url_density": 56
+      },
+      "sole_rejections": {
+        "html_residue": 23,
+        "repetition": 546,
+        "script_ratio": 286,
+        "too_short": 102400,
+        "url_density": 27
+      },
+      "by_label": {
+        "arabic": 122,
+        "code_switched": 10915,
+        "empty": 205,
+        "english": 771,
+        "other": 349,
+        "persian": 5,
+        "roman_urdu": 4,
+        "urdu": 187589
+      },
+      "kept_by_label": {
+        "arabic": 10,
+        "code_switched": 3862,
+        "english": 163,
+        "other": 218,
+        "roman_urdu": 2,
+        "urdu": 89163
+      },
+      "chars_kept_by_label": {
+        "arabic": 33802,
+        "code_switched": 4387583,
+        "english": 574850,
+        "other": 907561,
+        "roman_urdu": 70969,
+        "urdu": 180209145
+      },
+      "truncated_documents": 0
+    }
+  },
+  "pii": {
+    "pii_version": "1.0.0",
+    "config_fingerprint": "ac44c4eb5021",
+    "config": {
+      "redact_emails": true,
+      "redact_phones": true,
+      "email_placeholder": "[@]",
+      "phone_placeholder": "[#]",
+      "min_national_digits": 10,
+      "min_national_digits_unseparated": 11,
+      "max_national_digits": 12,
+      "min_international_digits": 10,
+      "max_international_digits": 13,
+      "max_shapes": 200
+    },
+    "documents": 6463060,
+    "documents_redacted": 44621,
+    "chars_in": 12287680055,
+    "chars_out": 12286703519,
+    "chars_removed": 976536,
+    "counts": {
+      "email": 31793,
+      "phone": 32756
+    },
+    "distinct_shapes": 200,
+    "shapes_dropped": 2603,
+    "shapes": {
+      "email:xxxxx@xxxxxxx.xxx": 15878,
+      "email:xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx": 15569,
+      "phone:ddddddddddd": 9657,
+      "phone:dddddddddddddd": 3991,
+      "phone:dddd-ddddddd": 3913,
+      "phone:ddd-dddddddd": 1086,
+      "phone:ddd-ddddddd": 859,
+      "phone:+dddddddddddd": 844,
+      "phone:dddd-dd-dddddddd": 831,
+      "phone:dddd-ddd-ddddddd": 829,
+      "phone:+d-ddd-ddd-dddd": 569,
+      "phone:+dddddddddd-dd": 539,
+      "phone:dddd ddd dddd": 474,
+      "phone:dddddddddddd": 422,
+      "phone:dddd ddd ddddddd": 332,
+      "phone:ddddddddddddd": 318,
+      "phone:+d ddd ddd dddd": 316,
+      "phone:+dd ddd ddddddd": 316,
+      "phone:dddd ddddddd": 260,
+      "phone:+ddddddddddd": 245,
+      "phone:dddd-dddddd": 231,
+      "phone:ddddd dddddd": 191,
+      "phone:+dd ddddddddddd": 184,
+      "phone:+dd-ddd-dd-dd-ddd": 154,
+      "phone:+dd–dd-dd-dd-dd-dd": 152,
+      "phone:+ddd-dddd-ddddd": 152,
+      "phone:+ddddddddddddd": 137,
+      "phone:ddddd-dddddd": 124,
+      "phone:+dd-ddd-ddddddd": 121,
+      "phone:ddddddddddddddd": 119,
+      "phone:+ddd ddd ddd ddd": 116,
+      "phone:+dd ddd ddd dddd": 113,
+      "phone:+dd-dd-dd-dd-dd-dd": 108,
+      "phone:+dd dddddddddd": 105,
+      "phone:+d ddd-ddd-dddd": 99,
+      "phone:ddd dddd dddd": 96,
+      "phone:ddd-ddd-ddd-ddd": 89,
+      "phone:dddd ddd ddd": 84,
+      "phone:dddd-dddddddddd": 84,
+      "phone:+dd ddd ddd dd dd": 84,
+      "phone:+dd-dddddddddd": 83,
+      "phone:dddd-dddddddd": 64,
+      "phone:dddd dddd ddd": 62,
+      "phone:dddd-ddddddddddd": 62,
+      "phone:dddd-ddddddd-d": 61,
+      "phone:+dd-dd-dddddddd": 60,
+      "phone:+dd dd dddd dddd": 54,
+      "phone:+dd d ddd dddd": 53,
+      "phone:+dd ddddddddd": 50,
+      "phone:+dd-ddddddddddd": 50,
+      "phone:+ddd dddd dddd": 46,
+      "phone:ddddd ddd ddd": 45,
+      "phone:dddd-ddd-dddd": 43,
+      "phone:+dd-dd-dddd-dddd": 42,
+      "phone:+dd ddd dddd dddd": 40,
+      "phone:ddddd-ddd-ddd": 38,
+      "phone:+dd ddd dd dd dd": 38,
+      "phone:+dd dd ddddddd": 38,
+      "phone:+dd dd dddddddd": 35,
+      "phone:ddd-ddddddd-dd": 35,
+      "phone:ddd ddddddd": 34,
+      "phone:+dd-d-dddd-dddd": 33,
+      "phone:dddd ddd dd dd": 32,
+      "phone:+dd (d) ddd ddd dddd": 32,
+      "phone:dddd-dd dd ddd": 31,
+      "phone:+ddd d-ddd-dddd": 31,
+      "phone:ddd-dddddddd-d": 29,
+      "phone:ddd-dddd-dddd": 29,
+      "phone:+ddddd-ddddddd": 28,
+      "phone:(ddd) dddddddd": 27,
+      "phone:+dd-dd)ddd-ddd-ddd": 26,
+      "phone:+dd dd ddd dd dd": 26,
+      "phone:ddd dddddddd": 24,
+      "phone:dddddd-dddddd": 22,
+      "phone:+ddd (d) ddddddd": 22,
+      "phone:+dd-ddd-dddd-dddd": 21,
+      "phone:+dd (d) dddd dddddd": 21,
+      "phone:+dd-ddd-dddddddd": 21,
+      "phone:dddd dddddddddd": 21,
+      "phone:ddd-ddddddd-d": 21,
+      "email:xxxxxxxxxxx@xxxxx.xxx": 20,
+      "phone:+dd dd-dddd-dddd": 20,
+      "phone:dddd-ddd-ddd": 18,
+      "phone:dddd-dddd-dddd": 16,
+      "phone:+ddd dddddddd": 16,
+      "phone:+ddd) ddd ddd ddd": 16,
+      "phone:+dd ddd dddd ddd": 16,
+      "phone:+dd d dddd dddd": 16,
+      "phone:+dddddddddd": 15,
+      "phone:dddd dddddd": 15,
+      "phone:ddddddd- dddd": 15,
+      "phone:+dd dddd ddd ddd": 14,
+      "phone:+d (ddd) ddd-dd-dd": 14,
+      "phone:dddd- ddddddd": 13,
+      "phone:dddd dd dd dd": 13,
+      "phone:+dd (d) dddd ddd ddd": 13,
+      "phone:+dd (d) ddd dd dd dd": 12,
+      "phone:ddddd-ddd-dddd-d": 12,
+      "phone:+dd (dd) ddddddd": 12,
+      "phone:+d ddd ddd-dd-dd": 11,
+      "phone:ddddddd-dddd": 11,
+      "phone:+dd d ddddddd": 11,
+      "phone:+dd-dd-ddd-ddd-ddd": 10,
+      "phone:+ddd-d-ddd-dddd": 10,
+      "phone:ddd ddd ddd ddd": 9,
+      "phone:ddddd (ddd) ddd": 9,
+      "phone:+dd(d)dddd-dddddd": 9,
+      "phone:(ddd) ddddddd": 8,
+      "phone:+dd (d) d dd dd dd dd": 8,
+      "phone:+dd dd dd dd dd": 8,
+      "phone:ddddddd-ddd": 8,
+      "phone:+dddd ddd dddd": 8,
+      "phone:+dd-d-ddd-dddd": 8,
+      "email:xxxxxxxxxxxxxxxx@xxxxx.xxx": 7,
+      "email:xxxxxxxxxx@xxxxx.xxx": 7,
+      "phone:dddd dd ddd dd": 7,
+      "phone:+dd-dddd-dddddd": 7,
+      "phone:+dd (d)dd dddd dddd": 7,
+      "phone:+dd (d) ddd-dd-dd": 7,
+      "phone:dddd-ddddd-d": 6,
+      "phone:ddd ddd ddd dddd": 6,
+      "phone:+dd(d)ddd ddd dddd": 6,
+      "email:xxxx@xxxxxxxx.xxx": 5,
+      "phone:+dd ddd-ddd-dddd": 5,
+      "phone:(dddd) ddd dd dd": 5,
+      "phone:+dd-ddddd ddddd": 5,
+      "email:xxxxxxxxxxxxxxx@xxxxx.xxx": 4,
+      "email:xxxxxxxxxxxx@xxxxx.xxx": 4,
+      "phone:+ddd ddd dddd": 4,
+      "phone:(ddd) dddd dddd": 4,
+      "phone:dddd-ddd-dddd-d": 4,
+      "email:xxxxxx.xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx": 4,
+      "phone:(dddd-dd)dddddddd": 4,
+      "phone:dddd-dddd-dddd-ddd": 3,
+      "email:xxxxxxxx@xxxxx.xxx": 3,
+      "phone:+dd (d) ddd ddd ddd": 3,
+      "phone:+ddd ddd ddddd": 3,
+      "phone:ddd-ddddddd d": 3,
+      "phone:+dd-ddd-dddd dddd": 3,
+      "phone:+dddddd dddddd": 3,
+      "email:xxxxxxx@xxxxxxxxxxxx.xxx": 3,
+      "phone:ddd- ddddddd": 2,
+      "email:xxxxxxxxxxxxxxxxx@xxxxx.xxx": 2,
+      "phone:dddd-dddd-dddd-dd": 2,
+      "email:xxxx@xxxx.xxx.xx": 2,
+      "email:xxxxxxx@xxxxx.xxx": 2,
+      "phone:dddd-dddd(dd)ddddd": 2,
+      "email:xxxxxxxxxdddd@xxxxx.xxx": 2,
+      "phone:+d-dddddddddd": 2,
+      "phone:dddd dd ddd ddd": 2,
+      "phone:+d-dd-ddd-dddd": 2,
+      "email:xxxx@xxxxxxxxxxx.xxx": 2,
+      "phone:+dd (d)-dd-dddddddd": 2,
+      "phone:+dd) ddd-ddddd": 2,
+      "phone:+dd) ddd-ddddd-d": 2,
+      "phone:ddddddddddd d": 2,
+      "phone:+dd) dddd ddd dddd": 2,
+      "phone:dddd dddd dd (d": 2,
+      "phone:ddddd dd dddd": 2,
+      "phone:dddddd-dddddddd": 2,
+      "phone:dddddd dddddddd": 2,
+      "phone:ddd- ddddddd-d": 1,
+      "email:xxxxxxxxddd@xxxxx.xxx": 1,
+      "phone:dddd-dddd-dddd-d": 1,
+      "email:xxxxxxxxxxxxdddd@xxxxx.xxx": 1,
+      "email:xx_xxxxx_xxxxx@xxxxxxx.xxx": 1,
+      "email:xxxxxxxxxxxxxx@xxxxxxx.xxx": 1,
+      "email:xxdddddd@xxxxx.xxx": 1,
+      "email:xxxx@xxxxd.xxx": 1,
+      "email:xxxx@xxx.xxx.xx": 1,
+      "email:xxxxxxxxxxxxxxxxddd@xxxxx.xxx": 1,
+      "email:xxxxxxddddxx@xxxxx.xxx": 1,
+      "email:xxxxx@xxx.xx": 1,
+      "email:xxxxxxxxxdd@xxxxxxxxxx.xxx": 1,
+      "email:xxx@xxxxxxx.xxx.xx": 1,
+      "email:xxxxx@xxx.xxxxxxxx.xxx": 1,
+      "email:xxxxxxxx@xxxxxxxxxxxxxxxxxxxxxxx.xx": 1,
+      "email:xxxxxxxxxxd@xxxxx.xxx": 1,
+      "phone:+ddd) dd-ddd-dd-dd": 1,
+      "email:xxxxxxxxxxx@xxxxxxxxxx.xxx": 1,
+      "email:xxxxxxdddd@xxxxx.xxx": 1,
+      "email:xxxx@xxxx.xx.xx": 1,
+      "email:xxxxxx_xxxxxxx@xxxxxx.xxx": 1,
+      "email:xxxxxx_xxxxxxxdd@xxxxx.xxx": 1,
+      "email:xx_xxxxxxxxx@xxxxxxx.xxx": 1,
+      "email:xxxxx@xx-xxxxxx.xxxxxx.xx": 1,
+      "email:xxxx@xxxxx-xx-xxxxxxx.xxx.xx": 1,
+      "email:xxxxxxx@xxxxxxx.xxx.xx": 1,
+      "phone:+dd dddd-ddddddd": 1,
+      "phone:+dd dd ddddddd-dd": 1,
+      "phone:+dddd-ddddddddd": 1,
+      "phone:+d-(ddd)-ddd-dddd": 1,
+      "email:xxxxxxxxxxxxxxx@xxx.xxx.xx": 1,
+      "phone:+dddd-ddddddd": 1,
+      "phone:ddddddd dd dd ddd": 1,
+      "phone:+dd-ddd ddddddd": 1,
+      "phone:+dd dd dd dd ddd": 1,
+      "phone:+dd-dd dddddddd": 1,
+      "phone:+dd (ddd)ddddddd": 1,
+      "phone:+ddd (d) dddddddd": 1
+    }
+  },
+  "exclusions": {
+    "version": "1.0.0",
+    "ids": 4312354,
+    "applied": 4312354,
+    "unapplied": 0,
+    "headers": [
+      {
+        "version": "1.0.0",
+        "stage": "6+7",
+        "count": 188,
+        "plans": [
+          {
+            "source": "urdu-wikipedia",
+            "plan_fingerprint": "8743e78c000775aa",
+            "limit": null,
+            "sample_rate": null
+          }
+        ]
+      },
+      {
+        "version": "1.0.0",
+        "stage": "6+7",
+        "count": 4318,
+        "plans": [
+          {
+            "source": "fineweb2-urd_Arab",
+            "plan_fingerprint": "54b744f92e3949f8",
+            "limit": null,
+            "sample_rate": null
+          }
+        ]
+      },
+      {
+        "version": "1.0.0",
+        "stage": "6+7",
+        "count": 4307848,
+        "plans": [
+          {
+            "source": "roman-urdu-parl",
+            "plan_fingerprint": "db3a15522463a364",
+            "limit": null,
+            "sample_rate": null
+          }
+        ]
+      }
+    ],
+    "headerless": []
+  },
+  "exclusion_coverage": {
+    "covered": [
+      "fineweb2-urd_Arab",
+      "roman-urdu-parl",
+      "urdu-wikipedia"
+    ],
+    "uncovered": [],
+    "headerless": [],
+    "stages": [
+      "6+7"
+    ]
+  }
+}

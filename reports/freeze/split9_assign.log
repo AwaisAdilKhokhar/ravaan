@@ -1,0 +1,49 @@
+reading urdu-wikipedia: plan 8743e78c000775aa over 1 file(s)
+reading fineweb2-urd_Arab: plan 54b744f92e3949f8 over 2 file(s)
+reading roman-urdu-parl: plan db3a15522463a364 over 1 file(s)
+excluding 4,312,354 documents removed by earlier stages
+  removals from stage(s) 6+7
+  fineweb2-urd_Arab        covered
+  roman-urdu-parl          covered
+  urdu-wikipedia           covered
+stage 9: applying bands from reports/freeze/plan_resolved.json
+stage 9 phase 2: assigning
+exclusions: applied 4,312,354 of 4,312,354 removed ids
+
+stage 9: assigned 6,242,081 documents, 220,979 outside the budgeted populations
+
+  urdu
+    train       4,708,447 docs  12,134,612,483 chars  ~ 3116.63M tokens
+    validation      2,679 docs       6,954,597 chars  ~    1.79M tokens
+    test            2,721 docs       6,966,359 chars  ~    1.79M tokens
+    arm A          26,653 docs      68,644,514 chars  ~   17.63M tokens  (target 17.65M)
+    arm B         106,726 docs     274,710,235 chars  ~   70.56M tokens  (target 70.59M)
+    fertility: 4.71 chars/word measured, solved at 3.8935 chars/token = 1.21 tokens/word
+
+  roman_urdu
+    train       1,403,776 docs      70,830,436 chars  ~   16.89M tokens
+    validation     50,254 docs       2,525,284 chars  ~    0.60M tokens
+    test           50,157 docs       2,525,168 chars  ~    0.60M tokens
+    arm A         489,393 docs      24,662,979 chars  ~    5.88M tokens  (target 5.88M)
+    arm B       1,403,776 docs      70,830,436 chars  ~   16.89M tokens  (target 23.53M)   UNMET
+    fertility: 4.92 chars/word measured, solved at 4.1928 chars/token = 1.17 tokens/word
+
+  code_switched
+    train          23,663 docs      53,575,608 chars  ~   16.35M tokens
+    validation        156 docs         486,147 chars  ~    0.15M tokens
+    test              228 docs         492,301 chars  ~    0.15M tokens
+    arm A           2,186 docs       4,781,745 chars  ~    1.46M tokens  (target 1.47M)
+    arm B           8,655 docs      19,267,753 chars  ~    5.88M tokens  (target 5.88M)
+    fertility: 5.04 chars/word measured, solved at 3.2758 chars/token = 1.54 tokens/word
+
+  arms, totalled across populations — this is §4.3's U
+    arm A:   518,232 docs  ~   24.97M tokens of 25M target
+    arm B: 1,519,157 docs  ~   93.33M tokens of 100M target
+
+  GATE G1: ARM_A_ONLY — ~3155.0M clean tokens against a 100M threshold
+    aggregate: pass   mixture: arm_a_only   arms fundable at the mixture: ['A']
+    urdu           ~ 3120.21M supply against   74.20M for arm B + held-out = 42.05x
+    roman_urdu     ~   18.10M supply against   24.73M for arm B + held-out = 0.73x  SHORT
+    code_switched  ~   16.65M supply against    6.18M for arm B + held-out = 2.69x
+  unmet arms: {'roman_urdu': ['B']}
+wrote 106,195 held-out documents to data/freeze/heldout.jsonl

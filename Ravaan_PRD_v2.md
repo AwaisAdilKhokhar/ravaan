@@ -155,6 +155,19 @@ bumping. (c) **The stage-10 fertility re-verification is skipped** — `pack.py 
 so a bad `code_switched` ratio is visible after the fact and re-packable; that population is 5.88% of
 the mixture, so a 20% error moves arm A by ~1%.
 
+**A fourth, taken 2026-09-17 during the freeze and narrowing what stage 8 measured.** The
+decontamination pass was restarted without the `roman_urdu` held-out split in its eval index: at
+100,411 short sentences on character 5-grams it made the pass **3.3× slower** (measured) and the
+first attempt was abandoned at 26.9% after 28.7 hours. **Gate G1's Finding T case is unaffected** —
+that is held-out *native Urdu* inside FineWeb2, and `heldout_urdu` is still indexed whole and
+unsampled — as is the reference transliteration set, both columns. What is not measured is
+Roman-Urdu-Parl's held-out sentences against the training corpus; that split carries stage 7's
+within-source dedup only, which removed 82.4% of the source's characters before the split existed.
+**Judged tolerable because contamination there inflates held-out BPB for both arms equally**, so the
+crossover — the primary endpoint — is largely robust to it; what it weakens is the absolute BPB
+figure and any transliteration claim resting on held-out Roman Urdu. **The report must state this
+rather than report a held-out number as though the whole split had been decontaminated.**
+
 **The cheapest thing that partly restores the seed argument, if it is ever wanted:** re-run the
 *diffusion* arm alone at a second seed, one run, and report the within-arm spread beside the
 between-arm gap. It does not make the endpoint seed-averaged, but it bounds the noise the single

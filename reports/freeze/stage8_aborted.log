@@ -1,0 +1,16 @@
+stage 8: indexing eval sets
+  heldout_code_switched                     384 items, word shingles
+  heldout_roman_urdu                    100,411 items, char shingles
+  heldout_urdu                            5,400 items, word shingles
+  roman-urdu-parl-test-roman             16,241 items, char shingles
+  roman-urdu-parl-test-urdu              16,241 items, char shingles
+  138,677 items total, 3,203,208 distinct shingles, 115,109 indexed lines, 20,883 below min_shingles (exact-only)
+reading urdu-wikipedia: plan 8743e78c000775aa over 1 file(s)
+reading fineweb2-urd_Arab: plan 54b744f92e3949f8 over 2 file(s)
+reading roman-urdu-parl: plan db3a15522463a364 over 1 file(s)
+excluding 4,312,354 documents removed by earlier stages
+  removals from stage(s) 6+7
+  fineweb2-urd_Arab        covered
+  roman-urdu-parl          covered
+  urdu-wikipedia           covered
+stage 8: checking the corpus

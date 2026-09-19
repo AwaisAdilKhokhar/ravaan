@@ -98,3 +98,7 @@ Thumbs.db
 # the 1.38 h pass. Named explicitly rather than globbed by size, because a rule that silently
 # drops the *small* lists is the fourth instance of this file's recurring bug.
 /reports/freeze/removals_67_roman.txt
+
+# Stage 8's retained hits: 1.4 GB of measured evidence, regenerable from the pass and
+# too large for git. The removals list it produces IS committed, and so is the report.
+/reports/freeze/hits_8.jsonl

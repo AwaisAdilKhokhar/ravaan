@@ -672,13 +672,21 @@ def main(argv: list[str] | None = None) -> int:
             )
 
     if args.removals:
-        cut = config.containment_threshold
         # Written as *row* ids, with any `#roman` / `#urdu` suffix removed by the same function
         # stage 9 splits on. This pass reads a parallel row as two documents because contamination
         # arrives on one side or the other; every later stage reads it as one. A list naming
         # `id#roman` would match nothing downstream and remove nothing, which is the quiet failure
         # — the pass would report a removal it never made.
-        removed = sorted({pair_key(hit.doc_id) for hit in hits if hit.containment >= cut})
+        # Per eval set, not the global threshold. A sentence-unit set carries 0.90 and the
+        # default is 0.80, so one global cut writes removals the report's own counters never
+        # agreed with — measured on the freeze at 432,249 ids against 349,823.
+        removed = sorted(
+            {
+                pair_key(hit.doc_id)
+                for hit in hits
+                if hit.containment >= index.threshold_for(hit.eval_set)
+            }
+        )
         written = write_exclusions(args.removals, removed, stage="8", readers=readers)
         print(f"\nwrote {written:,} contaminated ids to {args.removals}", file=sys.stderr)
 

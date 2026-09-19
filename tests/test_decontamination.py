@@ -781,3 +781,29 @@ def test_the_hit_dataclass_rounds_for_the_report():
     )
     assert hit.to_dict()["containment"] == 0.1235
     assert hit.to_dict()["jaccard"] == 0.9877
+
+
+def test_threshold_for_is_per_eval_set_not_global():
+    """The removals list has to agree with the counters beside it.
+
+    `for_sentences()` raises the cut to 0.90 because the 0.80-0.90 band on a sentence set is
+    templates. A removals list written at the global 0.80 deletes training documents on evidence
+    this stage already judged to be nothing, and no counter in the report disagrees with it —
+    measured on the freeze at 432,249 ids against a reported 349,823.
+    """
+    index = Decontaminator(DecontaminationConfig(containment_threshold=0.80))
+    index.add_eval_set(EvalSetSpec(name="documents"))
+    index.add_eval_set(EvalSetSpec(name="sentences").for_sentences())
+
+    assert index.threshold_for("documents") == 0.80
+    assert index.threshold_for("sentences") == 0.90
+    # An undeclared set falls back rather than raising: add_eval_item declares one on first use.
+    assert index.threshold_for("never-declared") == 0.80
+
+
+def test_a_sentence_set_hit_between_the_two_cuts_is_not_a_removal():
+    """The 82,426-document gap on the freeze, as one case."""
+    index = Decontaminator(DecontaminationConfig(containment_threshold=0.80))
+    index.add_eval_set(EvalSetSpec(name="sentences").for_sentences())
+    assert 0.85 >= index.config.containment_threshold
+    assert 0.85 < index.threshold_for("sentences")

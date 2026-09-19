@@ -1,0 +1,68 @@
+stage 8: indexing eval sets
+  heldout_code_switched                     384 items, word shingles
+  heldout_urdu                            5,400 items, word shingles
+  roman-urdu-parl-test-roman             16,241 items, char shingles
+  roman-urdu-parl-test-urdu              16,241 items, char shingles
+  38,266 items total, 3,067,145 distinct shingles, 57,022 indexed lines, 9,836 below min_shingles (exact-only)
+reading urdu-wikipedia: plan 8743e78c000775aa over 1 file(s)
+reading fineweb2-urd_Arab: plan 54b744f92e3949f8 over 2 file(s)
+reading roman-urdu-parl: plan db3a15522463a364 over 1 file(s)
+excluding 4,312,354 documents removed by earlier stages
+  removals from stage(s) 6+7
+  fineweb2-urd_Arab        covered
+  roman-urdu-parl          covered
+  urdu-wikipedia           covered
+stage 8: checking the corpus
+exclusions: applied 4,312,354 of 4,312,354 removed ids
+
+stage 8: kept 7,736,133/8,086,133 = 95.6716% of documents, 86.5038% of characters
+  350,000 contaminated documents removed (4.3284% of what was checked)
+
+  which half of §6.3.8 fired
+    contaminated             19,565
+    exact_document            5,812
+    exact_line              324,623
+
+  eval coverage — the share of each TEST SET found in the training corpus
+    heldout_code_switched                     384/384      = 100.0000%
+    heldout_urdu                            5,400/5,400    = 100.0000%
+    roman-urdu-parl-test-roman                652/16,241   = 4.0145%
+    roman-urdu-parl-test-urdu               7,213/16,241   = 44.4123%
+
+  by training source
+    fineweb2-urd_Arab             300,018/4,644,891  = 6.4591% removed
+    roman-urdu-parl                   769/3,347,824  = 0.0230% removed
+    urdu-wikipedia                 49,213/93,418     = 52.6804% removed
+
+  containment of retained hits (jaccard beside it — Finding M's gap)
+    1.00  containment   384,546   jaccard    11,665
+    0.90-1.00  containment   629,809   jaccard       573
+    0.80-0.90  containment 3,833,914   jaccard     1,247
+    0.70-0.80  containment       783   jaccard     4,212
+    0.60-0.70  containment     7,298   jaccard     7,574
+    0.50-0.60  containment    16,804   jaccard     2,128
+
+  strongest hits
+    heldout_code_switched/fineweb2-urd_Arab:<urn:uuid:00847eb7-dc60-4509-a61c-b8ece668763f> in fineweb2-urd_Arab:<urn:uuid:00847eb7-dc60-4509-a61c-b8ece668763f>
+      containment 1.000  jaccard 1.000  shingles 80/80 of eval, 0 in doc  [document]
+    heldout_code_switched/fineweb2-urd_Arab:<urn:uuid:00847eb7-dc60-4509-a61c-b8ece668763f> in fineweb2-urd_Arab:<urn:uuid:00847eb7-dc60-4509-a61c-b8ece668763f>
+      containment 1.000  jaccard 1.000  shingles 80/80 of eval, 80 in doc
+    heldout_code_switched/fineweb2-urd_Arab:<urn:uuid:00847eb7-dc60-4509-a61c-b8ece668763f> in fineweb2-urd_Arab:<urn:uuid:270a08f3-683f-4d1f-acf1-992d8c19e516>
+      containment 1.000  jaccard 0.000  shingles 80/80 of eval, 0 in doc  [line]
+    heldout_code_switched/fineweb2-urd_Arab:<urn:uuid:00847eb7-dc60-4509-a61c-b8ece668763f> in fineweb2-urd_Arab:<urn:uuid:4087c2ec-947f-41b0-b499-c399858633e0>
+      containment 1.000  jaccard 0.000  shingles 80/80 of eval, 0 in doc  [line]
+    heldout_code_switched/fineweb2-urd_Arab:<urn:uuid:00847eb7-dc60-4509-a61c-b8ece668763f> in fineweb2-urd_Arab:<urn:uuid:68286904-57ad-4793-84bb-0c359f7d2f27>
+      containment 1.000  jaccard 0.000  shingles 80/80 of eval, 0 in doc  [line]
+    heldout_code_switched/fineweb2-urd_Arab:<urn:uuid:00847eb7-dc60-4509-a61c-b8ece668763f> in fineweb2-urd_Arab:<urn:uuid:7cde7b92-d272-42fa-a312-9b8f84725f20>
+      containment 1.000  jaccard 0.000  shingles 80/80 of eval, 0 in doc  [line]
+    heldout_code_switched/fineweb2-urd_Arab:<urn:uuid:00847eb7-dc60-4509-a61c-b8ece668763f> in fineweb2-urd_Arab:<urn:uuid:7d32db3d-d357-47d2-9f58-02f33848ef8d>
+      containment 1.000  jaccard 0.000  shingles 80/80 of eval, 0 in doc  [line]
+    heldout_code_switched/fineweb2-urd_Arab:<urn:uuid:00847eb7-dc60-4509-a61c-b8ece668763f> in fineweb2-urd_Arab:<urn:uuid:a1275326-603a-449f-879e-00d30b3a4ff1>
+      containment 1.000  jaccard 0.000  shingles 80/80 of eval, 0 in doc  [line]
+    heldout_code_switched/fineweb2-urd_Arab:<urn:uuid:00d4607e-a294-4fc0-874b-61c26d55abc4> in fineweb2-urd_Arab:<urn:uuid:00d4607e-a294-4fc0-874b-61c26d55abc4>
+      containment 1.000  jaccard 1.000  shingles 775/775 of eval, 0 in doc  [document]
+    heldout_code_switched/fineweb2-urd_Arab:<urn:uuid:00d4607e-a294-4fc0-874b-61c26d55abc4> in fineweb2-urd_Arab:<urn:uuid:00d4607e-a294-4fc0-874b-61c26d55abc4>
+      containment 1.000  jaccard 1.000  shingles 775/775 of eval, 775 in doc
+
+wrote 432,249 contaminated ids to reports/freeze/removals_8.txt
+wrote 4,873,154 measured hits to reports/freeze/hits_8.jsonl

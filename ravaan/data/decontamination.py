@@ -626,6 +626,22 @@ class Decontaminator:
         self._indexes.setdefault(spec.shingling, _ShingleIndex())
         self.log.eval_sets.setdefault(spec.name, 0)
 
+    def threshold_for(self, eval_set: str) -> float:
+        """The containment cut that applies to one eval set — its own, or the global default.
+
+        The same resolution :meth:`add_eval_item` does per item, exposed because the *removals
+        list* has to agree with it. :meth:`for_sentences` raises the cut to 0.90 on the argument
+        that the 0.80-0.90 band on a sentence set is templates — ``'qaisrani , September 4 ,
+        2006'`` against ``'qaisrani , September 25 , 2006'`` — so a list written at the global 0.80
+        deletes training documents on evidence this stage already judged to be nothing, while the
+        report beside it counts the per-set number. Measured on the freeze: 432,249 ids against
+        349,823, a 23.6% over-removal that no counter in the report disagreed with.
+        """
+        spec = self._specs.get(eval_set)
+        if spec is None or spec.containment_threshold is None:
+            return self.config.containment_threshold
+        return spec.containment_threshold
+
     def add_eval_item(self, eval_set: str, item_id: str, text: str) -> None:
         """Index one test item. Every §8.2 test set goes through here before the corpus is read.
 

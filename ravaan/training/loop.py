@@ -172,7 +172,11 @@ class Trainer:
         stop = min(config.total_steps, max_steps or config.total_steps)
         log_path = self.out_dir / f"{self.run_name}.jsonl"
         self.model.train()
-        started = time.time()
+        # Resume continues the clock rather than restarting it. `state.tokens` survives a
+        # preemption and `wall_seconds` is restored beside it, so zeroing the origin here would
+        # divide every token the run has ever processed by the seconds since the last resume —
+        # and `tokens_per_second` is the number that says whether a rented instance is on budget.
+        started = time.time() - self.state.wall_seconds
 
         stream = self.sampler.batches(self.state.step * self.accumulation)
         while self.state.step < stop:

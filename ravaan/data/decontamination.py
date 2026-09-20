@@ -756,12 +756,12 @@ class Decontaminator:
         exact: DecontaminationVerdict | None = None
         if config.exact_document_match:
             position = self._doc_hashes.get(content_hash(text))
-            if position is not None:
+            if position is not None and not self._is_self(position, doc_id):
                 exact = self._contaminated(doc_id, position, "exact_document")
         if exact is None and config.exact_line_match and self._line_hashes:
             for line in lines(text, config.min_line_chars):
                 position = self._line_hashes.get(_line_hash(line))
-                if position is not None:
+                if position is not None and not self._is_self(position, doc_id):
                     exact = self._contaminated(doc_id, position, "exact_line")
                     break
 
@@ -778,6 +778,8 @@ class Decontaminator:
                 continue
             doc_size = len(doc_shingles)
             for position, intersection in counts.items():
+                if self._is_self(position, doc_id):
+                    continue
                 eval_size = self._eval_sizes[position]
                 contained = containment_of(intersection, eval_size)
                 if contained < self._eval_retain[position]:
@@ -820,6 +822,23 @@ class Decontaminator:
         if worst is not None:
             return worst
         return DecontaminationVerdict(doc_id=doc_id, kept=True)
+
+    def _is_self(self, position: int, doc_id: str) -> bool:
+        """Is this eval item the very document being checked?
+
+        §8.2's held-out sets are *carved out of the corpus* by stage 9, so at the freeze the same
+        document arrives twice: once indexed as an eval item and once read as a corpus document.
+        It then contains itself at containment 1.0 and the stage removes it — deleting the
+        evaluation set it was built to protect. Measured on the freeze before this guard existed:
+        **100% of `heldout_urdu` (5,400) and `heldout_code_switched` (384) were removed**, each by
+        a self-match recorded twice, once as `exact_document` and once as `exact_line`, and stage
+        10 then wrote a corpus with no urdu or code_switched validation or test stream at all.
+
+        A document is not contaminated by being itself. Overlap with a *different* held-out
+        document is real contamination and still counts, so near-duplicates across the split
+        boundary are caught exactly as before.
+        """
+        return self._eval_id[position] == doc_id
 
     def _contaminated(self, doc_id: str, position: int, reason: str) -> DecontaminationVerdict:
         eval_set = self._eval_set[position]

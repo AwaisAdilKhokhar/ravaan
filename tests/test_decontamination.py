@@ -807,3 +807,20 @@ def test_a_sentence_set_hit_between_the_two_cuts_is_not_a_removal():
     index.add_eval_set(EvalSetSpec(name="sentences").for_sentences())
     assert 0.85 >= index.config.containment_threshold
     assert 0.85 < index.threshold_for("sentences")
+
+
+def test_a_document_is_not_contaminated_by_being_itself():
+    """§8.2's held-out sets are carved out of the corpus, so each arrives twice at the freeze.
+
+    Without the guard the document matches itself at containment 1.0 and is removed, which
+    deletes the evaluation set. Measured on the freeze: 100% of heldout_urdu (5,400) and
+    heldout_code_switched (384) went this way, and stage 10 wrote a corpus with no urdu
+    validation or test stream.
+    """
+    index = Decontaminator()
+    index.add_eval_item("held-out", "corpus:7", URDU_ARTICLE)
+    index.seal()
+
+    assert index.check("corpus:7", URDU_ARTICLE).kept
+    # A *different* document holding the same text is still contamination.
+    assert not index.check("corpus:8", URDU_ARTICLE).kept

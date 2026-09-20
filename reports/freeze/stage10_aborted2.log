@@ -1,0 +1,25 @@
+excluding 4,662,177 documents removed by earlier stages
+  removals from stage(s) 6+7, 8
+  fineweb2-urd_Arab        covered
+  roman-urdu-parl          covered
+  urdu-wikipedia           covered
+
+stage 10 — tokenizer sentencepiece:ravaan-16k.model
+
+  fertility, measured against stage 9's estimate
+    code_switched    3.118 chars/token measured against 3.2758 estimated  (-4.8%)   separators 0.13%   4.838 bytes/token
+    roman_urdu       4.066 chars/token measured against 4.1928 estimated  (-3.0%)   separators 8.07%   4.066 bytes/token
+    urdu             3.739 chars/token measured against 3.8935 estimated  (-4.0%)   separators 0.16%   6.631 bytes/token
+
+  streams
+    code_switched/train/A       2,307 seq     1,181,184 tokens      1,487 docs  dropped  167
+    code_switched/train/B       8,921 seq     4,567,552 tokens      5,904 docs  dropped  469
+    roman_urdu/test             1,213 seq       621,056 tokens     50,139 docs  dropped   40
+    roman_urdu/train/A         11,839 seq     6,061,568 tokens    489,245 docs  dropped  261
+    roman_urdu/train/B         33,974 seq    17,394,688 tokens  1,403,368 docs  dropped  383
+    roman_urdu/validation       1,212 seq       620,544 tokens     50,233 docs  dropped  235
+    urdu/train/A               31,194 seq    15,971,328 tokens     24,770 docs  dropped  384
+    urdu/train/B              123,829 seq    63,400,448 tokens     99,175 docs  dropped  474
+exclusions: applied 4,662,177 of 4,662,177 removed ids
+
+wrote 16 shards under data/packed and the manifest to data/packed/manifest.json

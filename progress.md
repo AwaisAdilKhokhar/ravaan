@@ -22,11 +22,20 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
   initialization draw. This is PRD §10's own pre-committed minimum viable cut, taken deliberately.
 - **Weeks 1–2 complete. Weeks 5–8 complete ahead of them.** §7's tokenizer, §5's model, both
   objectives, the training loop, §4.2's five-task generator, §8's decoders, and both halves of G3.
-- **Weeks 3–4 — the freeze is nearly done.** Stage 6+7 ✅ all three sources (2026-09-16, Kaggle,
-  6.94 h, $0). **Stage 9 ✅ complete 2026-09-16**, both phases, local, $0 — **arm A is fully funded
-  at 24.97M of 25M tokens** and `data/freeze/heldout.jsonl` exists (106,195 documents). **Stage 8 is
-  running**; **stage 10 is chained behind it** and should land the packed corpus overnight. After
-  that the corpus is finished and the only remaining blocker is a GPU.
+- **✅ Weeks 3–4 are COMPLETE. The corpus freeze is finished, 2026-09-20, all local, $0.**
+  `data/packed` — 20 shards, 218 MB, manifest with per-shard checksums committed, shards not.
+  All twelve streams exist (three populations × train/A, train/B, validation, test).
+  **Arm A: 23,214,080 tokens. Held-out: validation 4,874 sequences, test 5,072** against §6.1's
+  ~5K each. **G1 re-check: PASS** — stage 8 removed only **592** roman-urdu-parl rows, so the
+  population that killed arm B never threatened arm A.
+- ⚠️ **U is 23.21M, not 25M, and the mixture is 68.8 / 26.1 / 5.1 against §6.1's 70.6 / 23.5 / 5.9.**
+  Accepted 2026-09-20 and logged in the preregistration's deviation log. Arm A's cut is a fixed
+  bucket range solved on stage 9's *pre*-stage-8 histogram and stage 8 then took 13.5% of the
+  characters inside it. **It strengthens the design rather than weakening it** — less unique data at
+  the same 9.9B tokens means arm A sits **2.11× past C_crit** where the plan put it at 1.79×, and
+  the crossover is still predicted at U = 33M. Epochs ~426, not ~396. **The report quotes the
+  realized numbers, not the planned ones.**
+- ⚠️ **The only blocker to a result is now a rented GPU.** Nothing in the pipeline waits on anything.
 - **One live design question left, and it is yours: the FIM framing** (open question 5, Finding AT).
   ✅ **Finding AE is decided 2026-09-16 — do not filter, disclose the rate**; open question 6 is
   folded into PRD v2.4 as a §6.2/§8.2 wording amendment.
@@ -132,7 +141,7 @@ holds only while the priority is wall-clock and while stage 10's reported fertil
 |---|---|---|
 | **Tokenizer** — SentencePiece Unigram 16k, byte fallback, 12 framing tokens inside the vocabulary | §7 | ✅ s19, fingerprint `2855877c8ecd38c9` |
 | ↳ fertility measured, retiring stage 9's estimate | §7 | ✅ urdu **3.8935** / roman_urdu **4.1928** / code_switched **3.2758** (separator-inclusive) |
-| ↳ ⚠️ `code_switched`'s figure is the least-supported — that population filled to only 43.4% of its share | §7 | ⚠️ re-measure when stage 10 runs for real |
+| ↳ `code_switched`'s figure was the least-supported — that population filled to only 43.4% of its share | §7 | ✅ **discharged 2026-09-20.** Stage 10 measured **3.117** against the 3.2758 estimate — low by 4.8%, the same direction and order as urdu (3.739 vs 3.8935, −4.0%) and roman_urdu (4.066 vs 4.1928, −3.0%) |
 | **Shared backbone** — RoPE, RMSNorm, SwiGLU, SDPA, tied embeddings; one flag switches the arm | §5 | ✅ s19, both arms at **69,975,680** params, identical |
 | **AR objective** · **MDLM objective** (time-agnostic) · **training loop** | §4.1, §4.3, §9 | ✅ s19; resume tested exact on both arms |
 | **§4.2's five-task corruption generator** | §4.2 | ✅ s20, both arms train on all five |

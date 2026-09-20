@@ -15,7 +15,27 @@
     "fingerprint": "2855877c8ecd38c9",
     "vocab_size": 16384,
     "eos_id": 3,
-    "placeholder": false
+    "placeholder": false,
+    "special_tokens": {
+      "<mask>": 4,
+      "<sep>": 5,
+      "<fim_prefix>": 6,
+      "<fim_suffix>": 7,
+      "<fim_middle>": 8,
+      "<lm>": 9,
+      "<infill>": 10,
+      "<translit>": 11,
+      "<restore>": 12,
+      "<codeswitch>": 13,
+      "<ur>": 14,
+      "<rom>": 15
+    },
+    "control_ids": {
+      "pad": 0,
+      "unk": 1,
+      "bos": 2,
+      "eos": 3
+    }
   },
   "layout": {
     "dtype": "uint16",

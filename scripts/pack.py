@@ -228,6 +228,47 @@ def load_tokenizer(path: str | None) -> Tokenizer:
     return SentencePieceTokenizer(path) if path else ByteTokenizer()
 
 
+def _with_framing_pieces(manifest: dict, tokenizer_path: str | None) -> dict:
+    """Add §7's twelve framing piece ids to stage 10's manifest. Finding AX.
+
+    `ShardWriter.manifest` names the tokenizer by id, fingerprint, vocabulary and eos, because
+    that is all *packing* needs from it — `ravaan.data.packing.Tokenizer` is deliberately narrow
+    and widening it would make the seam claim more than it checks. But `FramingTokens.from_manifest`
+    reads the piece ids off this record and refuses a partial set, so a corpus packed without them
+    trains neither arm: §4.2's generator cannot be built at all.
+
+    `scripts/pack_pilot.py` carried this and this driver did not, so the frozen corpus was written
+    without it and the defect surfaced only when a run was launched. The bugs live at the seams
+    (Findings W, AN) — and this one lived in the half of the seam that the pilot never crossed.
+
+    Silent for the placeholder tokenizer, which has no framing pieces and cannot freeze a corpus
+    anyway.
+    """
+    if not tokenizer_path:
+        return manifest
+    import sentencepiece as spm  # noqa: PLC0415
+
+    from scripts.tokenizer import SPECIAL_TOKENS  # noqa: PLC0415
+
+    sp = spm.SentencePieceProcessor(model_file=tokenizer_path)
+    missing = [piece for piece in SPECIAL_TOKENS if sp.piece_to_id(piece) == sp.unk_id()]
+    if missing:
+        raise SystemExit(
+            f"§7's tokenizer at {tokenizer_path} does not carry {', '.join(missing)} — every "
+            "framing piece must be inside the vocabulary, not appended to it"
+        )
+    manifest["tokenizer"]["special_tokens"] = {
+        piece: sp.piece_to_id(piece) for piece in SPECIAL_TOKENS
+    }
+    manifest["tokenizer"]["control_ids"] = {
+        "pad": sp.pad_id(),
+        "unk": sp.unk_id(),
+        "bos": sp.bos_id(),
+        "eos": sp.eos_id(),
+    }
+    return manifest
+
+
 def _resolve_report(plan: SplitPlan, measured: dict[str, float]) -> Iterator[str]:
     """How far every band moves when the estimate is replaced by the measurement.
 
@@ -389,9 +430,14 @@ def main(argv: list[str] | None = None) -> int:
         "exclusion_coverage": coverage.to_dict(),
     }
     if writer is not None:
-        payload["corpus"] = writer.manifest(log)
+        corpus = _with_framing_pieces(writer.manifest(log), args.tokenizer)
+        payload["corpus"] = corpus
         if args.manifest_out:
-            writer.write_manifest(args.manifest_out, log)
+            Path(args.manifest_out).write_text(
+                json.dumps(corpus, indent=2, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
             print(
                 f"\nwrote {len(writer.shards):,} shards under {args.out} "
                 f"and the manifest to {args.manifest_out}",

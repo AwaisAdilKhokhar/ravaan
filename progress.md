@@ -12,7 +12,9 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 
 ## State of play
 
-- **Started** 2026-08-03 (Week 1 of 16). **PRD v2.4** (2026-09-16). **Spend $0.00 of $150.**
+- **Started** 2026-08-03 (Week 1 of 16). **PRD v2.4** (2026-09-16). **Spend: first money went
+  out 2026-09-20 — $40 loaded on Vast.ai, ~$17.30 committed to the two core runs, of $150.**
+  Everything before this was $0: the whole corpus freeze ran local, on Colab and on Kaggle.
 - **⏱ Priority, set 2026-09-16 and it governs every choice below: time to a reported result.**
   The project ships **two training runs — one AR, one diffusion, one seed each** (PRD §0.4).
   Seeds 2–3 and ablations **A1/A2 are dropped**; A3/A4 are inference-only and survive. Budget
@@ -35,7 +37,15 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
   the same 9.9B tokens means arm A sits **2.11× past C_crit** where the plan put it at 1.79×, and
   the crossover is still predicted at U = 33M. Epochs ~426, not ~396. **The report quotes the
   realized numbers, not the planned ones.**
-- ⚠️ **The only blocker to a result is now a rented GPU.** Nothing in the pipeline waits on anything.
+- 🟢 **THE CORE RUNS ARE LIVE as of 2026-09-20, and there is no blocker left.** Vast.ai RTX 5090,
+  instance **51739847**, $0.5647/h. **Ravaan-DIFF seed 0 is training; Ravaan-AR seed 0 is chained
+  behind it.** Measured **181,600 tok/s** — 11.8× this 4060 and **8.5× G2's bar** — so each run is
+  **~15.1 h** and both together **~30.6 h for ~$17.30**. See "Next session".
+- ⚠️ **Two blockers were found by launching, not by reading, and both are fixed (Findings AX, AY).**
+  **`data/packed` could not build §4.2's task generator at all** — `pack.py` never wrote §7's twelve
+  framing pieces into the manifest, so *both* arms exited on arrival. It would have failed on the
+  rented box five minutes in. A third defect (AZ, `--eval-limit`) is **not** fixed and is worked
+  around on the command line.
 - **One live design question left, and it is yours: the FIM framing** (open question 5, Finding AT).
   ✅ **Finding AE is decided 2026-09-16 — do not filter, disclose the rate**; open question 6 is
   folded into PRD v2.4 as a §6.2/§8.2 wording amendment.
@@ -46,7 +56,7 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 |---|---|---|
 | **G0** — comparison unpublished | §11 | ✅ **PASS** 2026-08-03 — [`literature_review.md`](reports/literature_review.md) |
 | **G1** — clean corpus ≥ 100M tokens, per-population | §11 | ⛔ **FAIL on `roman_urdu` (0.44×)** → arm B dropped, single-arm. **Stage 9 measured arm A's own margin 2026-09-16: `roman_urdu` 2.55×** (not the ~1.53× this file carried), `code_switched` 9.40×, `urdu` 146.8×. Stage 8 must remove **>60.8%** of the `roman_urdu` pool to break arm A. **Re-check still due when stage 8 lands** |
-| **G2** — throughput implies **2** runs ≤ $90 | §11 | 🟡 **v2.4 slashed the bar to ~21,400 tok/s** (was 64,162 at six runs). This 4060 does ~14,200 — **1.5× short, not 4.5×**. The gate now answers *how long will this take*, not *can I afford it*; still measured on the instance, never off a spec sheet |
+| **G2** — throughput implies **2** runs ≤ $90 | §11 | ✅ **PASS 2026-09-20, measured on the rented instance** as the gate always required. RTX 5090 at microbatch 16: **DIFF 186,631 / AR 183,149 tok/s** against a bar of ~21,400 — **8.5× over**. Two runs = **30.6 h = $17.30** against the $90 ceiling. The 4060's 15,350 tok/s (re-measured on the frozen corpus, up from the 14,200 this file carried) was never the answer — it was the requirement |
 | **G3** — 20M pilot, both arms, resume | §11 | 🟡 resume **PASS**; coherence **FAIL**, recorded unmet on its own terms, Week 9 proceeds |
 | **G4** — arm A's curves at 50% of tokens | §11 | ⬜ Week 9–11. ⚠️ **v2.4 leaves it no lever on the run list** — "complete arm A's 3 seeds" is spent along with "cut arm B" — so it acts only on the write-up, *and* it is now the project's sole early warning for a diffusion-only defect |
 | **G5** — human evaluation | §11 | ⬜ Week 13, and the annotators are not lined up. ⚠️ **PRD §10's cut order puts human evaluation *above* the seeds already dropped** — so the ladder is currently being climbed out of order. Open decision, due before Week 12 (PRD §0.4) |
@@ -242,6 +252,9 @@ must say.
 | AW | 26 | Stage 8's cost is dominated by **posting-list length, not index size**: adding `heldout_roman_urdu` (100,411 short sentences, char 5-grams) grew distinct shingles only 3,067,145 → 3,203,208 (+4.4%) but **indexed lines 57,022 → 115,109** and made the pass **3.3× slower** (measured: 2m24s vs 43.8s over 1,500 identical Wikipedia documents, same top findings) | ⚠️ the first freeze attempt was abandoned at **26.9% after 28.7 h**; restarted without that set. `for_sentences()`'s docstring predicted this shape for char shingles on short sets and set `retain_hits_above` 0.50 → 0.80 for it — the residue it did not cover is the **fan-out**, which no config knob bounds |
 | AU | 25 | The Kaggle CLI's **access-token** auth path takes the username from the *server's* token introspection, which answers `del=c0b94e0932cd8e95` for this account — so uploads refuse after sending the bytes and pushed kernels land unreachable | ✅ `authenticate()` tries access token → legacy key → OAuth creds, and only the third reads `credentials.json`'s correct slug. **Delete `~/.kaggle/access_token`** and the CLI falls through to it |
 | AT | 24 | The AR FIM framing loses **~37× in rank at the middle's first token** — `<lm>` ranks gold **2**, `<fim_middle>` ranks it **74**, same checkpoint and position — and the damage is **one position wide** | ⚠️ **live — it reopens the framing call AQ closed.** Not the decoder, span distribution, window, memorization or share |
+| AX | 27 | **`scripts/pack.py` never wrote §7's twelve framing pieces into stage 10's manifest, so the frozen corpus could not build §4.2's task generator and *neither arm would start*** — `FramingTokens.from_manifest` refuses a partial set. `pack_pilot.py` patched the manifest after stage 10; `pack.py` did not, and the freeze ran through `pack.py` | ✅ fixed in `pack.py` (`_with_framing_pieces`); `data/packed/manifest.json` patched in place — piece ids are a property of the **tokenizer**, not the packing, so **no re-pack**: model sha256 matches the manifest's `2855877c8ecd38c9`, nothing outside the `tokenizer` block moved, **all 20 shard checksums still verify**. Findings W/AN a third time — *and this one lived in the half of the seam the pilot never crossed* |
+| AY | 27 | **`Trainer.train` clobbered the `wall_seconds` it had just restored** (`started = time.time()`), while `state.tokens` carried over — so after any preemption `tokens_per_second` divided every token the run had *ever* processed by seconds since resume | ✅ one line, `loop.py:179`. Logging only, no effect on the science — but it is the number that says whether a rented instance is on budget, and §9 makes resume a first-class path precisely because spot instances get preempted |
+| AZ | 27 | **`--eval-limit` truncates in shard order, not by sampling.** Populations concatenate `code_switched → roman_urdu → urdu`, so the default 2,000 scores the primary endpoint on the **first 592 of 3,466** urdu validation sequences and weights the `all` row 10/61/30 instead of 4/25/71 | ⚠️ **not fixed — pass `--eval-limit 0`**, which falls through to the full split for ~2 min. Finding E's shape ("a prefix of a shard is not a sample of it") applied to the eval set. Both core runs launched with `0` |
 
 > ⚠️ **One number in this table was carried wrong.** The status board reported Finding AS as
 > "AR gap +4.46 nats, DIFF +0.03" from session 23 through session 24. Session 23's measurement
@@ -282,7 +295,9 @@ above; the derivations are in git at `8cecdfd`. Dates are 2026.
 | 22 | 09-13 | **`ravaan/sampling/`** — both decoders, §8.1's invariants asserted for the first time; **G3's coherence half answered: FAIL** → [`pilot_coherence.md`](reports/pilot_coherence.md) | **AO, AP, AQ** |
 | 23 | 09-14 | **The first matched pair that is actually matched** — 186.9M unique × 2 epochs, both arms → [`diffusion_scale.md`](reports/diffusion_scale.md); `memorization.py`; `--tokens/--epochs` | **AR, AS** |
 | 24 | 09-14 | **Open question 5 answered — keep 10%** → [`infilling_share.md`](reports/infilling_share.md); §8.3's infill metrics; G3's record actually corrected | **AT** |
-| 25 | 09-15/16 | **The corpus freeze is finished.** Kaggle reopened (Z′, AL retired); AU and AV found and fixed; kernel 00's trial **FITS** at 8.96 h; **kernel 01 ran FineWeb2 stage 6+7 in 6.94 h for $0** — 4,318 ids, largest cluster 8 | **AU, AV** |
+| 25 | 09-15/16 | **Stage 6+7 finished for all three sources.** Kaggle reopened (Z′, AL retired); AU and AV found and fixed; kernel 00's trial **FITS** at 8.96 h; **kernel 01 ran FineWeb2 stage 6+7 in 6.94 h for $0** — 4,318 ids, largest cluster 8 | **AU, AV** |
+| 26 | 09-17/20 | **The corpus freeze is finished.** Stage 8 restarted on a narrower eval index and completed; **stage 10 packed 20 shards, all 12 streams**; U measured at **23.21M** and accepted into the deviation log; Weeks 3–4 closed | **AW** |
+| 27 | 09-20 | **The core runs are launched.** Two blockers found *by running the thing* — AX would have stopped both arms on the rented box; AY would have made the budget read as nonsense after the first preemption. **G2 PASSES on a rented 5090 at 181,600 tok/s.** Ravaan-DIFF s0 training, Ravaan-AR s0 chained, auto-stop watchdog installed | **AX, AY, AZ** |
 
 ### The two results worth keeping in front of you
 
@@ -565,6 +580,12 @@ Live only. Resolved notes have been dropped; they are in git at `8cecdfd`.
 
 **Small and mechanical**
 
+- ⚠️ **`--eval-limit` is a prefix, not a sample (Finding AZ)** — unfixed by choice, worked around
+  with `--eval-limit 0`. The honest fix is to make `Trainer.evaluate` sample across populations, or
+  to make the flag per-population; until then any *other* caller of `evaluate` has the same defect.
+- **`RavaanDiffusion`'s `mask_id` is not in the run's `config.json`** — `ModelConfig.to_dict()` does
+  not carry it, so a run record cannot say which absorbing token it trained against. Harmless while
+  it resolves from the manifest; worth closing when the model card is written.
 - **Two of §8.2's five test sets do not exist yet** — the ~200 human-written transliteration pairs
   and the ~300 real-OCR lines. Both are sentence/line unit; neither has been through stage 8.
 - **`scripts/` has ~2,900 lines and thin test coverage, and Findings W and AN both lived there.**
@@ -593,22 +614,55 @@ Live only. Resolved notes have been dropped; they are in git at `8cecdfd`.
 
 ## Next session
 
-**START HERE. The next task is stage 9**, then 8, then 10 — all local, all cheap, and all under
-step 1 below. **Stage 6+7 finished on 2026-09-16 and nothing about the corpus is blocked on you any
-more**; the G1 re-check that follows it is blocked on a command, not on a decision. The modelling
-work that could be done without the corpus had already been done — Weeks 5–8 are complete, both
-halves of G3 are answered, session 23 ran the first matched pair this project has that is
-*actually* matched, and session 24 closed the infilling share.
+**START HERE. The runs are already going. Check on them before anything else.** The corpus is
+frozen, G2 passed on the rented card, and both core runs were launched on 2026-09-20. Weeks 1–8 are
+complete. **Nothing is blocked on a decision.**
 
-> **⚠️ As of 2026-09-16 exactly two things wait on you, and only one is a design decision.**
-> **(a) Rent the GPU.** This is the blocker; the corpus finishes itself overnight. See step 2.
-> **(b) The FIM framing** — open question 5, reopened by Finding AT. A re-pilot costs 2.7 h and $0
-> today, and it is the last thing that can still delay the runs. Under the wall-clock priority the
-> consistent answer is to ship as-is and carry Finding AT as a stated limitation.
-> ~~**(c) The publishable-checkpoint fork**~~ — resolved by v2.4: two runs, no extras, so arm A's
-> checkpoint *is* the release and the model card must say what it is. See step 2.
+```bash
+ssh -p 46220 root@180.189.55.43 'tail -3 /workspace/runs/core-diff-s0.log;     cat /workspace/runs/watchdog.log; tmux ls; ls /workspace/runs/*/'
+```
 
-### 1. Finish the corpus
+**The live instance — Vast.ai RTX 5090, id `51739847`, `root@180.189.55.43:46220`, $0.5647/h.**
+Key is `~/.ssh/id_ed25519` (generated s27; the public half is on the Vast account). Three tmux
+sessions: **`diff`** (training), **`ar`** (blocked until diffusion writes `evaluation.json`),
+**`wd`** (the watchdog). Launched 11:32 UTC at step 0; at 11:40 it was step 1,190 / 1.58% /
+loss 5.18 / **181,070 tok/s**. Expect diffusion done **~15.1 h** in, AR **~15.4 h** after that.
+
+> **⚠️ Three things, and none of them is a design decision.**
+> **(a) Get the checkpoints off the box.** `bash /d/ravaan-runs/fetch.sh` on the laptop polls every
+> 5 min, pulls each run the moment its `evaluation.json` appears, then touches
+> `/workspace/runs/.downloaded`. **This matters**: the watchdog *stops* the instance when AR
+> finishes, and a stopped Vast instance can only be restarted if the host's GPU is still free.
+> **(b) Destroy the instance** once both runs are on local disk — the 🗑 icon, not Stop. Stop halts
+> the $0.5647/h GPU charge; only destroy halts the **$0.75/day storage** charge.
+> **(c) The second diffusion seed — open, and cheap now.** PRD §0.4 logs it as the highest-value
+> add-back and the first objection a reader will raise at one seed. Budgeted at ~43 GPU-h / ~$15;
+> at 181,600 tok/s it is **15.1 h and $8.55**, taking the total to ~$25.85 of the $40 loaded. It
+> must be appended to the chain **before AR finishes** or the box will stop first.
+
+**Cost control, as installed.** Three layers: prepaid credit is a hard $40 ceiling (**never enable
+Vast's automatic billing** — that removes it); `/workspace/watchdog.sh` stops the instance on AR's
+`evaluation.json` after a 2 h download grace, using the instance's own scoped `CONTAINER_API_KEY`;
+`fetch.sh`'s sentinel ends that grace early. Expected **$17.30**, worst case **$18.40**.
+
+**⚠️ Uncommitted at the end of s27** — `scripts/pack.py`, `ravaan/training/loop.py` and
+`data/packed/manifest.json` (Findings AX, AY). The payload on the rented box already carries them.
+`data/packed/manifest.json.pre-framing` is the gitignored backup of the original.
+
+**What the runs were launched with**, and the header to check any rerun against:
+
+```bash
+python -u scripts/train.py run --arm diff --size 70M --seed 0     --corpus data/packed --corpus-arm A     --tokenizer data/tokenizer/ravaan-16k.model --microbatch 16     --evaluate --eval-split validation --eval-limit 0     --out /workspace/runs/core-diff-s0
+# corpus 45,340 sequences — 23,214,080 tokens · urdu 68.80 / roman_urdu 26.11 / code_switched 5.09
+# Ravaan-DIFF at 70M: 69,975,680 parameters · 9.9e9 tokens over 75,531 steps · epochs 426.5
+# tasks lm 65% infill 10% translit 10% restore 8% codeswitch 7%
+```
+
+⚠️ **`--eval-limit 0` is load-bearing** (Finding AZ) and **microbatch 16 is the measured optimum**
+on the 5090 — 186,631 tok/s against 181,578 at 32 and 168,734 at 8. `--mask-id` is no longer
+needed: the patched manifest carries `<mask>` = 4, which is the path the code intended.
+
+### 1. ~~Finish the corpus~~ — ✅ DONE 2026-09-20. Kept as the record of how, not as a task
 
 **✅ Stage 6+7 is done for all three sources.** FineWeb2's pass ran on **Kaggle** on 2026-09-16 in
 **6.94 h for $0** — kernel 01, unsampled, `--single-pass`, sweep at 0.7/0.8/0.9. The rented 32 GB
@@ -720,7 +774,7 @@ output is ~250 MB, not gigabytes.
 
 **Disk is fine now** — 20 GB free on C:, not the 8 GB this file used to warn about.
 
-### 2. Then compute — and this is now the only real blocker
+### 2. ~~Then compute~~ — ✅ DONE 2026-09-20: Vast.ai RTX 5090, G2 PASS at 181,600 tok/s
 
 §4.3's run is 70M params × 9.9B tokens, and **v2.4 makes it two runs, not six.**
 
@@ -730,6 +784,15 @@ output is ~250 MB, not gigabytes.
 | v2.3's old bar at 6 runs | 64,162 | — | — | — |
 | a 4090-class spot at 64,162 | — | **86** | **~3.6 d** | **~$30** |
 | **this 4060**, measured ~14,200 | — | 387 | **~16 d** | **$0** |
+
+> ✅ **Settled 2026-09-20 and the estimates below were all pessimistic.** A rented **RTX 5090**
+> at **$0.5647/h** measured **181,600 tok/s** — 2× the "4090-class at 64,162" row this table hoped
+> for and 8.5× G2's bar — so two runs are **30.6 h for $17.30**, not 86 h for $30. Two lessons
+> worth keeping: **cost per token is nearly flat across consumer cards** (a 4090 at $0.27 and a
+> 5090 at $0.45 land within a few dollars of each other on the whole job), so "pick for throughput,
+> not price" is right for wall-clock and wrong for cost; and **datacenter cards are strictly worse
+> here** — a 70M model cannot fill an A100 or H100, so they cost 2–3× more for the same 9.9B
+> tokens. The rule that held: the measurement, not the spec sheet, decided it.
 
 **Renting is the answer while the priority is time**, and the interesting change is that at two runs
 the $150 cap has ~3× headroom — so **pick the instance for throughput, not price.** A card faster
@@ -761,7 +824,7 @@ spending limit when the account is created.
 > publishing. §2.4's "no raw text redistribution" means the corpus ships as code, manifest and
 > checksums either way.
 
-### 3. Then the runs — two of them
+### 3. The runs — 🟢 BOTH LAUNCHED 2026-09-20, diffusion first
 
 **One AR, one diffusion, one seed each, same corpus, same budget, same tasks** (PRD §0.4).
 Resume is proven exact on both arms, so spot preemption is survivable and §9's
@@ -833,6 +896,11 @@ noise the single comparison is exposed to — which is the one objection a reade
   one that is four phrases on a loop, and they are blind to what actually separates the arms.
 
 ### Re-running things
+
+```bash
+# the two core runs, as launched on the 5090 (s27). --arm and --out are the only differences
+python -u scripts/train.py run --arm diff --size 70M --seed 0 --corpus data/packed     --corpus-arm A --tokenizer data/tokenizer/ravaan-16k.model --microbatch 16     --evaluate --eval-split validation --eval-limit 0 --out runs/core-diff-s0
+```
 
 ```bash
 # G3's samples, ~8 min on the 4060

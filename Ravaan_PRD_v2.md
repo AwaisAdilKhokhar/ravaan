@@ -262,12 +262,26 @@ One arm, processing ~9.9B tokens:
 
 | Arm | Unique U | Epochs | Seeds | Predicted position |
 |---|---|---|---|---|
-| **A** (primary) | 25M | ~396 | **1** *(v2.4: was 3 — §0.4)* | **1.79× past** C_crit = 2.32 × 10¹⁸ FLOPs |
+| **A** (primary) | **23.21M** *(realized; planned 25M)* | **~426** *(planned ~396)* | **1** *(v2.4: was 3 — §0.4)* | **2.11× past** C_crit(23.21M) = 1.973 × 10¹⁸ FLOPs *(planned: 1.79× past 2.32 × 10¹⁸)* |
 | ~~**B** (bracket)~~ | ~~100M~~ | ~~99~~ | ~~1~~ | **Dropped in v2.3** — `roman_urdu` supply is 0.44× of its requirement. See §0.3 |
 
-At this compute the fitted law puts the crossover at **U = 33M**, so arm A's 25M sits on the side
+At this compute the fitted law puts the crossover at **U = 33M**, so arm A's U sits on the side
 where a crossover is predicted. Reproduce with `python scripts/crossover.py --params 70e6
---unique 25e6 --epochs 396`.
+--unique 23214080 --epochs 426` (the planned point was `--unique 25e6 --epochs 396`).
+
+> **Realized at the freeze, 2026-09-20: U = 23,214,080, not 25M.** Arm A's cut is a fixed bucket
+> range solved on stage 9's *pre*-stage-8 histogram, and stage 8 then removed 13.5% of the
+> characters inside those buckets, so the cut delivered **92.9%** of its token budget — urdu 90.5%,
+> `code_switched` 80.3%, `roman_urdu` **103.0%** (only 592 of its rows were removed, which is what
+> tilted the realized mixture to **68.8 / 26.1 / 5.1** against §6.1's 70.6 / 23.5 / 5.9). The pool
+> is not short: urdu alone still holds ~2.7B clean tokens.
+>
+> **This moves the design point further into the regime §4.3 exists to test, not out of it.** Less
+> unique data at the same 9.9B tokens processed means more repetition, so arm A sits **2.11× past
+> C_crit** where the plan put it at 1.79×, and the crossover is still predicted at U = 33M — so
+> arm A at 23.21M is further onto the side where P1 predicts a cross. The deviation is logged in
+> `reports/preregistration.md` §8 and **the report must quote the realized U, epoch count and
+> mixture rather than the planned ones.**
 
 **U is the arm's *total* unique-token budget** — native Urdu, Roman Urdu and code-switched text summed — not any one component. That is what the epoch counts above divide 9.9B by, and it is what U means in the fitted law: the training set the model repeats over. §6.1 gives the composition. *(Stated explicitly in v2.2; see §0.2.)*
 

@@ -6,24 +6,24 @@
     "tokenizer_fingerprint": "2855877c8ecd38c9",
     "sample_rate": null,
     "totals": {
-      "documents": 2130082,
-      "sequences": 222010,
-      "tokens_written": 113669120,
-      "tokens_encoded": 113672192,
-      "separators": 2129992,
-      "text_bytes": 679595821,
-      "dropped_tokens": 3072,
+      "documents": 2124321,
+      "sequences": 214489,
+      "tokens_written": 109818368,
+      "tokens_encoded": 109820781,
+      "separators": 2124236,
+      "text_bytes": 654592117,
+      "dropped_tokens": 2413,
       "empty_documents": 0
     },
     "fertility": {
       "code_switched": {
-        "chars_per_token_measured": 3.1174,
-        "bytes_per_token_measured": 4.8349,
+        "chars_per_token_measured": 3.1176,
+        "bytes_per_token_measured": 4.8378,
         "separator_share": 0.00129,
-        "encoded_tokens": 6009327,
-        "written_tokens": 6008320,
-        "chars": 18733452,
-        "documents": 7774
+        "encoded_tokens": 5749372,
+        "written_tokens": 5748736,
+        "chars": 17924300,
+        "documents": 7391
       },
       "roman_urdu": {
         "chars_per_token_measured": 4.0664,
@@ -35,31 +35,21 @@
         "documents": 1992985
       },
       "urdu": {
-        "chars_per_token_measured": 3.7391,
-        "bytes_per_token_measured": 6.6308,
+        "chars_per_token_measured": 3.7394,
+        "bytes_per_token_measured": 6.6314,
         "separator_share": 0.00156,
-        "encoded_tokens": 82964090,
-        "written_tokens": 82962944,
-        "chars": 310210951,
-        "documents": 129323
+        "encoded_tokens": 79372634,
+        "written_tokens": 79371776,
+        "chars": 296806726,
+        "documents": 123945
       }
     },
     "measured_chars_per_token": {
-      "code_switched": 3.1174,
+      "code_switched": 3.1176,
       "roman_urdu": 4.0664,
-      "urdu": 3.7391
+      "urdu": 3.7394
     },
     "streams": {
-      "code_switched/test": {
-        "documents": 228,
-        "sequences": 311,
-        "tokens_written": 159232,
-        "tokens_encoded": 159327,
-        "chars": 492301,
-        "separators": 227,
-        "text_bytes": 753736,
-        "dropped_tokens": 95
-      },
       "code_switched/train/A": {
         "documents": 1487,
         "sequences": 2307,
@@ -79,16 +69,6 @@
         "separators": 5902,
         "text_bytes": 22083906,
         "dropped_tokens": 469
-      },
-      "code_switched/validation": {
-        "documents": 155,
-        "sequences": 196,
-        "tokens_written": 100352,
-        "tokens_encoded": 100628,
-        "chars": 316851,
-        "separators": 153,
-        "text_bytes": 484303,
-        "dropped_tokens": 276
       },
       "roman_urdu/test": {
         "documents": 50139,
@@ -130,16 +110,6 @@
         "text_bytes": 2522961,
         "dropped_tokens": 235
       },
-      "urdu/test": {
-        "documents": 2713,
-        "sequences": 3548,
-        "tokens_written": 1816576,
-        "tokens_encoded": 1816746,
-        "chars": 6776291,
-        "separators": 2712,
-        "text_bytes": 12014008,
-        "dropped_tokens": 170
-      },
       "urdu/train/A": {
         "documents": 24770,
         "sequences": 31194,
@@ -159,16 +129,6 @@
         "separators": 99173,
         "text_bytes": 420656065,
         "dropped_tokens": 474
-      },
-      "urdu/validation": {
-        "documents": 2665,
-        "sequences": 3466,
-        "tokens_written": 1774592,
-        "tokens_encoded": 1774710,
-        "chars": 6627934,
-        "separators": 2664,
-        "text_bytes": 11751657,
-        "dropped_tokens": 118
       }
     }
   },
@@ -187,34 +147,34 @@
       "max_international_digits": 13,
       "max_shapes": 200
     },
-    "documents": 6118998,
-    "documents_redacted": 36545,
-    "chars_in": 10634377296,
-    "chars_out": 10633568339,
-    "chars_removed": 808957,
+    "documents": 6113237,
+    "documents_redacted": 36477,
+    "chars_in": 10620162221,
+    "chars_out": 10619354962,
+    "chars_removed": 807259,
     "counts": {
-      "email": 26979,
-      "phone": 26464
+      "email": 26914,
+      "phone": 26428
     },
     "distinct_shapes": 200,
-    "shapes_dropped": 2309,
+    "shapes_dropped": 2277,
     "shapes": {
-      "email:xxxxx@xxxxxxx.xxx": 13441,
-      "email:xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx": 13216,
-      "phone:ddddddddddd": 9062,
-      "phone:dddd-ddddddd": 3644,
-      "phone:dddddddddddddd": 1783,
-      "phone:ddd-dddddddd": 984,
+      "email:xxxxx@xxxxxxx.xxx": 13411,
+      "email:xxxxxxxxx.xxxxxxxx@xxxxxxx.xxx": 13184,
+      "phone:ddddddddddd": 9052,
+      "phone:dddd-ddddddd": 3641,
+      "phone:dddddddddddddd": 1781,
+      "phone:ddd-dddddddd": 983,
       "phone:ddd-ddddddd": 811,
-      "phone:+dddddddddddd": 676,
+      "phone:+dddddddddddd": 675,
       "phone:+d-ddd-ddd-dddd": 565,
       "phone:dddd ddd dddd": 452,
       "phone:dddd ddd ddddddd": 331,
-      "phone:+d ddd ddd dddd": 310,
-      "phone:+dd ddd ddddddd": 288,
-      "phone:dddddddddddd": 250,
+      "phone:+d ddd ddd dddd": 309,
+      "phone:+dd ddd ddddddd": 287,
+      "phone:dddddddddddd": 248,
       "phone:+ddddddddddd": 236,
-      "phone:ddddddddddddd": 224,
+      "phone:ddddddddddddd": 223,
       "phone:dddd-dddddd": 220,
       "phone:dddd ddddddd": 215,
       "phone:ddddd dddddd": 184,
@@ -222,7 +182,7 @@
       "phone:+dd-ddd-dd-dd-ddd": 152,
       "phone:+dd–dd-dd-dd-dd-dd": 150,
       "phone:+ddd-dddd-ddddd": 150,
-      "phone:+ddddddddddddd": 135,
+      "phone:+ddddddddddddd": 134,
       "phone:ddddd-dddddd": 119,
       "phone:ddddddddddddddd": 113,
       "phone:+dd-ddd-ddddddd": 113,
@@ -230,7 +190,7 @@
       "phone:+dd-dd-dd-dd-dd-dd": 108,
       "phone:+dd dddddddddd": 99,
       "phone:ddd dddd dddd": 90,
-      "phone:ddd-ddd-ddd-ddd": 84,
+      "phone:ddd-ddd-ddd-ddd": 83,
       "phone:dddd ddd ddd": 79,
       "phone:+dd-dddddddddd": 78,
       "phone:+dd ddd ddd dd dd": 78,
@@ -246,8 +206,8 @@
       "phone:+dd d ddd dddd": 52,
       "phone:+dd-ddddddddddd": 50,
       "phone:+dd dd dddd dddd": 48,
-      "phone:dddd-dd-dddddddd": 47,
       "phone:+ddd dddd dddd": 46,
+      "phone:dddd-dd-dddddddd": 46,
       "phone:+dd ddddddddd": 46,
       "phone:ddddd ddd ddd": 44,
       "phone:+dd-dd-dddd-dddd": 42,
@@ -265,8 +225,8 @@
       "phone:+ddd d-ddd-dddd": 30,
       "phone:ddd ddddddd": 30,
       "phone:dddd dddd dddd": 30,
-      "phone:+dd dddd dddddd": 30,
       "phone:ddd-dddddddd-d": 29,
+      "phone:+dd dddd dddddd": 29,
       "phone:+ddddd-ddddddd": 28,
       "phone:(ddd) dddddddd": 27,
       "phone:+dd-dd)ddd-ddd-ddd": 26,
@@ -278,10 +238,11 @@
       "phone:+dd-ddd-dddddddd": 21,
       "phone:ddd-ddddddd-d": 21,
       "phone:dddd dd dd ddd": 21,
+      "phone:+d (ddd) ddd dddd": 21,
       "email:xxxxxxxxxxx@xxxxx.xxx": 20,
       "phone:dddddd-dddddd": 20,
       "phone:dddd dddddddddd": 20,
-      "phone:+dd-ddd-dddd-dddd": 19,
+      "phone:+dd-ddd-dddd-dddd": 18,
       "phone:dddd-dddd-dddd": 16,
       "phone:dddd-ddd-ddd": 15,
       "phone:+dddddddddd": 15,
@@ -322,9 +283,9 @@
       "phone:ddd-ddd ddd ddd": 7,
       "phone:dddd-ddddd-d": 6,
       "phone:ddd ddd ddd dddd": 6,
-      "phone:dddd dd ddd dd": 6,
       "email:xxxx@xxxxxxxx.xxx": 5,
       "email:xxxxxxxxxx@xxxxx.xxx": 5,
+      "phone:dddd dd ddd dd": 5,
       "phone:(dddd) ddd dd dd": 5,
       "phone:+dd(d)ddd ddd dddd": 5,
       "phone:+dd-ddddd ddddd": 5,
@@ -333,6 +294,7 @@
       "phone:(ddd) dddd dddd": 4,
       "phone:dddd-ddd-dddd-d": 4,
       "phone:(dddd-dd)dddddddd": 4,
+      "phone:+ddd-ddd-ddd-ddd": 4,
       "email:xxxxxxxx@xxxxx.xxx": 3,
       "phone:+dd (d) ddd ddd ddd": 3,
       "phone:+ddd ddd dddd": 3,
@@ -348,8 +310,6 @@
       "email:xxxxxxxxxdddd@xxxxx.xxx": 2,
       "phone:+d-dddddddddd": 2,
       "phone:dddd dd ddd ddd": 2,
-      "phone:+d-dd-ddd-dddd": 2,
-      "email:xxxx@xxxxxxxxxxx.xxx": 2,
       "phone:+dd (d)-dd-dddddddd": 2,
       "phone:+dd) ddd-ddddd": 2,
       "phone:+dd) ddd-ddddd-d": 2,
@@ -360,7 +320,6 @@
       "phone:dddddd dddddddd": 2,
       "phone:ddd- ddddddd-d": 1,
       "phone:ddd- ddddddd": 1,
-      "email:xxxxxxxxddd@xxxxx.xxx": 1,
       "email:xxxxxxxxxxxxdddd@xxxxx.xxx": 1,
       "email:xx_xxxxx_xxxxx@xxxxxxx.xxx": 1,
       "email:xxxxxxxxxxxxxx@xxxxxxx.xxx": 1,
@@ -398,13 +357,14 @@
       "phone:+ddd (d) dddddddd": 1,
       "email:xxxxxxx@xxxxxxx.xx": 1,
       "phone:dddd-dddd(dd)ddddd": 1,
-      "phone:+dddd-dddddd": 1
+      "phone:+dddd-dddddd": 1,
+      "phone:ddd dddd ddd dd": 1
     }
   },
   "exclusions": {
     "version": "1.0.0",
-    "ids": 4656416,
-    "applied": 4656416,
+    "ids": 4662177,
+    "applied": 4662177,
     "unapplied": 0,
     "headers": [
       {
@@ -449,7 +409,7 @@
       {
         "version": "1.0.0",
         "stage": "8",
-        "count": 344062,
+        "count": 349823,
         "plans": [
           {
             "source": "urdu-wikipedia",
@@ -514,18 +474,6 @@
     },
     "shards": [
       {
-        "path": "code_switched/test/code_switched_test_00000.bin",
-        "stream": "code_switched/test",
-        "population": "code_switched",
-        "split": "test",
-        "arm": null,
-        "sequences": 311,
-        "tokens": 159232,
-        "text_bytes": 753736,
-        "separators": 227,
-        "sha256": "765153fce53d8bd769057e3a3c7d5dfa278f8ace2fb2b41298c412d945076af8"
-      },
-      {
         "path": "code_switched/train/A/code_switched_train_A_00000.bin",
         "stream": "code_switched/train/A",
         "population": "code_switched",
@@ -548,18 +496,6 @@
         "text_bytes": 22083906,
         "separators": 5902,
         "sha256": "c35b333188ce612dc2d22e8bbc749dbd22947dc89316f9af1a62bb0bcffea19a"
-      },
-      {
-        "path": "code_switched/validation/code_switched_validation_00000.bin",
-        "stream": "code_switched/validation",
-        "population": "code_switched",
-        "split": "validation",
-        "arm": null,
-        "sequences": 196,
-        "tokens": 100352,
-        "text_bytes": 484303,
-        "separators": 153,
-        "sha256": "cb9a4a41cd56f154efa1635afe14b538a1e880e442dee82fa515ff4e76005fca"
       },
       {
         "path": "roman_urdu/test/roman_urdu_test_00000.bin",
@@ -620,18 +556,6 @@
         "text_bytes": 2522961,
         "separators": 50209,
         "sha256": "6e37c4580e666ee7be5d97e21efd213ea67cd449d9447a884c96f1e7af2a065d"
-      },
-      {
-        "path": "urdu/test/urdu_test_00000.bin",
-        "stream": "urdu/test",
-        "population": "urdu",
-        "split": "test",
-        "arm": null,
-        "sequences": 3548,
-        "tokens": 1816576,
-        "text_bytes": 12014008,
-        "separators": 2712,
-        "sha256": "76736cb1d7d166e0ecb112987e3defbeee986005b6630c4c49484ea30e4dd5b2"
       },
       {
         "path": "urdu/train/A/urdu_train_A_00000.bin",
@@ -740,18 +664,6 @@
         "text_bytes": 13043282,
         "separators": 3361,
         "sha256": "d1d220fdb821d4d0fb7e907f1cf92f20f28cb989cbe039c5ce74a103fffe80e0"
-      },
-      {
-        "path": "urdu/validation/urdu_validation_00000.bin",
-        "stream": "urdu/validation",
-        "population": "urdu",
-        "split": "validation",
-        "arm": null,
-        "sequences": 3466,
-        "tokens": 1774592,
-        "text_bytes": 11751657,
-        "separators": 2664,
-        "sha256": "89b88881efb017c486f81581c325b59a394cc93501add36a91a7144635ebe5cb"
       }
     ],
     "log": {
@@ -761,24 +673,24 @@
       "tokenizer_fingerprint": "2855877c8ecd38c9",
       "sample_rate": null,
       "totals": {
-        "documents": 2130082,
-        "sequences": 222010,
-        "tokens_written": 113669120,
-        "tokens_encoded": 113672192,
-        "separators": 2129992,
-        "text_bytes": 679595821,
-        "dropped_tokens": 3072,
+        "documents": 2124321,
+        "sequences": 214489,
+        "tokens_written": 109818368,
+        "tokens_encoded": 109820781,
+        "separators": 2124236,
+        "text_bytes": 654592117,
+        "dropped_tokens": 2413,
         "empty_documents": 0
       },
       "fertility": {
         "code_switched": {
-          "chars_per_token_measured": 3.1174,
-          "bytes_per_token_measured": 4.8349,
+          "chars_per_token_measured": 3.1176,
+          "bytes_per_token_measured": 4.8378,
           "separator_share": 0.00129,
-          "encoded_tokens": 6009327,
-          "written_tokens": 6008320,
-          "chars": 18733452,
-          "documents": 7774
+          "encoded_tokens": 5749372,
+          "written_tokens": 5748736,
+          "chars": 17924300,
+          "documents": 7391
         },
         "roman_urdu": {
           "chars_per_token_measured": 4.0664,
@@ -790,31 +702,21 @@
           "documents": 1992985
         },
         "urdu": {
-          "chars_per_token_measured": 3.7391,
-          "bytes_per_token_measured": 6.6308,
+          "chars_per_token_measured": 3.7394,
+          "bytes_per_token_measured": 6.6314,
           "separator_share": 0.00156,
-          "encoded_tokens": 82964090,
-          "written_tokens": 82962944,
-          "chars": 310210951,
-          "documents": 129323
+          "encoded_tokens": 79372634,
+          "written_tokens": 79371776,
+          "chars": 296806726,
+          "documents": 123945
         }
       },
       "measured_chars_per_token": {
-        "code_switched": 3.1174,
+        "code_switched": 3.1176,
         "roman_urdu": 4.0664,
-        "urdu": 3.7391
+        "urdu": 3.7394
       },
       "streams": {
-        "code_switched/test": {
-          "documents": 228,
-          "sequences": 311,
-          "tokens_written": 159232,
-          "tokens_encoded": 159327,
-          "chars": 492301,
-          "separators": 227,
-          "text_bytes": 753736,
-          "dropped_tokens": 95
-        },
         "code_switched/train/A": {
           "documents": 1487,
           "sequences": 2307,
@@ -834,16 +736,6 @@
           "separators": 5902,
           "text_bytes": 22083906,
           "dropped_tokens": 469
-        },
-        "code_switched/validation": {
-          "documents": 155,
-          "sequences": 196,
-          "tokens_written": 100352,
-          "tokens_encoded": 100628,
-          "chars": 316851,
-          "separators": 153,
-          "text_bytes": 484303,
-          "dropped_tokens": 276
         },
         "roman_urdu/test": {
           "documents": 50139,
@@ -885,16 +777,6 @@
           "text_bytes": 2522961,
           "dropped_tokens": 235
         },
-        "urdu/test": {
-          "documents": 2713,
-          "sequences": 3548,
-          "tokens_written": 1816576,
-          "tokens_encoded": 1816746,
-          "chars": 6776291,
-          "separators": 2712,
-          "text_bytes": 12014008,
-          "dropped_tokens": 170
-        },
         "urdu/train/A": {
           "documents": 24770,
           "sequences": 31194,
@@ -914,16 +796,6 @@
           "separators": 99173,
           "text_bytes": 420656065,
           "dropped_tokens": 474
-        },
-        "urdu/validation": {
-          "documents": 2665,
-          "sequences": 3466,
-          "tokens_written": 1774592,
-          "tokens_encoded": 1774710,
-          "chars": 6627934,
-          "separators": 2664,
-          "text_bytes": 11751657,
-          "dropped_tokens": 118
         }
       }
     }

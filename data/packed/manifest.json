@@ -1,0 +1,441 @@
+{
+  "packing_version": "1",
+  "config": {
+    "packing_version": "1",
+    "sequence_length": 512,
+    "vocab_size": 16384,
+    "dtype": "uint16",
+    "cross_document": true,
+    "shard_sequences": 20000,
+    "salt": "ravaan/pack/v1"
+  },
+  "config_fingerprint": "4b193f342c46508e",
+  "tokenizer": {
+    "id": "sentencepiece:ravaan-16k.model",
+    "fingerprint": "2855877c8ecd38c9",
+    "vocab_size": 16384,
+    "eos_id": 3,
+    "placeholder": false
+  },
+  "layout": {
+    "dtype": "uint16",
+    "byte_order": "little",
+    "sequence_length": 512,
+    "sidecar": ".bytes is one uint32 per sequence: UTF-8 bytes of the text its tokens stand for, which is BPB's denominator (§8.3)"
+  },
+  "shards": [
+    {
+      "path": "code_switched/test/code_switched_test_00000.bin",
+      "stream": "code_switched/test",
+      "population": "code_switched",
+      "split": "test",
+      "arm": null,
+      "sequences": 311,
+      "tokens": 159232,
+      "text_bytes": 753736,
+      "separators": 227,
+      "sha256": "765153fce53d8bd769057e3a3c7d5dfa278f8ace2fb2b41298c412d945076af8"
+    },
+    {
+      "path": "code_switched/train/A/code_switched_train_A_00000.bin",
+      "stream": "code_switched/train/A",
+      "population": "code_switched",
+      "split": "train",
+      "arm": "A",
+      "sequences": 2307,
+      "tokens": 1181184,
+      "text_bytes": 5727481,
+      "separators": 1486,
+      "sha256": "3c65b9c9f560a6567b0d83b1f43c1a7d3cf2627dc69bc47743fd3872496026f7"
+    },
+    {
+      "path": "code_switched/train/B/code_switched_train_B_00000.bin",
+      "stream": "code_switched/train/B",
+      "population": "code_switched",
+      "split": "train",
+      "arm": "B",
+      "sequences": 8921,
+      "tokens": 4567552,
+      "text_bytes": 22083906,
+      "separators": 5902,
+      "sha256": "c35b333188ce612dc2d22e8bbc749dbd22947dc89316f9af1a62bb0bcffea19a"
+    },
+    {
+      "path": "code_switched/validation/code_switched_validation_00000.bin",
+      "stream": "code_switched/validation",
+      "population": "code_switched",
+      "split": "validation",
+      "arm": null,
+      "sequences": 196,
+      "tokens": 100352,
+      "text_bytes": 484303,
+      "separators": 153,
+      "sha256": "cb9a4a41cd56f154efa1635afe14b538a1e880e442dee82fa515ff4e76005fca"
+    },
+    {
+      "path": "roman_urdu/test/roman_urdu_test_00000.bin",
+      "stream": "roman_urdu/test",
+      "population": "roman_urdu",
+      "split": "test",
+      "arm": null,
+      "sequences": 1213,
+      "tokens": 621056,
+      "text_bytes": 2523567,
+      "separators": 50135,
+      "sha256": "75128ee1c0611b8f3d497a6cc1a66200c293492b5eefb9b04a3e80cf24f54d58"
+    },
+    {
+      "path": "roman_urdu/train/A/roman_urdu_train_A_00000.bin",
+      "stream": "roman_urdu/train/A",
+      "population": "roman_urdu",
+      "split": "train",
+      "arm": "A",
+      "sequences": 11839,
+      "tokens": 6061568,
+      "text_bytes": 24650519,
+      "separators": 489224,
+      "sha256": "5f2e29a93ee8a5dd1673ce5ba49ac47334599b56cbb0617b51f3940d2dfb6b58"
+    },
+    {
+      "path": "roman_urdu/train/B/roman_urdu_train_B_00000.bin",
+      "stream": "roman_urdu/train/B",
+      "population": "roman_urdu",
+      "split": "train",
+      "arm": "B",
+      "sequences": 20000,
+      "tokens": 10240000,
+      "text_bytes": 41617828,
+      "separators": 828417,
+      "sha256": "222ddd6375ce2bc9680995bc1fcadaed370e28740deddb9d82a04983ea746a8c"
+    },
+    {
+      "path": "roman_urdu/train/B/roman_urdu_train_B_00001.bin",
+      "stream": "roman_urdu/train/B",
+      "population": "roman_urdu",
+      "split": "train",
+      "arm": "B",
+      "sequences": 13974,
+      "tokens": 7154688,
+      "text_bytes": 29117302,
+      "separators": 574921,
+      "sha256": "f6bc7c74a94ec70e79639266fd986175e13f129fd799ffde6cae57f837a98e1d"
+    },
+    {
+      "path": "roman_urdu/validation/roman_urdu_validation_00000.bin",
+      "stream": "roman_urdu/validation",
+      "population": "roman_urdu",
+      "split": "validation",
+      "arm": null,
+      "sequences": 1212,
+      "tokens": 620544,
+      "text_bytes": 2522961,
+      "separators": 50209,
+      "sha256": "6e37c4580e666ee7be5d97e21efd213ea67cd449d9447a884c96f1e7af2a065d"
+    },
+    {
+      "path": "urdu/test/urdu_test_00000.bin",
+      "stream": "urdu/test",
+      "population": "urdu",
+      "split": "test",
+      "arm": null,
+      "sequences": 3548,
+      "tokens": 1816576,
+      "text_bytes": 12014008,
+      "separators": 2712,
+      "sha256": "76736cb1d7d166e0ecb112987e3defbeee986005b6630c4c49484ea30e4dd5b2"
+    },
+    {
+      "path": "urdu/train/A/urdu_train_A_00000.bin",
+      "stream": "urdu/train/A",
+      "population": "urdu",
+      "split": "train",
+      "arm": "A",
+      "sequences": 20000,
+      "tokens": 10240000,
+      "text_bytes": 67674962,
+      "separators": 15298,
+      "sha256": "b73ff1ff66ab44cdde5c74e17377fd884005597101dafd6ea367263556455702"
+    },
+    {
+      "path": "urdu/train/A/urdu_train_A_00001.bin",
+      "stream": "urdu/train/A",
+      "population": "urdu",
+      "split": "train",
+      "arm": "A",
+      "sequences": 11194,
+      "tokens": 5731328,
+      "text_bytes": 38017526,
+      "separators": 9471,
+      "sha256": "b5256d0cf80a1fdd0fde64df2fa6d7d435956e957081393f2bf00047bb2ecf1f"
+    },
+    {
+      "path": "urdu/train/B/urdu_train_B_00000.bin",
+      "stream": "urdu/train/B",
+      "population": "urdu",
+      "split": "train",
+      "arm": "B",
+      "sequences": 20000,
+      "tokens": 10240000,
+      "text_bytes": 67516028,
+      "separators": 15690,
+      "sha256": "db694de30d66deaa8d589a7a5dae55436d9848a4c532a4ae7353f86b50013b94"
+    },
+    {
+      "path": "urdu/train/B/urdu_train_B_00001.bin",
+      "stream": "urdu/train/B",
+      "population": "urdu",
+      "split": "train",
+      "arm": "B",
+      "sequences": 20000,
+      "tokens": 10240000,
+      "text_bytes": 67996609,
+      "separators": 15455,
+      "sha256": "be3f4cf419e830764a2140c8f0298a8f6e2184b86e9fdaa86b3070deda42c0be"
+    },
+    {
+      "path": "urdu/train/B/urdu_train_B_00002.bin",
+      "stream": "urdu/train/B",
+      "population": "urdu",
+      "split": "train",
+      "arm": "B",
+      "sequences": 20000,
+      "tokens": 10240000,
+      "text_bytes": 67889299,
+      "separators": 15477,
+      "sha256": "125a2d5a115575e0a6d0cb752d49d052af80da6bfa5f3168992f8916ce03edc6"
+    },
+    {
+      "path": "urdu/train/B/urdu_train_B_00003.bin",
+      "stream": "urdu/train/B",
+      "population": "urdu",
+      "split": "train",
+      "arm": "B",
+      "sequences": 20000,
+      "tokens": 10240000,
+      "text_bytes": 67768324,
+      "separators": 15190,
+      "sha256": "9082877c766c387ab0cc49d7b39208d14fabe736932e7b96c11284e11067f4dc"
+    },
+    {
+      "path": "urdu/train/B/urdu_train_B_00004.bin",
+      "stream": "urdu/train/B",
+      "population": "urdu",
+      "split": "train",
+      "arm": "B",
+      "sequences": 20000,
+      "tokens": 10240000,
+      "text_bytes": 68124869,
+      "separators": 16748,
+      "sha256": "db13e4b131d983677a89dedb3aaa44dec1751d01ccd25098f623e1d5074426b7"
+    },
+    {
+      "path": "urdu/train/B/urdu_train_B_00005.bin",
+      "stream": "urdu/train/B",
+      "population": "urdu",
+      "split": "train",
+      "arm": "B",
+      "sequences": 20000,
+      "tokens": 10240000,
+      "text_bytes": 68317654,
+      "separators": 17252,
+      "sha256": "ccbe4206b4e39af4051a973d8d044904d033b7eec514dc3c7fb5a2074dce77fc"
+    },
+    {
+      "path": "urdu/train/B/urdu_train_B_00006.bin",
+      "stream": "urdu/train/B",
+      "population": "urdu",
+      "split": "train",
+      "arm": "B",
+      "sequences": 3829,
+      "tokens": 1960448,
+      "text_bytes": 13043282,
+      "separators": 3361,
+      "sha256": "d1d220fdb821d4d0fb7e907f1cf92f20f28cb989cbe039c5ce74a103fffe80e0"
+    },
+    {
+      "path": "urdu/validation/urdu_validation_00000.bin",
+      "stream": "urdu/validation",
+      "population": "urdu",
+      "split": "validation",
+      "arm": null,
+      "sequences": 3466,
+      "tokens": 1774592,
+      "text_bytes": 11751657,
+      "separators": 2664,
+      "sha256": "89b88881efb017c486f81581c325b59a394cc93501add36a91a7144635ebe5cb"
+    }
+  ],
+  "log": {
+    "packing_version": "1",
+    "config_fingerprint": "4b193f342c46508e",
+    "tokenizer_id": "sentencepiece:ravaan-16k.model",
+    "tokenizer_fingerprint": "2855877c8ecd38c9",
+    "sample_rate": null,
+    "totals": {
+      "documents": 2130082,
+      "sequences": 222010,
+      "tokens_written": 113669120,
+      "tokens_encoded": 113672192,
+      "separators": 2129992,
+      "text_bytes": 679595821,
+      "dropped_tokens": 3072,
+      "empty_documents": 0
+    },
+    "fertility": {
+      "code_switched": {
+        "chars_per_token_measured": 3.1174,
+        "bytes_per_token_measured": 4.8349,
+        "separator_share": 0.00129,
+        "encoded_tokens": 6009327,
+        "written_tokens": 6008320,
+        "chars": 18733452,
+        "documents": 7774
+      },
+      "roman_urdu": {
+        "chars_per_token_measured": 4.0664,
+        "bytes_per_token_measured": 4.0664,
+        "separator_share": 0.08069,
+        "encoded_tokens": 24698775,
+        "written_tokens": 24697856,
+        "chars": 100434361,
+        "documents": 1992985
+      },
+      "urdu": {
+        "chars_per_token_measured": 3.7391,
+        "bytes_per_token_measured": 6.6308,
+        "separator_share": 0.00156,
+        "encoded_tokens": 82964090,
+        "written_tokens": 82962944,
+        "chars": 310210951,
+        "documents": 129323
+      }
+    },
+    "measured_chars_per_token": {
+      "code_switched": 3.1174,
+      "roman_urdu": 4.0664,
+      "urdu": 3.7391
+    },
+    "streams": {
+      "code_switched/test": {
+        "documents": 228,
+        "sequences": 311,
+        "tokens_written": 159232,
+        "tokens_encoded": 159327,
+        "chars": 492301,
+        "separators": 227,
+        "text_bytes": 753736,
+        "dropped_tokens": 95
+      },
+      "code_switched/train/A": {
+        "documents": 1487,
+        "sequences": 2307,
+        "tokens_written": 1181184,
+        "tokens_encoded": 1181351,
+        "chars": 3693723,
+        "separators": 1486,
+        "text_bytes": 5727481,
+        "dropped_tokens": 167
+      },
+      "code_switched/train/B": {
+        "documents": 5904,
+        "sequences": 8921,
+        "tokens_written": 4567552,
+        "tokens_encoded": 4568021,
+        "chars": 14230577,
+        "separators": 5902,
+        "text_bytes": 22083906,
+        "dropped_tokens": 469
+      },
+      "code_switched/validation": {
+        "documents": 155,
+        "sequences": 196,
+        "tokens_written": 100352,
+        "tokens_encoded": 100628,
+        "chars": 316851,
+        "separators": 153,
+        "text_bytes": 484303,
+        "dropped_tokens": 276
+      },
+      "roman_urdu/test": {
+        "documents": 50139,
+        "sequences": 1213,
+        "tokens_written": 621056,
+        "tokens_encoded": 621096,
+        "chars": 2523709,
+        "separators": 50135,
+        "text_bytes": 2523567,
+        "dropped_tokens": 40
+      },
+      "roman_urdu/train/A": {
+        "documents": 489245,
+        "sequences": 11839,
+        "tokens_written": 6061568,
+        "tokens_encoded": 6061829,
+        "chars": 24651584,
+        "separators": 489224,
+        "text_bytes": 24650519,
+        "dropped_tokens": 261
+      },
+      "roman_urdu/train/B": {
+        "documents": 1403368,
+        "sequences": 33974,
+        "tokens_written": 17394688,
+        "tokens_encoded": 17395071,
+        "chars": 70735148,
+        "separators": 1403338,
+        "text_bytes": 70735130,
+        "dropped_tokens": 383
+      },
+      "roman_urdu/validation": {
+        "documents": 50233,
+        "sequences": 1212,
+        "tokens_written": 620544,
+        "tokens_encoded": 620779,
+        "chars": 2523920,
+        "separators": 50209,
+        "text_bytes": 2522961,
+        "dropped_tokens": 235
+      },
+      "urdu/test": {
+        "documents": 2713,
+        "sequences": 3548,
+        "tokens_written": 1816576,
+        "tokens_encoded": 1816746,
+        "chars": 6776291,
+        "separators": 2712,
+        "text_bytes": 12014008,
+        "dropped_tokens": 170
+      },
+      "urdu/train/A": {
+        "documents": 24770,
+        "sequences": 31194,
+        "tokens_written": 15971328,
+        "tokens_encoded": 15971712,
+        "chars": 59612327,
+        "separators": 24769,
+        "text_bytes": 105692488,
+        "dropped_tokens": 384
+      },
+      "urdu/train/B": {
+        "documents": 99175,
+        "sequences": 123829,
+        "tokens_written": 63400448,
+        "tokens_encoded": 63400922,
+        "chars": 237194399,
+        "separators": 99173,
+        "text_bytes": 420656065,
+        "dropped_tokens": 474
+      },
+      "urdu/validation": {
+        "documents": 2665,
+        "sequences": 3466,
+        "tokens_written": 1774592,
+        "tokens_encoded": 1774710,
+        "chars": 6627934,
+        "separators": 2664,
+        "text_bytes": 11751657,
+        "dropped_tokens": 118
+      }
+    }
+  }
+}

@@ -102,3 +102,12 @@ Thumbs.db
 # Stage 8's retained hits: 1.4 GB of measured evidence, regenerable from the pass and
 # too large for git. The removals list it produces IS committed, and so is the report.
 /reports/freeze/hits_8.jsonl
+
+# ...and stage 10's corpus manifest. The packed shards ARE the corpus and stay out; the manifest
+# and its per-shard checksums are what §2.4's "ships as code, manifest and checksums" means, and
+# without them a rebuild cannot be verified against the frozen one. Same two-line shape as the
+# tokenizer above: `/data/*` excludes the `packed` entry itself, and git cannot re-include a file
+# whose parent directory is excluded.
+!/data/packed/
+/data/packed/*
+!/data/packed/manifest.json

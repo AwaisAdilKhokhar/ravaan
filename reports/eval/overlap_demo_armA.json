@@ -1,0 +1,42 @@
+{
+ "corpus": "data/packed",
+ "corpus_arm": "A",
+ "train_tokens": 23214080,
+ "n_values": [
+  8,
+  16,
+  32,
+  64,
+  128
+ ],
+ "samples": {
+  "ar-demo_samples": 24,
+  "diff-demo_samples": 24,
+  "held-out (control)": 12
+ },
+ "verbatim_rate": {
+  "ar-demo_samples": {
+   "8": 0.025871459694989107,
+   "16": 0.0,
+   "32": 0.0,
+   "64": 0.0,
+   "128": 0.0
+  },
+  "diff-demo_samples": {
+   "8": 0.02124183006535948,
+   "16": 0.0,
+   "32": 0.0,
+   "64": 0.0,
+   "128": 0.0
+  },
+  "held-out (control)": {
+   "8": 0.00980392156862745,
+   "16": 0.0,
+   "32": 0.0,
+   "64": 0.0,
+   "128": 0.0
+  }
+ },
+ "byte_verified": null,
+ "byte_verified_of": 0
+}

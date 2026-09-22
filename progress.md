@@ -118,11 +118,69 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 > money**: a larger model over the same corpus buys more memorization capacity, not more Urdu. The only
 > thing that raises this ceiling is more corpus.
 >
+> > ⚠️ **Amended 2026-09-23 (session 32). Both halves of that paragraph are AR's, and neither binds
+> > the diffusion arm.** The Chinchilla arithmetic is a statement about a model that scores every
+> > position; the diffusion objective scores only the masked ones, ~half of them on average, and
+> > **Finding BG** measures the consequence — at 16 epochs AR had turned and DIFF was still descending
+> > at −0.0520 bpb per doubling. And "the only thing that raises this ceiling is more corpus" is
+> > wrong twice over: **Finding BH** shows more epochs raise it for ~$5, and the corpus is *already
+> > on disk* — the frozen plan holds **12.14B characters** of native Urdu train band against arm B's
+> > 247M drawn. What caps arm B is §6.1's fixed mixture, not the supply.
+>
 > ⚠️ **Every Urdu judgement here is Claude's**, as in every other report in this repository.
 >
 > Curves: [`curve_ar_b.json`](reports/eval/curve_ar_b.json),
 > [`curve_diff_b.json`](reports/eval/curve_diff_b.json). Samples:
 > [`ship_samples.md`](reports/ship_samples.md). Overlap: [`overlap_armb.json`](reports/eval/overlap_armb.json).
+
+> ## 🎯 The shippable diffusion model is one ~$6 run away, 2026-09-23
+>
+> **The diffusion arm was stopped while it was still descending, and the reason it was stopped is
+> the experiment's, not the model's.** §0.4 requires both arms to take the same budget, so both
+> ended at 16 epochs — but at that point AR had turned two rungs earlier and DIFF had not turned at
+> all:
+>
+> | epochs | **AR** | Δ | **DIFF** | Δ |
+> |---|---|---|---|---|
+> | 4.00 | **0.7774** | −0.0551 | 0.9637 | −0.1244 |
+> | 8.00 | 0.7887 | **+0.0113** | 0.8841 | −0.0796 |
+> | 16.00 | 0.8690 | **+0.0803** | **0.8320** | **−0.0520** |
+>
+> **DIFF's last doubling bought more than AR's best doubling ever did.** The near-proof that this
+> continues is not extrapolation: `core-diff-s0` reached **0.8059 on arm A** — a corpus 3.7× smaller
+> and a worse mixture — by running 426 epochs. Arm B's diffusion had strictly better data and was
+> cut off at 16. Fitting the three deltas (ratio ≈0.65/doubling) puts **64 epochs at ~0.777**, level
+> with AR's best, and 256 at ~0.754. ⚠️ **That column is a three-point log-linear fit, not a
+> measurement** — arm A's own deltas wobble (−0.0379 then −0.0396) and the fit's own limit is only
+> ~0.74, so the prize is a few hundredths of a bpb, not a transformation.
+>
+> **Cost, at the 5090's measured diffusion throughput (~175k tok/s) and $0.5647/h:**
+>
+> | epochs | tokens | wall clock | GPU | all-in |
+> |---|---|---|---|---|
+> | 32 | 2.73B | 4.3 h | $2.45 | ~$3 |
+> | **64** | **5.46B** | **8.7 h** | **$4.90** | **~$6** |
+> | 128 | 10.9B | 17.3 h | $9.79 | ~$11 |
+> | 256 | 21.9B | 34.7 h | $19.59 | ~$22 |
+>
+> ✅ **Take 64, not 32 and not 256.** `checkpoint_fractions` writes seven checkpoints per run, so a
+> 64-epoch run lands rungs at **0.64 / 1.3 / 3.2 / 6.4 / 16 / 32 / 64 epochs** — four new points past
+> where the curve stopped. One run both produces the candidate checkpoint *and* answers whether
+> epochs are still buying anything, which is the question that decides whether the $22 version or the
+> corpus rebuild is worth doing. Going straight to 256 spends 4× to learn the same thing later.
+>
+> ⚠️ **You cannot resume `ship-diff-b` to get there, and this is the detail that will cost money if
+> it is missed.** `RavaanTrainingConfig.lr_at` is cosine to 10% of peak over `total_steps`, so the
+> existing checkpoint has already annealed. **64 epochs is a fresh run at the full price**, and its
+> 16-epoch rung will read slightly *worse* than the current 0.8320 because the cosine has not
+> finished there. That is expected, not a regression, and not a reason to stop the run.
+>
+> ✅ **A second thing the run buys, worth the $6 on its own: a matched-corpus release pair.** The
+> demo currently has to disclose that AR is arm B and DIFF is arm A (session 32). A 64-epoch arm B
+> diffusion run puts both released models on one corpus and that caveat disappears.
+>
+> **Everything needed is already on disk** — `vast/push.sh` ships the 169 MB arm-B corpus and the
+> runbook is proven over 46 unattended GPU-hours. The edits are three lines; see "Next actions".
 
 - **Started** 2026-08-03 (Week 1 of 16). **PRD v2.4** (2026-09-16). **Spend: first money went
   out 2026-09-20 — $40 loaded on Vast.ai, **~$28 committed to three runs** (the two core runs plus
@@ -313,7 +371,7 @@ holds only while the priority is wall-clock and while stage 10's reported fertil
 | ↳ 50-epoch run complete, both arms, §4.3's seven fraction checkpoints written | §4.3 | ✅ the curve infrastructure works end to end |
 | ↳ 306 generations read → [`pilot_coherence.md`](reports/pilot_coherence.md), text in [`pilot_samples.md`](reports/pilot_samples.md) | §11 | ✅ **both halves of its headline were narrowed on 2026-09-14 — Findings AR and AS** |
 | ↳ **G3's record corrected** — PRD §11, `pilot_coherence.md` §9/§11, and §12 written | §11 | ✅ s24; session 23's handoff said this was done, and it was not |
-| **Ablations A3/A4** — inference only | §4.4 | 🟡 pilot-scale sweep done; the core-run sweep is Week 12 |
+| **Ablations A3/A4** — inference only | §4.4 | ✅ **s32** — swept at full scale over `ship-diff-b/diff-s0_f1.pt`, 300 generations → **Finding BG**. A3 runs backwards here too, so AP replicates at 70M/85.4M. ⚠️ Re-sweep on the 64-epoch checkpoint when it lands |
 | ↳ ⚠️ **A2 measures §4.2's FIM layout, not "AR without FIM"** — MARIA reports the opposite | §4.4 | ⚠️ **A2 cut in v2.4** — Finding AT becomes a stated limitation; the report must say so |
 | **The microbatch that reproduces session 23's runs is 32** — nothing recorded it | §4.1 | ✅ identified from `pad_tokens` 11039 |
 | **`scripts/train.py --tokens / --epochs / --warmup-steps`** — `--steps` never moved the cosine | §4.3 | ✅ s23; every earlier short run trained at near-peak LR throughout |
@@ -376,7 +434,7 @@ must say.
 | AM | 21 | AR and DIFF cost the same per token, within **2.2%** | ✅ neither arm can buy an advantage by being cheaper at a fixed token budget |
 | AN | 21 | Kernel 10 **trained the bare objective** and the loss curve looked fine | ✅ `build_tasks` moved into the library; 3 tests. Second instance of "the bugs live at the seams" |
 | AO | 22 | `</s>` on a context-free diffusion canvas — 47% of first commits; Arabic-script share 0.000 → **1.000** when forbidden | ✅ `--forbid-eos always`, swept and reported. Deliberately **not** defaulted |
-| AP | 22 | A3 runs backwards — 64 denoising steps repeat *more* than 8, monotonically on every axis | ⚠️ directional, one seed. **A3's table must not be written as "more steps, better"** |
+| AP | 22 | A3 runs backwards — 64 denoising steps repeat *more* than 8, monotonically on every axis | ~~⚠️ directional, one seed~~ → ✅ **replicated at full scale, s32 (Finding BG)**: 8 steps beat 160 on a 70M checkpoint over 85.4M tokens, same direction. **A3's table must not be written as "more steps, better"** |
 | AQ | 22 | §4.2's AR FIM framing has **no terminator after the middle** — it stopped on 5/12 prompts, median length = the budget | ✅ **decided 2026-09-13: not fixed.** Cost moves to scoring; truncation rule preregistered |
 | AR | 23 | A4's two schedules are the *limits* of one family, not the family | ✅ `gumbel` added, `s=0` == `confidence` bit-for-bit; the **interior** gets real Urdu clauses out of the "incoherent" checkpoint |
 | AS | 23 | The pilot **AR arm memorized the corpus, and it is G3's control** — AR gap **+4.94 nats**, DIFF **+0.17**; on the plentiful corpus both are ~0.05 | ⚠️ G3's reasoning is qualified in place; the report must carry the correction, not just the conclusion |
@@ -393,6 +451,9 @@ must say.
 | BD | 31 | **Ravaan-AR's fluency at 426 epochs is literal recitation, and §8.3's metrics cannot see it.** `core-ar-s0`'s final checkpoint reproduces **24.9% of its 32-token windows, 16.5% of its 64-token windows and 11.1% of its 128-token windows verbatim** from the arm-A training stream, byte-verified against the packed tokens. The control — real held-out Urdu the model never trained on — scores **0.000** at every n ≥ 16, which is what makes the AR figure a measurement rather than an anecdote. ⚠️ **§8.3's three metrics rank this checkpoint *above* the diffusion arm** (script 0.96, repetition 0.000): a reader of that table would conclude it writes the better Urdu. It is reciting the corpus, in one case a 128-token block of Quranic exegesis. **This is the mechanism behind Finding BC's 3.6143 bpb** — a confidently-wrong memorizer — and it is the number the report needs beside any generation-quality claim. `scripts/overlap.py`, [`overlap.json`](reports/eval/overlap.json) |
 | BE | 31 | **The microbatch optimum is a property of the host, not the card, and must be re-measured on every box.** The core runs' RTX 5090 peaked at microbatch **16** (186,631 tok/s against 181,578 at 32). Session 31's RTX 5090 — same card, same model, same task mixture — peaks at **32**, and is **43% slower at 16**: 122,933 vs 175,821 tok/s, with 48 and 64 falling back to 166,685 and 157,753. Inheriting the previous box's setting would have cost ~2 GPU-hours on a 4-hour job. ⚠️ **`train.py throughput` could not measure this until session 31** — it hardcoded `arm="A"`, so a box holding only arm B's streams could not be measured at all. `--corpus-arm` added |
 | BF | 31 | **On arm B the two arms have opposite curve shapes, and on neither is the best checkpoint the last one.** Held-out urdu bpb over 16 epochs of 85.4M unique tokens: **AR turns at 4.0 epochs** (1.4557 → 0.8325 → **0.7774** → 0.7887 → 0.8690) while **DIFF descends monotonically to 16** (1.6144 → … → **0.8320**) and has not turned. So AR's best is **0.7774 at 4 epochs** and DIFF's is **0.8320 at 16** — **AR ahead by 0.055 at their respective bests**, while at the *shared* 16-epoch endpoint DIFF leads 0.8320 to 0.8690. Both statements are true and they answer different questions. ⚠️ AR's turn at 4 epochs is where the repeated-data literature puts it; arm A's turn was at 8.5 epochs over 23.2M unique. ⚠️ **Not a bracket test of C_crit**: arm B's composition (74.3/20.4/5.4) differs from arm A's (68.8/26.1/5.1), so U is confounded with mixture — the exact confound §4.1 exists to forbid |
+| BG | 32 | **A3's step count is the difference between a readable diffusion sample and a slot-looped one, and the sweep had never been run on a full-scale checkpoint.** Every diffusion sample in this repository before session 32 was decoded at **160 steps** — the one setting sessions 30 and 31 happened to use. Sweeping §4.4's grid over `ship-diff-b/diff-s0_f1.pt` (300 generations, `demo_sweep_diff.jsonl`) inverts the step axis on `lm/continue`: **8 steps → rep 0.016, 160 steps → 0.084, `confidence` at any step → 0.29–0.61**, and 64-step `confidence` unconditional generation averages **rep 0.852 with a longest repeated run of 66 words** over five prompts. ⚠️ **This is Finding AP at full scale** — "more steps, better" runs backwards at 70M over 85.4M tokens exactly as it did at 25M over 7.4M, so AP is no longer "directional, one seed". ⚠️ **The verdict it overturns is `progress.md`'s own**: the shippable block called DIFF "the better likelihood model and the worse generator" on the strength of `مہار مہار مہار` at rep 0.124 — which was a *decoder default*, not the checkpoint. **8 steps is 20× cheaper as well as better**, so this costs nothing to adopt | ✅ measured, both arms' pools shipped. **The released model card must name the step count beside the schedule** (Findings AO, AR already require the schedule and `--forbid-eos`) |
+| BH | 32 | **The diffusion arm was stopped while still descending, and §0.4's equal-budget rule is why.** At the shared 16-epoch endpoint AR had turned at 4 epochs and was being actively ruined by more compute (+0.0803 on its last doubling) while DIFF was still gaining **−0.0520** — *more than AR's best doubling ever bought*. Both stopped there because the experiment requires the same budget; **a shippable checkpoint does not owe that constraint.** Corroboration rather than extrapolation: `core-diff-s0` reached **0.8059 on arm A**, a corpus 3.7× smaller at 426 epochs, and **0.000 verbatim overlap at n ≥ 16** — so heavy repetition is safe on this arm in a way Finding BD proves it is not on AR's. Fitted continuation: **64 epochs ≈ 0.777 for ~$6**, 256 ≈ 0.754 for ~$22 | ⚠️ **live and actionable — this is the next run.** The fit is three points and its own limit is ~0.74; treat the column as a range. ⚠️ **The cosine anneals over `total_steps`, so `ship-diff-b` cannot be resumed into it** — 64 epochs is a fresh run at full price |
+| BI | 32 | **The ship corpus is capped by §6.1's mixture, not by the corpus.** `reports/freeze/plan.json` — the unsampled frozen plan — holds a native-Urdu train band of **12,136,015,091 characters**; arm B draws **246,984,881** of them, about **2%**. Arm B is not small because Urdu ran out (stage 9 measured the `urdu` margin at **146.8×**); it is small because the fixed 120:40:10 mixture chains native Urdu to the scarcest population, and `roman_urdu` is the one that failed G1 at 0.44×. `arm_tokens` is a free-form dict and arms are nested by construction, so a larger Urdu-heavy arm is a **config change, not code** | ⚠️ **live, and it carries a trap that makes it second, not first.** The held-out bands are carved *at the same mixture as the arms*, so changing `population_targets` can re-carve validation and test — and **every bpb number in this file stops being comparable**. The new held-out set must be verified byte-identical to the frozen one before a single GPU hour is spent. Corrects the shippable block's "the only thing that raises this ceiling is more corpus" |
 
 > ⚠️ **One number in this table was carried wrong.** The status board reported Finding AS as
 > "AR gap +4.46 nats, DIFF +0.03" from session 23 through session 24. Session 23's measurement
@@ -440,6 +501,7 @@ above; the derivations are in git at `8cecdfd`. Dates are 2026.
 | 29 | 09-21/22 | **Ravaan-AR s0 complete, and §4.5's primary endpoint has an answer.** **G4 PASSES** — the crossover is measured between 8.5 and 21 epochs, AR degrading to 3.6143 held-out urdu bpb against diffusion's 0.8059. AR's collapse verified as memorization and not a defect by three independent checks. `curves.py`'s reproduction tolerance corrected from an unreasonable 1e-9 to 1e-4 relative — which is itself what separated AR's float noise (6.6e-6) from DIFF's genuine ELBO sampling (5.9e-3, 207× larger) | **BC** |
 | 30 | 09-22 | **The compute phase is over.** DIFF s1 complete at urdu bpb **0.8024**, replicating seed 0's 0.8052 at **0.29σ** — the diffusion result is not one initialization's draw. All three runs downloaded (18.9 GB), **instance destroyed**, **~$28 of $40**. ⚠️ `roman_urdu` is the one population where the seeds differ by more than noise allows (2.19σ) and it is also the one stage 8 never decontaminated (AW) — a line in the report, not a conclusion. **The critical path is now the annotators** | — |
 | 31 | 09-22 | **A releasable checkpoint exists.** Both arms trained on **arm B** — 85.4M unique tokens, 3.7× arm A and never trained on — 16 epochs, ~$4.10 on a rented 5090. **`ar-s0_fp25.pt` at 4 epochs is the best Urdu model the project has produced: urdu bpb 0.7774**, against arm A's best 0.8311 and `core-ar-s0`'s final 3.6143. **Memorization 0.000 at every n ≥ 16, equal to the held-out control.** `scripts/overlap.py` written and the recitation behind Finding BC measured | **BD, BE, BF** |
+| 32 | 09-23 | **A demo exists, and the decode sweep it needed overturned a verdict in this file.** Five held-out prefixes continued by each arm's best checkpoint → [`demo.md`](reports/demo.md), [the page](https://claude.ai/artifact/Nq8PsaqFUkw9BPjqix4cuJ), `scripts/demo_page.py`. §4.4's A3/A4 grid run on a full-scale checkpoint for the first time (300 generations): **the diffusion arm's slot-looping was substantially a decoder default** — 8 steps, not 160. Arm A's diffusion found to be the better *generator* as well as the better bound, so the demo pairs `ship-ar-b/ar-s0_fp25.pt` with `core-diff-s1/diff-s1_f1.pt` across corpus arms, disclosed on the page. **Both verified non-reciting: 0.000 at n ≥ 16 against a 0.000 control.** And the curve re-read: **the diffusion arm was stopped while it was still descending** | **BG, BH, BI** |
 
 ### The results worth keeping in front of you
 
@@ -775,15 +837,22 @@ Live only. Resolved notes have been dropped; they are in git at `8cecdfd`.
 
 ## Next session
 
-**START HERE. §4.5's primary endpoint is answered *and* a releasable checkpoint exists — both are
-the first thing in this file.** Five runs are on local disk, nothing is rented and nothing is
-accruing. Weeks 1–11 complete. **Nothing is blocked on compute or money** — ~$9.80 of Vast credit
-is idle and, per the shippable block above, **more GPU cannot buy a better model; only more corpus
-can.**
+**START HERE. §4.5's primary endpoint is answered, a releasable checkpoint exists, and — new in
+session 32 — there is one more run worth paying for.** Five runs are on local disk, nothing is
+rented and nothing is accruing. Weeks 1–11 complete.
+
+> 🎯 **The stated intent, 2026-09-23: the next session trains the 64-epoch arm-B diffusion run.**
+> ~$6, ~8.7 h, everything already on disk. The block at the top of this file is the brief; step 1
+> below is the procedure. ⚠️ **~$9.80 of Vast credit is idle and that does not cover it** — load
+> more before renting, and prepaid credit only.
+
+⚠️ **This file used to say "more GPU cannot buy a better model; only more corpus can." That is
+withdrawn.** Findings BH and BI: more epochs buy ~0.055 bpb on the diffusion arm for ~$5, and the
+corpus is already on disk — 12.14B characters of native Urdu against arm B's 247M drawn.
 
 ```bash
 ls -la /d/ravaan-runs/            # core-{ar,diff}-s0, core-diff-s1, ship-{ar,diff}-b
-git status --short                # session 31 is NOT committed
+git status --short                # session 31 is in at c15ec70; session 32 is NOT committed
 ```
 
 > ### ⚠️ The critical path is the annotators, and it is the only thing with lead time
@@ -806,11 +875,47 @@ git status --short                # session 31 is NOT committed
 > annotators are still required to separate the arms at their *honest* checkpoints, but the
 > most embarrassing-looking result in the file is now settled by measurement.
 
-**Next actions, in order. Everything here is $0 and runs on the idle 4060.**
+**Next actions, in order. Item 1 is the only one that costs money; everything after it is $0 on
+the idle 4060.**
 
-1. **Commit session 31.** `scripts/overlap.py`, `scripts/train.py`'s `--corpus-arm`, `vast/`,
-   `reports/eval/{overlap,overlap_armb,curve_ar_b,curve_diff_b}.json`, the sample files and this
-   file are all untracked or unstaged. Nothing else below should start on top of that.
+0. **Commit session 32.** Session 31 is already in at `c15ec70`; what is untracked is
+   `scripts/demo_page.py`, `reports/demo*.{md,html,jsonl}`,
+   `reports/eval/overlap_demo_arm{A,B}.json` and this file. **Nothing below should start on top of
+   that** — a rented box is a bad place to discover an uncommitted working tree.
+
+1. 🎯 **The 64-epoch arm-B diffusion run. ~$6, ~8.7 h.** This is the session's stated intent and the
+   brief is the 🎯 block at the top of this file. The corpus, the runbook and the fetcher all exist;
+   the edits are three lines.
+
+   ```bash
+   # vast/launch.sh — EPOCHS=64, drop the AR line, rename the out dir:
+   #   EPOCHS=64
+   #   python -u scripts/train.py run --arm diff $COMMON --out /workspace/runs/ship-diff-b64 ...
+   # vast/fetch.sh — one wait_for, not two:
+   #   wait_for ship-diff-b64
+   ```
+
+   In order, and none of these steps is optional:
+   1. **Load Vast credit** — ~$9.80 idle does not cover an $6 run plus storage and a margin.
+      **Prepaid only; never enable automatic billing**, which removes the hard ceiling.
+   2. `./vast/push.sh <host> <port>` — ships code, tokenizer and the 169 MB arm-B corpus, then runs
+      G2's throughput check.
+   3. ⚠️ **Re-measure microbatch over 16/32/48/64 before trusting anything** (Finding BE — same
+      card, opposite optimum, **43% swing**). Do not start the chain if it is far under ~150k tok/s.
+   4. ⚠️ **Re-arm the watchdog on this run.** It triggers on the *last* run in the chain and the
+      chain is now one run; the sentinel names in `launch.sh` and `fetch.sh` must agree. One added
+      run cost three coordinated changes last time.
+   5. `./vast/fetch.sh` then `./vast/pull.sh` — **never a single `scp -r`**, which lost 4 GB of 6.3
+      GB last time. `pull.sh` resumes at a byte offset and md5-verifies every file.
+   6. **Destroy the instance in the console.** Stop halts the GPU charge; only destroy halts the
+      $0.75/day storage.
+   7. Locally: `curves.py` over the seven rungs → **ship the best rung, not the last one**;
+      `overlap.py --corpus-arm B --verify` for recitation; `sample.py --steps 8 --schedule gumbel
+      --gumbel 2 --forbid-eos always` for samples (Finding BG — **not** the 160-step default).
+
+   ⚠️ **Expect the 16-epoch rung to read worse than `ship-diff-b`'s 0.8320.** The cosine anneals
+   over `total_steps`, so at 64 epochs it has not finished at 16. That is the schedule, not a
+   regression, and it is not a reason to stop the run.
 2. **Average K = 9 draws for every diffusion number** (Finding BA), ~15 min. Takes urdu's sd from
    0.0069 to ~0.002 and is what lets both crossover tables carry a real error bar instead of a
    caveat. ⚠️ **Newly load-bearing:** arm B's AR-vs-DIFF gap at 16 epochs is 0.8690 vs 0.8320, and
@@ -822,13 +927,25 @@ git status --short                # session 31 is NOT committed
    Confirms the *held-out* descent replicates, not just the training trajectory.
 4. **Week 12's eval**: §8.3's infill exact-match and token-F1, and A3/A4's sweep. ✅ §8.3's
    generation metrics are done for four checkpoint pairs (`core_samples_{f1,fp02}.md`,
-   `ship_samples.md`). The A3/A4 sweep should now run over **`ship-ar-b/ar-s0_fp25.pt`** and
-   **`ship-diff-b/diff-s0_f1.pt`**, not the memorizers.
+   `ship_samples.md`). ✅ **The A3/A4 sweep is DONE, session 32** — 300 generations over
+   `ship-diff-b/diff-s0_f1.pt` → `reports/demo_sweep_diff.jsonl`, and it produced **Finding BG**.
+   What remains here is the **infill exact-match and token-F1**, which no session has run.
+   ⚠️ Re-run the sweep on the 64-epoch checkpoint once item 1 lands — BG's step optimum is a
+   property of a checkpoint, not a law, and 8 steps should not be assumed to carry over untested.
 5. **The release itself**, if it is wanted. §2's three requirements stand and one is now cheap:
    inference code ships with the weights, the model card carries the ELBO-is-a-bound caveat, G3's
    verdict, the single-seed caveat and Finding AE's 2.77% — **plus Finding BD, which is the reason
-   the shipped checkpoint is `fp25` and not `f1`**. Urdu Wikipedia's CC-BY-SA share-alike question
-   is still unsettled and is due *before* publishing.
+   the shipped checkpoint is `fp25` and not `f1`**, and **plus Finding BG's step count, which is
+   part of the model the same way the schedule and `--forbid-eos` are**. ⚠️ **Wait for item 1**:
+   the diffusion half of the release should be the 64-epoch arm-B checkpoint, which also removes
+   the cross-arm disclosure the session-32 demo has to carry. Urdu Wikipedia's CC-BY-SA
+   share-alike question is still unsettled and is due *before* publishing.
+5b. **The Urdu-heavy ship corpus** (Finding BI) — **only if item 1's curve says epochs have
+   flattened.** `arm_tokens` plus an Urdu-heavy `population_targets` is a config change, and the
+   supply is 12.14B characters against arm B's 247M. ⚠️ **The trap that makes this second:** the
+   held-out bands are carved at the arms' mixture, so a new `population_targets` can re-carve
+   validation and test and **invalidate every bpb number in this file.** Verify the new held-out
+   set byte-identical to the frozen one *before* spending a GPU hour.
 6. **The FIM framing** (open question 5, Finding AT) — still open, ~2.7 h on the 4060, $0.
 7. **`git remote`** — there still is not one, and session 17's **166 MB blob is in history**.
    Removing it is cheap now and expensive after the first push. CI has never run.
@@ -1166,6 +1283,19 @@ python scripts/train.py throughput --arm ar --size 70M --microbatch 32 --steps 3
 # is a checkpoint reciting its corpus? (Finding BD) — the held-out control is what makes it readable
 python scripts/overlap.py --samples reports/ship_samples.jsonl \
     --corpus data/packed --corpus-arm B --verify --out reports/eval/overlap_armb.json
+
+# session 32's A3/A4 sweep — 20 settings x 3 tasks x 5 prompts, ~25 min on the 4060 (Finding BG)
+python -u scripts/sample.py --checkpoint D:/ravaan-runs/ship-diff-b/diff-s0_f1.pt \
+    --corpus data/packed --tokenizer data/tokenizer/ravaan-16k.model \
+    --out reports/demo_sweep_diff --samples 5 --new-tokens 160 --forbid-eos always
+
+# the demo itself: each arm's best checkpoint, same prefixes, at BG's step count
+python -u scripts/sample.py --checkpoint D:/ravaan-runs/ship-ar-b/ar-s0_fp25.pt \
+    --checkpoint D:/ravaan-runs/core-diff-s1/diff-s1_f1.pt \
+    --corpus data/packed --tokenizer data/tokenizer/ravaan-16k.model \
+    --out reports/demo_samples --samples 12 --new-tokens 160 \
+    --forbid-eos always --steps 8 --schedule gumbel --gumbel 2
+python scripts/demo_page.py --samples reports/demo_samples.jsonl --out reports/demo
 
 # rent, ship, run, pull — vast/README.md is the runbook. pull.sh resumes and md5-verifies.
 ./vast/push.sh <host> <port>   &&   ./vast/pull.sh <host> <port> ship-ar-b

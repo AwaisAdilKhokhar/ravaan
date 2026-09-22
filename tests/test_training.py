@@ -282,6 +282,72 @@ def test_evaluate_reports_bits_per_byte_by_population(tmp_path):
         )
 
 
+def test_evaluate_seeds_the_diffusion_draw_and_leaves_the_denominators_alone(tmp_path):
+    """Finding BA, both halves: the ELBO moves with the draw, and only the numerator does.
+
+    Ravaan-DIFF's loss samples a masking rate and a mask per sequence, so `evaluate` returns a
+    Monte Carlo estimate. Two things have to hold before averaging K draws is the right repair.
+    A named generator must make a draw *reproducible* — otherwise K draws cannot be recorded as
+    what they were — and two different seeds must actually *differ*, or the estimator's spread
+    would be coming from somewhere this test does not know about. And `scored_tokens` must not
+    move across draws: the mean of K bits-per-byte figures equals the bits-per-byte of the mean
+    nats only while the denominator is constant, which is the identity `scripts/elbo.py` rests
+    on. `scored` is `labels != IGNORE_INDEX`, which the mask does not touch — asserted here so
+    a change to the objective that coupled them fails loudly rather than biasing an average.
+    """
+    root = _corpus(
+        tmp_path / "c",
+        streams=(
+            ("urdu/train/A", "urdu", "train", "A", 32),
+            ("urdu/validation", "urdu", "validation", None, 8),
+        ),
+    )
+    corpus = PackedCorpus(root, split="train", arm="A")
+    held_out = PackedCorpus(root, split="validation", arm=None)
+    torch.manual_seed(0)
+    trainer = Trainer(
+        RavaanDiffusion(4, TINY), corpus, _config(), out_dir=tmp_path / "run",
+        device="cpu", microbatch=4,
+    )
+
+    first = trainer.evaluate(held_out, generator=torch.Generator().manual_seed(1000))
+    again = trainer.evaluate(held_out, generator=torch.Generator().manual_seed(1000))
+    other = trainer.evaluate(held_out, generator=torch.Generator().manual_seed(1001))
+
+    assert first["urdu"]["bits_per_byte"] == pytest.approx(
+        again["urdu"]["bits_per_byte"], rel=1e-12
+    ), "a named seed did not reproduce its own draw"
+    assert first["urdu"]["bits_per_byte"] != other["urdu"]["bits_per_byte"], (
+        "two seeds gave the same ELBO — the generator is not reaching the masking draw"
+    )
+    for report in (again, other):
+        for name, entry in report.items():
+            assert entry["scored_tokens"] == first[name]["scored_tokens"], (
+                f"{name}'s denominator moved with the draw; averaging bpb would be invalid"
+            )
+
+
+def test_evaluate_without_a_generator_is_unchanged(tmp_path):
+    """The default path is the one both core runs used, and it stays the global-RNG one.
+
+    Session 33 added the `generator` argument; had it also changed what `generator=None` does,
+    every committed `evaluation.json` would have stopped being reproducible by the code that
+    wrote it. Ravaan-AR is the arm that can state this exactly, because its NLL has no draw in
+    it at all.
+    """
+    root = _corpus(tmp_path / "c", streams=(
+        ("urdu/train/A", "urdu", "train", "A", 32),
+        ("urdu/validation", "urdu", "validation", None, 8),
+    ))
+    corpus = PackedCorpus(root, split="train", arm="A")
+    held_out = PackedCorpus(root, split="validation", arm=None)
+    torch.manual_seed(0)
+    trainer = Trainer(
+        RavaanAR(TINY), corpus, _config(), out_dir=tmp_path / "run", device="cpu", microbatch=4
+    )
+    assert trainer.evaluate(held_out) == trainer.evaluate(held_out)
+
+
 # --- §4.2's task generator, through the loop -------------------------------
 
 _ALPHABET = sorted(set("یہ ایک اردو جملہ ہے۔ کتاب پڑھنا اچھا بھائی 2024") | set("abcdefghijklmnop"))

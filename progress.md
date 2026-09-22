@@ -113,6 +113,17 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 > because its NLL is exact. **A bound still cannot establish an AR win**, which is the direction this
 > table runs.
 >
+> > ✅ **Resolved 2026-09-23 (session 33). The 16-epoch diffusion number is 0.8322 ± 0.0018**, the
+> > mean of **nine seeded draws** of the full validation split (`scripts/elbo.py`,
+> > [`elbo_diff_b.json`](reports/eval/elbo_diff_b.json)). Single-draw sd on this checkpoint is
+> > **0.0053**, so BA's 0.0069 was if anything pessimistic, and K = 9 delivers the ~0.002 it
+> > predicted. **The disagreement resolves with a direction:** the curve's 0.8320 sits **0.04 sd**
+> > from the mean and the run's own `evaluation.json` 0.8247 sits **1.41 sd** below it — the table
+> > above was quoting the good draw and the run record holds the outlier. The endpoint gap is
+> > therefore **0.8690 exact against 0.8322 ± 0.0018**, about 20 sem, and it is now a measurement
+> > with a bar rather than a number with a caveat. ⚠️ **Only the 100% rung is averaged so far**;
+> > the other six, and all of arm A's, are still single draws until the chained pass lands.
+>
 > ⚠️ **70M over 85.4M unique tokens is already Chinchilla-optimal** — 16 epochs is 1,365,803,008 tokens,
 > and ÷20 is 68.3M against the model's 69.98M, within 2.5%. **Data is the ceiling, not compute or
 > money**: a larger model over the same corpus buys more memorization capacity, not more Urdu. The only
@@ -382,7 +393,7 @@ holds only while the priority is wall-clock and while stage 10's reported fertil
 
 ## Findings register
 
-Fifty-seven findings are referenced across this file, the PRD and the reports, and until now they
+Sixty-four findings are referenced across this file, the PRD and the reports, and until now they
 were only defined inside the session that raised them. One line each, with the session that owns
 the derivation — `git show 8cecdfd:progress.md` has the full text of every one.
 
@@ -454,6 +465,7 @@ must say.
 | BG | 32 | **A3's step count is the difference between a readable diffusion sample and a slot-looped one, and the sweep had never been run on a full-scale checkpoint.** Every diffusion sample in this repository before session 32 was decoded at **160 steps** — the one setting sessions 30 and 31 happened to use. Sweeping §4.4's grid over `ship-diff-b/diff-s0_f1.pt` (300 generations, `demo_sweep_diff.jsonl`) inverts the step axis on `lm/continue`: **8 steps → rep 0.016, 160 steps → 0.084, `confidence` at any step → 0.29–0.61**, and 64-step `confidence` unconditional generation averages **rep 0.852 with a longest repeated run of 66 words** over five prompts. ⚠️ **This is Finding AP at full scale** — "more steps, better" runs backwards at 70M over 85.4M tokens exactly as it did at 25M over 7.4M, so AP is no longer "directional, one seed". ⚠️ **The verdict it overturns is `progress.md`'s own**: the shippable block called DIFF "the better likelihood model and the worse generator" on the strength of `مہار مہار مہار` at rep 0.124 — which was a *decoder default*, not the checkpoint. **8 steps is 20× cheaper as well as better**, so this costs nothing to adopt | ✅ measured, both arms' pools shipped. **The released model card must name the step count beside the schedule** (Findings AO, AR already require the schedule and `--forbid-eos`) |
 | BH | 32 | **The diffusion arm was stopped while still descending, and §0.4's equal-budget rule is why.** At the shared 16-epoch endpoint AR had turned at 4 epochs and was being actively ruined by more compute (+0.0803 on its last doubling) while DIFF was still gaining **−0.0520** — *more than AR's best doubling ever bought*. Both stopped there because the experiment requires the same budget; **a shippable checkpoint does not owe that constraint.** Corroboration rather than extrapolation: `core-diff-s0` reached **0.8059 on arm A**, a corpus 3.7× smaller at 426 epochs, and **0.000 verbatim overlap at n ≥ 16** — so heavy repetition is safe on this arm in a way Finding BD proves it is not on AR's. Fitted continuation: **64 epochs ≈ 0.777 for ~$6**, 256 ≈ 0.754 for ~$22 | ⚠️ **live and actionable — this is the next run.** The fit is three points and its own limit is ~0.74; treat the column as a range. ⚠️ **The cosine anneals over `total_steps`, so `ship-diff-b` cannot be resumed into it** — 64 epochs is a fresh run at full price |
 | BI | 32 | **The ship corpus is capped by §6.1's mixture, not by the corpus.** `reports/freeze/plan.json` — the unsampled frozen plan — holds a native-Urdu train band of **12,136,015,091 characters**; arm B draws **246,984,881** of them, about **2%**. Arm B is not small because Urdu ran out (stage 9 measured the `urdu` margin at **146.8×**); it is small because the fixed 120:40:10 mixture chains native Urdu to the scarcest population, and `roman_urdu` is the one that failed G1 at 0.44×. `arm_tokens` is a free-form dict and arms are nested by construction, so a larger Urdu-heavy arm is a **config change, not code** | ⚠️ **live, and it carries a trap that makes it second, not first.** The held-out bands are carved *at the same mixture as the arms*, so changing `population_targets` can re-carve validation and test — and **every bpb number in this file stops being comparable**. The new held-out set must be verified byte-identical to the frozen one before a single GPU hour is spent. Corrects the shippable block's "the only thing that raises this ceiling is more corpus" |
+| BJ | 33 | **Finding BA's estimator noise is now a bar rather than a caveat, and the draw that went into the run record was the outlier.** `Trainer.evaluate` called `model.loss` with `generator=None`, so Ravaan-DIFF's ELBO rode the global RNG and no diffusion number in this repository was reproducible as a named draw. `evaluate` now takes a seeded generator — `generator=None` is byte-for-byte the old path, so every committed `evaluation.json` is still reproducible by the code that wrote it — and `scripts/elbo.py` averages K of them. On `ship-diff-b/diff-s0_f1.pt`, nine draws of the full 4,874-sequence split give **urdu 0.8322 ± 0.0018** (single-draw sd **0.0053**, range 0.8237–0.8399), roman_urdu 1.6962 ± 0.0039, code_switched 1.1685 ± 0.0089, all 0.9909 ± 0.0015. **BA's 0.0069 was pessimistic and its K = 9 prediction of ~0.002 was right.** The 1.06 sd disagreement BA found resolves with a direction: `curve_diff_b`'s 0.8320 is **0.04 sd** from the mean and the run's own `evaluation.json` 0.8247 is **1.41 sd below** it — progress.md had been quoting the good draw and the run record holds the low one | ⚠️ **live until the curves land.** Only the 100% rung is averaged; the remaining six and all of arm A's are single draws, so the crossover tables still carry one-draw numbers at every other rung. Arm B's endpoint gap is **0.8690 exact against 0.8322 ± 0.0018**, ~20 sem, and BH's −0.0520 last doubling is ~10× the single-draw sd — both survive the bar comfortably. ⚠️ **The sem is the estimator's only**: it says nothing about initialization (that is seed 1's job) and nothing about the corpus |
 
 > ⚠️ **One number in this table was carried wrong.** The status board reported Finding AS as
 > "AR gap +4.46 nats, DIFF +0.03" from session 23 through session 24. Session 23's measurement
@@ -916,12 +928,23 @@ the idle 4060.**
    ⚠️ **Expect the 16-epoch rung to read worse than `ship-diff-b`'s 0.8320.** The cosine anneals
    over `total_steps`, so at 64 epochs it has not finished at 16. That is the schedule, not a
    regression, and it is not a reason to stop the run.
-2. **Average K = 9 draws for every diffusion number** (Finding BA), ~15 min. Takes urdu's sd from
-   0.0069 to ~0.002 and is what lets both crossover tables carry a real error bar instead of a
-   caveat. ⚠️ **Newly load-bearing:** arm B's AR-vs-DIFF gap at 16 epochs is 0.8690 vs 0.8320, and
-   the diffusion half of that is one draw — `evaluation.json` and the curve disagree by 1.06 sd on
-   the *same checkpoint*. The scratch driver that measured the sd is the starting point; promote
-   it to `scripts/` as `overlap.py` was.
+2. **Average K = 9 draws for every diffusion number** (Finding BA) — ✅ **the driver exists and
+   the load-bearing number is done, session 33; the curves were left running.** `scripts/elbo.py`
+   takes K seeded draws per checkpoint and `Trainer.evaluate` now accepts the generator that makes
+   a draw nameable (`generator=None` is byte-for-byte the old path, so every committed
+   `evaluation.json` still reproduces). Arm B's 16-epoch endpoint is **0.8322 ± 0.0018** over nine
+   draws — Finding BJ — which turns the AR-vs-DIFF gap there into 0.8690 exact against a number
+   with a bar. ⚠️ **What is *not* done:** every other rung is still one draw. A chained pass over
+   `core-diff-s0` and `ship-diff-b` at K = 9 was launched and takes ~6 h on the 4060 at ~130–200 s
+   a pass; check `reports/.elbo_chain.log` for `CHAIN COMPLETE` and the two JSONs beside
+   `elbo_diff_b.json`. It resumes per (checkpoint, draw), so re-running it costs only what died.
+
+   ⚠️ **A full-split pass is 4,874 sequences at microbatch 1.** `Trainer.evaluate` does
+   `tokens.unsqueeze(0)` and scores one sequence at a time, which is why a 70M model takes minutes
+   on an idle 4060 and why K = 9 over 14 checkpoints is hours rather than minutes. Deliberately
+   **not** changed in session 33: `population_of(index)` attributes each sequence to its script
+   population one at a time, and §8.3's by-script reporting depends on it, so batching is a real
+   ~10× and a real change to the scoring path `curves.py` exists to keep identical to `cmd_run`'s.
 3. **Seed 1's fraction curve**, ~35 min:
    `python -u scripts/curves.py --run D:/ravaan-runs/core-diff-s1 --arm diff --seed 1 --corpus data/packed --corpus-arm A --out reports/eval/curve_diff_s1.json`
    Confirms the *held-out* descent replicates, not just the training trajectory.
@@ -1328,6 +1351,18 @@ python scripts/curves.py --run … --arm diff …     # §4.3/G4: score all seve
 # G4's curve for a finished run. ~5 min per checkpoint on the 4060, resumable, validation only.
 python -u scripts/curves.py --run "D:\ravaan-runs\core-diff-s0" --arm diff --seed 0 \
     --corpus data/packed --corpus-arm A --out reports/eval/curve_diff_s0.json
+```
+
+```bash
+# an error bar on any diffusion number (Findings BA, BJ). K seeded draws, resumable per draw.
+# ~130-200 s a pass on the 4060, so K=9 is ~25 min a checkpoint and ~3 h for a seven-rung curve.
+python -u scripts/elbo.py --run D:/ravaan-runs/ship-diff-b --seed 0 --draws 9 \
+    --corpus data/packed --corpus-arm B --check-denominators \
+    --out reports/eval/elbo_diff_b_curve.json
+
+# one checkpoint only, when it is a single number that has to carry the bar
+python -u scripts/elbo.py --checkpoint D:/ravaan-runs/ship-diff-b/diff-s0_f1.pt --seed 0 \
+    --draws 9 --corpus data/packed --corpus-arm B --out reports/eval/elbo_diff_b.json
 ```
 
 ⚠️ **Wait on a file the producer writes, never on a process name.** `pgrep` does not exist in Git

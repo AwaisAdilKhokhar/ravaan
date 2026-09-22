@@ -271,7 +271,13 @@ class Trainer:
     # --- evaluation --------------------------------------------------------
 
     @torch.no_grad()
-    def evaluate(self, held_out: PackedCorpus, *, limit: int | None = None) -> dict:
+    def evaluate(
+        self,
+        held_out: PackedCorpus,
+        *,
+        limit: int | None = None,
+        generator: torch.Generator | None = None,
+    ) -> dict:
         """Validation loss over a held-out corpus, in nats, bits-per-token and bits-per-byte.
 
         §8.3 reports **bits-per-byte** so the comparison is tokenizer-independent, and stage 10's
@@ -287,14 +293,27 @@ class Trainer:
         ``out.scored`` rather than ``tokens.numel()``: the two arms cover different numbers of
         positions with the same sequence, and multiplying a per-token average by the sequence
         length would silently rescale one of them. See :class:`~ravaan.models.ar.LossOutput`.
+
+        **``generator`` names the draw, and it is the whole of Finding BA's repair.**
+        Ravaan-DIFF's loss samples a masking rate and a mask *per sequence*, so this method
+        returns a Monte Carlo estimate rather than a property of the checkpoint — measured at
+        **sd 0.0069 bpb on native Urdu** over six draws of the full validation split. Left at
+        ``None`` the draw comes from the global RNG, which is how every diffusion number in this
+        repository before session 33 was produced and why a run's ``evaluation.json`` and a
+        `curves.py` point on the *same* checkpoint land ~1 sd apart. Passing a seeded generator
+        makes one draw reproducible; averaging K of them is what shrinks the estimator's sd by
+        √K, and `scripts/elbo.py` is the driver that does it. Ravaan-AR's NLL is exact and its
+        ``loss`` takes no generator, so passing one here with an AR model is an error rather
+        than a no-op, and it raises as one.
         """
         self.model.eval()
         count = min(len(held_out), limit or len(held_out))
         totals: dict[str, list[float]] = {}
+        draw = {} if generator is None else {"generator": generator}
         for index in range(count):
             tokens = torch.from_numpy(held_out[index]).unsqueeze(0).to(self.device)
             with _autocast(self.device, self.config.precision):
-                out = self.model.loss(tokens)
+                out = self.model.loss(tokens, **draw)
             scored = float(out.scored)
             nats = float(out.nats) * scored
             population = held_out.population_of(index)

@@ -1,47 +1,68 @@
 #!/bin/bash
-# Runs ON the rented instance. Chains both arm-B runs, then stops the box.
+# Runs ON the rented instance. One 64-epoch arm-B diffusion run, then stops the box.
 #
-# This is the deployable-checkpoint run, not a research run: arm B (85.4M unique
-# tokens, 74.27% native Urdu) at 16 epochs, against the core runs' arm A (23.2M,
-# 68.80%) at 426. The point is a checkpoint that has not memorised its corpus --
-# core-ar-s0 reproduces 25% of its output verbatim at 32 tokens, and 11% at 128.
+# This is the shippable-diffusion run (Finding BH), not a research run. §0.4 makes both
+# arms take the same budget, so session 31's pair both stopped at 16 epochs -- but at
+# that point AR had turned at 4 and was being actively ruined by more compute (+0.0803
+# on its last doubling) while DIFF was still gaining -0.0520, more than AR's best
+# doubling ever bought. A shippable checkpoint does not owe §0.4's constraint. So this
+# run buys the epochs the experiment could not.
+#
+# What it is expected to land: a three-point fit puts 64 epochs at ~0.777 urdu bpb,
+# level with the AR arm's best 0.7774 on the same corpus, against DIFF's 0.8322 +/-
+# 0.0018 at 16 (Finding BJ, nine seeded draws). ⚠️ That is a FIT, not a measurement --
+# arm A's own deltas wobble and the fit's limit is ~0.74, so the prize is a few
+# hundredths of a bpb. The other half of the purchase is a matched-corpus release pair:
+# the AR release is arm B and the best diffusion so far is arm A, and every artefact has
+# had to disclose it.
+#
+# ⚠️ NOT a resume of ship-diff-b. RavaanTrainingConfig.lr_at is cosine to 10% of peak
+# over total_steps, so that checkpoint has already annealed. This is a fresh run at full
+# price, and its 16-epoch rung will read slightly WORSE than ship-diff-b's 0.8320
+# because the cosine has not finished there. Expected, not a regression, not a reason to
+# stop the run.
 #
 # §4.2's task mixture is KEPT (lm 65% / infill 10% / translit 10% / restore 8% /
-# codeswitch 7%). A pure-LM run would generate marginally better, but the mixture
-# is what makes the checkpoint comparable to the measured curves and what gives the
+# codeswitch 7%). A pure-LM run would generate marginally better, but the mixture is
+# what makes the checkpoint comparable to the measured curves and what gives the
 # released model infilling and transliteration as well as generation.
 #
-# Seven fraction checkpoints per run land at 0.16 / 0.33 / 0.82 / 1.6 / 4.1 / 8.2 /
-# 16.4 epochs. The shipped checkpoint is whichever scores best on held-out bpb --
-# picked by scripts/curves.py after the fetch, NOT assumed to be the last one. On
-# arm A the best AR checkpoint was the 2% one and the final one was worse than
-# uniform random, so this choice is load-bearing.
+# Seven fraction checkpoints land at 0.64 / 1.3 / 3.2 / 6.4 / 16 / 32 / 64 epochs --
+# four of them past where the curve currently stops. The shipped checkpoint is whichever
+# scores best on held-out bpb, picked by scripts/curves.py after the fetch and NOT
+# assumed to be the last one: on arm A the best AR checkpoint was the 2% one and the
+# final one was worse than uniform random, so this choice is load-bearing.
 set -euo pipefail
 cd /workspace/ravaan
 
-# microbatch is HOST-dependent and must be re-measured on every box, not inherited. The
-# core runs' 5090 peaked at 16 (186,631 tok/s against 181,578 at 32); this one peaks at
-# 32 and is 43% slower at 16 -- 122,933 vs 175,821. Same card, opposite optimum. Run
-# `train.py throughput --corpus-arm B --corpus ...` over 16/32/48/64 before trusting this.
+# ⚠️ microbatch is HOST-dependent and must be re-measured on every box, not inherited
+# (Finding BE). The core runs' 5090 peaked at 16 (186,631 tok/s against 181,578 at 32);
+# session 31's peaked at 32 and was 43% SLOWER at 16 -- 122,933 vs 175,821. Same card,
+# opposite optimum. push.sh sweeps 16/32/48/64 on the diff arm before you get here;
+# set MICROBATCH to whatever it reported as the peak.
+EPOCHS=64
+MICROBATCH="${MICROBATCH:-32}"
+RUN=ship-diff-b64
 
-EPOCHS=16
 COMMON="--size 70M --seed 0 --corpus /workspace/data/packed --corpus-arm B
-        --tokenizer /workspace/data/tokenizer/ravaan-16k.model --microbatch 32
+        --tokenizer /workspace/data/tokenizer/ravaan-16k.model --microbatch $MICROBATCH
         --epochs $EPOCHS --evaluate --eval-split validation --eval-limit 0"
 
 mkdir -p /workspace/runs
 
-# AR first: it is the one most likely to be the released generator, so if anything
-# goes wrong it goes wrong on the arm we care about most while the box is watched.
-python -u scripts/train.py run --arm ar   $COMMON --out /workspace/runs/ship-ar-b   2>&1 | tee /workspace/runs/ship-ar-b.log
-python -u scripts/train.py run --arm diff $COMMON --out /workspace/runs/ship-diff-b 2>&1 | tee /workspace/runs/ship-diff-b.log
+python -u scripts/train.py run --arm diff $COMMON --out "/workspace/runs/$RUN" 2>&1 | tee "/workspace/runs/$RUN.log"
 
-touch /workspace/runs/.both_done
-echo "BOTH RUNS COMPLETE — waiting for the fetcher before stopping"
+touch /workspace/runs/.run_done
+echo "RUN COMPLETE — waiting for the fetcher before stopping"
 
-# Grace window for the local fetcher. The watchdog waits on the sentinel the
-# fetcher writes, never on a process name (Git Bash has no pgrep; that mistake
-# cost sessions 23 and 28). Hard cap so a dead fetcher cannot bill indefinitely.
+# Grace window for the local fetcher. The watchdog waits on the sentinel the fetcher
+# writes, never on a process name (Git Bash has no pgrep; that mistake cost sessions 23
+# and 28). Hard cap so a dead fetcher cannot bill indefinitely.
+#
+# ⚠️ The watchdog triggers on the LAST run in the chain and the chain is now one run.
+# $RUN above, fetch.sh's wait_for, and .fetched_all below are the three names that must
+# agree; adding a run last time cost three coordinated changes and this is the same trap
+# with the count going the other way.
 for _ in $(seq 1 96); do
     [ -f /workspace/runs/.fetched_all ] && break
     sleep 300

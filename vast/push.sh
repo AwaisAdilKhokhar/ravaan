@@ -31,10 +31,21 @@ $S "$H" 'python -c "import torch, numpy" && pip install -q sentencepiece'
 $S "$H" 'cd /workspace/ravaan && pip install -q --no-deps -e .'
 $S "$H" 'cd /workspace/ravaan && python -c "import torch, sentencepiece, ravaan; print(\"imports OK\", torch.__version__, torch.cuda.is_available())"'
 
-echo "== throughput check (G2's rule: measure on the instance before committing) =="
-$S "$H" 'cd /workspace/ravaan && python -u scripts/train.py throughput --arm ar --size 70M --microbatch 16 --steps 30 --corpus-arm B --corpus /workspace/data/packed --tokenizer /workspace/data/tokenizer/ravaan-16k.model'
+echo "== throughput sweep (G2's rule: measure on the instance before committing) =="
+# ⚠️ A SWEEP, not one setting (Finding BE). The microbatch optimum is a property of the
+# host, not the card: the core runs' 5090 peaked at 16 (186,631 tok/s), session 31's
+# peaked at 32 and was 43% SLOWER at 16 -- 122,933 against 175,821, with 48 and 64
+# falling back to 166,685 and 157,753. Inheriting the previous box's setting would have
+# cost ~2 GPU-hours on a 4-hour job, and this run is longer. Measured on --arm diff
+# because that is the arm being paid for; AR and DIFF cost the same per token within
+# 2.2% (Finding AM), but there is no reason to measure the arm we are not running.
+for MB in 16 32 48 64; do
+    echo "-- microbatch $MB --"
+    $S "$H" "cd /workspace/ravaan && python -u scripts/train.py throughput --arm diff --size 70M --microbatch $MB --steps 30 --corpus-arm B --corpus /workspace/data/packed --tokenizer /workspace/data/tokenizer/ravaan-16k.model"
+done
 
 echo
-echo "If that cleared ~150k tok/s, start the chain:"
-echo "  ssh -p $P $H 'cd /workspace/ravaan && nohup bash vast/launch.sh > /workspace/runs/chain.log 2>&1 &'"
+echo "Take the PEAK from the sweep above. Do not start if it is far under ~150k tok/s."
+echo "Start the run detached, passing that microbatch:"
+echo "  ssh -p $P $H 'cd /workspace/ravaan && MICROBATCH=<peak> nohup bash vast/launch.sh > /workspace/runs/chain.log 2>&1 &'"
 echo "Then locally:  ./vast/fetch.sh ${1} ${P}"

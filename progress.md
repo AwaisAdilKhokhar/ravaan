@@ -42,8 +42,26 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 > an upper bound — and it still beats AR's exact NLL. §4.3's standing caveat is that a bound can
 > prove a diffusion win and never an AR one; **here that asymmetry works for the result.**
 >
-> ⚠️ **Still one seed per arm.** The crossover's *existence* is well supported; its *location*
-> rests on one initialization. `core-diff-s1` bounds the diffusion side only.
+> ✅ **The diffusion side is replicated, 2026-09-22.** `core-diff-s1` finished at urdu bpb
+> **0.8024** against seed 0's **0.8052** — a difference of 0.0028 where the sd of a difference of
+> two single draws is √2 × 0.0069 = 0.0098, so **0.29σ. Indistinguishable.** Both seeds land at
+> ~0.80 against AR's 3.6143, so **no initialization story explains the 4.5×.**
+>
+> | population | seed 0 | seed 1 | Δ | sd(diff) | σ |
+> |---|---|---|---|---|---|
+> | **urdu** | 0.8052 | 0.8024 | 0.0028 | 0.0098 | **0.29** |
+> | roman_urdu | 1.5937 | 1.6213 | 0.0276 | 0.0126 | **2.19** |
+> | code_switched | 1.1340 | 1.1126 | 0.0214 | 0.0434 | 0.49 |
+> | all | 0.9508 | 0.9526 | 0.0018 | 0.0057 | 0.32 |
+>
+> ⚠️ **`roman_urdu` at 2.19σ is the one population where the seeds differ by more than noise
+> comfortably allows.** One of four comparisons at ~2σ is unsurprising, and it is also the
+> population Finding AW says was **never decontaminated by stage 8**. Worth a line in the report;
+> **not** worth a conclusion. Averaging draws (Finding BA) is what would settle it.
+>
+> ⚠️ **AR is still one seed, so §4.5's endpoint is still a single paired comparison.** What is now
+> replicated is the diffusion arm's own number, not the gap. v2.4's requirement to write the
+> endpoint as one comparison, with no between-seed interval, is unchanged.
 >
 > Curves: [`curve_ar_s0.json`](reports/eval/curve_ar_s0.json),
 > [`curve_diff_s0.json`](reports/eval/curve_diff_s0.json), both by `scripts/curves.py`.
@@ -85,9 +103,18 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
   3.6143**, roman_urdu 6.2295, code_switched 5.0055, all 4.1070. ⚠️ **Those are memorization
   numbers, not a broken run — see Finding BC**, which is the single most important thing in this
   file to read before quoting any of them.
-- 🟢 **Ravaan-DIFF seed 1 is training**, ~09:25 UTC 2026-09-22. The no-second-seed decision of
-  2026-09-21 was **reversed the same day**; the watchdog was rearmed onto it and the download
-  sentinel renamed. Three runs: **~46 h for ~$28** of the $40 loaded. See "Next session".
+- 🟢 **Ravaan-DIFF seed 1 is COMPLETE, 2026-09-22** — 15.20 h, **urdu bpb 0.8024**, replicating
+  seed 0 at **0.29σ**. The no-second-seed decision of 2026-09-21 was reversed the same day, and
+  it was worth it: it is what makes the diffusion result defensible against the first objection a
+  reader raises at one seed.
+- ✅ **THE COMPUTE PHASE IS OVER. The instance is destroyed, 2026-09-22.** All three runs are on
+  local disk at `/d/ravaan-runs` — **6.3 GB each, 8 checkpoints and `evaluation.json` apiece,
+  18.9 GB total**, every artifact off the box before it went. Total **~$28 of the $40 loaded**,
+  against G2's $90 ceiling and a $150 project budget. **Nothing is rented and nothing is
+  accruing.** Weeks 9–11 complete.
+- ⚠️ **The critical path is now the annotators, and it has been since the corpus froze.** Nothing
+  left in the plan is blocked on compute or money; **G5 is blocked on three people who have never
+  been approached.** See "Next session".
 - ⚠️ **Two blockers were found by launching, not by reading, and both are fixed (Findings AX, AY).**
   **`data/packed` could not build §4.2's task generator at all** — `pack.py` never wrote §7's twelve
   framing pieces into the manifest, so *both* arms exited on arrival. It would have failed on the
@@ -219,7 +246,7 @@ holds only while the priority is wall-clock and while stage 10's reported fertil
 | ↳ 50% costs **+0.0374 held-out bpb** and buys **+0.02–0.04 token-F1**; memorization gaps ~0.04 | §4.2 | ✅ matched pair, one variable |
 | ↳ ⚠️ but it found **Finding AT**, and the *framing* call is live again | §4.2, §4.4 | ⬜ **open question 5 — and it is yours** |
 | **`--task-share`** — §4.2's table stays frozen; the override lands in `config.json` | §4.2 | ✅ residual out of `lm` alone |
-| **G2** — measured on a local 4060; the **rented** card decides it | §11 | 🟡 **v2.4: requirement is ~21,400 tok/s** at 70M for two runs ≤ $90 (was 64,162 at six), against 14,128 (AR) / 14,438 (DIFF) here |
+| **G2** — the **rented** card decides it, and it did | §11 | ✅ **PASS 2026-09-20 on the instance**, which is what the gate always required. RTX 5090 at microbatch 16: **181,288 tok/s sustained** against a v2.4 bar of ~21,400 — **8.5× over**. The 4060's 15,350 was never the answer, it was the requirement. Three runs came in at **~46 GPU-h / ~$28** against the $90 ceiling |
 | ↳ the ladder: 70M **4.54×** short · 40M **2.78×** · 25M **1.72×** (37,236 tok/s) | §11 | ✅ s21 — check a spec sheet against this *before* renting |
 | ↳ Finding AM — both arms cost the same per token, within 2.2% | §4.1 | ✅ and it is the half that transfers to another card |
 | ↳ §4.2's generator is ~180 ms of CPU per 256-sequence step, so `throughput` builds tasks by default | §11 | ✅ ~13% of throughput, and the cheapest evidence the tasks are running |
@@ -350,6 +377,7 @@ above; the derivations are in git at `8cecdfd`. Dates are 2026.
 | 27 | 09-20 | **The core runs are launched.** Two blockers found *by running the thing* — AX would have stopped both arms on the rented box; AY would have made the budget read as nonsense after the first preemption. **G2 PASSES on a rented 5090 at 181,600 tok/s.** Ravaan-DIFF s0 training, Ravaan-AR s0 chained, auto-stop watchdog installed | **AX, AY, AZ** |
 | 28 | 09-21 | **Ravaan-DIFF s0 is complete — the project's first core result**, 15.17 h, urdu bpb ≤ 0.8052 over the full validation split, 6.3 GB on local disk. AR s0 training. **The second diffusion seed was declined and then added back the same day**, which required rearming the watchdog and renaming the sentinel. **G4's diffusion half read** through `scripts/curves.py` — §4.3's "evaluate every checkpoint" had no driver and the gate's own curve could not be produced. AX's committed fix found not to parse | **BA, BB** |
 | 29 | 09-21/22 | **Ravaan-AR s0 complete, and §4.5's primary endpoint has an answer.** **G4 PASSES** — the crossover is measured between 8.5 and 21 epochs, AR degrading to 3.6143 held-out urdu bpb against diffusion's 0.8059. AR's collapse verified as memorization and not a defect by three independent checks. `curves.py`'s reproduction tolerance corrected from an unreasonable 1e-9 to 1e-4 relative — which is itself what separated AR's float noise (6.6e-6) from DIFF's genuine ELBO sampling (5.9e-3, 207× larger) | **BC** |
+| 30 | 09-22 | **The compute phase is over.** DIFF s1 complete at urdu bpb **0.8024**, replicating seed 0's 0.8052 at **0.29σ** — the diffusion result is not one initialization's draw. All three runs downloaded (18.9 GB), **instance destroyed**, **~$28 of $40**. ⚠️ `roman_urdu` is the one population where the seeds differ by more than noise allows (2.19σ) and it is also the one stage 8 never decontaminated (AW) — a line in the report, not a conclusion. **The critical path is now the annotators** | — |
 
 ### The results worth keeping in front of you
 
@@ -685,63 +713,75 @@ Live only. Resolved notes have been dropped; they are in git at `8cecdfd`.
 
 ## Next session
 
-**START HERE. Both core runs are DONE and the primary endpoint is answered — see the top of this
-file.** The only thing still on the rented box is **DIFF seed 1**, which finishes ~09:25 UTC
-2026-09-22 and then stops the instance by itself. `core-diff-s0` and `core-ar-s0` are both fully
-downloaded (6.3 GB each). Weeks 1–11 are complete. **Nothing is blocked on a decision.**
-
-> **⚠️ The one manual step left: DESTROY the instance** once seed 1 has downloaded — the 🗑 icon,
-> not Stop. Stop halts the $0.5647/h GPU charge; only destroy halts the **$0.75/day storage**.
-> The watchdog only ever *stops*, deliberately, so the disk survives if a download failed.
-
-**What to do first, and it needs no GPU rental:** average K draws for every diffusion number
-(Finding BA) — ~15 min on the idle 4060 for K = 9, which takes urdu's sd from 0.0069 to ~0.002.
-Then the AR-vs-DIFF crossover table can be written with a real error bar instead of a caveat.
+**START HERE. The compute phase is over and §4.5's primary endpoint is answered — the result is
+the first thing in this file.** All three runs are on local disk, the instance is destroyed,
+nothing is rented and nothing is accruing. Weeks 1–11 complete. **Nothing is blocked on compute
+or money.**
 
 ```bash
-ssh -p 46220 root@180.189.55.43 'tail -1 /workspace/runs/core-ar-s0.log; tail -2 /workspace/runs/watchdog.log; tmux ls'
-tail -3 /d/ravaan-runs/fetch.log        # the downloader, on this laptop
+ls -la /d/ravaan-runs/core-*/          # 3 runs, 6.3 GB each, 8 checkpoints + evaluation.json
+git log --oneline -8                   # the result is committed
 ```
 
-**The live instance — Vast.ai RTX 5090, id `51739847`, `root@180.189.55.43:46220`, $0.5647/h.**
-Key is `~/.ssh/id_ed25519` (generated s27; the public half is on the Vast account). Launched
-11:32:39 UTC 2026-09-20. **Sustained 181,288 tok/s for 15.17 h with no drift** — the `seconds`
-field in the jsonl is true wall clock and can be trusted (Finding AY's fix, verified against the
-instance's own date).
+> ### ⚠️ The critical path is the annotators, and it is the only thing with lead time
+>
+> **G5 needs 3 fluent Urdu speakers for ~2 h each, and nobody has been approached.** §8.4 is the
+> only instrument in the plan that can separate the two arms on generation quality — §8.3's three
+> metrics score fluent prose and slot-looping clauses within a few hundredths of each other, twice
+> now, on two different checkpoint pairs. §8.2 also needs **~200 hand-written transliteration
+> pairs** and **~300 real-OCR lines** (~8 h of hand-correction); neither set exists and neither has
+> been through stage 8. These are favour-sized asks with weeks of lead time and every other task
+> below can be done alone. ⚠️ **PRD §10's cut order puts human evaluation *above* the seeds v2.4
+> already dropped**, so keeping §8.4 while having cut seeds climbs the ladder out of order — that
+> decision is due before Week 12 (PRD §0.4) and is still open.
+> [The annotation page](https://claude.ai/code/artifact/92e617de-5364-4273-8584-8ff1cc95dea2)
+> renders all 243 samples in nastaliq and records a verdict per sample per annotator.
+> **The instrument exists and only the people are missing.**
 
-**The chain, as it now stands.** Each link waits on the producer's own completion artifact, never
-on a process name — Git Bash has no `pgrep` and a name-based wait falls straight through:
+**Next actions, in order. Everything here is $0 and runs on the idle 4060.**
 
-| tmux | script | waits on | then |
-|---|---|---|---|
-| ~~`diff`~~ | — | — | ✅ DIFF s0 done 02:42 UTC 09-21, downloaded, session exited cleanly |
-| ~~`ar`~~ | `chain_ar.sh` | `core-diff-s0/evaluation.json` | ✅ AR s0 done 20:2x UTC 09-21, downloaded |
-| `d1` | `chain_diff_s1.sh` | `core-ar-s0/evaluation.json` | **DIFF s1** → ~09:25 UTC 09-22 |
-| `wd` | `watchdog.sh` | `core-diff-s1/evaluation.json` | 2 h grace, then **stop** |
+1. **Average K = 9 draws for every diffusion number** (Finding BA), ~15 min. Takes urdu's sd from
+   0.0069 to ~0.002 and is what lets the crossover table carry a real error bar instead of a
+   caveat. It is also the only thing that settles whether `roman_urdu`'s 2.19σ seed difference is
+   real. The scratch driver that measured the sd is the starting point; promote it to `scripts/`.
+2. **Seed 1's fraction curve**, ~35 min:
+   `python -u scripts/curves.py --run D:/ravaan-runs/core-diff-s1 --arm diff --seed 1 --corpus data/packed --corpus-arm A --out reports/eval/curve_diff_s1.json`
+   Confirms the *held-out* descent replicates, not just the training trajectory — the training
+   curves already agree to 0.007–0.06 bpt at every fraction.
+3. **Week 12's eval**: §8.3's generation metrics, §8.3's infill exact-match and token-F1, and
+   A3/A4's core-run sweep over the trained diffusion checkpoint. All built, all inference-only.
+4. **The FIM framing** (open question 5, Finding AT) — still open, ~2.7 h on the 4060, $0. Under
+   the wall-clock priority (a) "change nothing and state the limitation" was the consistent answer;
+   the card is idle now, so (b) is cheaper than it was when the question was framed.
+5. **`git remote`** — there still is not one, and session 17's **166 MB blob is in history**.
+   Removing it is cheap now and expensive after the first push. CI has never run.
 
-> **⚠️ Three things, and none of them is a design decision.**
-> **(a) The downloader is `fetch_all.sh`, not `fetch.sh`.** It covers all three runs and is
-> `nohup`-detached (`/d/ravaan-runs/fetch.log`). **This matters**: the watchdog *stops* the
-> instance, and a stopped Vast instance can only be restarted if the host's GPU is still free.
-> The old two-run `fetch.sh` is superseded — do not run it, it touches the wrong sentinel.
-> **(b) Destroy the instance** once all three runs are on local disk — the 🗑 icon, not Stop. Stop
-> halts the $0.5647/h GPU charge; only destroy halts the **$0.75/day storage** charge.
-> **(c) Nothing is time-sensitive any more.** The one item that had a deadline — the second
-> diffusion seed — is chained and its deadline is passed.
+---
 
-> **⚠️ The second seed cost three coordinated changes, not one, and that is the thing to carry.**
-> Chaining a run after AR is the easy part. The watchdog was armed on **AR's** `evaluation.json`
-> and would have stopped the box roughly two hours into seed 1 and killed it; and the sentinel had
-> to be **renamed** `.downloaded` → `.downloaded_all`, because the two-run fetcher touches the old
-> one the moment AR lands, which would have ended seed 1's download grace before seed 1 existed.
-> **Premise, written next to the verdict:** this chain is only correct while the watchdog's trigger
-> is the *last* run in it. Add a fourth run and the watchdog must be rearmed again.
+### The rented-box record — history, not a task. Kept for the lessons only.
 
-**Cost control, as installed.** Three layers: prepaid credit is a hard $40 ceiling (**never enable
-Vast's automatic billing** — that removes it); `/workspace/watchdog.sh` stops the instance on
-**DIFF s1's** `evaluation.json` after a 2 h download grace, using the instance's own scoped
-`CONTAINER_API_KEY`; `fetch_all.sh`'s sentinel ends that grace early. Three runs ≈ **46 GPU-h**:
-expected **~$26 GPU + ~$1.50 storage ≈ $28** of the $40 loaded.
+Vast.ai RTX 5090, instance `51739847`, $0.5647/h, 2026-09-20 11:32 UTC → 2026-09-22, **destroyed**.
+Three runs, **~46 GPU-h, ~$28** of the $40 loaded, against G2's $90 ceiling. Sustained **181,288
+tok/s with no drift across 15.17 h**, and AR within 1.9% of it (Finding AM, reproduced on a rented
+card). The chain ran unattended for 46 hours and needed no intervention.
+
+- ⚠️ **The watchdog's trigger must be the *last* run in the chain.** It was armed on AR; adding a
+  seed behind AR would have stopped the box two hours into it. **Premise next to the verdict:**
+  add a fourth run and the watchdog must be rearmed again.
+- ⚠️ **A sentinel is part of the trigger.** `.downloaded` → `.downloaded_all` was renamed because
+  the two-run fetcher touches the old one the moment AR lands, which would have ended the new
+  run's download grace before that run existed. **One added run cost three coordinated changes.**
+- ⚠️ **The watchdog only ever *stops*, deliberately**, so the disk survives a failed download.
+  Stop halts the GPU charge; **only destroy halts the $0.75/day storage.**
+- ⚠️ **Wait on a file the producer writes, never a process name.** Git Bash has no `pgrep`, so
+  `until ! pgrep -f foo.py` returns *immediately*. Session 23 hit this; session 28 hit it again.
+- ⚠️ **Harness-tracked waiters get killed under memory pressure; `nohup`'d work does not.** Three
+  waiters died in sessions 28–29 without the jobs they watched being touched.
+- **Cost control as installed, and it held:** prepaid credit is a hard ceiling (**never enable
+  Vast's automatic billing** — that removes it), the watchdog stops on the last run's own
+  completion artifact using the instance's scoped `CONTAINER_API_KEY`, and the fetcher's sentinel
+  ends the grace early.
+
 
 **What DIFF s0 produced**, and the numbers the report starts from:
 

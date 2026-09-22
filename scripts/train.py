@@ -272,7 +272,7 @@ def cmd_throughput(args: argparse.Namespace) -> int:
     training = TrainingConfig()
     # §4.2's generator is a quarter of every batch's CPU cost and G2 is a budget gate, so it is
     # measured unless explicitly excluded. With --corpus it runs on the real thing.
-    corpus = PackedCorpus(args.corpus, split="train", arm="A") if args.corpus else None
+    corpus = PackedCorpus(args.corpus, split="train", arm=args.corpus_arm) if args.corpus else None
     tasks = (
         None
         if args.no_tasks
@@ -393,6 +393,9 @@ def build_parser() -> argparse.ArgumentParser:
     t.add_argument("--steps", type=int, default=20)
     t.add_argument("--mask-id", type=int)
     t.add_argument("--corpus", help="packed corpus; without it §4.2's task cost is not measured")
+    # G2 measures the run you are about to pay for, so it must read the streams that run will.
+    # Hardcoding arm A meant a box holding only arm B could not be measured -- this box.
+    t.add_argument("--corpus-arm", default="A", help="which §6.1 arm's streams to measure on")
     t.add_argument("--tokenizer", help="§7's .model file")
     t.add_argument("--no-tasks", action="store_true", help="bare objective — understates G2")
     t.set_defaults(func=cmd_throughput)

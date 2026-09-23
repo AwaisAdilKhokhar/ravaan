@@ -1,0 +1,30 @@
+{
+ "all": {
+  "nats_per_token": 3.7502643326721175,
+  "bits_per_token": 5.4104877547688215,
+  "bits_per_byte": 0.9148234661715811,
+  "scored_tokens": 2495488,
+  "sequences": 4874
+ },
+ "code_switched": {
+  "nats_per_token": 3.5550166303481983,
+  "bits_per_token": 5.128804862881139,
+  "bits_per_byte": 1.062735158774255,
+  "scored_tokens": 100352,
+  "sequences": 196
+ },
+ "roman_urdu": {
+  "nats_per_token": 4.428203800268988,
+  "bits_per_token": 6.388547662693731,
+  "bits_per_byte": 1.5713183520469078,
+  "scored_tokens": 620544,
+  "sequences": 1212
+ },
+ "urdu": {
+  "nats_per_token": 3.5242418037996655,
+  "bits_per_token": 5.084406173235353,
+  "bits_per_byte": 0.7677850468043843,
+  "scored_tokens": 1774592,
+  "sequences": 3466
+ }
+}

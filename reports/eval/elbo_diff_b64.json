@@ -1,0 +1,377 @@
+{
+ "source": "D:\\ravaan-runs\\ship-diff-b64",
+ "arm": "diff",
+ "seed": 0,
+ "eval_split": "validation",
+ "corpus_arm": "B",
+ "base_seed": 1000,
+ "requested_draws": 9,
+ "points": {
+  "diff-s0_f1_weights": {
+   "checkpoint": "diff-s0_f1_weights.pt",
+   "draw_seeds": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008
+   ],
+   "draws": [
+    {
+     "all": {
+      "nats_per_token": 3.74453993876539,
+      "bits_per_token": 5.402229200067491,
+      "bits_per_byte": 0.9134270819674435,
+      "scored_tokens": 2495488,
+      "sequences": 4874
+     },
+     "code_switched": {
+      "nats_per_token": 3.492607324935344,
+      "bits_per_token": 5.03876726745669,
+      "bits_per_byte": 1.0440785475700414,
+      "scored_tokens": 100352,
+      "sequences": 196
+     },
+     "roman_urdu": {
+      "nats_per_token": 4.337792832844679,
+      "bits_per_token": 6.258112208348707,
+      "bits_per_byte": 1.5392366280008052,
+      "scored_tokens": 620544,
+      "sequences": 1212
+     },
+     "urdu": {
+      "nats_per_token": 3.5513363278844294,
+      "bits_per_token": 5.123495308767688,
+      "bits_per_byte": 0.7736878115976895,
+      "scored_tokens": 1774592,
+      "sequences": 3466
+     }
+    },
+    {
+     "all": {
+      "nats_per_token": 3.7605700688250323,
+      "bits_per_token": 5.425355789209342,
+      "bits_per_byte": 0.9173374034390754,
+      "scored_tokens": 2495488,
+      "sequences": 4874
+     },
+     "code_switched": {
+      "nats_per_token": 3.6715166544427675,
+      "bits_per_token": 5.296878869905819,
+      "bits_per_byte": 1.097561626404934,
+      "scored_tokens": 100352,
+      "sequences": 196
+     },
+     "roman_urdu": {
+      "nats_per_token": 4.461747862875428,
+      "bits_per_token": 6.436941515467311,
+      "bits_per_byte": 1.5832212371789127,
+      "scored_tokens": 620544,
+      "sequences": 1212
+     },
+     "urdu": {
+      "nats_per_token": 3.5204162842981557,
+      "bits_per_token": 5.0788871152217006,
+      "bits_per_byte": 0.7669516259345817,
+      "scored_tokens": 1774592,
+      "sequences": 3466
+     }
+    },
+    {
+     "all": {
+      "nats_per_token": 3.71653943578601,
+      "bits_per_token": 5.361833013276743,
+      "bits_per_byte": 0.9065967588440884,
+      "scored_tokens": 2495488,
+      "sequences": 4874
+     },
+     "code_switched": {
+      "nats_per_token": 3.5820409969369673,
+      "bits_per_token": 5.167792782541921,
+      "bits_per_byte": 1.070813811423111,
+      "scored_tokens": 100352,
+      "sequences": 196
+     },
+     "roman_urdu": {
+      "nats_per_token": 4.423834736631083,
+      "bits_per_token": 6.382244436249997,
+      "bits_per_byte": 1.5697680191839343,
+      "scored_tokens": 620544,
+      "sequences": 1212
+     },
+     "urdu": {
+      "nats_per_token": 3.4768163513630967,
+      "bits_per_token": 5.0159857081932,
+      "bits_per_byte": 0.7574530221460674,
+      "scored_tokens": 1774592,
+      "sequences": 3466
+     }
+    },
+    {
+     "all": {
+      "nats_per_token": 3.7666159700704864,
+      "bits_per_token": 5.434078180953863,
+      "bits_per_byte": 0.918812214770456,
+      "scored_tokens": 2495488,
+      "sequences": 4874
+     },
+     "code_switched": {
+      "nats_per_token": 3.585722940308707,
+      "bits_per_token": 5.173104703985164,
+      "bits_per_byte": 1.071914490007948,
+      "scored_tokens": 100352,
+      "sequences": 196
+     },
+     "roman_urdu": {
+      "nats_per_token": 4.441264774077617,
+      "bits_per_token": 6.407390664836622,
+      "bits_per_byte": 1.575952950806761,
+      "scored_tokens": 620544,
+      "sequences": 1212
+     },
+     "urdu": {
+      "nats_per_token": 3.540932381892952,
+      "bits_per_token": 5.108485587480107,
+      "bits_per_byte": 0.7714212264413008,
+      "scored_tokens": 1774592,
+      "sequences": 3466
+     }
+    },
+    {
+     "all": {
+      "nats_per_token": 3.7273003327854615,
+      "bits_per_token": 5.377357706013369,
+      "bits_per_byte": 0.9092217261047667,
+      "scored_tokens": 2495488,
+      "sequences": 4874
+     },
+     "code_switched": {
+      "nats_per_token": 3.6504921716999035,
+      "bits_per_token": 5.266546952915434,
+      "bits_per_byte": 1.0912765764799508,
+      "scored_tokens": 100352,
+      "sequences": 196
+     },
+     "roman_urdu": {
+      "nats_per_token": 4.418996334644557,
+      "bits_per_token": 6.375264097698209,
+      "bits_per_byte": 1.5680511447628551,
+      "scored_tokens": 620544,
+      "sequences": 1212
+     },
+     "urdu": {
+      "nats_per_token": 3.489769705353132,
+      "bits_per_token": 5.034673447757503,
+      "bits_per_byte": 0.7602750167914943,
+      "scored_tokens": 1774592,
+      "sequences": 3466
+     }
+    },
+    {
+     "all": {
+      "nats_per_token": 3.7670287937580067,
+      "bits_per_token": 5.43467375964061,
+      "bits_per_byte": 0.9189129172178662,
+      "scored_tokens": 2495488,
+      "sequences": 4874
+     },
+     "code_switched": {
+      "nats_per_token": 3.751653573950943,
+      "bits_per_token": 5.412492006272381,
+      "bits_per_byte": 1.1215177230234914,
+      "scored_tokens": 100352,
+      "sequences": 196
+     },
+     "roman_urdu": {
+      "nats_per_token": 4.4208218139704725,
+      "bits_per_token": 6.377897707668953,
+      "bits_per_byte": 1.568698903830746,
+      "scored_tokens": 620544,
+      "sequences": 1212
+     },
+     "urdu": {
+      "nats_per_token": 3.5392781886179825,
+      "bits_per_token": 5.106099091045637,
+      "bits_per_byte": 0.7710608468386083,
+      "scored_tokens": 1774592,
+      "sequences": 3466
+     }
+    },
+    {
+     "all": {
+      "nats_per_token": 3.7349866112386696,
+      "bits_per_token": 5.388446661820703,
+      "bits_per_byte": 0.9110966840471348,
+      "scored_tokens": 2495488,
+      "sequences": 4874
+     },
+     "code_switched": {
+      "nats_per_token": 3.4422894254022713,
+      "bits_per_token": 4.9661738833323765,
+      "bits_per_byte": 1.0290365360944917,
+      "scored_tokens": 100352,
+      "sequences": 196
+     },
+     "roman_urdu": {
+      "nats_per_token": 4.440077529713379,
+      "bits_per_token": 6.405677833280012,
+      "bits_per_byte": 1.5755316651247926,
+      "scored_tokens": 620544,
+      "sequences": 1212
+     },
+     "urdu": {
+      "nats_per_token": 3.504980395206525,
+      "bits_per_token": 5.056617834577493,
+      "bits_per_byte": 0.7635887906104256,
+      "scored_tokens": 1774592,
+      "sequences": 3466
+     }
+    },
+    {
+     "all": {
+      "nats_per_token": 3.730086098570093,
+      "bits_per_token": 5.381376716495934,
+      "bits_per_byte": 0.9099012739139268,
+      "scored_tokens": 2495488,
+      "sequences": 4874
+     },
+     "code_switched": {
+      "nats_per_token": 3.668093934807242,
+      "bits_per_token": 5.291940929261293,
+      "bits_per_byte": 1.096538440053498,
+      "scored_tokens": 100352,
+      "sequences": 196
+     },
+     "roman_urdu": {
+      "nats_per_token": 4.388902759001284,
+      "bits_per_token": 6.331848245355042,
+      "bits_per_byte": 1.5573726417354843,
+      "scored_tokens": 620544,
+      "sequences": 1212
+     },
+     "urdu": {
+      "nats_per_token": 3.503214970946006,
+      "bits_per_token": 5.054070865751777,
+      "bits_per_byte": 0.763204178423194,
+      "scored_tokens": 1774592,
+      "sequences": 3466
+     }
+    },
+    {
+     "all": {
+      "nats_per_token": 3.7309834114134475,
+      "bits_per_token": 5.382671265285168,
+      "bits_per_byte": 0.910120160577047,
+      "scored_tokens": 2495488,
+      "sequences": 4874
+     },
+     "code_switched": {
+      "nats_per_token": 3.6587105855649833,
+      "bits_per_token": 5.278403617842557,
+      "bits_per_byte": 1.0937333856237443,
+      "scored_tokens": 100352,
+      "sequences": 196
+     },
+     "roman_urdu": {
+      "nats_per_token": 4.366543135350637,
+      "bits_per_token": 6.299590127198111,
+      "bits_per_byte": 1.54943847958491,
+      "scored_tokens": 620544,
+      "sequences": 1212
+     },
+     "urdu": {
+      "nats_per_token": 3.51282619515679,
+      "bits_per_token": 5.067936931257547,
+      "bits_per_byte": 0.7652980626233553,
+      "scored_tokens": 1774592,
+      "sequences": 3466
+     }
+    }
+   ],
+   "summary": {
+    "all": {
+     "bits_per_byte": 0.9128251356535338,
+     "draws": 9,
+     "sd": 0.004531276604191913,
+     "sem": 0.0015104255347306377,
+     "min": 0.9065967588440884,
+     "max": 0.9189129172178662,
+     "values": [
+      0.9134270819674435,
+      0.9173374034390754,
+      0.9065967588440884,
+      0.918812214770456,
+      0.9092217261047667,
+      0.9189129172178662,
+      0.9110966840471348,
+      0.9099012739139268,
+      0.910120160577047
+     ]
+    },
+    "code_switched": {
+     "bits_per_byte": 1.07960790407569,
+     "draws": 9,
+     "sd": 0.02884749205227041,
+     "sem": 0.009615830684090136,
+     "min": 1.0290365360944917,
+     "max": 1.1215177230234914,
+     "values": [
+      1.0440785475700414,
+      1.097561626404934,
+      1.070813811423111,
+      1.071914490007948,
+      1.0912765764799508,
+      1.1215177230234914,
+      1.0290365360944917,
+      1.096538440053498,
+      1.0937333856237443
+     ]
+    },
+    "roman_urdu": {
+     "bits_per_byte": 1.5652524078010224,
+     "draws": 9,
+     "sd": 0.014018458492595295,
+     "sem": 0.004672819497531765,
+     "min": 1.5392366280008052,
+     "max": 1.5832212371789127,
+     "values": [
+      1.5392366280008052,
+      1.5832212371789127,
+      1.5697680191839343,
+      1.575952950806761,
+      1.5680511447628551,
+      1.568698903830746,
+      1.5755316651247926,
+      1.5573726417354843,
+      1.54943847958491
+     ]
+    },
+    "urdu": {
+     "bits_per_byte": 0.7658822868229685,
+     "draws": 9,
+     "sd": 0.005417964639372783,
+     "sem": 0.001805988213124261,
+     "min": 0.7574530221460674,
+     "max": 0.7736878115976895,
+     "values": [
+      0.7736878115976895,
+      0.7669516259345817,
+      0.7574530221460674,
+      0.7714212264413008,
+      0.7602750167914943,
+      0.7710608468386083,
+      0.7635887906104256,
+      0.763204178423194,
+      0.7652980626233553
+     ]
+    }
+   },
+   "step": 41681,
+   "tokens": 5463212032
+  }
+ }
+}

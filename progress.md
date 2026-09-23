@@ -12,6 +12,52 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 
 ## State of play
 
+> ## 📦 IT IS PUBLISHED, 2026-09-23 (session 34)
+>
+> **Both models are public on the Hugging Face Hub, Apache-2.0, as a matched pair.**
+>
+> | | | held-out urdu bpb |
+> |---|---|---|
+> | [`AwaisAdilKhokhar/ravaan-diff-70m`](https://huggingface.co/AwaisAdilKhokhar/ravaan-diff-70m) | `ship-diff-b64`, 64 epochs | **0.7659 ± 0.0018** (K = 9) |
+> | [`AwaisAdilKhokhar/ravaan-ar-70m`](https://huggingface.co/AwaisAdilKhokhar/ravaan-ar-70m) | `ship-ar-b/ar-s0_fp25`, **4 epochs** | 0.7774 exact |
+>
+> **Landing page:** <https://claude.ai/artifact/S6Pzi3VP9LWGdJniB8n5BL> — private until shared from
+> the page's own share menu. Source is committed: `release_assets/landing.template.html` plus
+> `scripts/landing.py`, which rebuilds `reports/landing.html` **byte-identical** to what was
+> published. The page is not in the scratchpad and does not depend on a session.
+>
+> ✅ **The AR half is the 4-epoch checkpoint, deliberately, and its card says why** — it is
+> Finding BF made legible. Releasing the arm at the rung where it was actually good, and
+> explaining that 16 epochs made it *worse*, is what turns the baseline from a formality into the
+> evidence for the crossover. It is the better of the two cards for that reason.
+>
+> ✅ **Neither released checkpoint memorizes** — [`overlap_release.json`](reports/eval/overlap_release.json),
+> measured on the **released** checkpoints rather than inherited from `ship-diff-b`:
+>
+> | | 16-gram | 32-gram | 64-gram | 128-gram |
+> |---|---|---|---|---|
+> | released AR (`fp25`, 4 ep) | 0.000 | 0.000 | 0.000 | 0.000 |
+> | released DIFF (`b64`, 64 ep) | 0.000 | 0.000 | 0.000 | 0.000 |
+> | held-out Urdu (control) | 0.000 | 0.000 | 0.000 | 0.000 |
+>
+> ⚠️ **`--verify` had nothing to verify** — there were no n ≥ 16 matches to byte-check. The
+> control row is what makes the zeros mean something rather than meaning the instrument is blind.
+>
+> **What shipped with the weights** (PRD §2's three requirements, all met): safetensors rather
+> than a pickle; a vendored torch-only `ravaan_infer/` package because `RavaanDiffusion` is not a
+> `transformers` architecture; a `generate.py` whose defaults are **8 steps / gumbel 2 /
+> `--forbid-eos`**, each named in the card as measured rather than preferred (Findings BG, AR, AO);
+> and a card carrying the ELBO-is-a-bound asymmetry, the single-seed caveat, Finding AE's 2.77%,
+> Finding AW's undecontaminated `roman_urdu`, Finding T's ~4.4%, G3's unmet verdict, and the fact
+> that **every Urdu judgement in this project is an LLM's** because G5's annotators were never
+> recruited.
+>
+> ⚠️ **Two debts this session created and did not pay.** (1) Both cards link to
+> `github.com/AwaisAdilKhokhar/ravaan`, **which does not exist** — it is a 404 on a public page.
+> (2) **Nothing is committed**; every artifact of this session is untracked. See "Next session".
+>
+> ⚠️ **The HF write token was pasted into a chat transcript and must be rotated.**
+
 > ## 🏁 The primary endpoint has an answer, 2026-09-21
 >
 > **§4.5's crossover is measured, at full scale, on the frozen corpus.** Both arms, one seed each,
@@ -200,9 +246,32 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 > before the run, confirmed after — it is the schedule, not a regression, and the two numbers are
 > not comparable.
 >
-> ⚠️ **These seven are single ELBO draws (Finding BA).** The 0.0128 margin over AR's exact
+> ⚠️ ~~**These seven are single ELBO draws (Finding BA).** The 0.0128 margin over AR's exact
 > 0.7774 is ~2.4 single-draw sd, so the win is real but wants `scripts/elbo.py` at K = 9 before it
-> is written down as a result. **That is $0 on the 4060 and is the first thing to do next session.**
+> is written down as a result.~~
+>
+> > ✅ **DONE 2026-09-23 (session 34). The bar is on, and the result got slightly better.**
+> > Nine seeded draws of the full validation split on `diff-s0_f1_weights.pt`
+> > ([`elbo_diff_b64.json`](reports/eval/elbo_diff_b64.json)):
+> >
+> > | population | K = 9 | sem | sd | single draw, as first reported |
+> > |---|---|---|---|---|
+> > | **urdu** | **0.7659** | 0.0018 | 0.0054 | 0.7646 |
+> > | roman_urdu | 1.5653 | 0.0047 | 0.0140 | 1.5648 |
+> > | code_switched | 1.0796 | 0.0096 | 0.0288 | 1.0559 |
+> > | all | 0.9128 | 0.0015 | 0.0045 | 0.9110 |
+> >
+> > **The endpoint is 0.7659 ± 0.0018 against AR's exact 0.7774 — a margin of +0.0115 bpb, which
+> > is 6.4 sem.** Not 2.4 draws of noise; a measurement. ✅ **And the draw this file had been
+> > quoting was honest**: 0.7646 sits **−0.24 sd** from the mean, so unlike Finding BJ's case
+> > (where the run record held a 1.41 sd outlier) nothing here was being flattered by a lucky
+> > sample. ⚠️ **The sem is still the estimator's alone** — one seed per arm, and v2.4's
+> > requirement to write the endpoint as a single paired comparison is untouched.
+> >
+> > ✅ **Arm B's seven-rung curve is also averaged now** — `elbo_diff_b_curve.json`, 7 checkpoints
+> > × 9 draws, finished 17:52. Arm A's is [`elbo_diff_s0.json`](reports/eval/elbo_diff_s0.json).
+> > **Finding BA is fully retired for every diffusion number this project reports except the six
+> > lost `ship-diff-b64` rungs**, which can never get one (Finding BM).
 >
 > ⚠️ **Six of the seven checkpoints died with the instance and only the 64-epoch one was saved.**
 > The link ran at 19 KB/s direct and the run wrote 5.9 GB; what came back is
@@ -211,7 +280,7 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 > complete — what is gone is the ability to put a bar on any rung but the last, or to resume
 > training. Neither blocks the release; both are permanent. See Finding BM.
 >
-> Curve: [`curve.json`](../../d/ravaan-runs/ship-diff-b64/curve.json) (run dir, not the repo).
+> Curve: [`curve_diff_b64.json`](reports/eval/curve_diff_b64.json) (copied into the repo, session 34 — the run dir on `D:` was its only home and it holds the six lost checkpoints' scores).
 > Checkpoint: `D:/ravaan-runs/ship-diff-b64/diff-s0_f1_weights.pt`.
 
 
@@ -362,8 +431,15 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 - **Tests: 910 collected** across 23 files (verified 2026-09-15). ⚠️ The counts this file carried
   were never reconciled — the old per-file breakdown summed to 847, session 21 reported 792 green,
   session 22 reported 886. Trust the runner, not the log.
-- **Git:** branch `stages-7-and-8`, working tree clean, **70 commits ahead of `main`** (main is at
-  session 8 — fast-forward it when convenient). There is still **no remote**.
+- **Git:** branch `stages-7-and-8`, **70 commits ahead of `main`** (main is at session 8 —
+  fast-forward it when convenient). ⚠️ **Session 34's work is uncommitted.**
+  ✅ **History was rewritten 2026-09-23 and the repository is now pushable.** `git-filter-repo`
+  dropped session 17's **166 MB `removals_67_roman.txt`** and a stray 12 MB zip from every commit:
+  **`.git` 54 MB → 15 MB, largest remaining blob 19.9 MB, all 106 commits preserved, and the HEAD
+  tree hash is byte-identical before and after** (`d590db1a…`) — so nothing in the working tree
+  changed, only history. **Pre-rewrite backup: `D:/ravaan-git-backup.git`**, keep until the first
+  push is confirmed. There is still **no remote**, and both published model cards link to
+  `github.com/AwaisAdilKhokhar/ravaan`, which does not yet exist.
 
 ---
 
@@ -474,7 +550,7 @@ holds only while the priority is wall-clock and while stage 10's reported fertil
 
 ## Findings register
 
-Sixty-eight findings are referenced across this file, the PRD and the reports, and until now they
+Seventy-one findings are referenced across this file, the PRD and the reports, and until now they
 were only defined inside the session that raised them. One line each, with the session that owns
 the derivation — `git show 8cecdfd:progress.md` has the full text of every one.
 
@@ -551,6 +627,10 @@ must say.
 | BL | 33 | **A rented GPU can already be running someone else's job, and every symptom looks like a slow box.** The first 5090 rented this session measured throughput **flat and declining** across the sweep — 63,897 / 61,454 / 60,615 at microbatch 16/32/48 — which a GPU that wants a bigger batch does not do, then OOMed at 64 with the tell in the message: 31.36 GiB total, 17.89 GiB ours, 1.13 GiB free, so **~12.3 GiB belonged to nobody we could see**. Confirmed with nothing of ours running: **100% utilisation, 12,620 MiB resident, 2265 MHz against a 3105 MHz maximum, 525 W against a 525 W limit.** At ~62k tok/s the run would have been 23.7 h and **$13.38** against a $9.80 ceiling | ✅ `vast/push.sh` now refuses before shipping a byte. ⚠️ **The check is `memory.used` and `utilization.gpu`, NOT the process list** — `nvidia-smi --query-compute-apps` is **empty** in a Vast container even when the card is busy, because container isolation hides the other tenant's PID. Those two counters are the only signals that cross the boundary. A clean card reads ~0 MiB and 0% |
 | BM | 33 | **Getting a finished run off a rented box is a harder constraint than training it, and the fix is to send less rather than to send it faster.** The instance's outbound ran at **19 KB/s direct** — measured raw, not inferred from the fetcher — while the 169 MB *upload* had been fine, so it is the host's egress and not the home link. One 839 MB checkpoint was **7 h and $3.92**; all seven were **48.6 h and $27.43** against ~$2.80 left. Two things made it affordable: **Vast's proxy route (`sshN.vast.ai`) ran 6.7× faster at 128 KB/s**, and **stripping the optimizer state cut the checkpoint 839 MB → 280 MB** — Adam's two moments are two thirds of the file and a released model needs none of it. Together: 7 h → 36 min, $3.92 → $0.34 | ⚠️ **live and it changes what a run should write.** Six of seven checkpoints were abandoned on the instance; `curve.json` holds all seven *scored*, so the curve survived and only the weights are gone. **Score on the box** (`launch.sh` does now) and **strip before transfer**, or plan the budget around 5.9 GB at a link speed nobody measures until it is too late. ⚠️ The stripped file **cannot resume training** — irrelevant here, the cosine had fully annealed |
 | BN | 33 | **Two watchers, a fetcher and two `pkill`s all failed silently, and the box idled 3.3 h on a finished run.** The fetcher and both status watchers were killed under memory pressure or were never killed when they should have been, so when training ended at 10:47 nothing triggered the pull and it was found by the user asking — **~$1.85 of idle billing**. Three distinct mechanisms: (a) harness-tracked waiters die under memory pressure where `nohup` ones do not, for the **fourth** time (sessions 23, 28, 33×2); (b) **`pkill -f <pattern>` matches the killing command's own shell** when the pattern appears in its command line, so `pkill -f launch.sh` and `pkill -f pull.sh` both killed themselves and left the target running — one of them kept downloading 5.9 GB for two hours unnoticed; (c) `fetch.sh` had **not** died as assumed and woke to start a second, competing pull | ⚠️ **live.** `launch.sh`'s 8 h grace cap bounded the damage, which is the only reason it was $1.85 and not $40 — **bounded at eight hours is not the same as caught**. Kill by **PID**, never by a pattern naming the script. And a watcher is not a guarantee: the run's own artefacts on disk are the truth |
+
+| BO | 34 | **G0's novelty verdict has a shelf life, and two of its sub-claims expired while nobody was looking.** The review was written 2026-08-03 and re-run 2026-09-23 across arXiv, ACL Anthology, OpenReview **and the Hugging Face Hub**. The Urdu claim survives — no masked diffusion LM for Urdu exists, and the only Urdu model on the Hub carrying a diffusion tag is a **text-to-speech** model. Two other things are now false: **Diffutron** (arXiv:2603.20466, a 0.3B masked diffusion LM for **Turkish**, March 2026) kills "first diffusion LM for a non-English language"; and **Ni et al., *Diffusion Language Models are Super Data Learners*** (arXiv:2511.03276, **November 2025**) makes the data-constrained crossover claim at 1–1.7B on English and Python — **it predates the G0 review by nine months and was not in it** | ⚠️ **live, and it changes the framing rather than the result.** The phenomenon is established prior art; **Ravaan's contribution is the axis nobody tested — a naturally low-resource, non-Latin-script natural language on noisy web text.** Both released cards state all three points explicitly, because the disclosure is what makes the surviving claim hold up when a reader checks it. **Carry the search date with the claim, always** — §8.1 of the review already required the hedge and this is why |
+| BP | 34 | **The diffusion arm samples 17.9× faster and no artifact in this repository said so.** 160 tokens costs the AR arm **160 sequential forward passes**; the diffusion arm fills the same canvas in **8**. Measured over 12 matched `lm/continue` prompts on the 4060: median **0.37 s against 6.59 s**. The numbers were sitting in session 32's sweep and every session since, because `sample.py` has always written `seconds` and `forwards` into its JSONL | ✅ **used on the landing page and it is the most legible finding this project has for a non-specialist.** ⚠️ **It went unnoticed because every table in this repository scores likelihood and not one scored wall-clock at inference** — the project measured the thing it set out to measure and was blind to a free result beside it. Worth a line in the report: at 8 steps the better decode setting (Finding BG) is also the 20× cheaper one, which is not how these trade-offs usually run |
+| BQ | 34 | **A vendored package verified by reading is not verified — third instance, after AX and BB.** `scripts/release.py` rewrites `from ravaan.` to `from ravaan_infer.` textually, and a textual rewrite works perfectly on the machine that built it because the real `ravaan` is importable there. `scripts/verify_release.py` runs each staged release in a **subprocess whose cwd is the release and whose `sys.path` has this repository stripped out**, then asserts parameter count, Arabic-script share and longest repeated run on real generated text. It caught **three** defects on first run: `SamplingConfig(top_k=None)` where the dataclass requires an int, `build_generator(seed, device=…)` against the real signature `(device, seed)`, and the **cp1252 console hole** on Urdu output — the same class `ravaan/console.py` closed for this repo and which a fresh subprocess re-opened | ✅ **the gate is now structural, not a habit.** `push_hf.py` refuses to upload anything absent from `release_verify.json` or failing it, and `cards.py` refuses to write a card when `elbo_diff_b64.json` is missing. **Every number that reaches a public page is gated on the artifact that produced it.** The lesson generalizes past releases: the check has to run where the stranger runs it, not where the author does |
 
 > ⚠️ **One number in this table was carried wrong.** The status board reported Finding AS as
 > "AR gap +4.46 nats, DIFF +0.03" from session 23 through session 24. Session 23's measurement
@@ -935,9 +1015,43 @@ Live only. Resolved notes have been dropped; they are in git at `8cecdfd`.
 
 ## Next session
 
-**START HERE. §4.5's primary endpoint is answered *with error bars*, and the release pair now
-exists on one corpus.** Six runs are on local disk, **nothing is rented and nothing is accruing**
-— both instances destroyed 2026-09-23. Weeks 1–11 complete.
+**START HERE. The models are published. The remaining work is writing, committing, and three
+people.** Six runs on local disk, **nothing is rented and nothing is accruing** since 2026-09-23.
+Weeks 1–11 complete. **There is no GPU work left that anything downstream is waiting on.**
+
+> 📦 **Session 34 published the pair and put the bar on the headline.**
+> [`ravaan-diff-70m`](https://huggingface.co/AwaisAdilKhokhar/ravaan-diff-70m) at
+> **0.7659 ± 0.0018** and [`ravaan-ar-70m`](https://huggingface.co/AwaisAdilKhokhar/ravaan-ar-70m)
+> at 0.7774 exact — margin **6.4 sem**, public, Apache-2.0, matched pair. Landing page at
+> <https://claude.ai/artifact/S6Pzi3VP9LWGdJniB8n5BL>. Findings BO, BP, BQ are the new entries;
+> the 📦 block at the top of this file is the record.
+>
+> ⚠️ **Spend unchanged at ~$1.90 — session 34 cost $0.** Everything it did ran on the idle 4060
+> or on the Hub.
+
+⚠️ **PAY THESE FIRST. Session 34 created two debts and both are visible to the public right now.**
+1. **`github.com/AwaisAdilKhokhar/ravaan` does not exist**, and **both published model cards link
+   to it.** It is a 404 on a page anyone can read. The repo is *ready* — session 34 rewrote history
+   with `git-filter-repo` and the 166 MB blob is gone (**`.git` 54 MB → 15 MB, 106 commits intact,
+   HEAD tree hash byte-identical before and after**), so it passes GitHub's limits. Create the
+   empty repo under that exact name, `git remote add origin`, push. Backup of the pre-rewrite
+   history is at **`D:/ravaan-git-backup.git`** — keep it until the push is confirmed, then it can
+   go.
+2. **Nothing from session 34 is committed.** `scripts/{release,verify_release,cards,push_hf,landing}.py`,
+   `release_assets/`, `reports/landing.html`, `reports/release_samples.*`,
+   `reports/eval/{elbo_diff_b64,elbo_diff_b_curve,elbo_diff_s0,overlap_release,release_verify}.json`
+   and this file. **The staged release itself is at `D:/ravaan-release/` and is deliberately not in
+   the repo** — 560 MB of weights that already live on the Hub.
+3. **Rotate the Hugging Face token.** It was pasted into a chat transcript on 2026-09-23.
+
+⚠️ **The tooling session 34 added, and the one thing to understand about it.** Four drivers now
+gate the release path, and **each refuses rather than warns**: `release.py` stages a repo,
+`verify_release.py` runs it in a subprocess with this repository stripped from `sys.path`,
+`cards.py` refuses to write a card if `elbo_diff_b64.json` is absent, and `push_hf.py` refuses to
+upload anything missing from `release_verify.json` or failing it. **Finding BQ is why** — the
+verifier caught three defects on its first run that reading the code had missed. If a future
+session changes the inference path, **`verify_release.py` is the thing to re-run**, and it must
+keep running the release where a stranger would run it rather than where the author does.
 
 > 🥇 **Session 33 spent the $6 and it paid.** `ship-diff-b64` reaches **urdu bpb 0.7646** at
 > 64 epochs, **beating the AR arm's best 0.7774 on the identical corpus**, and the curve has still
@@ -990,76 +1104,61 @@ git status --short                # session 31 is in at c15ec70; session 32 is N
 > annotators are still required to separate the arms at their *honest* checkpoints, but the
 > most embarrassing-looking result in the file is now settled by measurement.
 
-**Next actions, in order. Nothing here costs money — there is ~$1.90 of credit left and every
-item below runs $0 on the idle 4060.**
+**Next actions, in order. Nothing below costs money and nothing below needs a GPU.** ~$1.90 of
+credit remains and no item requires it.
 
-0. **Commit session 33.** `vast/` is already in at `8486d93`; what is untracked is
-   `scripts/elbo.py`'s outputs, `reports/eval/elbo_*.json` and this file.
+0. 🎯 **Pay session 34's three debts** — the GitHub repo, the commit, the token rotation. They are
+   spelled out above. The first is a live 404 on a public page, so it is genuinely first.
 
-1. 🎯 **Put a bar on 0.7646, and it is the one thing standing between this result and a
-   report.** `ship-diff-b64`'s seven rungs are single ELBO draws, and the margin over AR's exact
-   0.7774 is **0.0128 ≈ 2.4 single-draw sd**. K = 9 takes the sem to ~0.002 and the margin to
-   ~7 sem. ~25 min:
+1. **The write-up.** Deferred deliberately on 2026-09-23 ("I'll do the preprint later"), and it is
+   now the only thing between this project and a citable result. **The material is all on disk**:
+   `reports/preregistration.md` holds four falsifiable predictions committed before training, the
+   findings register holds seventy-one numbered entries, and every curve and bar is a committed
+   JSON. ⚠️ **Read Finding BO before writing a word of the novelty framing** — the phenomenon is
+   prior art (Prabhudesai; **Ni et al., which the G0 review missed**), and the contribution is the
+   language and script. The model cards already say this correctly and are the place to start.
+   ⚠️ arXiv cs.CL needs an **endorsement** for a first-time submitter; that has weeks of lead time,
+   like the annotators.
+
+2. ⏳ **G5's annotators — still the critical path, and now the *only* one.** Three fluent Urdu
+   speakers, ~2 h each. §8.3's three metrics score fluent prose and slot-looping clauses within a
+   few hundredths of each other, so **they are the only instrument that can separate the arms on
+   generation quality**. ⚠️ **Every Urdu judgement in this project, including on both published
+   model cards, is an LLM's** — that is disclosed in public now, which raises the value of fixing
+   it. [The annotation page](https://claude.ai/code/artifact/92e617de-5364-4273-8584-8ff1cc95dea2)
+   renders all 243 samples in nastaliq. **The instrument exists; only the people are missing.**
+
+3. **Re-run the A3/A4 sweep on the *released* checkpoint.** Finding BG's 8-step optimum was
+   measured on `ship-diff-b` (16 epochs) and **the released model is `ship-diff-b64` (64 epochs)**
+   — the step optimum is a property of a checkpoint, not a law, and `generate.py` ships 8 steps as
+   its default to the public on the strength of the older measurement. ~25 min on the 4060, $0.
+   If it moves, the model card and `release_assets/generate.py` both need the new number.
 
    ```bash
-   python -u scripts/elbo.py --checkpoint D:/ravaan-runs/ship-diff-b64/diff-s0_f1_weights.pt        --seed 0 --draws 9 --corpus data/packed --corpus-arm B --check-denominators        --out reports/eval/elbo_diff_b64.json
+   python -u scripts/sample.py --checkpoint D:/ravaan-runs/ship-diff-b64/diff-s0_f1_weights.pt        --corpus data/packed --tokenizer data/tokenizer/ravaan-16k.model        --out reports/sweep_b64 --samples 5 --new-tokens 160 --forbid-eos always
    ```
 
-   ⚠️ **Only this rung can ever get a bar.** The other six checkpoints died with the instance
-   (Finding BM); `curve.json` has them *scored*, which is enough for the curve's shape and not
-   enough for an error bar. ✅ **The stripped file loads — fixed and tested in session 33.**
-   `Trainer.load` read `payload["optimizer"]` unconditionally and would have died on line one; it
-   now records `trainer.resumable` instead, and **`train()` refuses to resume a checkpoint without
-   optimizer state** rather than restarting Adam from zero while the schedule continues — a
-   difference invisible in every artifact except the loss curve. The CUDA-saved RNG state cannot
-   restore onto CPU either (16 bytes against 5056) and is caught the same way. Verified end to end
-   on the real file: loads, `resumable = False`, step 41,681, `train()` refuses.
+4. **Week 12's remaining eval: infill exact-match and token-F1.** Never run by any session. §8.3's
+   generation metrics are done for five checkpoint pairs; this is the preregistered conditional
+   metric, scored under the truncation rule in `preregistration.md` §8.
 
-
-2. **Average K = 9 draws for every diffusion number** (Finding BA) — ✅ **the driver exists and
-   the load-bearing number is done, session 33; the curves were left running.** `scripts/elbo.py`
-   takes K seeded draws per checkpoint and `Trainer.evaluate` now accepts the generator that makes
-   a draw nameable (`generator=None` is byte-for-byte the old path, so every committed
-   `evaluation.json` still reproduces). Arm B's 16-epoch endpoint is **0.8322 ± 0.0018** over nine
-   draws — Finding BJ — which turns the AR-vs-DIFF gap there into 0.8690 exact against a number
-   with a bar. ⚠️ **What is *not* done:** every other rung is still one draw. A chained pass over
-   `core-diff-s0` and `ship-diff-b` at K = 9 was launched and takes ~6 h on the 4060 at ~130–200 s
-   a pass; check `reports/.elbo_chain.log` for `CHAIN COMPLETE` and the two JSONs beside
-   `elbo_diff_b.json`. It resumes per (checkpoint, draw), so re-running it costs only what died.
-
-   ⚠️ **A full-split pass is 4,874 sequences at microbatch 1.** `Trainer.evaluate` does
-   `tokens.unsqueeze(0)` and scores one sequence at a time, which is why a 70M model takes minutes
-   on an idle 4060 and why K = 9 over 14 checkpoints is hours rather than minutes. Deliberately
-   **not** changed in session 33: `population_of(index)` attributes each sequence to its script
-   population one at a time, and §8.3's by-script reporting depends on it, so batching is a real
-   ~10× and a real change to the scoring path `curves.py` exists to keep identical to `cmd_run`'s.
-3. **Seed 1's fraction curve**, ~35 min:
+5. **Seed 1's fraction curve**, ~35 min, $0 — confirms the *held-out* descent replicates rather
+   than just the training trajectory:
    `python -u scripts/curves.py --run D:/ravaan-runs/core-diff-s1 --arm diff --seed 1 --corpus data/packed --corpus-arm A --out reports/eval/curve_diff_s1.json`
-   Confirms the *held-out* descent replicates, not just the training trajectory.
-4. **Week 12's eval**: §8.3's infill exact-match and token-F1, and A3/A4's sweep. ✅ §8.3's
-   generation metrics are done for four checkpoint pairs (`core_samples_{f1,fp02}.md`,
-   `ship_samples.md`). ✅ **The A3/A4 sweep is DONE, session 32** — 300 generations over
-   `ship-diff-b/diff-s0_f1.pt` → `reports/demo_sweep_diff.jsonl`, and it produced **Finding BG**.
-   What remains here is the **infill exact-match and token-F1**, which no session has run.
-   ⚠️ Re-run the sweep on the 64-epoch checkpoint once item 1 lands — BG's step optimum is a
-   property of a checkpoint, not a law, and 8 steps should not be assumed to carry over untested.
-5. **The release itself**, if it is wanted. §2's three requirements stand and one is now cheap:
-   inference code ships with the weights, the model card carries the ELBO-is-a-bound caveat, G3's
-   verdict, the single-seed caveat and Finding AE's 2.77% — **plus Finding BD, which is the reason
-   the shipped checkpoint is `fp25` and not `f1`**, and **plus Finding BG's step count, which is
-   part of the model the same way the schedule and `--forbid-eos` are**. ⚠️ **Wait for item 1**:
-   the diffusion half of the release should be the 64-epoch arm-B checkpoint, which also removes
-   the cross-arm disclosure the session-32 demo has to carry. Urdu Wikipedia's CC-BY-SA
-   share-alike question is still unsettled and is due *before* publishing.
-5b. **The Urdu-heavy ship corpus** (Finding BI) — **only if item 1's curve says epochs have
-   flattened.** `arm_tokens` plus an Urdu-heavy `population_targets` is a config change, and the
-   supply is 12.14B characters against arm B's 247M. ⚠️ **The trap that makes this second:** the
-   held-out bands are carved at the arms' mixture, so a new `population_targets` can re-carve
-   validation and test and **invalidate every bpb number in this file.** Verify the new held-out
-   set byte-identical to the frozen one *before* spending a GPU hour.
+
 6. **The FIM framing** (open question 5, Finding AT) — still open, ~2.7 h on the 4060, $0.
-7. **`git remote`** — there still is not one, and session 17's **166 MB blob is in history**.
-   Removing it is cheap now and expensive after the first push. CI has never run.
+
+7. **A live Hugging Face Space**, if the demo is wanted interactive. The static page is published
+   and the inference path is proven to run **CPU-only with the source repo off `sys.path`**
+   (Finding BQ), which is exactly what a free Space needs. `D:/ravaan-release/ravaan-diff-70m`
+   is the folder to start from; a diffusion decode is **0.37 s at 8 steps** (Finding BP), so the
+   free tier is genuinely enough.
+
+8. ~~**The Urdu-heavy ship corpus**~~ (Finding BI) — **not worth it now.** It would invalidate
+   every bpb number in this file by re-carving the held-out bands, and the published cards now
+   quote those numbers. If it is ever revisited, the new held-out set must be verified
+   byte-identical to the frozen one *before* a GPU hour is spent, and the release would have to be
+   re-cut and re-pushed.
 
 ---
 

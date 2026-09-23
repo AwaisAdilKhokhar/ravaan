@@ -1,0 +1,42 @@
+{
+ "corpus": "data/packed",
+ "corpus_arm": "B",
+ "train_tokens": 85362688,
+ "n_values": [
+  8,
+  16,
+  32,
+  64,
+  128
+ ],
+ "samples": {
+  "ar-release_samples": 24,
+  "diff-release_samples": 24,
+  "held-out (control)": 12
+ },
+ "verbatim_rate": {
+  "ar-release_samples": {
+   "8": 0.034313725490196074,
+   "16": 0.0,
+   "32": 0.0,
+   "64": 0.0,
+   "128": 0.0
+  },
+  "diff-release_samples": {
+   "8": 0.02287581699346405,
+   "16": 0.0,
+   "32": 0.0,
+   "64": 0.0,
+   "128": 0.0
+  },
+  "held-out (control)": {
+   "8": 0.016339869281045753,
+   "16": 0.0,
+   "32": 0.0,
+   "64": 0.0,
+   "128": 0.0
+  }
+ },
+ "byte_verified": null,
+ "byte_verified_of": 0
+}

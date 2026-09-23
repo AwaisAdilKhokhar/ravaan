@@ -1,0 +1,411 @@
+<title>Ravaan Urdu Diffusion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap">
+<style>
+  :root{
+    --paper:#EFEDE7; --surface:#F8F7F3; --sunk:#E5E2D9;
+    --ink:#1B1A18; --body:#33312D; --muted:#6C6960; --rule:#D6D2C8;
+    --ar:#37477F; --ar-soft:#37477F1F;
+    --diff:#2B7A6B; --diff-soft:#2B7A6B1F;
+    --rubric:#A3392F;
+    --serif:"Newsreader",Georgia,"Times New Roman",serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    --urdu:"Noto Nastaliq Urdu","Jameel Noori Nastaleeq","Noto Naskh Arabic",serif;
+    --measure:70ch;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#16171A; --surface:#1E2024; --sunk:#101113;
+      --ink:#EAE7DF; --body:#CFCBC1; --muted:#959187; --rule:#2F3238;
+      --ar:#93A3E2; --ar-soft:#93A3E226;
+      --diff:#5FC3AF; --diff-soft:#5FC3AF26;
+      --rubric:#E28B7B;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#16171A; --surface:#1E2024; --sunk:#101113;
+    --ink:#EAE7DF; --body:#CFCBC1; --muted:#959187; --rule:#2F3238;
+    --ar:#93A3E2; --ar-soft:#93A3E226;
+    --diff:#5FC3AF; --diff-soft:#5FC3AF26;
+    --rubric:#E28B7B;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--body);
+    font-family:var(--serif); font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--measure); margin:0 auto; padding:0 20px; padding-block:0}
+  .wide{max-width:920px; margin:0 auto; padding:0 20px}
+
+  h1,h2,h3{color:var(--ink); font-weight:600; text-wrap:balance; margin:0}
+  h1{font-size:clamp(2.1rem,6.2vw,3.4rem); line-height:1.06; letter-spacing:-.022em}
+  h2{font-size:clamp(1.3rem,3.4vw,1.72rem); line-height:1.22; letter-spacing:-.012em}
+  h3{font-size:1.02rem; letter-spacing:-.005em}
+  p{margin:0}
+  a{color:inherit; text-underline-offset:3px; text-decoration-thickness:1px}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--rubric); outline-offset:3px; border-radius:2px}
+
+  /* rubrication — the red heading convention of Persian/Urdu manuscripts */
+  .rubric{
+    font-family:var(--mono); font-size:.685rem; font-weight:600;
+    letter-spacing:.15em; text-transform:uppercase; color:var(--rubric);
+  }
+
+  header{padding-block:clamp(52px,9vw,92px) 0}
+  .kicker{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:22px}
+  .glyph{font-family:var(--urdu); font-size:1.5rem; color:var(--ink); line-height:1}
+  .lede{font-size:clamp(1.06rem,2.5vw,1.2rem); color:var(--body); margin-top:20px; max-width:62ch}
+  .lede em{color:var(--ink); font-style:normal; font-weight:600}
+
+  .headline-stat{
+    display:flex; flex-wrap:wrap; align-items:flex-end; gap:10px 28px;
+    margin-top:34px; padding:22px 24px;
+    background:var(--surface); border:1px solid var(--rule); border-radius:3px;
+  }
+  .stat-num{font-family:var(--mono); font-size:clamp(1.7rem,4.6vw,2.3rem); font-weight:600;
+    color:var(--diff); line-height:1; font-variant-numeric:tabular-nums}
+  .stat-vs{font-family:var(--mono); font-size:1.02rem; color:var(--muted); font-variant-numeric:tabular-nums}
+  .stat-vs b{color:var(--ar); font-weight:600}
+  .stat-cap{font-size:.9rem; color:var(--muted); flex-basis:100%; margin-top:2px}
+
+  section{padding-block:clamp(40px,7vw,68px)}
+  .sec-head{margin-bottom:18px}
+  .sec-head h2{margin-top:8px}
+  section > .wrap > p + p,
+  section > .wrap > .sec-head + p{margin-top:16px}
+  .wrap > p{margin-top:16px}
+
+  figure{margin:30px 0 0}
+  .chartbox{background:var(--surface); border:1px solid var(--rule); border-radius:3px; padding:14px 8px 6px}
+  .chart-scroll{overflow-x:auto}
+  svg.curve{display:block; width:100%; min-width:540px; height:auto}
+  figcaption{font-size:.87rem; color:var(--muted); margin-top:12px; max-width:62ch}
+
+  .legend{display:flex; gap:20px; flex-wrap:wrap; font-family:var(--mono);
+    font-size:.74rem; letter-spacing:.05em; padding:2px 10px 10px}
+  .legend span{display:inline-flex; align-items:center; gap:7px; color:var(--muted)}
+  .swatch{width:15px; height:3px; border-radius:2px; flex:none}
+
+  table{border-collapse:collapse; width:100%; margin-top:24px; font-size:.95rem}
+  caption{caption-side:top; text-align:left; font-size:.87rem; color:var(--muted); padding-bottom:10px}
+  th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--rule); vertical-align:baseline}
+  th{font-family:var(--mono); font-size:.7rem; letter-spacing:.09em; text-transform:uppercase;
+    color:var(--muted); font-weight:600; border-bottom-width:1.5px}
+  td.n{font-family:var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+  tr.win td{background:var(--diff-soft)}
+  tr.win td.n{color:var(--diff); font-weight:600}
+  td .tag{font-family:var(--mono); font-size:.72rem; color:var(--muted)}
+
+  .pair{margin-top:26px; border:1px solid var(--rule); border-radius:3px; overflow:hidden;
+    background:var(--surface)}
+  .pair-prefix{padding:14px 18px; background:var(--sunk); border-bottom:1px solid var(--rule)}
+  .pair-prefix .rubric{display:block; margin-bottom:8px}
+  .cols{display:grid; grid-template-columns:1fr 1fr}
+  @media (max-width:700px){ .cols{grid-template-columns:1fr} }
+  .col{padding:16px 18px 20px}
+  .col + .col{border-left:1px solid var(--rule)}
+  @media (max-width:700px){ .col + .col{border-left:0; border-top:1px solid var(--rule)} }
+  .col-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+    margin-bottom:12px; flex-wrap:wrap}
+  .col-name{font-family:var(--mono); font-size:.72rem; font-weight:600; letter-spacing:.11em;
+    text-transform:uppercase}
+  .col.ar .col-name{color:var(--ar)} .col.diff .col-name{color:var(--diff)}
+  .col-meta{font-family:var(--mono); font-size:.7rem; color:var(--muted); font-variant-numeric:tabular-nums}
+
+  .ur{
+    font-family:var(--urdu); direction:rtl; text-align:right;
+    font-size:1.04rem; line-height:2.55; color:var(--ink);
+  }
+  .pair-prefix .ur{font-size:.98rem; line-height:2.4; color:var(--body)}
+
+  .note{border-left:2px solid var(--rubric); padding:2px 0 2px 16px; margin-top:22px;
+    color:var(--body); font-size:.96rem}
+
+  .caveats{margin-top:22px; display:grid; gap:2px}
+  .caveat{background:var(--surface); border:1px solid var(--rule); border-radius:3px;
+    padding:15px 18px}
+  .caveat h3{margin-bottom:5px}
+  .caveat p{font-size:.93rem; color:var(--body)}
+
+  .links{display:flex; flex-wrap:wrap; gap:10px; margin-top:26px}
+  .btn{display:inline-flex; align-items:center; gap:9px; padding:11px 17px;
+    border:1px solid var(--rule); border-radius:3px; background:var(--surface);
+    color:var(--ink); text-decoration:none; font-family:var(--mono); font-size:.79rem;
+    letter-spacing:.04em; transition:border-color .15s, transform .15s}
+  .btn:hover{border-color:var(--ink); transform:translateY(-1px)}
+  .btn .dot{width:7px; height:7px; border-radius:50%; flex:none}
+
+  footer{border-top:1px solid var(--rule); margin-top:clamp(40px,7vw,70px);
+    padding-block:26px 46px; color:var(--muted); font-size:.87rem}
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important; animation:none!important} }
+</style>
+
+<header>
+  <div class="wrap">
+    <div class="kicker">
+      <span class="glyph">رواں</span>
+      <span class="rubric">Ravaan &middot; 70M &middot; trained from scratch</span>
+    </div>
+    <h1>A diffusion model that reads Urdu better than its autoregressive twin</h1>
+    <p class="lede">
+      To our knowledge, the <em>first masked diffusion language model trained for Urdu</em>.
+      Released alongside a matched autoregressive baseline &mdash; same corpus, same architecture,
+      same budget &mdash; so the comparison can be checked rather than believed.
+    </p>
+
+    <div class="headline-stat">
+      <span class="stat-num">0.7659</span>
+      <span class="stat-vs">bits&#8203;/byte &nbsp;vs&nbsp; <b>0.7774</b> autoregressive</span>
+      <span class="stat-cap">
+        Held-out native Urdu, lower is better. Margin +0.0115 bpb = 6.4&nbsp;sem over nine
+        independent evaluation draws.
+      </span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wide">
+    <div class="sec-head" style="max-width:70ch;margin-left:auto;margin-right:auto">
+      <span class="rubric">The result</span>
+      <h2>One objective could spend the compute. The other couldn&rsquo;t.</h2>
+    </div>
+
+    <figure>
+      <div class="chartbox">
+        <div class="chart-scroll">
+          <svg class="curve" viewBox="0 0 760 420" role="img"
+               aria-label="Held-out Urdu bits-per-byte against training epochs. The autoregressive curve reaches its minimum of 0.7774 at 4 epochs and then rises to 0.8690 by 16 epochs. The diffusion curve descends continuously to 0.7659 at 64 epochs.">
+            <g stroke="var(--rule)" stroke-width="1">
+              <line x1="64" y1="54.8" x2="732" y2="54.8"></line>
+              <line x1="64" y1="99.6" x2="732" y2="99.6"></line>
+              <line x1="64" y1="144.3" x2="732" y2="144.3"></line>
+              <line x1="64" y1="189.1" x2="732" y2="189.1"></line>
+              <line x1="64" y1="233.8" x2="732" y2="233.8"></line>
+              <line x1="64" y1="278.5" x2="732" y2="278.5"></line>
+              <line x1="64" y1="323.3" x2="732" y2="323.3"></line>
+              <line x1="64" y1="368.0" x2="732" y2="368.0"></line>
+            </g>
+            <g fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="11" text-anchor="end">
+              <text x="55" y="58.8">0.8</text><text x="55" y="103.6">0.9</text>
+              <text x="55" y="148.3">1.0</text><text x="55" y="193.1">1.1</text>
+              <text x="55" y="237.8">1.2</text><text x="55" y="282.5">1.3</text>
+              <text x="55" y="327.3">1.4</text><text x="55" y="372.0">1.5</text>
+            </g>
+            <g fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="11" text-anchor="middle">
+              <text x="139.4" y="388">&frac14;</text><text x="281.8" y="388">1</text>
+              <text x="424.2" y="388">4</text><text x="566.7" y="388">16</text>
+              <text x="709.1" y="388">64</text>
+            </g>
+            <text x="398" y="410" fill="var(--muted)" font-family="IBM Plex Mono, monospace"
+                  font-size="11" text-anchor="middle" letter-spacing="1.4">EPOCHS OVER 85.4M UNIQUE TOKENS</text>
+            <text x="18" y="215" fill="var(--muted)" font-family="IBM Plex Mono, monospace"
+                  font-size="11" text-anchor="middle" letter-spacing="1.4"
+                  transform="rotate(-90 18 215)">BITS / BYTE</text>
+
+            <polyline fill="none" stroke="var(--ar)" stroke-width="2.4" stroke-linejoin="round"
+              stroke-linecap="round"
+              points="93.6,348.2 164.8,231.4 258.9,119.9 330.1,69.4 424.2,44.7 495.4,49.8 566.7,85.7"></polyline>
+            <polyline fill="none" stroke="var(--diff)" stroke-width="2.4" stroke-linejoin="round"
+              stroke-linecap="round"
+              points="236.0,272.4 307.2,197.5 401.3,135.1 472.5,110.0 566.7,82.5 637.9,56.3 709.1,39.6"></polyline>
+
+            <g fill="var(--ar)">
+              <circle cx="93.6" cy="348.2" r="3"></circle><circle cx="164.8" cy="231.4" r="3"></circle>
+              <circle cx="258.9" cy="119.9" r="3"></circle><circle cx="330.1" cy="69.4" r="3"></circle>
+              <circle cx="495.4" cy="49.8" r="3"></circle><circle cx="566.7" cy="85.7" r="3"></circle>
+            </g>
+            <g fill="var(--diff)">
+              <circle cx="236.0" cy="272.4" r="3"></circle><circle cx="307.2" cy="197.5" r="3"></circle>
+              <circle cx="401.3" cy="135.1" r="3"></circle><circle cx="472.5" cy="110.0" r="3"></circle>
+              <circle cx="566.7" cy="82.5" r="3"></circle><circle cx="637.9" cy="56.3" r="3"></circle>
+            </g>
+
+            <circle cx="424.2" cy="44.7" r="5" fill="var(--paper)" stroke="var(--ar)" stroke-width="2.4"></circle>
+            <text x="424.2" y="30" fill="var(--ar)" font-family="IBM Plex Mono, monospace"
+                  font-size="11.5" font-weight="600" text-anchor="middle">0.7774</text>
+            <text x="424.2" y="17" fill="var(--muted)" font-family="IBM Plex Mono, monospace"
+                  font-size="10" text-anchor="middle">AR turns here</text>
+
+            <circle cx="709.1" cy="39.6" r="5" fill="var(--paper)" stroke="var(--diff)" stroke-width="2.4"></circle>
+            <text x="709.1" y="26" fill="var(--diff)" font-family="IBM Plex Mono, monospace"
+                  font-size="11.5" font-weight="600" text-anchor="middle">0.7659</text>
+          </svg>
+        </div>
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--ar)"></i>Ravaan-AR &mdash; autoregressive</span>
+          <span><i class="swatch" style="background:var(--diff)"></i>Ravaan-DIFF &mdash; masked diffusion</span>
+        </div>
+      </div>
+      <figcaption>
+        Both arms trained on the identical 85.4M-token corpus. The autoregressive arm reaches its
+        best held-out score at 4 epochs and is then actively degraded by further training &mdash; by
+        16 epochs it has fallen back to 0.8690. The diffusion arm descends monotonically for all 64
+        epochs and has still not turned; its last doubling bought &minus;0.0386 bpb.
+      </figcaption>
+    </figure>
+  </div>
+
+  <div class="wrap">
+    <table>
+      <caption>Held-out validation bits-per-byte on native Urdu</caption>
+      <thead>
+        <tr><th>Model</th><th>Epochs</th><th>Urdu bpb</th><th>&nbsp;</th></tr>
+      </thead>
+      <tbody>
+        <tr class="win">
+          <td><strong>Ravaan-DIFF-70M</strong></td><td class="n">64</td>
+          <td class="n">0.7659 &plusmn; 0.0018</td>
+          <td><span class="tag">still descending</span></td>
+        </tr>
+        <tr>
+          <td>Ravaan-AR-70M <span class="tag">best</span></td><td class="n">4</td>
+          <td class="n">0.7774</td>
+          <td><span class="tag">exact likelihood</span></td>
+        </tr>
+        <tr>
+          <td>Ravaan-AR-70M <span class="tag">same budget</span></td><td class="n">16</td>
+          <td class="n">0.8690</td>
+          <td><span class="tag">degraded by compute</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="note">
+      The diffusion figure is an <strong>ELBO &mdash; an upper bound</strong>, averaged over nine
+      seeded draws. That asymmetry runs in this result&rsquo;s favour and is worth stating plainly:
+      a bound that falls below an exact likelihood proves the bound&rsquo;s model is better, but the
+      reverse would prove nothing. This comparison could establish a diffusion win and could never
+      have established an autoregressive one.
+    </p>
+  </div>
+</section>
+
+<section style="background:var(--surface); border-block:1px solid var(--rule)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="rubric">And it is faster</span>
+      <h2>160 sequential steps, or 8 parallel ones</h2>
+    </div>
+    <p>
+      An autoregressive model writes 160 tokens in 160 forward passes, each waiting on the last.
+      The diffusion model fills the whole canvas in <strong>8 denoising passes</strong>. Measured
+      over 12 matched prompts on the same laptop GPU, that is a median of
+      <strong>0.37&nbsp;s against 6.59&nbsp;s &mdash; 17.9&times; faster</strong>.
+    </p>
+    <p>
+      The step count is not a preference, it is part of the model. More denoising steps decode
+      <em>worse</em> here, monotonically: 8 steps score 0.016 on repetition where 160 score 0.084,
+      and the confidence schedule at any step count collapses into looping a single phrase. The
+      better setting is also the cheap one, which is not how these trade-offs usually go.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="rubric">Samples</span>
+      <h2>The same Urdu prefix, continued by both arms</h2>
+    </div>
+    <p>
+      Unedited output from the two released checkpoints, given identical prefixes drawn from
+      held-out text the models never trained on. Neither model reproduces its training data:
+      verbatim overlap is <strong>0.000 at 16 tokens and above</strong> for both, matching a
+      control of real held-out Urdu.
+    </p>
+  </div>
+  <div class="wide">
+__SAMPLES__
+  </div>
+</section>
+
+<section style="background:var(--surface); border-block:1px solid var(--rule)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="rubric">What this is not</span>
+      <h2>The limits, stated rather than buried</h2>
+    </div>
+
+    <div class="caveats">
+      <div class="caveat">
+        <h3>The Urdu was never read by a native speaker</h3>
+        <p>
+          Every judgement of fluency in this project was made by a language model. A human
+          evaluation was designed and specified, and never ran &mdash; the annotators were never
+          recruited. Treat the qualitative claims as unvalidated.
+        </p>
+      </div>
+      <div class="caveat">
+        <h3>One seed per arm</h3>
+        <p>
+          There is no estimate of seed-to-seed variance on this pair, so the gap cannot be
+          separated from a single initialization draw. The error bar above is the evaluation
+          estimator&rsquo;s, not the training run&rsquo;s.
+        </p>
+      </div>
+      <div class="caveat">
+        <h3>A known lexical defect is in the training data</h3>
+        <p>
+          The Roman-Urdu source renders eight common words as fixed unrelated words, in 2.77% of
+          rows after deduplication. It was disclosed rather than filtered, because filtering the
+          confirmed cases cannot reach the unscreened tail without the native-speaker pass that
+          never happened.
+        </p>
+      </div>
+      <div class="caveat">
+        <h3>Not the discovery, the replication</h3>
+        <p>
+          The data-constrained crossover itself is prior work &mdash; Prabhudesai et al.
+          (arXiv:2507.15857) and Ni et al. (arXiv:2511.03276), both on English and code. What is
+          new here is the language and the script: naturally low-resource, non-Latin, noisy web
+          text. Nor is this the first diffusion model for a non-English language; Diffutron
+          (arXiv:2603.20466) is a Turkish one.
+        </p>
+      </div>
+      <div class="caveat">
+        <h3>70M parameters, and no tuning of any kind</h3>
+        <p>
+          No instruction tuning, no alignment, no safety filtering. It produces fluent-sounding
+          false statements and reproduces the biases of filtered web text. It is a research
+          artifact, not a product.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="rubric">Provenance</span>
+      <h2>Six training runs, about $28</h2>
+    </div>
+    <p>
+      The corpus freeze &mdash; ten stages of filtering, deduplication, PII screening and held-out
+      decontamination &mdash; ran entirely on free tiers and a laptop GPU. The released diffusion
+      model is 64 epochs on one rented RTX&nbsp;5090: 5.46B tokens, 8.2 hours, roughly
+      <strong>$4.60</strong>. The design was preregistered before any training, with four
+      falsifiable predictions and a deviation log recording every departure.
+    </p>
+
+    <div class="links">
+      <a class="btn" href="https://huggingface.co/AwaisAdilKhokhar/ravaan-diff-70m">
+        <i class="dot" style="background:var(--diff)"></i>ravaan-diff-70m</a>
+      <a class="btn" href="https://huggingface.co/AwaisAdilKhokhar/ravaan-ar-70m">
+        <i class="dot" style="background:var(--ar)"></i>ravaan-ar-70m</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Ravaan &mdash; a masked diffusion language model for Urdu, and its matched autoregressive
+    baseline. Novelty claim checked against arXiv, ACL Anthology, OpenReview and the Hugging Face
+    Hub on 2026&#8209;09&#8209;23; it is a statement about a literature search on a date, not a fact
+    about the world.
+  </div>
+</footer>

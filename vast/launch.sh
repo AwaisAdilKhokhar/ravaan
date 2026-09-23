@@ -50,6 +50,17 @@ if [ -z "${MICROBATCH:-}" ]; then
     exit 2
 fi
 
+# ⚠️ Checked HERE, before the gate spends a measurement on it. `resolve_batching` refuses
+# a microbatch that does not divide the 256 sequences in a step, but it is not reached
+# until the Trainer is constructed -- so an invalid value passes the gate, starts the run,
+# and dies on its first line. That is exactly what microbatch 48 did in session 33.
+if [ $((256 % MICROBATCH)) -ne 0 ]; then
+    echo "MICROBATCH=$MICROBATCH does not divide the 256 sequences in an optimizer step." >&2
+    echo "  pick one of: 16 32 64 128. train.py throughput will measure any value," >&2
+    echo "  but train.py run refuses anything that is not a divisor (§4.1)." >&2
+    exit 2
+fi
+
 # --- the budget gate -------------------------------------------------------
 #
 # This run has a HARD ceiling of the credit already loaded, so throughput is a budget
@@ -61,10 +72,20 @@ fi
 # microbatch, 43% off the same card's own peak. An unattended 12-hour run that nobody is
 # watching is exactly how a ceiling gets breached, so the gate is here rather than in a
 # human's judgement of push.sh's output.
-FLOOR="${FLOOR:-150000}"
-echo "== budget gate: measuring at microbatch $MICROBATCH, floor ${FLOOR} tok/s =="
+# ⚠️ The floor is BUDGET-derived, not health-derived. Health is push.sh's pre-flight,
+# which reads the card directly and is not fooled by noise. 120,000 tok/s is 11.6 h and
+# $6.57 of GPU -- still inside the credit this run is capped by -- while the dud box that
+# prompted all of this measured ~62,000. Session 33 first set this to 150,000 and then
+# 140,000 and had BOTH fire on a verifiably clean card (0% util, 2 MiB resident, 38 °C,
+# no throttle reasons) purely because the measurement underneath was three seconds long.
+# A gate set inside its own noise band stops runs rather than saving money.
+FLOOR="${FLOOR:-120000}"
+# Equal tokens, not equal steps: 8192/MB steps is ~4.2M tokens (~28 s) at any microbatch,
+# where the old flat --steps 30 was ~3 s at microbatch 32 and varied with the setting.
+STEPS=$((8192 / MICROBATCH))
+echo "== budget gate: measuring at microbatch $MICROBATCH over $STEPS steps, floor ${FLOOR} tok/s =="
 measured=$(python -u scripts/train.py throughput --arm diff --size 70M \
-    --microbatch "$MICROBATCH" --steps 30 --corpus-arm B \
+    --microbatch "$MICROBATCH" --steps "$STEPS" --corpus-arm B \
     --corpus /workspace/data/packed \
     --tokenizer /workspace/data/tokenizer/ravaan-16k.model \
     | python -c 'import json,sys; print(json.load(sys.stdin)["tokens_per_second"])') || true

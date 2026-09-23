@@ -64,9 +64,25 @@ echo "== throughput sweep (G2's rule: measure on the instance before committing)
 # cost ~2 GPU-hours on a 4-hour job, and this run is longer. Measured on --arm diff
 # because that is the arm being paid for; AR and DIFF cost the same per token within
 # 2.2% (Finding AM), but there is no reason to measure the arm we are not running.
-for MB in 16 32 48 64; do
+#
+# ⚠️ ONLY DIVISORS OF 256. `TrainingConfig.tokens_per_step` is 131,072 = 256 sequences of
+# 512, and `resolve_batching` REFUSES a microbatch that does not divide it rather than
+# rounding -- §4.1's "same number of tokens processed" is a per-step property, and a run
+# that quietly used 240 sequences a step is not the same run. But `train.py throughput`
+# does not go through `resolve_batching`, so it will happily measure 48 and report it as
+# the peak. Session 33 swept 16/32/48/64, took 48, and the run died on its first line:
+#   ValueError: microbatch 48 does not divide the 256 sequences in a step
+# The sweep must not offer a setting the trainer will reject.
+#
+# ⚠️ EQUAL TOKENS PER MEASUREMENT, not equal steps. At ~150k tok/s, 30 steps at microbatch
+# 32 is ~3 SECONDS of timed work, and session 33 saw the same box and setting measure
+# 137,329 / 156,540 / 161,586 on three runs. That noise band is wider than the differences
+# the sweep exists to detect, and it tripped a threshold twice on a demonstrably healthy
+# card. 8192/MB steps puts ~4.2M tokens through every setting -- ~28 s each, and the same
+# work per setting so the comparison is fair rather than merely longer.
+for MB in 16 32 64 128; do
     echo "-- microbatch $MB --"
-    $S "$H" "cd /workspace/ravaan && python -u scripts/train.py throughput --arm diff --size 70M --microbatch $MB --steps 30 --corpus-arm B --corpus /workspace/data/packed --tokenizer /workspace/data/tokenizer/ravaan-16k.model"
+    $S "$H" "cd /workspace/ravaan && python -u scripts/train.py throughput --arm diff --size 70M --microbatch $MB --steps $((8192 / MB)) --corpus-arm B --corpus /workspace/data/packed --tokenizer /workspace/data/tokenizer/ravaan-16k.model"
 done
 
 echo

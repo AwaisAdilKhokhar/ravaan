@@ -77,6 +77,10 @@ SITE_DESC = (
     "One writes left to right, a token per forward pass. The other fills a canvas of masks in "
     "eight passes. Held-out Urdu: 0.7646 bits/byte against 0.7774."
 )
+SITE_IMAGE_ALT = (
+    "Two model panels: the diffusion arm finished in 8 forward passes, the autoregressive "
+    "arm still typing at pass 8 of 32."
+)
 #: An emoji favicon as an inline SVG — no extra file to keep in sync, and nothing to 404.
 FAVICON = (
     "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>"
@@ -99,7 +103,7 @@ SITE_HEAD = f"""<!doctype html>
 <meta property="og:image" content="{SITE_URL}og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="628">
-<meta property="og:image:alt" content="Two model panels: the diffusion arm finished in 8 forward passes, the autoregressive arm still typing at pass 8 of 32.">
+<meta property="og:image:alt" content="{SITE_IMAGE_ALT}">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="{FAVICON}">
 <style>img{{max-width:100%}}[hidden]{{display:none!important}}</style>
@@ -115,7 +119,7 @@ def words(pieces: list[str | None], steps: list[int]) -> list[dict]:
     part of the prompt, even in the rare case where the model continues it.
     """
     out: list[dict] = []
-    for piece, step in zip(pieces, steps):
+    for piece, step in zip(pieces, steps, strict=True):
         if piece is None:  # framing and control positions — never shown, see `_pieces`
             continue
         if piece.startswith(" ") or not out:
@@ -130,7 +134,9 @@ def words(pieces: list[str | None], steps: list[int]) -> list[dict]:
 
 
 def arm_payload(rec: dict) -> dict:
-    cells = [s for piece, s in zip(rec["pieces"], rec["commit_step"]) if piece is not None]
+    cells = [
+        s for piece, s in zip(rec["pieces"], rec["commit_step"], strict=True) if piece is not None
+    ]
     return {
         "words": words(rec["pieces"], rec["commit_step"]),
         "cells": cells,
@@ -147,7 +153,7 @@ def curve(path: Path, total_epochs: float) -> list[dict]:
     """Held-out Urdu bpb against epochs. `fraction` is of the run, so epochs is fraction × total."""
     data = json.loads(path.read_text(encoding="utf-8"))
     points = []
-    for key, point in data["points"].items():
+    for point in data["points"].values():
         points.append(
             {
                 "epochs": round(point["tokens"] / UNIQUE_TOKENS, 2),
@@ -255,7 +261,9 @@ def main() -> int:
         # the parser's implicit-body recovery.
         marker = "</style>"
         if page.count(marker) != 1:
-            raise SystemExit(f"expected exactly one {marker} to split on, found {page.count(marker)}")
+            raise SystemExit(
+                f"expected exactly one {marker} to split on, found {page.count(marker)}"
+            )
         head, body = page.split(marker, 1)
         args.site.parent.mkdir(parents=True, exist_ok=True)
         args.site.write_text(

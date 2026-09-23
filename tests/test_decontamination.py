@@ -805,8 +805,8 @@ def test_a_sentence_set_hit_between_the_two_cuts_is_not_a_removal():
     """The 82,426-document gap on the freeze, as one case."""
     index = Decontaminator(DecontaminationConfig(containment_threshold=0.80))
     index.add_eval_set(EvalSetSpec(name="sentences").for_sentences())
-    assert 0.85 >= index.config.containment_threshold
-    assert 0.85 < index.threshold_for("sentences")
+    assert index.config.containment_threshold <= 0.85
+    assert index.threshold_for("sentences") > 0.85
 
 
 def test_a_document_is_not_contaminated_by_being_itself():

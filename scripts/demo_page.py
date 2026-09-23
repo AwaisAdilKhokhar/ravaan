@@ -121,11 +121,12 @@ def markdown(pairs: list[dict], source: Path) -> str:
         "were chosen, and the selection rule is in that driver's docstring.",
         "",
         "⚠️ **The two checkpoints are not from the same corpus arm.** Each is its own arm's best,",
-        "which is what a demo of the best models means, and it is *not* §4.1's matched comparison —",
+        "which is what a demo of the best models means, and it is *not* §4.1's matched "
+        "comparison —",
         "U and the mixture both differ, so nothing here is evidence about AR versus diffusion.",
         "",
     ]
-    for key, arm in ARMS.items():
+    for arm in ARMS.values():
         lines += [
             f"- **{arm['name']}** — `{arm['checkpoint']}`, {arm['corpus']}, {arm['epochs']}. "
             f"Urdu bpb **{arm['bpb']}** ({arm['bpb_note']}). Decode: {arm['decode']}.",
@@ -333,7 +334,8 @@ TEMPLATE = """<title>Ravaan Writes Urdu</title>
     padding-bottom: 6px;
   }}
   .spec dt {{ color: var(--muted); font-size: 12.5px; white-space: nowrap; }}
-  .spec dd {{ margin: 0; text-align: right; font-size: 13.5px; font-variant-numeric: tabular-nums; }}
+  .spec dd {{ margin: 0; text-align: right; font-size: 13.5px;
+             font-variant-numeric: tabular-nums; }}
   .spec dd.big {{
     font-family: var(--mono);
     font-size: 20px;

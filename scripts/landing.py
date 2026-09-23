@@ -44,10 +44,14 @@ def clip(text: str, limit: int) -> str:
 def pair_block(prefix: dict, ar: dict, diff: dict) -> str:
     def column(rec: dict, css: str, name: str) -> str:
         s = rec["stats"]
+        meta = (
+            f"{rec['seconds']:.1f}s &middot; {rec['forwards']} passes "
+            f"&middot; rep {s['repetition']:.3f}"
+        )
         return f"""        <div class="col {css}">
           <div class="col-head">
             <span class="col-name">{name}</span>
-            <span class="col-meta">{rec['seconds']:.1f}s &middot; {rec['forwards']} passes &middot; rep {s['repetition']:.3f}</span>
+            <span class="col-meta">{meta}</span>
           </div>
           <p class="ur">{html.escape(clip(rec['text'], 300))}</p>
         </div>"""
@@ -72,7 +76,8 @@ def main() -> int:
     ap.add_argument("--out", default=str(REPO / "reports/landing.html"))
     args = ap.parse_args()
 
-    rows = [json.loads(line) for line in Path(args.samples).read_text(encoding="utf-8").splitlines()]
+    lines = Path(args.samples).read_text(encoding="utf-8").splitlines()
+    rows = [json.loads(line) for line in lines]
     by_prompt: dict[int, dict[str, dict]] = {}
     for record in rows:
         if record["task"] != "lm/continue":
@@ -93,7 +98,8 @@ def main() -> int:
 
     Path(args.out).write_text(page, encoding="utf-8")
     print(f"wrote {args.out} — {len(page):,} chars, {len(blocks)} sample pairs")
-    print("publish it as an artifact; the built file is committed so it can be rebuilt without a session")
+    print("publish it as an artifact; the built file is committed so it can be rebuilt "
+          "without a session")
     return 0
 
 

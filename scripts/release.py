@@ -140,8 +140,10 @@ def build(spec: dict, out_root: Path, *, tokenizer_src: Path) -> Path:
         "weights_format": "safetensors",
         "optimizer_state": "stripped — this checkpoint cannot resume training",
     }
-    (dest / "config.json").write_text(json.dumps(cfg, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"  config   config.json")
+    (dest / "config.json").write_text(
+        json.dumps(cfg, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+    print("  config   config.json")
 
     # --- tokenizer --------------------------------------------------------------------------
     tok_dir = dest / "tokenizer"
@@ -222,7 +224,7 @@ def _write_framing(pkg: Path) -> None:
             "from collections.abc import Mapping\n"
             "from dataclasses import dataclass\n\n"
             f"{body}\n"
-        ).encode("utf-8")
+        ).encode()
     )
 
 

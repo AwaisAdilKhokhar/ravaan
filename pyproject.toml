@@ -64,3 +64,11 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+# `release_assets/` is vendored *for publication* — these files are uploaded verbatim to the
+# Hugging Face repos, where they run outside this package. Each one calls `sys.path.insert`
+# before importing `ravaan_infer`, so sorting the import block (I001) would hoist the imports
+# above the path setup and break the file for everyone who downloaded it. The published copy
+# and the copy here must not drift for a cosmetic rule.
+"release_assets/*.py" = ["I001"]

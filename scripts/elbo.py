@@ -58,7 +58,6 @@ from ravaan.console import pin_utf8_streams  # noqa: E402
 
 pin_utf8_streams()
 
-import torch  # noqa: E402
 
 from ravaan.models.config import LADDER  # noqa: E402
 from ravaan.sampling.decoding import build_generator  # noqa: E402

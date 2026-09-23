@@ -81,7 +81,8 @@ PROBE = textwrap.dedent(
 
 
 def arabic_share(text: str) -> float:
-    """Share of *letters* in the Arabic block. Punctuation and digits are not evidence either way."""
+    """Share of *letters* in the Arabic block. Punctuation and digits are not evidence
+    either way."""
     letters = [c for c in text if unicodedata.category(c).startswith("L")]
     if not letters:
         return 0.0
@@ -93,7 +94,7 @@ def longest_repeat(text: str) -> int:
     """Longest run of one repeated word — the slot-looping tell (`مہار مہار مہار`)."""
     words = text.split()
     best = run = 1
-    for a, b in zip(words, words[1:]):
+    for a, b in zip(words, words[1:], strict=False):
         run = run + 1 if a == b else 1
         best = max(best, run)
     return best if words else 0
@@ -148,7 +149,7 @@ def check(release: Path, *, prefix: str, n_tokens: int) -> dict:
     print(f"  {'✓' if ok_params else '✗'} parameters      {result['params']:,}")
     print(f"  {'✓' if ok_script else '✗'} Arabic script   {share:.3f} of letters")
     print(f"  {'✓' if ok_loop else '✗'} longest repeat  {repeat} word(s)")
-    print(f"  ✓ imports resolve with the source repo off sys.path")
+    print("  ✓ imports resolve with the source repo off sys.path")
     print(f"\n  {result['describe']}")
     print(f"  sample: {text[:160]}")
 

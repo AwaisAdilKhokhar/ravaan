@@ -333,7 +333,8 @@ def ar_card(spec: dict, ev: dict) -> str:
     )
     overlap = ev["overlap_line"]
 
-    return f"""{frontmatter(spec)}# Ravaan-AR-70M — an autoregressive Urdu baseline, released as a control
+    title = "# Ravaan-AR-70M — an autoregressive Urdu baseline, released as a control"
+    return f"""{frontmatter(spec)}{title}
 
 70M parameters, trained from scratch on a purpose-built 85.4M-token Urdu corpus. On its own terms
 it is a competent small Urdu language model. **Its reason for existing is to be the matched
@@ -531,7 +532,8 @@ def main() -> int:
     }
 
     written = []
-    for spec in ({"name": "ravaan-diff-70m", "arm": "diff"}, {"name": "ravaan-ar-70m", "arm": "ar"}):
+    specs = ({"name": "ravaan-diff-70m", "arm": "diff"}, {"name": "ravaan-ar-70m", "arm": "ar"})
+    for spec in specs:
         dest = root / spec["name"]
         if not dest.exists():
             print(f"  (skipping {spec['name']} — not staged)")

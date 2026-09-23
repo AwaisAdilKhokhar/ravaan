@@ -196,7 +196,7 @@ def main() -> int:
     try:
         from PIL import Image
     except ImportError:
-        raise SystemExit("this needs Pillow: pip install pillow")
+        raise SystemExit("this needs Pillow: pip install pillow") from None
 
     sys.path.insert(0, str(REPO / "scripts"))
     from decoder_demo import arm_payload

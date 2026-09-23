@@ -365,13 +365,25 @@ def _rank(draw: dict) -> tuple:
     )
 
 
+def _note(name: str, record: dict, draws: dict) -> str:
+    """One arm's line in the progress log: what the rule chose, and out of how much."""
+    draw = record[name]
+    if draw is None:
+        return f"{name} — all {DRAWS} rejected"
+    kept = sum(1 for d in draws[name] if d["rejected"] is None)
+    return (
+        f"{name} seed {draw['seed']} run {draw['stats']['longest_repeat']} "
+        f"({kept}/{DRAWS} kept, {draw['forwards']} passes, {draw['seconds']:.2f}s)"
+    )
+
+
 def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
     sys.path.insert(0, str(release / "ravaan-diff-70m"))
     import sentencepiece as spm
-
-    from ravaan.evaluation.generation import GenerationStats
     from ravaan_infer.loader import load
     from ravaan_infer.sampling import prompts as prompt_builders
+
+    from ravaan.evaluation.generation import GenerationStats
 
     arms = {
         "diff": load(release / "ravaan-diff-70m", device=device),
@@ -456,16 +468,10 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
                 for d in sorted(draws[name], key=lambda d: (d["rejected"] is not None, _rank(d)))
             ]
 
-        def _note(name: str) -> str:
-            draw, kept = record[name], sum(1 for d in draws[name] if d["rejected"] is None)
-            if draw is None:
-                return f"{name} — all {DRAWS} rejected"
-            return (
-                f"{name} seed {draw['seed']} run {draw['stats']['longest_repeat']} "
-                f"({kept}/{DRAWS} kept, {draw['forwards']} passes, {draw['seconds']:.2f}s)"
-            )
-
-        print(f"  {spec['id']:<11} {_note('diff'):<44} {_note('ar')}", file=sys.stderr)
+        print(
+            f"  {spec['id']:<11} {_note('diff', record, draws):<44} {_note('ar', record, draws)}",
+            file=sys.stderr,
+        )
         pool.append({"id": spec["id"], "prefix": spec["prefix"], "shown": shown,
                      "diff": record["diff_pool"], "ar": record["ar_pool"]})
         if shown:

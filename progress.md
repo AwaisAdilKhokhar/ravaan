@@ -63,6 +63,28 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 > replicated is the diffusion arm's own number, not the gap. v2.4's requirement to write the
 > endpoint as one comparison, with no between-seed interval, is unchanged.
 >
+>
+> > ✅ **The diffusion column now carries an error bar, 2026-09-23 (session 33).** Nine seeded
+> > draws of the full validation split at every rung (`scripts/elbo.py`,
+> > [`elbo_diff_s0.json`](reports/eval/elbo_diff_s0.json)) — Finding BA is retired as a caveat on
+> > this table and replaced by a number:
+> >
+> > | fraction | epochs | **Ravaan-DIFF, K = 9** | sem | single draw, as first reported |
+> > |---|---|---|---|---|
+> > | 1% | 4.3 | 1.1623 | 0.0009 | 1.1624 |
+> > | 2% | 8.5 | 1.0370 | 0.0012 | 1.0350 |
+> > | 5% | 21.3 | 0.9419 | 0.0013 | 0.9405 |
+> > | 10% | 42.6 | 0.8950 | 0.0016 | 0.8956 |
+> > | 25% | 106.6 | 0.8520 | 0.0017 | 0.8577 |
+> > | 50% | 213.2 | 0.8239 | 0.0018 | 0.8181 |
+> > | 100% | 426.5 | **0.8072** | 0.0017 | 0.8059 |
+> >
+> > **Every rung moves by less than 0.006 and the shape is untouched**, so the crossover stands
+> > exactly as reported — the descent is monotone, it never regresses, and no rung's shift is
+> > large enough to move the crossing. **The AR arm needs none of this**: its NLL is exact.
+> > ⚠️ **The sem is the estimator's alone.** It says nothing about initialization (that is seed
+> > 1's job) and nothing about the single-seed limitation, which v2.4's requirement to write the
+> > endpoint as one paired comparison still governs.
 > Curves: [`curve_ar_s0.json`](reports/eval/curve_ar_s0.json),
 > [`curve_diff_s0.json`](reports/eval/curve_diff_s0.json), both by `scripts/curves.py`.
 
@@ -144,7 +166,60 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 > [`curve_diff_b.json`](reports/eval/curve_diff_b.json). Samples:
 > [`ship_samples.md`](reports/ship_samples.md). Overlap: [`overlap_armb.json`](reports/eval/overlap_armb.json).
 
-> ## 🎯 The shippable diffusion model is one ~$6 run away, 2026-09-23
+> ## 🥇 The shippable diffusion model exists, and it beats the AR arm, 2026-09-23
+>
+> **`ship-diff-b64` ran: 64 epochs, arm B, 5.46B tokens, 8.2 h on a rented 5090 for ~$4.60.**
+> Held-out validation bits-per-byte on native Urdu, the seven rungs `checkpoint_fractions` wrote:
+>
+> | epochs | **urdu** | roman_urdu | code_switched | all |
+> |---|---|---|---|---|
+> | 0.64 | 1.2864 | 2.2916 | 1.8049 | 1.4752 |
+> | 1.28 | 1.1188 | 2.0821 | 1.6095 | 1.2996 |
+> | 3.20 | 0.9793 | 1.9227 | 1.3887 | 1.1540 |
+> | 6.40 | 0.9232 | 1.8153 | 1.3072 | 1.0883 |
+> | 16.00 | 0.8619 | 1.6967 | 1.1837 | 1.0152 |
+> | 32.00 | 0.8032 | 1.6425 | 1.1336 | 0.9575 |
+> | **64.00** | **0.7646** | **1.5648** | **1.0559** | **0.9110** |
+>
+> ✅ **The diffusion arm beats the AR arm's best on the same corpus: 0.7646 against 0.7774.**
+> That is the comparison the project has never been able to make — until now the best AR
+> checkpoint was arm B and the best diffusion was arm A, and every artefact had to disclose it.
+> **Both released models are now on one corpus and the caveat is gone.**
+>
+> ✅ **Finding BH's fit held and was pessimistic.** It predicted ~0.777 at 64 epochs from three
+> points; the measurement is **0.7646**. The realized per-doubling ratio is **0.66** against the
+> fitted 0.65.
+>
+> ⚠️ **It still has not turned.** The last doubling bought **−0.0386** (0.8032 → 0.7646). AR
+> turned at 4 epochs on this corpus and was being actively ruined by 16; this curve is still
+> descending at 64. **More epochs would still buy**, and the same arithmetic that made this run
+> worth $6 now points at 128 for ~$11.
+>
+> ✅ **The 16-epoch rung reads 0.8619 against `ship-diff-b`'s 0.8320, exactly as predicted.**
+> The cosine anneals over `total_steps`, so at 64 epochs it has not finished at 16. Predicted
+> before the run, confirmed after — it is the schedule, not a regression, and the two numbers are
+> not comparable.
+>
+> ⚠️ **These seven are single ELBO draws (Finding BA).** The 0.0128 margin over AR's exact
+> 0.7774 is ~2.4 single-draw sd, so the win is real but wants `scripts/elbo.py` at K = 9 before it
+> is written down as a result. **That is $0 on the 4060 and is the first thing to do next session.**
+>
+> ⚠️ **Six of the seven checkpoints died with the instance and only the 64-epoch one was saved.**
+> The link ran at 19 KB/s direct and the run wrote 5.9 GB; what came back is
+> `diff-s0_f1_weights.pt`, **optimizer state stripped** (839 MB → 280 MB, md5-verified, load-tested,
+> 69,975,680 parameters). `curve.json` holds all seven rungs *scored*, so the curve above is
+> complete — what is gone is the ability to put a bar on any rung but the last, or to resume
+> training. Neither blocks the release; both are permanent. See Finding BM.
+>
+> Curve: [`curve.json`](../../d/ravaan-runs/ship-diff-b64/curve.json) (run dir, not the repo).
+> Checkpoint: `D:/ravaan-runs/ship-diff-b64/diff-s0_f1_weights.pt`.
+
+
+> ## ✅ ~~The shippable diffusion model is one ~$6 run away~~ — TAKEN, 2026-09-23
+>
+> **The run happened and the block above is the result. Kept because the reasoning is what
+> justified the spend, and it was right: the fit predicted ~0.777 and the measurement came in
+> at 0.7646.** What follows is the brief as it stood before the run.
 >
 > **The diffusion arm was stopped while it was still descending, and the reason it was stopped is
 > the experiment's, not the model's.** §0.4 requires both arms to take the same budget, so both
@@ -197,6 +272,12 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
   out 2026-09-20 — $40 loaded on Vast.ai, **~$28 committed to three runs** (the two core runs plus
   the second diffusion seed added 2026-09-21), of $150.**
   Everything before this was $0: the whole corpus freeze ran local, on Colab and on Kaggle.
+  **Session 33 spent ~$7.90 of the ~$9.80 that remained** — ~$4.60 on `ship-diff-b64` itself,
+  ~$1.85 on a finished box idling because nothing was watching (Finding BN), ~$0.75 on getting
+  6 GB off a 19 KB/s link (Finding BM) and ~$0.40 on a shared-GPU dud and two false starts
+  (Finding BL). **~$1.90 is left, which does not rent anything** — the 128-epoch continuation
+  Finding BK points at needs a top-up, prepaid only, never automatic billing. **Both instances
+  destroyed 2026-09-23; nothing is accruing.**
 - **⏱ Priority, set 2026-09-16 and it governs every choice below: time to a reported result.**
   The project ships **two training runs — one AR, one diffusion, one seed each** (PRD §0.4).
   Seeds 2–3 and ablations **A1/A2 are dropped**; A3/A4 are inference-only and survive. Budget
@@ -393,7 +474,7 @@ holds only while the priority is wall-clock and while stage 10's reported fertil
 
 ## Findings register
 
-Sixty-four findings are referenced across this file, the PRD and the reports, and until now they
+Sixty-eight findings are referenced across this file, the PRD and the reports, and until now they
 were only defined inside the session that raised them. One line each, with the session that owns
 the derivation — `git show 8cecdfd:progress.md` has the full text of every one.
 
@@ -466,6 +547,10 @@ must say.
 | BH | 32 | **The diffusion arm was stopped while still descending, and §0.4's equal-budget rule is why.** At the shared 16-epoch endpoint AR had turned at 4 epochs and was being actively ruined by more compute (+0.0803 on its last doubling) while DIFF was still gaining **−0.0520** — *more than AR's best doubling ever bought*. Both stopped there because the experiment requires the same budget; **a shippable checkpoint does not owe that constraint.** Corroboration rather than extrapolation: `core-diff-s0` reached **0.8059 on arm A**, a corpus 3.7× smaller at 426 epochs, and **0.000 verbatim overlap at n ≥ 16** — so heavy repetition is safe on this arm in a way Finding BD proves it is not on AR's. Fitted continuation: **64 epochs ≈ 0.777 for ~$6**, 256 ≈ 0.754 for ~$22 | ⚠️ **live and actionable — this is the next run.** The fit is three points and its own limit is ~0.74; treat the column as a range. ⚠️ **The cosine anneals over `total_steps`, so `ship-diff-b` cannot be resumed into it** — 64 epochs is a fresh run at full price |
 | BI | 32 | **The ship corpus is capped by §6.1's mixture, not by the corpus.** `reports/freeze/plan.json` — the unsampled frozen plan — holds a native-Urdu train band of **12,136,015,091 characters**; arm B draws **246,984,881** of them, about **2%**. Arm B is not small because Urdu ran out (stage 9 measured the `urdu` margin at **146.8×**); it is small because the fixed 120:40:10 mixture chains native Urdu to the scarcest population, and `roman_urdu` is the one that failed G1 at 0.44×. `arm_tokens` is a free-form dict and arms are nested by construction, so a larger Urdu-heavy arm is a **config change, not code** | ⚠️ **live, and it carries a trap that makes it second, not first.** The held-out bands are carved *at the same mixture as the arms*, so changing `population_targets` can re-carve validation and test — and **every bpb number in this file stops being comparable**. The new held-out set must be verified byte-identical to the frozen one before a single GPU hour is spent. Corrects the shippable block's "the only thing that raises this ceiling is more corpus" |
 | BJ | 33 | **Finding BA's estimator noise is now a bar rather than a caveat, and the draw that went into the run record was the outlier.** `Trainer.evaluate` called `model.loss` with `generator=None`, so Ravaan-DIFF's ELBO rode the global RNG and no diffusion number in this repository was reproducible as a named draw. `evaluate` now takes a seeded generator — `generator=None` is byte-for-byte the old path, so every committed `evaluation.json` is still reproducible by the code that wrote it — and `scripts/elbo.py` averages K of them. On `ship-diff-b/diff-s0_f1.pt`, nine draws of the full 4,874-sequence split give **urdu 0.8322 ± 0.0018** (single-draw sd **0.0053**, range 0.8237–0.8399), roman_urdu 1.6962 ± 0.0039, code_switched 1.1685 ± 0.0089, all 0.9909 ± 0.0015. **BA's 0.0069 was pessimistic and its K = 9 prediction of ~0.002 was right.** The 1.06 sd disagreement BA found resolves with a direction: `curve_diff_b`'s 0.8320 is **0.04 sd** from the mean and the run's own `evaluation.json` 0.8247 is **1.41 sd below** it — progress.md had been quoting the good draw and the run record holds the low one | ⚠️ **live until the curves land.** Only the 100% rung is averaged; the remaining six and all of arm A's are single draws, so the crossover tables still carry one-draw numbers at every other rung. Arm B's endpoint gap is **0.8690 exact against 0.8322 ± 0.0018**, ~20 sem, and BH's −0.0520 last doubling is ~10× the single-draw sd — both survive the bar comfortably. ⚠️ **The sem is the estimator's only**: it says nothing about initialization (that is seed 1's job) and nothing about the corpus |
+| BK | 33 | **The diffusion arm beats the AR arm's best on the same corpus, given epochs the experiment could not spend.** `ship-diff-b64` — 64 epochs, arm B, 5.46B tokens, 8.2 h, ~$4.60 — reaches **urdu bpb 0.7646** against AR's best **0.7774** at 4 epochs on the identical 85.4M-token stream. Finding BH predicted ~0.777 from a three-point fit and was pessimistic; the realized per-doubling ratio is **0.66** against the fitted 0.65. The curve **has still not turned**: the last doubling bought −0.0386 (0.8032 → 0.7646) where AR turned at 4 epochs and was being ruined by 16. The 16-epoch rung reads **0.8619** against `ship-diff-b`'s 0.8320 — predicted before the run and confirmed after, because the cosine anneals over `total_steps` and has not finished at 16 in a 64-epoch schedule | ⚠️ **live.** The seven rungs are single ELBO draws and the 0.0128 margin is ~2.4 single-draw sd — **K = 9 before this is written as a result** (Findings BA, BJ). ✅ **The matched-corpus release pair exists**, so the cross-arm disclosure every artefact carried is gone. ⚠️ Still **not** a bracket test of C_crit and it does not touch §4.5's endpoint |
+| BL | 33 | **A rented GPU can already be running someone else's job, and every symptom looks like a slow box.** The first 5090 rented this session measured throughput **flat and declining** across the sweep — 63,897 / 61,454 / 60,615 at microbatch 16/32/48 — which a GPU that wants a bigger batch does not do, then OOMed at 64 with the tell in the message: 31.36 GiB total, 17.89 GiB ours, 1.13 GiB free, so **~12.3 GiB belonged to nobody we could see**. Confirmed with nothing of ours running: **100% utilisation, 12,620 MiB resident, 2265 MHz against a 3105 MHz maximum, 525 W against a 525 W limit.** At ~62k tok/s the run would have been 23.7 h and **$13.38** against a $9.80 ceiling | ✅ `vast/push.sh` now refuses before shipping a byte. ⚠️ **The check is `memory.used` and `utilization.gpu`, NOT the process list** — `nvidia-smi --query-compute-apps` is **empty** in a Vast container even when the card is busy, because container isolation hides the other tenant's PID. Those two counters are the only signals that cross the boundary. A clean card reads ~0 MiB and 0% |
+| BM | 33 | **Getting a finished run off a rented box is a harder constraint than training it, and the fix is to send less rather than to send it faster.** The instance's outbound ran at **19 KB/s direct** — measured raw, not inferred from the fetcher — while the 169 MB *upload* had been fine, so it is the host's egress and not the home link. One 839 MB checkpoint was **7 h and $3.92**; all seven were **48.6 h and $27.43** against ~$2.80 left. Two things made it affordable: **Vast's proxy route (`sshN.vast.ai`) ran 6.7× faster at 128 KB/s**, and **stripping the optimizer state cut the checkpoint 839 MB → 280 MB** — Adam's two moments are two thirds of the file and a released model needs none of it. Together: 7 h → 36 min, $3.92 → $0.34 | ⚠️ **live and it changes what a run should write.** Six of seven checkpoints were abandoned on the instance; `curve.json` holds all seven *scored*, so the curve survived and only the weights are gone. **Score on the box** (`launch.sh` does now) and **strip before transfer**, or plan the budget around 5.9 GB at a link speed nobody measures until it is too late. ⚠️ The stripped file **cannot resume training** — irrelevant here, the cosine had fully annealed |
+| BN | 33 | **Two watchers, a fetcher and two `pkill`s all failed silently, and the box idled 3.3 h on a finished run.** The fetcher and both status watchers were killed under memory pressure or were never killed when they should have been, so when training ended at 10:47 nothing triggered the pull and it was found by the user asking — **~$1.85 of idle billing**. Three distinct mechanisms: (a) harness-tracked waiters die under memory pressure where `nohup` ones do not, for the **fourth** time (sessions 23, 28, 33×2); (b) **`pkill -f <pattern>` matches the killing command's own shell** when the pattern appears in its command line, so `pkill -f launch.sh` and `pkill -f pull.sh` both killed themselves and left the target running — one of them kept downloading 5.9 GB for two hours unnoticed; (c) `fetch.sh` had **not** died as assumed and woke to start a second, competing pull | ⚠️ **live.** `launch.sh`'s 8 h grace cap bounded the damage, which is the only reason it was $1.85 and not $40 — **bounded at eight hours is not the same as caught**. Kill by **PID**, never by a pattern naming the script. And a watcher is not a guarantee: the run's own artefacts on disk are the truth |
 
 > ⚠️ **One number in this table was carried wrong.** The status board reported Finding AS as
 > "AR gap +4.46 nats, DIFF +0.03" from session 23 through session 24. Session 23's measurement
@@ -514,6 +599,7 @@ above; the derivations are in git at `8cecdfd`. Dates are 2026.
 | 30 | 09-22 | **The compute phase is over.** DIFF s1 complete at urdu bpb **0.8024**, replicating seed 0's 0.8052 at **0.29σ** — the diffusion result is not one initialization's draw. All three runs downloaded (18.9 GB), **instance destroyed**, **~$28 of $40**. ⚠️ `roman_urdu` is the one population where the seeds differ by more than noise allows (2.19σ) and it is also the one stage 8 never decontaminated (AW) — a line in the report, not a conclusion. **The critical path is now the annotators** | — |
 | 31 | 09-22 | **A releasable checkpoint exists.** Both arms trained on **arm B** — 85.4M unique tokens, 3.7× arm A and never trained on — 16 epochs, ~$4.10 on a rented 5090. **`ar-s0_fp25.pt` at 4 epochs is the best Urdu model the project has produced: urdu bpb 0.7774**, against arm A's best 0.8311 and `core-ar-s0`'s final 3.6143. **Memorization 0.000 at every n ≥ 16, equal to the held-out control.** `scripts/overlap.py` written and the recitation behind Finding BC measured | **BD, BE, BF** |
 | 32 | 09-23 | **A demo exists, and the decode sweep it needed overturned a verdict in this file.** Five held-out prefixes continued by each arm's best checkpoint → [`demo.md`](reports/demo.md), [the page](https://claude.ai/artifact/Nq8PsaqFUkw9BPjqix4cuJ), `scripts/demo_page.py`. §4.4's A3/A4 grid run on a full-scale checkpoint for the first time (300 generations): **the diffusion arm's slot-looping was substantially a decoder default** — 8 steps, not 160. Arm A's diffusion found to be the better *generator* as well as the better bound, so the demo pairs `ship-ar-b/ar-s0_fp25.pt` with `core-diff-s1/diff-s1_f1.pt` across corpus arms, disclosed on the page. **Both verified non-reciting: 0.000 at n ≥ 16 against a 0.000 control.** And the curve re-read: **the diffusion arm was stopped while it was still descending** | **BG, BH, BI** |
+| 33 | 09-23 | **The $6 run: `ship-diff-b64` at urdu bpb 0.7646, beating the AR arm's best 0.7774 on the same corpus** — the matched-corpus release pair exists. `scripts/elbo.py` and a seeded `Trainer.evaluate`; **arm A's whole curve now carries K = 9 error bars** and Finding BA is retired as a caveat there. `vast/` gained a shared-GPU pre-flight, a budget gate, a divisor check and on-box scoring | **BJ, BK, BL, BM, BN** |
 
 ### The results worth keeping in front of you
 
@@ -849,14 +935,31 @@ Live only. Resolved notes have been dropped; they are in git at `8cecdfd`.
 
 ## Next session
 
-**START HERE. §4.5's primary endpoint is answered, a releasable checkpoint exists, and — new in
-session 32 — there is one more run worth paying for.** Five runs are on local disk, nothing is
-rented and nothing is accruing. Weeks 1–11 complete.
+**START HERE. §4.5's primary endpoint is answered *with error bars*, and the release pair now
+exists on one corpus.** Six runs are on local disk, **nothing is rented and nothing is accruing**
+— both instances destroyed 2026-09-23. Weeks 1–11 complete.
 
-> 🎯 **The stated intent, 2026-09-23: the next session trains the 64-epoch arm-B diffusion run.**
-> ~$6, ~8.7 h, everything already on disk. The block at the top of this file is the brief; step 1
-> below is the procedure. ⚠️ **~$9.80 of Vast credit is idle and that does not cover it** — load
-> more before renting, and prepaid credit only.
+> 🥇 **Session 33 spent the $6 and it paid.** `ship-diff-b64` reaches **urdu bpb 0.7646** at
+> 64 epochs, **beating the AR arm's best 0.7774 on the identical corpus**, and the curve has still
+> not turned. The matched-corpus release pair exists and the cross-arm disclosure is gone. The
+> 🥇 block at the top of this file is the result; Finding BK is the entry.
+>
+> ⚠️ **Spend: ~$7.90 of the $9.80, leaving ~$1.90. Everything below is $0 on the 4060.**
+> ~$4.60 was the run; **~$1.85 was a finished box idling because nothing was watching** (Finding
+> BN) and ~$0.40 was false starts. **There is not enough credit left to rent again** — the 128-epoch
+> continuation Finding BK points at would need a top-up, prepaid only, never automatic billing.
+
+⚠️ **Three debts session 33 created and did not pay. Read these before trusting the tooling.**
+1. **`vast/pull.sh` reported "complete and md5-verified" having downloaded nothing.** The `ONLY`
+   filter was passed `'a|b'`, but `case` parses alternation *before* variable expansion, so it
+   became a literal pipe matching no file — and the script then declared success. **A fetcher that
+   claims success on an empty transfer is the exact failure session 31's md5 check exists to
+   prevent.** Fix the pattern *and* make an empty match an error, not a pass.
+2. **`fetch.sh` starts a full-run pull that nothing bounds.** It woke on `evaluation.json` and began
+   pulling 5.9 GB over a 19 KB/s link — 20+ hours of billing — while a second pull ran alongside it.
+   It should strip and pull the scored-best checkpoint, not everything (Finding BM).
+3. **Never `pkill -f <script-name>`**: the pattern matches the killing shell's own command line, so
+   it kills itself and leaves the target running. Twice this session. **Kill by PID.**
 
 ⚠️ **This file used to say "more GPU cannot buy a better model; only more corpus can." That is
 withdrawn.** Findings BH and BI: more epochs buy ~0.055 bpb on the diffusion arm for ~$5, and the
@@ -887,47 +990,32 @@ git status --short                # session 31 is in at c15ec70; session 32 is N
 > annotators are still required to separate the arms at their *honest* checkpoints, but the
 > most embarrassing-looking result in the file is now settled by measurement.
 
-**Next actions, in order. Item 1 is the only one that costs money; everything after it is $0 on
-the idle 4060.**
+**Next actions, in order. Nothing here costs money — there is ~$1.90 of credit left and every
+item below runs $0 on the idle 4060.**
 
-0. **Commit session 32.** Session 31 is already in at `c15ec70`; what is untracked is
-   `scripts/demo_page.py`, `reports/demo*.{md,html,jsonl}`,
-   `reports/eval/overlap_demo_arm{A,B}.json` and this file. **Nothing below should start on top of
-   that** — a rented box is a bad place to discover an uncommitted working tree.
+0. **Commit session 33.** `vast/` is already in at `8486d93`; what is untracked is
+   `scripts/elbo.py`'s outputs, `reports/eval/elbo_*.json` and this file.
 
-1. 🎯 **The 64-epoch arm-B diffusion run. ~$6, ~8.7 h.** This is the session's stated intent and the
-   brief is the 🎯 block at the top of this file. The corpus, the runbook and the fetcher all exist;
-   the edits are three lines.
+1. 🎯 **Put a bar on 0.7646, and it is the one thing standing between this result and a
+   report.** `ship-diff-b64`'s seven rungs are single ELBO draws, and the margin over AR's exact
+   0.7774 is **0.0128 ≈ 2.4 single-draw sd**. K = 9 takes the sem to ~0.002 and the margin to
+   ~7 sem. ~25 min:
 
    ```bash
-   # vast/launch.sh — EPOCHS=64, drop the AR line, rename the out dir:
-   #   EPOCHS=64
-   #   python -u scripts/train.py run --arm diff $COMMON --out /workspace/runs/ship-diff-b64 ...
-   # vast/fetch.sh — one wait_for, not two:
-   #   wait_for ship-diff-b64
+   python -u scripts/elbo.py --checkpoint D:/ravaan-runs/ship-diff-b64/diff-s0_f1_weights.pt        --seed 0 --draws 9 --corpus data/packed --corpus-arm B --check-denominators        --out reports/eval/elbo_diff_b64.json
    ```
 
-   In order, and none of these steps is optional:
-   1. **Load Vast credit** — ~$9.80 idle does not cover an $6 run plus storage and a margin.
-      **Prepaid only; never enable automatic billing**, which removes the hard ceiling.
-   2. `./vast/push.sh <host> <port>` — ships code, tokenizer and the 169 MB arm-B corpus, then runs
-      G2's throughput check.
-   3. ⚠️ **Re-measure microbatch over 16/32/48/64 before trusting anything** (Finding BE — same
-      card, opposite optimum, **43% swing**). Do not start the chain if it is far under ~150k tok/s.
-   4. ⚠️ **Re-arm the watchdog on this run.** It triggers on the *last* run in the chain and the
-      chain is now one run; the sentinel names in `launch.sh` and `fetch.sh` must agree. One added
-      run cost three coordinated changes last time.
-   5. `./vast/fetch.sh` then `./vast/pull.sh` — **never a single `scp -r`**, which lost 4 GB of 6.3
-      GB last time. `pull.sh` resumes at a byte offset and md5-verifies every file.
-   6. **Destroy the instance in the console.** Stop halts the GPU charge; only destroy halts the
-      $0.75/day storage.
-   7. Locally: `curves.py` over the seven rungs → **ship the best rung, not the last one**;
-      `overlap.py --corpus-arm B --verify` for recitation; `sample.py --steps 8 --schedule gumbel
-      --gumbel 2 --forbid-eos always` for samples (Finding BG — **not** the 160-step default).
+   ⚠️ **Only this rung can ever get a bar.** The other six checkpoints died with the instance
+   (Finding BM); `curve.json` has them *scored*, which is enough for the curve's shape and not
+   enough for an error bar. ✅ **The stripped file loads — fixed and tested in session 33.**
+   `Trainer.load` read `payload["optimizer"]` unconditionally and would have died on line one; it
+   now records `trainer.resumable` instead, and **`train()` refuses to resume a checkpoint without
+   optimizer state** rather than restarting Adam from zero while the schedule continues — a
+   difference invisible in every artifact except the loss curve. The CUDA-saved RNG state cannot
+   restore onto CPU either (16 bytes against 5056) and is caught the same way. Verified end to end
+   on the real file: loads, `resumable = False`, step 41,681, `train()` refuses.
 
-   ⚠️ **Expect the 16-epoch rung to read worse than `ship-diff-b`'s 0.8320.** The cosine anneals
-   over `total_steps`, so at 64 epochs it has not finished at 16. That is the schedule, not a
-   regression, and it is not a reason to stop the run.
+
 2. **Average K = 9 draws for every diffusion number** (Finding BA) — ✅ **the driver exists and
    the load-bearing number is done, session 33; the curves were left running.** `scripts/elbo.py`
    takes K seeded draws per checkpoint and `Trainer.evaluate` now accepts the generator that makes
@@ -1209,7 +1297,14 @@ spending limit when the account is created.
 > publishing. §2.4's "no raw text redistribution" means the corpus ships as code, manifest and
 > checksums either way.
 
-### 3. The runs — ✅ ALL FIVE DONE (3 core on arm A, 2 shippable on arm B)
+### 3. The runs — ✅ ALL SIX DONE (3 core on arm A, 3 shippable on arm B)
+
+**Sixth run, session 33: `ship-diff-b64`** — 64 epochs, arm B, 5.46B tokens, 8.2 h, ~$4.60,
+microbatch 32 on a clean 5090 at ~149k tok/s sustained. **urdu bpb 0.7646**, beating the AR
+arm's best 0.7774 on the same corpus (Finding BK). Only the 64-epoch checkpoint came back —
+stripped of optimizer state, 280 MB, md5-verified — because the box's egress ran at 19 KB/s
+(Finding BM). `curve.json` holds all seven rungs scored.
+
 
 **One AR, one diffusion, one seed each, same corpus, same budget, same tasks** (PRD §0.4) —
 **plus a second diffusion seed, added back 2026-09-21.**
@@ -1351,6 +1446,13 @@ python scripts/curves.py --run … --arm diff …     # §4.3/G4: score all seve
 # G4's curve for a finished run. ~5 min per checkpoint on the 4060, resumable, validation only.
 python -u scripts/curves.py --run "D:\ravaan-runs\core-diff-s0" --arm diff --seed 0 \
     --corpus data/packed --corpus-arm A --out reports/eval/curve_diff_s0.json
+```
+
+```bash
+# session 33's 64-epoch shippable diffusion run, as it was actually launched
+#   ssh -p <port> root@<host> 'cd /workspace/ravaan && \n#       MICROBATCH=32 FLOOR=120000 setsid nohup bash vast/launch.sh \n#       > /workspace/runs/chain.log 2>&1 < /dev/null &'
+# MICROBATCH must divide 256 (16/32/64/128) - throughput measures any value, run refuses
+# non-divisors. Pull over the PROXY host (sshN.vast.ai), never the direct one: 6.7x faster.
 ```
 
 ```bash

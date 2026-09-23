@@ -155,10 +155,28 @@ class Trainer:
     def load(self, path: str | Path) -> None:
         payload = torch.load(Path(path), map_location=self.device, weights_only=False)
         self.model.load_state_dict(payload["model"])
-        self.optimizer.load_state_dict(payload["optimizer"])
+        # A checkpoint without optimizer state is a *scoring* checkpoint, not a resumable one.
+        # Session 33 could only afford to bring back 280 MB of an 839 MB file over a 19 KB/s
+        # link, and Adam's two moments are the two thirds that a released model never needs
+        # (Finding BM). Loading one to score it is legitimate; resuming training from one is
+        # not, and `train` would restart the optimizer silently rather than fail, so the
+        # absence is recorded on the trainer instead of being shrugged off.
+        self.resumable = "optimizer" in payload
+        if self.resumable:
+            self.optimizer.load_state_dict(payload["optimizer"])
         self.state = TrainState(**payload["state"])
-        torch.set_rng_state(payload["torch_rng"].cpu())
-        self.generator.set_state(payload["generator"].cpu())
+        # The RNG states are restored so a resumed run continues the same stream, and §9 makes
+        # resume a first-class path. But a generator saved on CUDA cannot be restored into a CPU
+        # one — the state is 16 bytes against 5056 — so scoring a rented run's checkpoint on a
+        # different device than it trained on would die here on a mismatch that does not matter
+        # for scoring at all. Failing to restore them costs resume determinism, which is the
+        # same thing a missing optimizer costs, so it is recorded the same way rather than
+        # raised.
+        try:
+            torch.set_rng_state(payload["torch_rng"].cpu())
+            self.generator.set_state(payload["generator"].cpu())
+        except (RuntimeError, KeyError, AttributeError):
+            self.resumable = False
 
     # --- the loop ----------------------------------------------------------
 
@@ -168,6 +186,19 @@ class Trainer:
         max_steps: int | None = None,
         on_log: Callable[[dict], None] | None = None,
     ) -> TrainState:
+        # Refusing here is the point. A stripped checkpoint restores weights and `state.step`,
+        # so training would continue from the right step with a *freshly initialised* optimizer
+        # — no Adam moments, and §6's most carefully preregistered hyperparameter quietly
+        # different from the run it claims to continue. That is invisible in every artifact
+        # except the loss curve, which is exactly the class of fault `resolve_batching` refuses
+        # rather than rounds.
+        if getattr(self, "resumable", True) is False and self.state.step > 0:
+            raise RuntimeError(
+                "this checkpoint carries no optimizer state, so training cannot resume from it "
+                f"at step {self.state.step}: the optimizer would restart from zero while the "
+                "schedule continued. It is a scoring checkpoint (Finding BM) — use it with "
+                "`evaluate`, or start a fresh run."
+            )
         config = self.config
         stop = min(config.total_steps, max_steps or config.total_steps)
         log_path = self.out_dir / f"{self.run_name}.jsonl"

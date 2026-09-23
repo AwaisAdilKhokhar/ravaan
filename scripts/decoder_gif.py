@@ -44,8 +44,11 @@ CHROME = (
 RAMP = ("#1F6B44", "#217E50", "#21935C", "#20A768", "#1EBD75", "#1AD282", "#12E88F", "#00FF9C")
 DIFF, AR, GROUND = "#00FF9C", "#FF4D9D", "#07090A"
 
-WIDTH = 1000
-FRAME_H = 412
+#: 1200x628 is the 1.91:1 the feeds crop to. A wider-than-tall frame is forced anyway — Urdu
+#: needs the measure — but padding to the standard ratio is the difference between a readable
+#: card and a thin strip on a phone.
+WIDTH = 1200
+FRAME_H = 628
 #: Frames per screenshot. Chrome will render a very tall viewport but gets unreliable past a few
 #: thousand pixels, so the capture is chunked and the chunks are sliced independently.
 CHUNK = 8
@@ -58,34 +61,37 @@ STYLE = f"""
   body {{ background: {GROUND}; font-family: "IBM Plex Sans", sans-serif; }}
   .frame {{
     width: {WIDTH}px; height: {FRAME_H}px; background: {GROUND};
-    padding: 18px 22px; display: flex; flex-direction: column; gap: 11px;
+    padding: 24px 28px; display: flex; flex-direction: column; gap: 14px;
     font-size: 14px; overflow: hidden;
   }}
   .fhead {{ display: flex; justify-content: space-between; align-items: baseline;
            font-family: "JetBrains Mono", monospace; }}
-  .fhead .t {{ font-weight: 800; font-size: 19px; color: #E4F1EA; letter-spacing: -.03em; }}
+  .fhead .t {{ font-weight: 800; font-size: 23px; color: #E4F1EA; letter-spacing: -.03em; }}
   .fhead .t i {{ font-style: normal; color: {DIFF}; }}
   .fhead .p {{ font-size: 12px; color: #6E8077; letter-spacing: .1em; text-transform: uppercase; }}
   .arm {{ border: 1px solid #1C2422; border-top-width: 2px; border-radius: 6px;
-         background: #0D1110; padding: 11px 14px 13px; flex: 1;
+         background: #0D1110; padding: 15px 18px 17px; flex: 1;
          display: flex; flex-direction: column; }}
   .arm.d {{ border-top-color: {DIFF}; }}
   .arm.a {{ border-top-color: {AR}; }}
   .hd {{ display: flex; justify-content: space-between; align-items: baseline; gap: 14px;
-        font-family: "JetBrains Mono", monospace; font-size: 11.5px; }}
+        font-family: "JetBrains Mono", monospace; font-size: 13px; }}
   .hd .l {{ display: flex; align-items: baseline; gap: 9px; min-width: 0; }}
   .hd .n {{ font-weight: 700; letter-spacing: .04em; }}
   .hd .c {{ color: #94A79D; font-variant-numeric: tabular-nums; }}
   .hd .c b {{ font-weight: 700; }}
   .cv {{ display: flex; flex-wrap: wrap; gap: 3px; direction: rtl; padding: 7px;
         background: #121716; border-radius: 4px; margin: 9px 0 3px; }}
-  .cv i {{ width: 11px; height: 11px; border-radius: 1.5px; background: #1A211E; display: block; }}
+  .cv i {{ width: 13px; height: 13px; border-radius: 1.5px; background: #1A211E; display: block; }}
   .cv i.g {{ background: transparent; box-shadow: inset 0 0 0 1px #6E8077; opacity: .5; }}
   .ur {{ font-family: "Noto Nastaliq Urdu", serif; direction: rtl; text-align: right;
-        font-size: 17px; line-height: 2.45; color: #E4F1EA; }}
+        font-size: 20px; line-height: 2.5; color: #E4F1EA; }}
   .ur .g {{ color: #6E8077; }}
   .ur .p {{ display: inline-block; background: #1A211E; border-radius: 3px;
            color: transparent; transform: translateY(-.35em); }}
+  .foot {{ display: flex; justify-content: space-between; font-family: "JetBrains Mono", monospace;
+          font-size: 12px; color: #6E8077; letter-spacing: .02em; }}
+  .foot b {{ font-weight: 700; }}
 </style>
 """
 
@@ -134,6 +140,12 @@ def frame_html(sample: dict, tick: int, total: int) -> str:
             f'<div class="cv">{cells}</div>'
             f'<div class="ur">{" ".join(words)}</div></div>'
         )
+    parts.append(
+        '<div class="foot"><span>held-out Urdu, bits/byte &nbsp;'
+        f'<b style="color:{DIFF}">0.7646</b> diffusion &nbsp;·&nbsp; '
+        f'<b style="color:{AR}">0.7774</b> autoregressive</span>'
+        '<span>70M params &nbsp;·&nbsp; 85.4M unique tokens &nbsp;·&nbsp; Apache-2.0</span></div>'
+    )
     parts.append("</div>")
     return "".join(parts)
 

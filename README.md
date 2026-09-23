@@ -6,6 +6,8 @@ Ravaan trains two ~70M-parameter Urdu language models that differ in exactly one
 factorization — and measures where, if anywhere, their curves cross.
 
 **Both models are trained, measured and public.**
+**▶ [Watch them write, side by side](https://awaisadilkhokhar.github.io/ravaan/)** — an
+interactive replay of the real decode, not an illustration of one.
 
 | | held-out Urdu, bits/byte | epochs |
 |---|---|---|

@@ -176,6 +176,21 @@ def main() -> int:
     ap.add_argument("--ms", type=int, default=190, help="milliseconds per forward pass")
     ap.add_argument("--hold", type=int, default=14, help="frames to hold on the finished text")
     ap.add_argument("--chrome", default=None)
+    ap.add_argument(
+        "--og",
+        type=Path,
+        nargs="?",
+        const=REPO / "site" / "og.png",
+        default=None,
+        help="also write one frame as a static PNG, for og:image",
+    )
+    ap.add_argument(
+        "--og-frame",
+        type=int,
+        default=8,
+        help="which pass the still shows. 8 is the one that states the result: diffusion "
+             "finished, AR a quarter done.",
+    )
     args = ap.parse_args()
 
     try:
@@ -222,6 +237,15 @@ def main() -> int:
         )
     finally:
         shutil.rmtree(work, ignore_errors=True)
+
+    if args.og:
+        args.og.parent.mkdir(parents=True, exist_ok=True)
+        # Frame 0 is a canvas of blanks, which is the worst possible thumbnail for a link that
+        # is trying to say something happened. The still has to be a frame that carries the
+        # claim on its own.
+        frames[min(args.og_frame, len(frames) - 1)].save(args.og, optimize=True)
+        print(f"wrote {args.og} — pass {args.og_frame}, "
+              f"{args.og.stat().st_size / 1024:.0f} KB", file=sys.stderr)
 
     size = args.out.stat().st_size
     print(f"\nwrote {args.out} — {len(frames)} frames, {WIDTH}×{FRAME_H}, "

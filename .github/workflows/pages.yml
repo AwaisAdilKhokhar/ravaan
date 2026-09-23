@@ -1,0 +1,40 @@
+# Publish site/ (the interactive decoder demo) to GitHub Pages on every push that
+# touches it. Deploying via Actions instead of the classic "/docs folder" source
+# lets the frontend live in a sensibly named directory.
+#
+# site/index.html is generated — `python scripts/decoder_demo.py --site` — and the
+# generator is the only thing allowed to write it, because the Urdu on that page has
+# to come out of reports/demo_trace.json rather than out of a hand edit.
+name: pages
+
+on:
+  push:
+    branches: [main]
+    paths: [site/**, .github/workflows/pages.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # One-time setup: Settings -> Pages -> Source: "GitHub Actions".
+      # (The workflow token can't create the Pages site itself.)
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@v4

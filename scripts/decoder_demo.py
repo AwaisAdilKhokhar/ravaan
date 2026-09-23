@@ -22,7 +22,15 @@ separately would break that joining and render text no Urdu reader would accept.
 carries the exact order and the prose carries the correct shaping, and the page says which is
 which rather than letting a reader assume the prose is token-by-token.
 
-    python scripts/decoder_demo.py            # -> reports/decoder_demo.html
+**Two outputs from one template.** `reports/decoder_demo.html` is the body of the page, which is
+what the Claude artifact host wants — it supplies its own doctype, charset and viewport. GitHub
+Pages supplies none of that, so `--site` wraps the same markup in a real HTML document and adds
+what a *shared link* needs and an artifact never did: Open Graph tags. Without them LinkedIn
+renders the link as an empty grey card, and the first frame of the animation — which is a canvas
+of blanks — is the worst possible thumbnail, so `og:image` points at a still of pass 8 instead.
+
+    python scripts/decoder_demo.py            # -> reports/decoder_demo.html   (artifact body)
+    python scripts/decoder_demo.py --site     # -> site/index.html             (GitHub Pages)
 """
 
 from __future__ import annotations
@@ -61,6 +69,41 @@ ORDER = (
 #: these are the numbers the whole page is an argument about.
 CURVES = {"ar": "curve_ar_b.json", "diff": "curve_diff_b64.json"}
 UNIQUE_TOKENS = 85_362_688
+
+SITE_URL = "https://awaisadilkhokhar.github.io/ravaan/"
+SITE_TITLE = "Ravaan — watch two Urdu models write the same sentence"
+SITE_DESC = (
+    "Two 70M-parameter Urdu language models, matched on everything but the factorization. "
+    "One writes left to right, a token per forward pass. The other fills a canvas of masks in "
+    "eight passes. Held-out Urdu: 0.7646 bits/byte against 0.7774."
+)
+#: An emoji favicon as an inline SVG — no extra file to keep in sync, and nothing to 404.
+FAVICON = (
+    "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>"
+    "<text y='.9em' font-size='90'>%F0%9F%AA%B6</text></svg>"
+)
+
+#: `<head>` for the standalone page. The artifact host injects a charset, a viewport and a small
+#: reset; GitHub Pages injects nothing, so the equivalents are spelled out here.
+SITE_HEAD = f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="{SITE_DESC}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ravaan">
+<meta property="og:url" content="{SITE_URL}">
+<meta property="og:title" content="{SITE_TITLE}">
+<meta property="og:description" content="{SITE_DESC}">
+<meta property="og:image" content="{SITE_URL}og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="628">
+<meta property="og:image:alt" content="Two model panels: the diffusion arm finished in 8 forward passes, the autoregressive arm still typing at pass 8 of 32.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="{FAVICON}">
+<style>img{{max-width:100%}}[hidden]{{display:none!important}}</style>
+"""
 
 
 def words(pieces: list[str | None], steps: list[int]) -> list[dict]:
@@ -184,6 +227,14 @@ def main() -> int:
         "--template", type=Path, default=REPO / "release_assets" / "decoder_demo.template.html"
     )
     ap.add_argument("--out", type=Path, default=REPO / "reports" / "decoder_demo.html")
+    ap.add_argument(
+        "--site",
+        type=Path,
+        nargs="?",
+        const=REPO / "site" / "index.html",
+        default=None,
+        help="also write the standalone GitHub Pages document here",
+    )
     args = ap.parse_args()
 
     data = build(args.trace, args.eval)
@@ -191,11 +242,28 @@ def main() -> int:
     template = args.template.read_text(encoding="utf-8")
     if "__DATA__" not in template:
         raise SystemExit(f"{args.template} has no __DATA__ marker")
-    args.out.write_text(template.replace("__DATA__", blob), encoding="utf-8")
+    page = template.replace("__DATA__", blob)
+    args.out.write_text(page, encoding="utf-8")
 
     size = args.out.stat().st_size
     print(f"wrote {args.out} — {len(data['samples'])} samples, {size / 1024:.0f} KB",
           file=sys.stderr)
+
+    if args.site:
+        # The template is head-ish content (title, fonts, styles) followed by body markup. Split
+        # on the one `</style>` so each half lands in the right element rather than relying on
+        # the parser's implicit-body recovery.
+        marker = "</style>"
+        if page.count(marker) != 1:
+            raise SystemExit(f"expected exactly one {marker} to split on, found {page.count(marker)}")
+        head, body = page.split(marker, 1)
+        args.site.parent.mkdir(parents=True, exist_ok=True)
+        args.site.write_text(
+            f"{SITE_HEAD}{head}{marker}\n</head>\n<body>{body}\n</body>\n</html>\n",
+            encoding="utf-8",
+        )
+        print(f"wrote {args.site} — standalone, {args.site.stat().st_size / 1024:.0f} KB",
+              file=sys.stderr)
     return 0
 
 

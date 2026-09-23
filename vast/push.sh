@@ -7,6 +7,31 @@ set -euo pipefail
 H="root@${1:?host}"; P="${2:?port}"
 S="ssh -p $P -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20"
 
+echo "== pre-flight: is this card already someone else's? =="
+# Session 33 rented a 5090 that was already running another tenant's job at 100%. The
+# symptoms looked like a slow box and cost fifteen minutes to diagnose: throughput flat
+# at ~62k tok/s across microbatch 16/32/48 (a GPU that wants a bigger batch does not do
+# that), then an OOM at 64 whose message gave it away -- 31.36 GiB total, 17.89 GiB ours,
+# 1.13 GiB free, so ~12.3 GiB belonged to nobody we could see.
+#
+# ⚠️ `nvidia-smi --query-compute-apps` is EMPTY in a Vast container even when the card is
+# busy: container isolation hides the other tenant's PID. memory.used and utilization.gpu
+# are the only signals that cross the boundary, which is why this checks those two and
+# not the process list. A clean card reads ~0 MiB and 0%.
+preflight=$($S "$H" 'nvidia-smi --query-gpu=memory.used,utilization.gpu,clocks.sm,clocks.max.sm --format=csv,noheader,nounits' 2>/dev/null | head -1)
+echo "  $preflight  (memory MiB, util %, sm MHz, sm max MHz)"
+used=$(echo "$preflight"  | cut -d, -f1 | tr -d ' ')
+util=$(echo "$preflight"  | cut -d, -f2 | tr -d ' ')
+case "${used:-}${util:-}" in ''|*[!0-9]*) echo "could not read the GPU state — aborting" >&2; exit 4;; esac
+if [ "$used" -gt 500 ] || [ "$util" -gt 10 ]; then
+    echo >&2
+    echo "ABORTING: this GPU is already in use — ${used} MiB resident, ${util}% utilised," >&2
+    echo "  before we have shipped a single byte. You are sharing the card." >&2
+    echo "  Destroy this instance and rent another; do not try to tune around it." >&2
+    exit 4
+fi
+echo "  card is clean"
+
 echo "== creating layout =="
 $S "$H" 'mkdir -p /workspace/ravaan /workspace/data/packed /workspace/data/tokenizer /workspace/runs'
 

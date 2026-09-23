@@ -35,6 +35,16 @@ while IFS=$'\t' read -r name size; do
     [ -z "$name" ] && continue
     # rolling.pt is the mid-run resume artefact: useless once the run finished, and 840 MB.
     case "$name" in *_rolling.pt) echo "skip     $name (resume artefact)"; continue;; esac
+    # ONLY is an optional glob, for when the link is dropping and you want the small
+    # files or one specific checkpoint before committing to ~5.9 GB. Unset = everything,
+    # which is the default because seven scored rungs are worth more than the transfer
+    # time: re-scoring, elbo.py at K=9 and an A3/A4 re-sweep all want a choice of rung.
+    #   ONLY='*.json'      ./vast/pull.sh h p run     # curve + evaluation + config first
+    #   ONLY='*_fp25.pt'   ./vast/pull.sh h p run     # one checkpoint
+    if [ -n "${ONLY:-}" ]; then
+        # shellcheck disable=SC2254
+        case "$name" in $ONLY) ;; *) continue;; esac
+    fi
     dst="$DEST/$RUN/$name"
     [ -f "$dst" ] || : > "$dst"
 

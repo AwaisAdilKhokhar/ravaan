@@ -11,17 +11,18 @@ from __future__ import annotations
 import hashlib
 import json
 
-import numpy as np
 import pytest
-import torch
 
-from ravaan.models.ar import RavaanAR
-from ravaan.models.config import ModelConfig
-from ravaan.models.diffusion import RavaanDiffusion
-from ravaan.training.config import CHECKPOINT_FRACTIONS, TrainingConfig
-from ravaan.training.data import PackedCorpus, SequenceSampler
-from ravaan.training.loop import Trainer
-from ravaan.training.tasks import FramingTokens, TaskGenerator
+np = pytest.importorskip("numpy")
+torch = pytest.importorskip("torch")
+
+from ravaan.models.ar import RavaanAR  # noqa: E402
+from ravaan.models.config import ModelConfig  # noqa: E402
+from ravaan.models.diffusion import RavaanDiffusion  # noqa: E402
+from ravaan.training.config import CHECKPOINT_FRACTIONS, TrainingConfig  # noqa: E402
+from ravaan.training.data import PackedCorpus, SequenceSampler  # noqa: E402
+from ravaan.training.loop import Trainer  # noqa: E402
+from ravaan.training.tasks import FramingTokens, TaskGenerator  # noqa: E402
 
 SEQ = 16
 VOCAB = 64

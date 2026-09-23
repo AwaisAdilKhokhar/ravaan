@@ -20,15 +20,16 @@ import string
 from collections import Counter
 from pathlib import Path
 
-import numpy as np
 import pytest
-import torch
 
-from ravaan.data.corruption import CorruptionConfig
-from ravaan.models.ar import IGNORE_INDEX, RavaanAR
-from ravaan.models.config import ModelConfig
-from ravaan.models.diffusion import RavaanDiffusion
-from ravaan.training.tasks import (
+np = pytest.importorskip("numpy")
+torch = pytest.importorskip("torch")
+
+from ravaan.data.corruption import CorruptionConfig  # noqa: E402
+from ravaan.models.ar import IGNORE_INDEX, RavaanAR  # noqa: E402
+from ravaan.models.config import ModelConfig  # noqa: E402
+from ravaan.models.diffusion import RavaanDiffusion  # noqa: E402
+from ravaan.training.tasks import (  # noqa: E402
     TASK_SHARES,
     FramingTokens,
     TaskGenerator,

@@ -8,12 +8,18 @@ only structural difference between them is the attention mask.
 from __future__ import annotations
 
 import pytest
-import torch
 
-from ravaan.models.ar import IGNORE_INDEX, RavaanAR
-from ravaan.models.backbone import RavaanTransformer
-from ravaan.models.config import LADDER, ModelConfig, assert_matched, parameter_count
-from ravaan.models.diffusion import RavaanDiffusion
+torch = pytest.importorskip("torch")
+
+from ravaan.models.ar import IGNORE_INDEX, RavaanAR  # noqa: E402
+from ravaan.models.backbone import RavaanTransformer  # noqa: E402
+from ravaan.models.config import (  # noqa: E402
+    LADDER,
+    ModelConfig,
+    assert_matched,
+    parameter_count,
+)
+from ravaan.models.diffusion import RavaanDiffusion  # noqa: E402
 
 TINY = ModelConfig(vocab_size=64, n_layers=2, d_model=32, n_heads=2, d_ffn=88, context_length=16)
 

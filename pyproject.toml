@@ -57,6 +57,12 @@ include = ["ravaan*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+# `scripts/` is drivers, not a distributed package — `packages.find` deliberately ships only
+# `ravaan*`. But Finding W's lesson is that this repo's bugs live in the drivers, so the drivers
+# have tests, and those tests have to be able to import them. Without this the suite passes
+# locally off a stale editable install and fails on a clean checkout, which is exactly what CI
+# caught the first time it ever ran.
+pythonpath = ["."]
 
 [tool.ruff]
 line-length = 100

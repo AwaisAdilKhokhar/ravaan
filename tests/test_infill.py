@@ -14,14 +14,16 @@ from __future__ import annotations
 
 import pytest
 
-from ravaan.evaluation.infill import (
+pytest.importorskip("numpy")
+
+from ravaan.evaluation.infill import (  # noqa: E402
     TRUNCATION_RULE,
     InfillItem,
     InfillScore,
     token_f1,
     truncate_to_gold,
 )
-from ravaan.training.tasks import TASK_SHARES, rebalance_shares
+from ravaan.training.tasks import TASK_SHARES, rebalance_shares  # noqa: E402
 
 # --- the preregistered rule -------------------------------------------------
 

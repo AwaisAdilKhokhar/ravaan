@@ -5,6 +5,32 @@
 Ravaan trains two ~70M-parameter Urdu language models that differ in exactly one thing — the
 factorization — and measures where, if anywhere, their curves cross.
 
+**Both models are trained, measured and public.**
+
+| | held-out Urdu, bits/byte | epochs |
+|---|---|---|
+| [`ravaan-diff-70m`](https://huggingface.co/AwaisAdilKhokhar/ravaan-diff-70m) — masked diffusion | **0.7646** | 64 |
+| [`ravaan-ar-70m`](https://huggingface.co/AwaisAdilKhokhar/ravaan-ar-70m) — autoregressive | 0.7774 | 4 |
+
+Same corpus, same 85,362,688 unique tokens, same backbone, same tokenizer. **The autoregressive
+model's best checkpoint is at 4 epochs** — train it four times longer and it gets measurably
+worse. The diffusion model was trained sixteen times longer than that and had still not turned.
+Each released checkpoint is its own arm's best, which is why the AR half is a 4-epoch model and
+[its card says so](https://huggingface.co/AwaisAdilKhokhar/ravaan-ar-70m).
+
+Two caveats that belong next to those numbers, not below the fold: the diffusion figure is an
+**ELBO — an upper bound** — while the AR figure is exact, so this asymmetry can establish a
+diffusion win and never an AR one; and each arm is **a single seed**, so the gap between them is
+one paired comparison. The diffusion arm was separately replicated at a second seed and landed
+0.29σ away.
+
+![Two 70M Urdu models writing the same sentence — diffusion finishing in 8 forward passes while the autoregressive model is still typing](reports/decoder_demo.gif)
+
+*Left to right is not the only way to write a sentence. The diffusion model starts from a canvas
+of masks and commits a subset of positions per forward pass, in whatever order it is surest
+about; eight passes later there are none left. Both panels above run on the same clock, one tick
+per forward pass. Rebuild with `python scripts/decoder_gif.py`.*
+
 | | Ravaan-AR | Ravaan-DIFF |
 |---|---|---|
 | Attention | Causal | Bidirectional |
@@ -44,10 +70,32 @@ lives in [`progress.md`](progress.md).
 
 ## Status
 
-Pre-alpha. Weeks 3–4 of 16. Nothing has been trained. Gate G0 (novelty) passed and Gate G1
-(corpus size, per population) passes on the measured corpus; all ten PRD §6.3 pipeline stages
-plus the PII pass are built and validated against real text, and the raw corpus is on disk. What
-remains before the freeze is the freeze runs themselves. See `progress.md`.
+**Released.** Both arms are trained on the frozen corpus and published under Apache-2.0 as a
+matched pair, with safetensors weights, a vendored torch-only `ravaan_infer/` package (the
+diffusion model is not a `transformers` architecture and `AutoModel` cannot load it), and model
+cards carrying the caveats above.
+
+Neither released checkpoint reproduces its training data: 16-, 32-, 64- and 128-gram overlap
+against the corpus is 0.000 for both, measured on the released weights rather than inherited,
+with held-out Urdu as a control so the zeros mean something
+([`reports/eval/overlap_release.json`](reports/eval/overlap_release.json)).
+
+What is *not* done: no native speakers were recruited to score generations, so **every Urdu
+quality judgement in this project is a model's or the author's**. Gate G3's coherence bar is
+unmet. See [`progress.md`](progress.md) for the full findings register.
+
+### Reproducing the demo
+
+```bash
+python scripts/demo_trace.py      # sample both released models, recording per-token commit order
+python scripts/decoder_demo.py    # -> reports/decoder_demo.html  (the interactive page)
+python scripts/decoder_gif.py     # -> reports/decoder_demo.gif   (the animation above)
+```
+
+`demo_trace.py` asserts its traced diffusion loop reproduces the shipped sampler token-for-token
+on every run, so the animation is the real decoder rather than an illustration of one. Samples
+are the best of 16 seeds per arm under a fixed rule applied identically to both; every rejected
+draw ships in `reports/demo_trace_pool.json` with the reason it lost.
 
 ## Layout
 

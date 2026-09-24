@@ -12,6 +12,46 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 
 ## State of play
 
+> ## 🔁 THE DEMO WAS SHOWING THE WRONG CHECKPOINT, 2026-09-24 (session 36)
+>
+> **A native Urdu speaker read the published demo and said the diffusion samples were worse than
+> the AR arm's.** That read was correct and it found two defects no metric in this file had.
+>
+> ⚠️ **`reports/demo_samples.jsonl` was decoding `core-diff-s1/diff-s1_f1.pt`** — **arm A, 0.8024
+> bpb** — while the released and better `ship-diff-b64` at **0.7646** sat unused on disk. The
+> published page had been showing **AR's best against diffusion's second-best, across corpus
+> arms**, since session 32. Both are arm B now; the cross-arm disclosure that page always carried
+> is gone, and what remains unmatched is training length, which is the result rather than a flaw.
+>
+> ⚠️ **`generate.py` shipped a decode default measured on a checkpoint that is not the release.**
+> Finding BG's sweep ran on `ship-diff-b` (16 epochs). Re-swept on the released 64-epoch
+> checkpoint (**open debt #3, paid**): **A3 survives** — `confidence` still degenerates to a
+> 72-word repeated run and more steps is monotonically worse, so **Finding AP replicates a third
+> time** — but **A4 no longer has a winner.** `random` now ties `gumbel 2` on script consistency
+> and leads distinct-1 **0.676 to 0.410**; the reason this project rejected `random` has weakened
+> with training and **§8.3 can no longer choose between them**.
+>
+> ✅ **Both pages now show both schedules rather than asserting a default.**
+> [`demo.md`](reports/demo.md) and [the page](https://claude.ai/artifact/Nq8PsaqFUkw9BPjqix4cuJ)
+> carry three panels — AR plus both orders on one checkpoint — and
+> **<https://awaisadilkhokhar.github.io/ravaan/>** carries a **switch**, which is the page best
+> placed to show it because A4 *is* the commit order it animates. Non-recitation re-measured on
+> the new samples rather than inherited: **0.000 at n ≥ 16 against a 0.000 control.**
+>
+> ⚠️ **Two independent signals now favour `random` and neither is a fluent reader.** Distinct-1 on
+> the 160-token sweep, and the trace filter's survival rate on a 28-token canvas — **7–13 of 16
+> draws against `gumbel 2`'s 2–6**, over 10 prompts × 16 seeds. **`generate.py` and both model
+> cards are unchanged on purpose**: the default should move on a reader's verdict, not on two
+> proxies that agree.
+>
+> ✅ **Eleven of twelve demo prompts now survive selection, where five did.** The same five are
+> kept for comparability, and `demo_page.py` says that is continuity rather than a filter.
+>
+> **New findings: BU (the re-sweep and the wrong checkpoint), BV (the first non-LLM Urdu
+> judgement in this project), BW (the decoder demo's schedule switch).**
+>
+> ⚠️ **Spend unchanged at ~$1.90 — session 36 cost $0.** Everything ran on the idle 4060.
+
 > ## 🌐 THE CODE IS PUBLIC AND THE DEMO IS HOSTED, 2026-09-24 (session 35)
 >
 > **<https://github.com/AwaisAdilKhokhar/ravaan>** — public, Apache-2.0, 106 commits of history
@@ -671,7 +711,7 @@ must say.
 | BP | 34 | **The diffusion arm samples 17.9× faster and no artifact in this repository said so.** 160 tokens costs the AR arm **160 sequential forward passes**; the diffusion arm fills the same canvas in **8**. Measured over 12 matched `lm/continue` prompts on the 4060: median **0.37 s against 6.59 s**. The numbers were sitting in session 32's sweep and every session since, because `sample.py` has always written `seconds` and `forwards` into its JSONL | ✅ **used on the landing page and it is the most legible finding this project has for a non-specialist.** ⚠️ **It went unnoticed because every table in this repository scores likelihood and not one scored wall-clock at inference** — the project measured the thing it set out to measure and was blind to a free result beside it. Worth a line in the report: at 8 steps the better decode setting (Finding BG) is also the 20× cheaper one, which is not how these trade-offs usually run |
 | BQ | 34 | **A vendored package verified by reading is not verified — third instance, after AX and BB.** `scripts/release.py` rewrites `from ravaan.` to `from ravaan_infer.` textually, and a textual rewrite works perfectly on the machine that built it because the real `ravaan` is importable there. `scripts/verify_release.py` runs each staged release in a **subprocess whose cwd is the release and whose `sys.path` has this repository stripped out**, then asserts parameter count, Arabic-script share and longest repeated run on real generated text. It caught **three** defects on first run: `SamplingConfig(top_k=None)` where the dataclass requires an int, `build_generator(seed, device=…)` against the real signature `(device, seed)`, and the **cp1252 console hole** on Urdu output — the same class `ravaan/console.py` closed for this repo and which a fresh subprocess re-opened | ✅ **the gate is now structural, not a habit.** `push_hf.py` refuses to upload anything absent from `release_verify.json` or failing it, and `cards.py` refuses to write a card when `elbo_diff_b64.json` is missing. **Every number that reaches a public page is gated on the artifact that produced it.** The lesson generalizes past releases: the check has to run where the stranger runs it, not where the author does |
 | BR | 35 | **A CI gate that has never run is not a gate, and this one was hiding two real bugs.** `.github/workflows/tests.yml` was written in August and first executed on 2026-09-24, because until session 35 there was no remote to run it on. It came back red on **28 ruff findings, two of which were defects rather than style**: a literal `\n` inside the AR model card's H1 in `cards.py`, which would have shipped a broken title to the Hub on the next regeneration, and the same inside a rendered `<span>` in `landing.py`. Both were introduced earlier in session 35 by a bad multi-line edit and neither is visible from reading the diff. Then it was red a **second** time, for a different cause: the suite passed locally only off a **stale editable install**. `scripts/` is not a distributed package (`packages.find` ships `ravaan*` only) and `pytest`'s `pythonpath` was never set, so `test_substitutions` could not import its subject on a clean checkout; and five modules import `torch`/`numpy` at module scope, which errors during *collection* — not skipping — in the dependency-free job | ✅ **fixed and verified the way CI verifies it**: a venv with pytest and ruff only — **915 passed with torch present, 788 passed / 5 skipped without it**, ruff clean. `pythonpath = ["."]` makes the driver imports explicit rather than lucky, and the five modules now use `test_sampling.py`'s existing `importorskip` pattern. ⚠️ **The lesson generalises**: "it passes locally" was false for the whole life of the project and nothing could have told you |
-| BS | 35 | **§8.3's repetition rate is the wrong instrument below ~30 words, and it fails silently in the direction that matters.** It is `1 - distinct-4` over whitespace words, so a 20-word continuation has 17 four-grams and the metric reads **0.000 for nearly every draw** — including draws that are unreadable. Measured while selecting demo samples: the worst diffusion draw in the pool scored repetition **0.000**, longest-repeat **1** and distinct-2 **1.000** while spraying one word (`کہیں، کہیں، کہیں`) across the canvas non-contiguously, which every n-gram order above 1 scores as clean. What separates draws at this length is **`longest_repeat`** and **distinct-1**, the type/token ratio: on a 160-draw pool the failing draws sit at **0.61** and everything kept starts at **0.74**, which is not a close call | ⚠️ **live for §8.3 generally, not just for demos.** The metric is sound at the canvas widths §8.3 was written for and misleading below them; anything scoring short generations must lead on `longest_repeat` + distinct-1. A fourth clause was also needed — three or more punctuation marks in a row — because `،،،،` attaches to whitespace tokens and makes them *look* distinct to every word-based metric. Selection rule and all 320 draws are in [`demo_trace_pool.json`](reports/demo_trace_pool.json) |
+| BS | 35 | **§8.3's repetition rate is the wrong instrument below ~30 words, and it fails silently in the direction that matters.** It is `1 - distinct-4` over whitespace words, so a 20-word continuation has 17 four-grams and the metric reads **0.000 for nearly every draw** — including draws that are unreadable. Measured while selecting demo samples: the worst diffusion draw in the pool scored repetition **0.000**, longest-repeat **1** and distinct-2 **1.000** while spraying one word (`کہیں، کہیں، کہیں`) across the canvas non-contiguously, which every n-gram order above 1 scores as clean. What separates draws at this length is **`longest_repeat`** and **distinct-1**, the type/token ratio: on a 160-draw pool the failing draws sit at **0.61** and everything kept starts at **0.74**, which is not a close call | ⚠️ **live for §8.3 generally, not just for demos.** The metric is sound at the canvas widths §8.3 was written for and misleading below them; anything scoring short generations must lead on `longest_repeat` + distinct-1. A fourth clause was also needed — three or more punctuation marks in a row — because `،،،،` attaches to whitespace tokens and makes them *look* distinct to every word-based metric. Selection rule and all 320 draws are in [`demo_trace_pool.json`](reports/demo_trace_pool.json) — ⚠️ **that file now holds 480**, because session 36 added a third track (Finding BW); 320 was correct when this was written and the rule is unchanged |
 | BT | 35 | **Token-level truth and correct Urdu typography cannot be the same view, for two independent reasons.** (1) **§7's tokenizer has byte fallback**, so a character outside the 16k vocabulary arrives as two or three `<0xNN>` pieces occupying two or three *positions* — `…` is `<0xE2><0x80><0xA6>`. A diffusion decode commits positions in confidence order, so it can commit the middle byte of a character first, and a position-by-position rendering shows **U+FFFD** until the run completes. (2) **Nastaliq joins within a word** and a letter's shape depends on its neighbours, so splitting a word across `<span>`s to reveal its tokens separately produces text no Urdu reader would accept | ✅ **resolved by showing both, and labelling which is which**: the demo's cell canvas is per-token and exact (it is what shows diffusion committing position 19 before position 4), the prose is per-word and reveals a word when its **last** token commits. Byte-fallback draws are rejected from the demo pool outright rather than special-cased — on this checkpoint they are also the draws that had stopped writing Urdu. ⚠️ **Any future visualization of this model inherits both constraints** |
 | BU | 36 | **A3's step optimum survived the move to the released checkpoint and A4's schedule choice did not — and the demo had never been running the released checkpoint at all.** Open debt #3 paid: §4.4's grid re-swept over `ship-diff-b64/diff-s0_f1_weights.pt` (300 generations, `sweep_b64.jsonl`). **8 steps holds** — `confidence` degenerates to a 72-word longest repeated run at 16 steps, and more steps is monotonically worse on every axis, so **Finding AP replicates a third time**, now at 70M over 85.4M tokens for 64 epochs. What moved is A4: on `lm/continue` `random` scores **script 0.998 and distinct-1 0.676** against `gumbel 2`'s **0.997 and 0.410**, so it now ties the schedule it used to lose to on script consistency while leading the metric Finding BS says should decide. ⚠️ **The reason the project rejected `random` — script-consistent non-words — has weakened with training, and §8.3 can no longer rank the two.** Separately, `demo_samples.jsonl` was found to be decoding `core-diff-s1/diff-s1_f1.pt` (**arm A, 0.8024**) while the released and better `ship-diff-b64` (**arm B, 0.7646**) sat unused on disk — so the published demo was showing AR's best against diffusion's second-best, across corpus arms | ✅ **demo regenerated on b64 and the pairing is matched for the first time**, so the cross-arm disclosure every version of that page carried is gone. Both arms re-verified non-reciting on the new samples: **0.000 at n ≥ 16 against a 0.000 control** ([`overlap_demo_b64.json`](reports/eval/overlap_demo_b64.json)). ⚠️ **`generate.py` and both model cards still ship `gumbel 2` as the default on the strength of the old sweep** — unchanged deliberately, because the metrics no longer justify a default and the page now shows both. ⚠️ **The A3/A4 grid holds temperature at 0.9 and top-p at 0.95 and always has**; since `sample_ids` returns the post-filter probability that the diffusion decoder *also* ranks commit order by, temperature moves the commit order on that arm and not on AR's — an axis this project has never swept |
 | BV | 36 | **The first Urdu judgement in this project that is not an LLM's, and it arrived as a bug report about the demo.** A fluent speaker — the maintainer — read the published demo and reported the diffusion samples as clearly worse than the AR arm's, which is what sent the decoder back for re-measurement and surfaced Finding BU's two defects. On the regenerated page the same reader calls the diffusion output substantially more coherent. Corroborated by the selection rule rather than resting on the read: **eleven of twelve prompts now survive demo selection where five did**, on the same rule and the same prefixes | ⚠️ **live, and it is a lead rather than a result.** One reader, informed and not blind, who already knew which arm was which — that is exactly the instrument G5's three independent annotators exist to replace, and §8.3's generation claim still needs them. ✅ **But it is evidence the human-eval channel works and finds things no metric here did**: §8.3's three numbers ranked the old demo's diffusion panel as fine, and a native speaker took one look and did not. **The cheapest instrument in this project is a fluent reader and it had never been pointed at the demo** |
@@ -1071,17 +1111,27 @@ Live only. Resolved notes have been dropped; they are in git at `8cecdfd`.
 
 ## Next session
 
-**START HERE. The models are published, the code is public, the demo is hosted. The remaining work
-is writing and three people.** Six runs on local disk, **nothing is rented and nothing is
+**START HERE. The models are published, the code is public, both demos are hosted and correct.
+The remaining work is writing and three people** — and after session 36 one of those three has a
+sharper question to answer than "is this good Urdu": **which unmasking schedule reads better.** Six runs on local disk, **nothing is rented and nothing is
 accruing** since 2026-09-23. Weeks 1–11 complete. **There is no GPU work left that anything
 downstream is waiting on, and no engineering debt blocking anything.**
 
+> 🔁 **Session 36 rebuilt both demos on the released checkpoint and re-swept the decoder.**
+> The published demo had been decoding **arm A's `core-diff-s1`** while the better, released
+> `ship-diff-b64` sat on disk — found because **a native speaker read the page and said so**.
+> Open debt #3 paid: **8 steps survives, A4 no longer has a winner.** Both pages now show
+> `gumbel 2` and `random` side by side; **<https://awaisadilkhokhar.github.io/ravaan/>** has a
+> switch. Findings BU, BV, BW; the 🔁 block at the top of this file is the record.
+>
+> ⚠️ **`demo_trace_pool.json` now holds 480 draws, not 320** — three tracks, not two. Session 35's
+> block above says 320 and was right when written.
+>
 > 🌐 **Session 35 paid session 34's debts and hosted the demo.**
 > **<https://github.com/AwaisAdilKhokhar/ravaan>** — public, both workflows green.
-> **<https://awaisadilkhokhar.github.io/ravaan/>** — the interactive decoder demo, no sign-in.
-> Findings BR, BS, BT are the new entries; the 🌐 block at the top of this file is the record.
+> Findings BR, BS, BT are its entries.
 >
-> ⚠️ **Spend unchanged at ~$1.90 — session 35 cost $0.**
+> ⚠️ **Spend unchanged at ~$1.90 — sessions 35 and 36 each cost $0.**
 
 ⚠️ **ONE DEBT IS STILL OPEN, AND IT IS A CREDENTIAL.**
 1. **Rotate the Hugging Face write token.** It was pasted into a chat transcript on 2026-09-23 and
@@ -1103,10 +1153,19 @@ re-breaks the dependency-free job by failing collection, not by skipping**.
 nearly every draw under ~30 words, including unreadable ones. Lead on `longest_repeat` and
 distinct-1 at that length. This applies to G3's coherence scoring as much as to demos.
 
+⚠️ **Before changing a decode default, read Finding BU.** The A4 schedule is **not settled on this
+checkpoint** and the two candidates fail in opposite directions — `gumbel 2` writes well-formed
+words that circle, `random` writes varied content with malformed joins. Two proxies favour
+`random` and both are proxies. `release_assets/generate.py`, both model cards and
+`reports/release_samples.jsonl` all still ship `gumbel 2`; **changing them is one edit and it is
+gated on a reader, not on more measurement.** And ⚠️ **a decode optimum is a property of a
+checkpoint**: BG's held at 16 epochs and half of it did not at 64, so any future checkpoint
+re-opens both axes.
+
 **The demo is regenerated, never hand-edited** — the Urdu must come out of the sample file:
 
 ```bash
-python scripts/demo_trace.py                  # sample both released models, recording commit order
+python scripts/demo_trace.py                  # both released models, both schedules, commit order
 python scripts/decoder_demo.py --site         # -> reports/decoder_demo.html AND site/index.html
 python scripts/decoder_gif.py --og            # -> reports/decoder_demo.gif AND site/og.png
 ```
@@ -1216,6 +1275,21 @@ credit remains and no item requires it.
    model cards, is an LLM's** — that is disclosed in public now, which raises the value of fixing
    it. [The annotation page](https://claude.ai/code/artifact/92e617de-5364-4273-8584-8ff1cc95dea2)
    renders all 243 samples in nastaliq. **The instrument exists; only the people are missing.**
+
+   ⚠️ **Session 36 changed what to ask them, and made the case for asking.** Finding BV: the one
+   fluent read this project has ever had found a real defect in ten seconds that every table in
+   this file had missed. And Finding BU left a question that is **easier to answer than "is this
+   good Urdu" and gates a shipped default**: given two continuations of one prefix from one
+   checkpoint, differing only in commit order, **which reads better — `gumbel 2` or `random`?**
+   It is a forced choice, not a rating, so it needs far less than 2 h and no rubric. Put it to
+   them **first**, before the 243-sample pass: it is the cheapest question in the project and
+   `release_assets/generate.py` is waiting on it. Both demos already render the pair side by
+   side — the [three-panel page](https://claude.ai/artifact/Nq8PsaqFUkw9BPjqix4cuJ) and the
+   switch on <https://awaisadilkhokhar.github.io/ravaan/>.
+
+   ⚠️ **Ask them blind.** BV is a lead and not a result precisely because that reader knew which
+   arm was which and had already formed a view. A forced choice between two unlabelled panels
+   costs nothing extra to run and is the difference between a result and another lead.
 
 3. ✅ **Re-run the A3/A4 sweep on the *released* checkpoint — done 2026-09-24 (Finding BU).**
    `reports/sweep_b64.jsonl`, 300 generations. **8 steps survives**, so `generate.py`'s step

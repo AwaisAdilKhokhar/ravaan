@@ -192,6 +192,12 @@ def build(trace: Path, evaldir: Path) -> dict:
                 # the two schedules at 64 epochs, so the page lets the reader switch rather than
                 # animating one and calling it the default.
                 "diff_random": arm_payload(rec["diff_random"]),
+                # ⚠️ The third order is a *proposal* and the page marks it as one. Findings BX/BY:
+                # the two shipped orders assemble 47–66% of their multi-piece words back to front
+                # against the AR arm's 0%, and a left-to-right window of eight halves that at the
+                # same eight forward passes. It is on the page because the page draws commit
+                # order and that is precisely what it changes — not because it has been adopted.
+                "diff_block": arm_payload(rec["diff_block"]),
                 "ar": arm_payload(rec["ar"]),
             }
         )

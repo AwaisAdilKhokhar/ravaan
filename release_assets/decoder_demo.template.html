@@ -178,6 +178,17 @@ section { padding-block: clamp(36px, 5.5vw, 64px); }
 .sched-b + .sched-b { border-left: 1px solid var(--line); }
 .sched-b:hover { color: var(--ink-2); }
 .sched-b[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+/* The proposed order is a different kind of thing from the two shipped ones, so it does not get
+   to look like a peer of theirs until it is one. Dimmer at rest, and amber rather than the arm's
+   own green when active, so "this is not the release" survives a screenshot. */
+.sched-b.is-proposal { color: var(--ink-3); }
+.sched-b.is-proposal[aria-pressed="true"] { background: #FFB020; color: #1A1204; }
+.proposal {
+  margin: 10px 0 0; padding: 9px 12px; font-size: .78rem; line-height: 1.6;
+  color: var(--ink-2); border: 1px solid #4A3410; border-left: 2px solid #FFB020;
+  border-radius: 5px; background: #150F04;
+}
+.proposal b { color: #FFB020; font-weight: 600; }
 .sched-b:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 
 .canvas {
@@ -387,13 +398,20 @@ footer .frow { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: basel
             <span class="arm-sub">masked diffusion &middot; 8 steps &middot; <span id="schedName">gumbel 2</span></span>
           </div>
           <div class="arm-right">
-            <div class="sched" role="group" aria-label="unmasking schedule">
+            <div class="sched" role="group" aria-label="commit order">
               <button type="button" class="sched-b" data-sched="gumbel" aria-pressed="true">gumbel 2</button>
               <button type="button" class="sched-b" data-sched="random" aria-pressed="false">random</button>
+              <button type="button" class="sched-b is-proposal" data-sched="block" aria-pressed="false">block 8 &lowast;</button>
             </div>
             <span class="arm-count" id="diffCount"></span>
           </div>
         </div>
+        <p class="proposal" id="proposalNote" hidden>
+          &lowast; <b>Proposed, not released.</b> The other two orders are the shipped decoder,
+          asserted token-for-token against it on every build. This one cuts the canvas into
+          left-to-right runs of eight, so each run is written against finished text — same eight
+          passes, and it assembles far fewer words back-to-front.
+        </p>
         <div class="canvas" id="diffCanvas" aria-hidden="true"></div>
         <p class="ur-out" id="diffOut"></p>
       </div>
@@ -537,9 +555,20 @@ let current = 0, tick = 0, timer = null, playing = false;
    nothing else -- which is the whole subject of this page. Finding BU: at 64 epochs the metrics
    stopped choosing between them, so the reader does. */
 let schedule = "gumbel";
+
+/* Three tracks, one checkpoint, one seed, eight forward passes each. `block` is the odd one: not
+   a schedule but a window -- the canvas is cut into left-to-right runs of eight and each is
+   finished before the next starts, so a run is written against real text instead of against
+   masks. It is marked with an asterisk everywhere it appears because, unlike the other two, it
+   is NOT what `pip install` gives you. */
+const TRACK = {
+  gumbel: { key: "diff",        label: "gumbel 2", shipped: true  },
+  random: { key: "diff_random", label: "random",   shipped: true  },
+  block:  { key: "diff_block",  label: "block 8",  shipped: false }
+};
 function sample() {
   const s = DATA.samples[current];
-  return Object.assign({}, s, { diff: schedule === "random" ? s.diff_random : s.diff });
+  return Object.assign({}, s, { diff: s[TRACK[schedule].key] });
 }
 function totalTicks(s) { return Math.max(DATA.steps, s.ar.forwards); }
 
@@ -563,7 +592,8 @@ document.querySelectorAll(".sched-b").forEach(b => {
     schedule = b.dataset.sched;
     document.querySelectorAll(".sched-b").forEach(o =>
       o.setAttribute("aria-pressed", String(o.dataset.sched === schedule)));
-    el("schedName").textContent = schedule === "random" ? "random" : "gumbel 2";
+    el("schedName").textContent = TRACK[schedule].label;
+    el("proposalNote").hidden = TRACK[schedule].shipped;
     select(current);
   });
 });

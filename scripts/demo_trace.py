@@ -13,12 +13,15 @@ So this writes a **trace**: for every position, which step committed it and how 
 model was. `reports/demo_trace.json` is that, plus the per-position SentencePiece pieces, so a
 page can replay the decode rather than describe it.
 
-**The diffusion arm is traced twice, under both of §4.4's surviving unmasking schedules.** Same
-checkpoint, same seed, same eight steps — only the order it commits positions in differs, which
-is exactly the quantity this page draws. Finding BU is the reason: at 64 epochs `random` ties
-`gumbel 2` on script consistency and leads distinct-1, so §8.3's metrics no longer choose between
-them, and animating one alone would assert a default the measurements stopped supporting. See
-:data:`TRACKS`.
+**The diffusion arm is traced three times, and all three differ only in commit order.** Same
+checkpoint, same seed, same eight forward passes. Two are §4.4's surviving unmasking schedules —
+Finding BU is the reason both are shown: at 64 epochs `random` ties `gumbel 2` on script
+consistency and leads distinct-1, so §8.3's metrics no longer choose between them and animating
+one alone would assert a default the measurements stopped supporting. The third is `block8`,
+which is not a schedule but a **window**: Finding BX measured the arm assembling 47–66% of its
+multi-piece words out of order against the AR arm's 0%, and Finding BY measured windows halving
+that at no extra passes. ⚠️ **`block8` is a proposal and the other two are the release** — the
+page must say which is which. See :data:`TRACKS`.
 
 **The traced loop is asserted equal to the shipped one.** The diffusion trace is produced by a
 re-implementation of `ravaan_infer.sampling.diffusion.sample_diffusion`'s commit loop — the
@@ -161,14 +164,37 @@ GUMBEL = 2.0
 TEMPERATURE = 1.0
 TOP_P = 0.95
 
+#: Window width for the semi-autoregressive track, and the passes spent inside one window. Eight
+#: and two are chosen together so a 28–32 token canvas costs **exactly `STEPS` passes** — four
+#: windows at two passes each — because a decoder that fixed the Urdu by spending more forward
+#: passes would be fixing it by becoming the AR arm, and this page's subject is the pass count.
+#: Finding BY: the narrower `block4` costs 15.2 passes and is not better on any axis.
+BLOCK = 8
+BLOCK_STEPS = 2
+
 #: What the page animates: the AR arm, and the *same* diffusion checkpoint decoded under both
 #: of §4.4's surviving A4 schedules. Finding BU is why there are two — at 64 epochs `random`
 #: ties `gumbel 2` on script consistency and leads distinct-1, so §8.3 no longer picks between
 #: them and showing one would assert a default the measurements do not support. The commit order
 #: is the one thing this page exists to draw, and the schedule *is* the commit order.
+#:
+#: **A third track, added 2026-09-24, and it is not a schedule.** Finding BX measured why a fluent
+#: reader keeps calling the diffusion Urdu worse: the decoder commits three or four positions per
+#: pass from independent marginals, so **47–66% of multi-piece words are assembled out of order**
+#: against the AR arm's 0%. `block8` decodes the canvas in contiguous left-to-right windows of
+#: eight instead — full diffusion inside a window, so each window is written against finished text
+#: — which halves both that rate and the prompt-echo rate at **the same eight forward passes**
+#: (Finding BY). It belongs on this page because this page draws commit order, and that is the
+#: whole of what it changes.
+#:
+#: ⚠️ **It is a proposal, not the release.** The other two tracks are asserted token-for-token
+#: against the shipped `sample_diffusion`; `block8` cannot be, because the shipped sampler does
+#: not do it. The page must say so beside the switch rather than let a visitor read three tracks
+#: as three things they can `pip install`.
 TRACKS = (
-    ("diff", "gumbel", GUMBEL),
-    ("diff_random", "random", 0.0),
+    ("diff", "gumbel", GUMBEL, 0),
+    ("diff_random", "random", 0.0, 0),
+    ("diff_block", "random", 0.0, BLOCK),
 )
 
 #: Seeds drawn per prompt per arm before the filter and the selection rule run. Sixteen is enough
@@ -197,7 +223,7 @@ def _pieces(sp, ids: list[int], first_text_id: int) -> list[str | None]:
 @torch.no_grad()
 def _trace_diffusion(
     arm, prompt, *, seed: int, forbid, device: str,
-    schedule: str = SCHEDULE, gumbel: float = GUMBEL,
+    schedule: str = SCHEDULE, gumbel: float = GUMBEL, window: int = 0,
 ) -> dict:
     """Run the absorbing-state decode and record every commit. Asserted against the real sampler.
 
@@ -206,6 +232,13 @@ def _trace_diffusion(
     vendored artifact that people have already downloaded, and a demo is not a reason to change
     what a published package does. The cost of copying is drift, and the assertion at the bottom
     is what pays it.
+
+    ``window`` turns on the semi-autoregressive track: the masked positions are cut into
+    contiguous left-to-right windows of that width and each is decoded to completion before the
+    next begins, so a window is written against finished text rather than against masks. ⚠️ **The
+    assertion does not apply to it** — the shipped sampler has no such mode, so there is nothing
+    to be equal to, and claiming otherwise is the exact error the assertion exists to prevent.
+    What is still checked is that the canvas came back full and the given positions untouched.
     """
     from ravaan_infer.sampling.decoding import build_generator, sample_ids
     from ravaan_infer.sampling.diffusion import sample_diffusion, unmask_counts
@@ -223,9 +256,17 @@ def _trace_diffusion(
     generator = build_generator(device, seed)
 
     masked = ~locked
-    counts = unmask_counts(int(masked.sum(dim=-1).max().item()), STEPS)
     positions = torch.arange(tokens.shape[1], device=device).unsqueeze(0).expand_as(tokens)
     positions = positions.contiguous()
+
+    # One scope, or one per window. The single-scope case is `sample_diffusion` exactly; the
+    # windowed case runs the same loop against a scope mask, which is the only difference between
+    # the two tracks and is why they share every other line.
+    free = masked[0].nonzero().flatten().tolist()
+    if window > 0:
+        scopes = [(free[i:i + window], BLOCK_STEPS) for i in range(0, len(free), window)]
+    else:
+        scopes = [(free, STEPS)]
 
     #: commit_step[i] is the step that wrote position i; -1 means it was given, not written.
     commit_step = [-1] * tokens.shape[1]
@@ -234,46 +275,76 @@ def _trace_diffusion(
     forwards = 0
     started = time.perf_counter()
 
-    for index, take in enumerate(counts):
-        if take <= 0 or not bool(masked.any()):
+    for members, steps in scopes:
+        if not members:
             continue
-        logits = model(tokens)
-        forwards += 1
-        ids, confidence = sample_ids(logits, config, generator=generator, forbid=forbid_ids)
+        scope = torch.zeros_like(masked)
+        scope[0, members] = True
+        counts = unmask_counts(len(members), steps)
 
-        # Mirrors `sample_diffusion`'s three branches, including which of them draw from the
-        # generator and in what order — `random` consumes one `torch.rand` where `gumbel` with a
-        # positive scale consumes one and `confidence` consumes none. Get that wrong and the two
-        # decoders diverge on seed alone, which the assertion below would report as drift.
-        if schedule == "random":
-            score = torch.rand(tokens.shape, device=device, generator=generator)
-        elif schedule == "confidence":
-            score = confidence
-        else:
-            score = confidence.clamp_min(1e-20).log()
-            scale = gumbel * (1.0 - (index + 1) / len(counts))
-            if scale > 0:
-                draw = torch.rand(tokens.shape, device=device, generator=generator).clamp(
-                    1e-20, 1.0 - 1e-20
-                )
-                score = score + scale * -(-draw.log()).log()
-        score = score.masked_fill(~masked, float("-inf"))
+        for index, take in enumerate(counts):
+            if take <= 0 or not bool((masked & scope).any()):
+                continue
+            logits = model(tokens)
+            forwards += 1
+            ids, confidence = sample_ids(logits, config, generator=generator, forbid=forbid_ids)
 
-        order = score.argsort(dim=-1, descending=True)
-        rank = torch.empty_like(order)
-        rank.scatter_(1, order, positions)
-        commit = (rank < take) & masked
-        tokens = torch.where(commit, ids, tokens)
-        masked = masked & ~commit
+            # Mirrors `sample_diffusion`'s three branches, including which of them draw from the
+            # generator and in what order — `random` consumes one `torch.rand` where `gumbel`
+            # with a positive scale consumes one and `confidence` consumes none. Get that wrong
+            # and the two decoders diverge on seed alone, which the assertion below reports as
+            # drift.
+            if schedule == "random":
+                score = torch.rand(tokens.shape, device=device, generator=generator)
+            elif schedule == "confidence":
+                score = confidence
+            else:
+                score = confidence.clamp_min(1e-20).log()
+                scale = gumbel * (1.0 - (index + 1) / len(counts))
+                if scale > 0:
+                    draw = torch.rand(tokens.shape, device=device, generator=generator).clamp(
+                        1e-20, 1.0 - 1e-20
+                    )
+                    score = score + scale * -(-draw.log()).log()
+            score = score.masked_fill(~(masked & scope), float("-inf"))
 
-        wrote = commit[0].nonzero().flatten().tolist()
-        for position in wrote:
-            commit_step[position] = len(steps_log)
-            commit_conf[position] = round(float(confidence[0, position]), 4)
-        steps_log.append({"committed": wrote, "remaining": int(masked.sum().item())})
+            order = score.argsort(dim=-1, descending=True)
+            rank = torch.empty_like(order)
+            rank.scatter_(1, order, positions)
+            commit = (rank < take) & masked & scope
+            tokens = torch.where(commit, ids, tokens)
+            masked = masked & ~commit
+
+            wrote = commit[0].nonzero().flatten().tolist()
+            for position in wrote:
+                commit_step[position] = len(steps_log)
+                commit_conf[position] = round(float(confidence[0, position]), 4)
+            steps_log.append({"committed": wrote, "remaining": int(masked.sum().item())})
 
     elapsed = time.perf_counter() - started
     traced = tokens[0].tolist()
+
+    # §8.1's two invariants hold for every track, windowed or not: the canvas came back full and
+    # the given positions were never overwritten. These are the checks that do not depend on
+    # there being a shipped decoder to compare against.
+    if int((tokens == mask_id).sum().item()):
+        raise AssertionError(
+            f"the traced decode left the canvas masked after {forwards} passes — the schedule "
+            "did not cover it"
+        )
+    if not torch.equal(tokens[locked], torch.tensor(
+            [prompt.tokens], dtype=torch.long, device=device)[locked]):
+        raise AssertionError("the traced decode overwrote a position it was given")
+
+    # ⚠️ The equality claim is for the shipped decoder only. `block8` has no counterpart in
+    # `ravaan_infer`, so there is nothing for it to be equal to — and asserting it against the
+    # un-windowed sampler would pass only if the windows had stopped doing anything.
+    if window > 0:
+        return {
+            "tokens": traced, "commit_step": commit_step, "commit_conf": commit_conf,
+            "steps": steps_log, "forwards": forwards, "seconds": round(elapsed, 4),
+            "schedule": schedule, "gumbel": None, "window": window, "shipped": False,
+        }
 
     # The whole claim of this file: what the animation replays is what the shipped sampler does.
     reference = sample_diffusion(
@@ -303,6 +374,8 @@ def _trace_diffusion(
         "seconds": round(elapsed, 4),
         "schedule": schedule,
         "gumbel": gumbel if schedule == "gumbel" else None,
+        "window": 0,
+        "shipped": True,
     }
 
 
@@ -414,7 +487,7 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
     from ravaan_infer.loader import load
     from ravaan_infer.sampling import prompts as prompt_builders
 
-    from ravaan.evaluation.generation import GenerationStats
+    from ravaan.evaluation.generation import GenerationStats, commit_order, prefix_echo
 
     arms = {
         "diff": load(release / "ravaan-diff-70m", device=device),
@@ -450,7 +523,7 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
         )
         ar_prompt = prompt_builders.lm(ar_arm.framing, "ar", prefix=prefix_ids)
 
-        names = [name for name, _, _ in TRACKS] + ["ar"]
+        names = [name for name, _, _, _ in TRACKS] + ["ar"]
         draws: dict[str, list[dict]] = {name: [] for name in names}
         for offset in range(DRAWS):
             seed = base_seed + offset
@@ -469,9 +542,10 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
                         device=device,
                         schedule=schedule,
                         gumbel=gumbel,
+                        window=window,
                     ),
                 )
-                for name, schedule, gumbel in TRACKS
+                for name, schedule, gumbel, window in TRACKS
             ]
             ar = _trace_ar(
                 ar_arm,
@@ -489,6 +563,14 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
                 # for the prefix they were handed, and the prefix is a third of a 28-token canvas.
                 written = draw["text"][len(spec["prefix"]):]
                 draw["stats"] = GenerationStats.of(written).to_dict()
+                # The two order-dependent metrics, added 2026-09-24 after a fluent reader ranked
+                # the arms opposite to distinct-1. Neither can be computed from text alone, so
+                # they are scored here — where the trace and the prefix are both in hand — rather
+                # than inside `GenerationStats`. **Recorded, not filtered**: `_reject` does not
+                # read them, because a threshold set on the day a metric is introduced is a
+                # threshold set to produce the answer that motivated it.
+                draw["commit_order"] = commit_order(draw["pieces"], draw["commit_step"])
+                draw["echo"] = prefix_echo(spec["prefix"], written)
                 draw["rejected"] = _reject(draw)
                 draws[name].append(draw)
 
@@ -505,6 +587,8 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
                     "seed": d["seed"],
                     "text": d["text"],
                     "stats": d["stats"],
+                    "commit_order": d["commit_order"],
+                    "echo": d["echo"],
                     "rejected": d["rejected"],
                 }
                 for d in sorted(draws[name], key=lambda d: (d["rejected"] is not None, _rank(d)))
@@ -530,8 +614,16 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
         "schedule": SCHEDULE,
         "gumbel": GUMBEL,
         "tracks": [
-            {"name": name, "schedule": schedule, "gumbel": gumbel if schedule == "gumbel" else None}
-            for name, schedule, gumbel in TRACKS
+            {
+                "name": name,
+                "schedule": schedule,
+                "gumbel": gumbel if schedule == "gumbel" else None,
+                "window": window,
+                # What the page needs to label the switch honestly: only the un-windowed tracks
+                # are the decoder someone can pip install. Finding BY.
+                "shipped": window == 0,
+            }
+            for name, schedule, gumbel, window in TRACKS
         ],
         "temperature": TEMPERATURE,
         "top_p": TOP_P,
@@ -559,7 +651,7 @@ def main() -> int:
     pool_path = args.out.with_name(args.out.stem + "_pool.json")
     pool_path.write_text(json.dumps(pool, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"\nwrote {args.out} — {len(payload['samples'])} samples", file=sys.stderr)
-    names = [name for name, _, _ in TRACKS] + ["ar"]
+    names = [name for name, _, _, _ in TRACKS] + ["ar"]
     drawn = sum(len(entry[arm]) for entry in pool["pool"] for arm in names)
     print(f"wrote {pool_path} — {drawn} draws", file=sys.stderr)
     return 0

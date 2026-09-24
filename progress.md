@@ -12,6 +12,63 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 
 ## State of play
 
+> ## 🔬 IT IS THE COMMIT RULE, NOT THE WEIGHTS, 2026-09-24/25 (session 37)
+>
+> **The same fluent reader said the diffusion Urdu was still worse than the AR arm's on the
+> regenerated demo.** Session 36 read that as a schedule question. It is not. The demo's **own
+> traces** already held the answer and nobody had looked:
+>
+> ⚠️ **The diffusion arm assembles its words out of order.** `sample_diffusion` commits three or
+> four positions per pass **from independent marginals**, and a word in §7's 16k vocabulary is
+> often two or three pieces — so a word's middle gets written by a pass that never saw its start.
+> On the hosted demo's ten prompts: **47% (`gumbel 2`) and 66% (`random`) of multi-piece words
+> out of order, against the AR arm's 0%**. The broken words a reader points at —
+> `بْباغ` (pieces committed at passes 3, 0, 4, 7), `ٹیُباغے` (4, 5, 1, 0, 4), `تفویضع` — are
+> exactly those words. **0% for AR is by construction**, not by merit: it is a failure the
+> left-to-right factorization cannot have.
+>
+> ⚠️ **§8.3 had no instrument for it, and distinct-1 ranked the decoders backwards.** Finding BU
+> deferred A4 to a reader because `random` led distinct-1 **0.676 to 0.410**. It leads *because*
+> it scatters commits, which is the thing that breaks the words. **The metric and the reader were
+> measuring opposite sides of one mechanism.** Two new metrics close it — `commit_order` and
+> `prefix_echo`, both outside `GenerationStats` because neither is a property of the string.
+>
+> ✅ **`block8` halves both failure rates and costs nothing.** Decoding the canvas in left-to-right
+> windows of eight — full diffusion inside a window, so each window is written against finished
+> text — runs at **8.0 forward passes, exactly what ships**, and takes the default from
+> **ooo 47% → 30%, echo 60% → 25%, distinct-1 0.694 → 0.789**. It is not dodging hard words:
+> its multi-piece share *rises* to 10.8–12.3% against AR's 7.8%. **`block4` is strictly
+> dominated** at 15.2 passes.
+>
+> ⚠️ **The rule built to fix the defect games the metric built to detect it.** `wordwise` scores
+> **0% out-of-order by construction** — on a multi-piece share that collapses to **2.2%** against
+> AR's 7.8%. It writes more, commoner, single-token words instead of assembling hard ones, and it
+> is the worst echoer measured. It does fix one real thing: `U+FFFD` draws fall **2.1% → 0.0%**,
+> which is Finding BT's unsolved case.
+>
+> ⚠️ **Temperature had never been swept, and the metrics are wrong about it too.** 0.7 → 1.3:
+> **every §8.3 number improves monotonically on every decoder**, while the share of draws
+> containing any non-Arabic letter goes **0% → 2% → 26%**. Mean script consistency moves 1.000 →
+> 0.981 and hides all of it. **This is the third proxy-versus-reader inversion in four sessions.**
+>
+> ✅ **The hosted decoder demo now carries `block 8` as a third commit order, marked a proposal.**
+> **<https://awaisadilkhokhar.github.io/ravaan/>** — same page, same switch, a third button in
+> amber rather than the arm's green, and a note that says the other two orders are the release
+> and this one is not. It belongs there because that page's whole subject is commit order and
+> `block8` is a commit order. On the ten draws it shows: **out-of-order 33% against `gumbel 2`'s
+> 47% and `random`'s 66%, on nearly double the multi-piece words (54 against 19 and 29)** — it is
+> attempting harder words and getting more of them right — and **prompt echo 1/10, which is the
+> AR arm's own rate.** It also survives the page's existing selection filter **8–14 of 16 draws**
+> where `gumbel 2` survives 1–6, on a filter that knows nothing about windows.
+>
+> ⚠️ **`release_assets/generate.py`, both model cards and `generate`'s default are untouched.**
+> Finding BU's rule holds and this session is its third argument: the default moves on a reader's
+> verdict. Putting the candidate on the demo *is* how a reader gets to render one.
+>
+> **New findings: BX (the commit-order defect and its two metrics), BY (block-8 at matched cost),
+> BZ (the metric its own fix games), CA (temperature buys the numbers by leaving Urdu).**
+>
+> ⚠️ **Spend unchanged at ~$1.90 — session 37 cost $0.** 4,560 draws in 55 minutes on the idle 4060.
 > ## 🔁 THE DEMO WAS SHOWING THE WRONG CHECKPOINT, 2026-09-24 (session 36)
 >
 > **A native Urdu speaker read the published demo and said the diffusion samples were worse than
@@ -629,7 +686,7 @@ holds only while the priority is wall-clock and while stage 10's reported fertil
 
 ## Findings register
 
-Seventy-one findings are referenced across this file, the PRD and the reports, and until now they
+Seventy-nine findings are referenced across this file, the PRD and the reports, and until now they
 were only defined inside the session that raised them. One line each, with the session that owns
 the derivation — `git show 8cecdfd:progress.md` has the full text of every one.
 
@@ -716,6 +773,10 @@ must say.
 | BU | 36 | **A3's step optimum survived the move to the released checkpoint and A4's schedule choice did not — and the demo had never been running the released checkpoint at all.** Open debt #3 paid: §4.4's grid re-swept over `ship-diff-b64/diff-s0_f1_weights.pt` (300 generations, `sweep_b64.jsonl`). **8 steps holds** — `confidence` degenerates to a 72-word longest repeated run at 16 steps, and more steps is monotonically worse on every axis, so **Finding AP replicates a third time**, now at 70M over 85.4M tokens for 64 epochs. What moved is A4: on `lm/continue` `random` scores **script 0.998 and distinct-1 0.676** against `gumbel 2`'s **0.997 and 0.410**, so it now ties the schedule it used to lose to on script consistency while leading the metric Finding BS says should decide. ⚠️ **The reason the project rejected `random` — script-consistent non-words — has weakened with training, and §8.3 can no longer rank the two.** Separately, `demo_samples.jsonl` was found to be decoding `core-diff-s1/diff-s1_f1.pt` (**arm A, 0.8024**) while the released and better `ship-diff-b64` (**arm B, 0.7646**) sat unused on disk — so the published demo was showing AR's best against diffusion's second-best, across corpus arms | ✅ **demo regenerated on b64 and the pairing is matched for the first time**, so the cross-arm disclosure every version of that page carried is gone. Both arms re-verified non-reciting on the new samples: **0.000 at n ≥ 16 against a 0.000 control** ([`overlap_demo_b64.json`](reports/eval/overlap_demo_b64.json)). ⚠️ **`generate.py` and both model cards still ship `gumbel 2` as the default on the strength of the old sweep** — unchanged deliberately, because the metrics no longer justify a default and the page now shows both. ⚠️ **The A3/A4 grid holds temperature at 0.9 and top-p at 0.95 and always has**; since `sample_ids` returns the post-filter probability that the diffusion decoder *also* ranks commit order by, temperature moves the commit order on that arm and not on AR's — an axis this project has never swept |
 | BV | 36 | **The first Urdu judgement in this project that is not an LLM's, and it arrived as a bug report about the demo.** A fluent speaker — the maintainer — read the published demo and reported the diffusion samples as clearly worse than the AR arm's, which is what sent the decoder back for re-measurement and surfaced Finding BU's two defects. On the regenerated page the same reader calls the diffusion output substantially more coherent. Corroborated by the selection rule rather than resting on the read: **eleven of twelve prompts now survive demo selection where five did**, on the same rule and the same prefixes | ⚠️ **live, and it is a lead rather than a result.** One reader, informed and not blind, who already knew which arm was which — that is exactly the instrument G5's three independent annotators exist to replace, and §8.3's generation claim still needs them. ✅ **But it is evidence the human-eval channel works and finds things no metric here did**: §8.3's three numbers ranked the old demo's diffusion panel as fine, and a native speaker took one look and did not. **The cheapest instrument in this project is a fluent reader and it had never been pointed at the demo** |
 | BW | 36 | **The hosted decoder demo animates commit order, and commit order is exactly what A4 changes — so showing one schedule was the page asserting the default Finding BU had just retired.** `site/index.html` was already built on the released `ship-diff-b64` (the `core-diff-s1` mistake never reached it), so nothing on it was *wrong*; what it lacked was the axis it is best placed to show. `demo_trace.py` now traces the diffusion arm **twice from the same seed** under both schedules — `TRACKS` — and the page carries a switch. ⚠️ **The traced loop had to mirror which branches draw from the generator**: `random` consumes one `torch.rand` per step where `gumbel` at positive scale consumes one and `confidence` consumes none, so a naive port would diverge on seed alone. The existing token-for-token assertion against `sample_diffusion` caught that class by construction and **passed on all 480 draws**, `random` included | ✅ **live.** A second, unlooked-for measurement fell out of the selection filter: over 10 prompts × 16 seeds, `random` survives **7–13 of 16 draws where `gumbel 2` survives 2–6** — a consistent gap in the same direction as the sweep's distinct-1, on a different instrument (§8.3's reject rule) and a different canvas width (28 tokens, not 160). ⚠️ **This is now two independent signals favouring `random` on this checkpoint and still no fluent-reader verdict**, which is the only thing that should move `generate.py`'s default. All 10 prompts still survive, so `ORDER` is unchanged |
+| BX | 37 | **The diffusion arm's Urdu defect is a commit-order defect, it is measurable, and §8.3 had no instrument that could see it.** `sample_diffusion` commits three or four positions per pass **from independent marginals**, and a word in §7's 16k vocabulary is often two or three pieces — so a word's middle can be written by a pass that never saw its start. Measured on the traces the hosted demo already ships: the diffusion arm assembled **47%** (`gumbel 2`) and **66%** (`random`) of its multi-piece words out of order against the AR arm's **0%**, and echoed a bigram of its own prompt on **5/10 and 4/10** continuations against AR's **1/10**. Replicated at scale over 80 draws a cell: **ooo 47% / echo 60%** for the shipped default, **65% / 28%** for `random`, **0% / 14%** for AR. Two new metrics, `commit_order` and `prefix_echo`, both outside `GenerationStats` because neither is a property of the string | ✅ **live, and it retires "the diffusion samples are just worse".** The failure is one the AR factorization **cannot have** — 0% is by construction, not by merit — so it is a statement about the decoder, and the honest comparison is diffusion-against-diffusion. ⚠️ **It also explains Finding BU's contradiction**: distinct-1 preferred `random` **0.676 to 0.410** precisely *because* `random` scatters commits, which is the thing that breaks words. The metric and the reader were not disagreeing about quality, they were measuring opposite sides of one mechanism |
+| BY | 37 | **Semi-autoregressive block decoding halves both failure rates and costs nothing.** `block8` — decode the canvas in contiguous left-to-right windows of eight, full diffusion inside a window, so window *k* is written against finished text instead of against masks — runs at **8.0 forward passes, identical to what ships**, and at temperature 1.0 moves the shipped default from **ooo 47% → 30%, echo 60% → 25%, distinct-1 0.694 → 0.789**, and `random` from **65% → 36%, 28% → 14%, 0.877 → 0.887**. It is not avoiding hard words to get there: its multi-piece share **rises** to 10.8–12.3% against AR's 7.8%. ⚠️ **`block4` is strictly dominated** — 15.2 passes for ooo 22–42%, worse echo, no gain — so the window that helps is the one that still leaves real parallelism inside it | ✅ **live, and it is the candidate.** At matched passes `block8/random` at t = 1.0 beats the shipped `gumbel 2` on every axis measured and ties the AR arm's echo rate at 14%. ⚠️ **On the hosted demo as a marked proposal, and shipped nowhere**: `release_assets/generate.py` and both model cards are untouched, and the page's third button is amber with a note saying the other two orders are the release and this one is not. On the ten draws it shows, out-of-order is **33% against 47% and 66%** on **54 multi-piece words against 19 and 29** — harder words, more of them right — with prompt echo at **1/10, matching the AR arm**, and it survives the page's own selection filter **8–14 of 16** where `gumbel 2` survives 1–6. Finding BU's rule holds — a decode default moves on a reader's verdict, and Finding CA is the reason that rule earned itself a third confirmation this session |
+| BZ | 37 | **The rule built to fix the defect wins the metric built to detect it, by avoiding the words the metric counts.** `wordwise` — commit a position only if the piece sampled there opens a word, or its left neighbour is already written — drives out-of-order to **exactly 0% by construction** at 8.1 passes, and **that number is close to meaningless**: its multi-piece share collapses to **2.2% (`gumbel`) / 3.7% (`random`) against AR's 7.8%** and the shipped decoder's 6.6–9.8%, at 4.33 characters a word against AR's 4.58. It writes *more, commoner, single-token* words rather than assembling multi-piece ones correctly. It is also the **worst echoer of any decoder measured** — 74% against the shipped 60% at t = 1.0. ✅ **It does fix one real thing**: draws containing `U+FFFD` fall from **2.1% to 0.0%**, because forcing byte-fallback runs left to right is exactly Finding BT's unsolved case | ✅ **live as a methods lesson, not as a decoder.** A metric introduced in the same session as a rule that optimizes it must print its **denominator beside it** — `summarize` carries the `n` column for this reason and the defect was visible in the first table because of it. ⚠️ **Generalize it**: every §8.3 rate in this project is a share over a denominator nobody prints, and this is the second time (with Finding BS) that the denominator was where the failure lived |
+| CA | 37 | **Temperature had never been swept, the metrics say raise it, and raising it walks the model out of Urdu.** Every A3/A4 sweep in this project ran at **0.9** and the hosted demo at **1.0**; swept 0.7 → 1.3, **every §8.3 metric improves monotonically on every decoder** — `parallel/random` goes distinct-1 **0.749 → 0.950**, echo **54% → 5%**, longest-repeat **2.3 → 0.7**. And the share of draws containing **any non-Arabic letter** goes **0% → 2% → 10% → 16% → 26%** across 0.7/1.0/1.1/1.2/1.3, with Latin fragments (`Orwle15ps`, `shukriya`) and broken joins appearing in the text. **Mean script consistency moves only 1.000 → 0.981 and hides all of it**. ⚠️ Session 36 predicted this axis and its mechanism: `sample_ids` returns the **post-filter** probability that `sample_diffusion` also ranks commit order by, so on the diffusion arm temperature moves *the order positions are committed in* and not only which token lands — for `confidence` and `gumbel`, though **not** for `random`, whose order is a free draw | ⚠️ **live, and it is the third proxy-versus-reader inversion in four sessions** (BU's A4, BV's demo, now this). **Do not raise the decode temperature on these numbers.** The instrument that works is the **share of draws with any leak**, not the mean over letters — which is Finding BS's lesson in a second place: a mean over a share is blind to a per-draw failure. ⚠️ **And this sweep has A3's ceiling defect** — 1.3 is the top of the grid and the leak is still climbing, so the axis is bounded by where it was stopped, exactly what Finding BG says about a grid's ceiling doing as much work as its contents |
 
 > ⚠️ **One number in this table was carried wrong.** The status board reported Finding AS as
 > "AR gap +4.46 nats, DIFF +0.03" from session 23 through session 24. Session 23's measurement
@@ -768,6 +829,7 @@ above; the derivations are in git at `8cecdfd`. Dates are 2026.
 | 34 | 09-23 | **Both models published on the Hugging Face Hub as a matched pair, Apache-2.0** — [`ravaan-diff-70m`](https://huggingface.co/AwaisAdilKhokhar/ravaan-diff-70m) at **0.7659 ± 0.0018** (K = 9) and [`ravaan-ar-70m`](https://huggingface.co/AwaisAdilKhokhar/ravaan-ar-70m) at 0.7774 exact, margin **6.4 sem**. Safetensors, a vendored torch-only `ravaan_infer/`, and cards carrying every caveat. **The AR half is released at 4 epochs deliberately** and its card says why — Finding BF made legible. Four drivers added that **refuse rather than warn**; `verify_release.py` runs the release where a stranger would run it. Memorization re-measured on the *released* checkpoints: 0.000 at every n, against a 0.000 held-out control. G0's novelty review re-run and two sub-claims found expired | **BO, BP, BQ** |
 | 35 | 09-24 | **The code is public and the demo is hosted.** [`github.com/AwaisAdilKhokhar/ravaan`](https://github.com/AwaisAdilKhokhar/ravaan) created and pushed — **session 34's two debts paid**, the cards' 404 resolved, everything from both sessions committed. The interactive decoder demo is live at [awaisadilkhokhar.github.io/ravaan](https://awaisadilkhokhar.github.io/ravaan/) on Pages, with no sign-in wall. `scripts/demo_trace.py` records **which forward pass committed each position** and asserts its traced loop against the shipped sampler every run; `decoder_demo.py` and `decoder_gif.py` render it as a page and a 1200x628 GIF — **Finding BP, finally shown rather than stated**. CI executed for the first time in the project's life and was red twice before green | **BR, BS, BT** |
 | 36 | 09-24 | **The demo was showing the wrong checkpoint, and a native speaker caught it.** §4.4's grid re-swept on the *released* `ship-diff-b64` — **open debt #3 paid**: 8 steps survives, `random` and `gumbel 2` are now tied on the metrics that were supposed to separate them. `demo_page.py` rewritten for **three panels — AR plus both schedules on one checkpoint** — and the demo regenerated on b64, so the **pairing is matched and the cross-arm disclosure is gone**. Non-reciting re-verified on the new samples. Eleven of twelve prompts now survive selection, against five. **The hosted decoder demo now carries a schedule switch** — `demo_trace.py` traces both orders from one seed, the assertion against the shipped sampler passes on all 480 draws, and `random` survives the selection filter 7–13/16 against `gumbel 2`'s 2–6 | **BU, BV, BW** |
+| 37 | 09-24/25 | **The reader was right twice, and the cause is the commit rule rather than the weights.** The demo's own traces measure the diffusion arm assembling **47% / 66% of multi-piece words out of order against AR's 0%** and echoing its own prompt **5/10 and 4/10 against 1/10** — two metrics §8.3 did not have, now in `ravaan.evaluation.generation` with 14 dependency-free tests, recorded by `demo_trace.py` and `sample.py` and **not** wired into any filter. `scripts/decode_variants.py` decodes 4,560 draws over four commit rules × two schedules × seven temperatures, baseline asserted token-for-token against the shipped sampler: **`block8` halves both failure rates at identical pass cost**, `wordwise` games its own metric, and **temperature buys every §8.3 number by leaking out of Urdu script**. **The hosted demo carries `block 8` as a third commit order, marked a proposal in amber** — out-of-order **33% against 47% and 66% on nearly double the multi-piece words**, and prompt echo **1/10, the AR arm's own rate**. `generate.py`'s default is untouched | **BX, BY, BZ, CA** |
 
 ### The results worth keeping in front of you
 
@@ -1112,10 +1174,27 @@ Live only. Resolved notes have been dropped; they are in git at `8cecdfd`.
 ## Next session
 
 **START HERE. The models are published, the code is public, both demos are hosted and correct.
-The remaining work is writing and three people** — and after session 36 one of those three has a
-sharper question to answer than "is this good Urdu": **which unmasking schedule reads better.** Six runs on local disk, **nothing is rented and nothing is
-accruing** since 2026-09-23. Weeks 1–11 complete. **There is no GPU work left that anything
-downstream is waiting on, and no engineering debt blocking anything.**
+The remaining work is writing and three people** — and after session 37 the question to put to a
+fluent reader is sharper again, and is now a *three*-way forced choice on one page: **`gumbel 2`,
+`random`, or `block 8` — which of these reads best.** Six runs on local disk, **nothing is rented
+and nothing is accruing** since 2026-09-23. Weeks 1–11 complete. **There is no GPU work left that
+anything downstream is waiting on, and no engineering debt blocking anything.**
+
+⚠️ **Ask it blind.** Finding BV is filed as a lead rather than a result precisely because that
+reader knew which arm was which, and session 37 is the third time the metrics and a reader have
+disagreed. The hosted demo labels its three orders, so it is the wrong instrument for the verdict
+even though it is the right one for showing the mechanism — **hide the labels before asking.**
+
+⚠️ **The candidate is `block 8` and it is on the demo, not in the release.** It halves the
+out-of-order rate at the same eight forward passes (Findings BX, BY) and its button is amber with
+a note saying it is not what `pip install` gives you. **Three artifacts still ship `gumbel 2`** —
+`release_assets/generate.py`, both model cards, `reports/release_samples.jsonl` — and moving them
+is one edit **gated on the reader, not on more measurement.** ⚠️ And `block 8` would have to go
+into `ravaan_infer` before any of them could honestly name it, which is a released package with
+downloads against it.
+
+⚠️ **Do not raise the decode temperature on §8.3's numbers** (Finding CA). They improve
+monotonically to 1.3 while the share of draws leaking out of Arabic script goes 2% → 26%.
 
 > 🔁 **Session 36 rebuilt both demos on the released checkpoint and re-swept the decoder.**
 > The published demo had been decoding **arm A's `core-diff-s1`** while the better, released
@@ -1165,7 +1244,10 @@ re-opens both axes.
 **The demo is regenerated, never hand-edited** — the Urdu must come out of the sample file:
 
 ```bash
-python scripts/demo_trace.py                  # both released models, both schedules, commit order
+# s37: a third commit order, block 8. The two schedules are asserted token-for-token against
+# the shipped sampler; block 8 cannot be - ravaan_infer has no windowed mode for it to equal -
+# so the page marks it a proposal in amber. ~6 min on the 4060.
+python scripts/demo_trace.py                  # both released models, THREE commit orders
 python scripts/decoder_demo.py --site         # -> reports/decoder_demo.html AND site/index.html
 python scripts/decoder_gif.py --og            # -> reports/decoder_demo.gif AND site/og.png
 ```
@@ -1699,6 +1781,28 @@ python scripts/decoder_demo.py --site
 
 # rent, ship, run, pull — vast/README.md is the runbook. pull.sh resumes and md5-verifies.
 ./vast/push.sh <host> <port>   &&   ./vast/pull.sh <host> <port> ship-ar-b
+```
+
+```bash
+# session 37's decoder comparison. FOUR commit rules x 2 schedules x 4 temperatures x 10 prompts
+# x 8 seeds = 2,880 draws, ~33 min on the 4060. The `parallel` rule is asserted token-for-token
+# against the shipped sample_diffusion on first use of each cell - if that assertion ever fires,
+# every number the run produced is about a decoder the release does not ship (Finding BQ).
+python -u scripts/decode_variants.py
+python scripts/decode_variants.py --summarize            # -> reports/decode_variants.md
+python scripts/decode_variants.py --read 1.0 0           # -> reports/decode_variants_read.md
+
+# the above-ceiling half, 1,680 draws, ~15 min. Both flags REPEAT (action="append"), like
+# sample.py's - and read Finding CA before believing what the table says about temperature.
+python -u scripts/decode_variants.py \
+    --temperature 1.1 --temperature 1.2 --temperature 1.3 \
+    --variant parallel --variant block8 --variant wordwise \
+    --out reports/decode_variants_hot.jsonl
+
+# ⚠️ the waiter dies and the work does not. Session 37 lost a harness-tracked poller to "system
+# is running low on memory" while this exact nohup'd run continued untouched - the fourth time.
+nohup python -u scripts/decode_variants.py > logs/decode_variants.log 2>&1 < /dev/null &
+until grep -qE "wrote .*decode_variants\.jsonl|Traceback" logs/decode_variants.log; do sleep 20; done
 ```
 
 ```bash

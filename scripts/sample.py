@@ -63,7 +63,7 @@ pin_utf8_streams()
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
 
-from ravaan.evaluation.generation import GenerationStats  # noqa: E402
+from ravaan.evaluation.generation import GenerationStats, prefix_echo  # noqa: E402
 from ravaan.sampling import SamplingConfig, generate, load_arm, prompts  # noqa: E402
 from ravaan.training.data import PackedCorpus  # noqa: E402
 from ravaan.training.tasks import SentencePieceCodec  # noqa: E402
@@ -294,6 +294,16 @@ def main(argv: list[str] | None = None) -> int:
                             "tokens": written,
                             "text": text,
                             "stats": stats.to_dict(),
+                            # Added 2026-09-24. Only `lm/continue` has a prefix to echo, and on
+                            # the other tasks this is 0.0 for the trivial reason rather than an
+                            # interesting one — so it is keyed off the prompt text being
+                            # non-empty rather than written as if every task had been measured.
+                            # The out-of-order rate has no home here: `generate` returns the
+                            # finished tensor and no commit order, which is the same gap
+                            # `scripts/demo_trace.py` re-implements the loop to fill.
+                            "echo": prefix_echo(
+                                decode(codec, list(prompt.tokens), framing_ids), text
+                            ),
                             "detail": out.detail,
                         }
                     )

@@ -1,28 +1,41 @@
 #!/usr/bin/env python
-"""The demo: each arm's best checkpoint, continuing the same five held-out Urdu prefixes.
+"""The demo: each arm's best checkpoint on one corpus, and both ways of decoding the diffusion one.
 
 `sample.py` writes every generation it makes; this writes the five that are worth showing
 someone, and says out loud which five and why. Two artefacts, from one pass over
-`reports/demo_samples.jsonl`:
+`reports/demo_b64.jsonl`:
 
 * **`reports/demo.md`** — the reading view, Urdu first, with §8.3's metrics beside each sample.
 * **`<out>.html`** — the same thing laid out in Nastaliq for a browser, which is the only way
   Urdu prose is actually legible to a reader who is being asked to judge it.
 
-**The two checkpoints are not from the same corpus arm, and that is the whole disclosure.**
-`ship-ar-b/ar-s0_fp25.pt` is arm B at 4 epochs; `core-diff-s1/diff-s1_f1.pt` is arm A at 426.
-Each is its own arm's best — by held-out Urdu bpb, among checkpoints that are not reciting the
-corpus — and picking the best of each is what "a demo of the best models" means. What it is
-*not* is §4.1's matched comparison: U and the mixture both differ, so nothing on this page is
-evidence about AR versus diffusion. §4.5's crossover is that evidence and lives in `progress.md`.
+**The pairing is matched now, and that is what changed.** `ship-ar-b/ar-s0_fp25.pt` is arm B at
+4 epochs and `ship-diff-b64/diff-s0_f1_weights.pt` is arm B at 64 — the same corpus and the same
+mixture, where every earlier version of this page paired arm B against arm A and had to disclose
+it. Each is still its own arm's best by held-out Urdu bpb among checkpoints that are not reciting
+the corpus. What remains unmatched is *training length*, and that is the result rather than a
+confound: AR turns at 4 epochs and is ruined by more, while the diffusion arm had not turned at
+64. §4.5's crossover is the evidence and lives in `progress.md`.
+
+**Three panels, two of them the same checkpoint.** The diffusion arm appears twice, differing
+only in §4.4's A4 schedule, because on this checkpoint §8.3's metrics stopped separating them:
+`random` leads distinct-1 0.68 to 0.41 on `lm/continue` and now ties `gumbel 2` on script
+consistency, where on the 16-epoch checkpoint it lost that axis outright. The trade is
+well-formed words that circle against varied content with malformed joins, no metric in this
+repository ranks those, and a fluent reader settles it. Showing one and calling it the default
+would be asserting an answer the project does not have.
 
 **Five of twelve, and the rule is stated rather than implied.** The pool is twelve prompts drawn
-evenly from the `urdu` validation split; prompt 9's prefix is not Arabic script at all (both arms
-score 0.00 script consistency on it) and the other six were dropped because one arm or the other
-degenerated. Cherry-picking a demo is normal; doing it silently is not, so the pool ships beside
-the selection and `--all` renders every prompt.
+evenly from the `urdu` validation split. ⚠️ **On this checkpoint eleven of the twelve qualify**,
+where the previous version of this page could keep only five: prompt 9's prefix is not Arabic
+script at all (every panel scores 0.00 script consistency on it) and it is the *only* exclusion,
+against six dropped before for one arm or the other degenerating. The same five are kept so the
+page stays comparable to the version it replaces, not because the rest failed — a selection that
+narrow is now a choice about continuity rather than a filter, and saying so is the point.
+Cherry-picking a demo is normal; doing it silently is not, so the pool ships beside the selection
+and `--all` renders every prompt.
 
-    python scripts/demo_page.py --samples reports/demo_samples.jsonl --out reports/demo
+    python scripts/demo_page.py --samples reports/demo_b64.jsonl --out reports/demo
 """
 
 from __future__ import annotations
@@ -39,8 +52,9 @@ from ravaan.console import pin_utf8_streams  # noqa: E402
 
 pin_utf8_streams()
 
-#: The five prompts both arms carried. Read, not scored — §8.3's numbers rank a slot-looping
-#: sample above a wandering one, and the whole point of a demo is that a person reads it.
+#: The five prompts every panel carried in the version this replaces, kept so the pages compare.
+#: Read, not scored — §8.3's numbers rank a slot-looping sample above a wandering one, and the
+#: whole point of a demo is that a person reads it. Eleven of the twelve now qualify; see above.
 CHOSEN = (3, 4, 7, 10, 11)
 
 #: What each prompt is about, for a reader who does not read Urdu. Descriptive, not a verdict.
@@ -59,9 +73,18 @@ TOPICS = {
     11: "a personal essay on moral values",
 }
 
+#: Which record in the samples file each panel is. A diffusion entry names its A4 schedule, so
+#: two of them can sit beside one AR panel; `None` matches the AR arm, which has no schedule.
+SELECTORS = {
+    "ar": ("ar", None, None),
+    "diff_random": ("diff", "random", None),
+    "diff_gumbel": ("diff", "gumbel", 2.0),
+}
+
 ARMS = {
     "ar": {
         "name": "Ravaan-AR",
+        "kind": "autoregressive",
         "checkpoint": "ship-ar-b/ar-s0_fp25.pt",
         "corpus": "arm B — 85,362,688 unique tokens",
         "epochs": "4 epochs (341M tokens seen)",
@@ -69,21 +92,37 @@ ARMS = {
         "bpb_note": "held-out Urdu bits-per-byte — an exact NLL",
         "decode": "temperature 0.9, top-p 0.95",
         "blurb": (
-            "The best Urdu model the project has produced. One token at a time, left to right; "
-            "it chooses its own length and its likelihood is exact."
+            "One token at a time, left to right; it chooses its own length and its likelihood "
+            "is exact. 160 tokens cost it 160 sequential forward passes."
         ),
     },
-    "diff": {
-        "name": "Ravaan-DIFF",
-        "checkpoint": "core-diff-s1/diff-s1_f1.pt",
-        "corpus": "arm A — 23,214,080 unique tokens",
-        "epochs": "426 epochs (9.9B tokens seen)",
-        "bpb": "0.8024",
+    "diff_random": {
+        "name": "Ravaan-DIFF · random",
+        "kind": "masked diffusion",
+        "checkpoint": "ship-diff-b64/diff-s0_f1_weights.pt",
+        "corpus": "arm B — 85,362,688 unique tokens",
+        "epochs": "64 epochs (5.46B tokens seen)",
+        "bpb": "0.7646",
+        "bpb_note": "held-out Urdu bits-per-byte — an ELBO, so read it as ≤",
+        "decode": "8 denoising steps, random schedule, </s> forbidden",
+        "blurb": (
+            "The same checkpoint and the same eight steps as the panel beside it. It commits "
+            "positions in a uniformly random order instead of by confidence — which is what "
+            "changes, and the only thing that changes."
+        ),
+    },
+    "diff_gumbel": {
+        "name": "Ravaan-DIFF · gumbel 2",
+        "kind": "masked diffusion",
+        "checkpoint": "ship-diff-b64/diff-s0_f1_weights.pt",
+        "corpus": "arm B — 85,362,688 unique tokens",
+        "epochs": "64 epochs (5.46B tokens seen)",
+        "bpb": "0.7646",
         "bpb_note": "held-out Urdu bits-per-byte — an ELBO, so read it as ≤",
         "decode": "8 denoising steps, gumbel schedule s=2, </s> forbidden",
         "blurb": (
-            "The best diffusion checkpoint by held-out bits-per-byte. It fills a canvas of a "
-            "width the caller fixed, unmasking a few positions per step in confidence order."
+            "Ranks positions by log p plus Gumbel noise annealed to zero — the one-parameter "
+            "family whose endpoints are `confidence` and `random`. The project's shipped default."
         ),
     },
 }
@@ -94,13 +133,26 @@ def load(path: Path, indices: tuple[int, ...]) -> list[dict]:
     rows = [r for r in rows if r["task"] == "lm/continue"]
     by_prompt: dict[int, dict] = {}
     for r in rows:
-        by_prompt.setdefault(r["prompt_index"], {})[r["arm"]] = r
+        selector = (r["arm"], r.get("schedule"), r.get("gumbel"))
+        for key, want in SELECTORS.items():
+            if selector == want:
+                by_prompt.setdefault(r["prompt_index"], {})[key] = r
     out = []
     for i in indices:
-        pair = by_prompt.get(i)
-        if not pair or "ar" not in pair or "diff" not in pair:
-            raise SystemExit(f"prompt {i} is missing an arm in {path}")
-        out.append({"index": i, "prefix": pair["ar"]["prompt_text"], **pair})
+        panels = by_prompt.get(i)
+        missing = [k for k in SELECTORS if not panels or k not in panels]
+        if missing:
+            raise SystemExit(f"prompt {i} is missing {', '.join(missing)} in {path}")
+        # Finding BT: a byte-fallback draw renders U+FFFD, because the decoder can commit the
+        # middle byte of a character before its first. Those are rejected outright rather than
+        # special-cased — on this checkpoint they are also the draws that stopped writing Urdu.
+        broken = [k for k in SELECTORS if "�" in panels[k]["text"]]
+        if broken:
+            raise SystemExit(
+                f"prompt {i}: {', '.join(broken)} decoded a byte-fallback draw (U+FFFD). "
+                "Pick another prompt rather than shipping it"
+            )
+        out.append({"index": i, "prefix": panels["ar"]["prompt_text"], **panels})
     return out
 
 
@@ -114,16 +166,29 @@ def metrics(record: dict) -> str:
 
 def markdown(pairs: list[dict], source: Path) -> str:
     lines = [
-        "# The demo — each arm's best checkpoint, reading the same five prefixes",
+        "# The demo — each arm's best checkpoint, and both ways of decoding the diffusion one",
         "",
         "Generated by `scripts/sample.py`, selected and laid out by `scripts/demo_page.py`.",
         f"Every generation made is in [`{source.name}`]({source.name}); this is the five that",
         "were chosen, and the selection rule is in that driver's docstring.",
         "",
-        "⚠️ **The two checkpoints are not from the same corpus arm.** Each is its own arm's best,",
-        "which is what a demo of the best models means, and it is *not* §4.1's matched "
-        "comparison —",
-        "U and the mixture both differ, so nothing here is evidence about AR versus diffusion.",
+        "**Both checkpoints are arm B**, so unlike every earlier version of this page the "
+        "pairing",
+        "is matched on corpus and mixture. What is *not* matched is training length — AR's best "
+        "rung",
+        "is 4 epochs because it turns there and is ruined by more, while the diffusion arm had "
+        "not",
+        "turned at 64. That asymmetry is the result, not a confound; §4.5's crossover is the "
+        "evidence",
+        "and it lives in `progress.md`.",
+        "",
+        "**Two diffusion panels, one checkpoint.** They differ only in A4's unmasking schedule. "
+        "On",
+        "this checkpoint the metrics stopped separating them — `random` leads distinct-1 "
+        "0.68/0.41 and",
+        "ties on script consistency — so the choice is a fluent reader's: `gumbel 2` writes "
+        "well-formed",
+        "words that circle, `random` writes varied content with malformed joins.",
         "",
     ]
     for arm in ARMS.values():
@@ -143,7 +208,7 @@ def markdown(pairs: list[dict], source: Path) -> str:
             "```",
             "",
         ]
-        for key in ("ar", "diff"):
+        for key in ARMS:
             lines += [
                 f"**{ARMS[key]['name']}** — {metrics(pair[key])}",
                 "",
@@ -160,14 +225,14 @@ def page(pairs: list[dict], overlap: dict[str, str]) -> str:
     blocks = []
     for pair in pairs:
         panels = []
-        for key in ("ar", "diff"):
+        for key in ARMS:
             record = pair[key]
             s = record["stats"]
             panels.append(
                 f"""      <article class="panel {key}">
         <header class="panel-head">
           <span class="arm-name">{html.escape(ARMS[key]['name'])}</span>
-          <span class="arm-kind">{'autoregressive' if key == 'ar' else 'masked diffusion'}</span>
+          <span class="arm-kind">{html.escape(ARMS[key]['kind'])}</span>
         </header>
         <p class="urdu" dir="rtl" lang="ur">{html.escape(record['text'].strip())}</p>
         <dl class="stats">
@@ -269,7 +334,7 @@ TEMPLATE = """<title>Ravaan Writes Urdu</title>
     margin: 0;
   }}
   .wrap {{
-    max-width: 1080px;
+    max-width: 1300px;
     margin: 0 auto;
     padding: 0 20px;
     padding-block: 56px 72px;
@@ -304,7 +369,7 @@ TEMPLATE = """<title>Ravaan Writes Urdu</title>
     margin: 0;
   }}
 
-  .cards {{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }}
+  .cards {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }}
   .card {{
     background: var(--surface);
     border: 1px solid var(--rule);
@@ -315,7 +380,7 @@ TEMPLATE = """<title>Ravaan Writes Urdu</title>
     gap: 14px;
   }}
   .card.ar {{ --accent: var(--ar); }}
-  .card.diff {{ --accent: var(--diff); }}
+  .card.diff_random, .card.diff_gumbel {{ --accent: var(--diff); }}
   .card h2 {{
     font-family: var(--display);
     font-size: 22px;
@@ -403,7 +468,7 @@ TEMPLATE = """<title>Ravaan Writes Urdu</title>
     color: var(--muted);
   }}
 
-  .panels {{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }}
+  .panels {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }}
   .panel {{
     background: var(--surface);
     border: 1px solid var(--rule);
@@ -414,7 +479,7 @@ TEMPLATE = """<title>Ravaan Writes Urdu</title>
     flex-direction: column;
   }}
   .panel.ar {{ --accent: var(--ar); }}
-  .panel.diff {{ --accent: var(--diff); }}
+  .panel.diff_random, .panel.diff_gumbel {{ --accent: var(--diff); }}
   .panel-head {{
     display: flex;
     align-items: baseline;
@@ -478,7 +543,9 @@ TEMPLATE = """<title>Ravaan Writes Urdu</title>
   }}
   .closing p {{ margin: 0; max-width: 70ch; color: var(--muted); }}
 
-  @media (max-width: 820px) {{
+  /* Three Nastaliq columns need real width; below that the comparison stacks rather than
+     wrapping 2+1, which would break the side-by-side read the page exists for. */
+  @media (max-width: 1080px) {{
     .cards, .panels {{ grid-template-columns: minmax(0, 1fr); }}
   }}
 </style>
@@ -488,9 +555,10 @@ TEMPLATE = """<title>Ravaan Writes Urdu</title>
     <span class="eyebrow">Ravaan · 70M parameters · Urdu</span>
     <h1>Two ways to write a sentence in Urdu</h1>
     <p class="standfirst">Five prefixes from the held-out validation split, continued by the
-      project's best autoregressive checkpoint and its best masked-diffusion checkpoint. Same
-      prompts, same tokenizer, same 160 new tokens — and two decoders that have almost nothing
-      in common.</p>
+      project's best autoregressive checkpoint and its best masked-diffusion checkpoint —
+      trained this time on the same corpus. Same prompts, same tokenizer, same 160 new tokens.
+      The diffusion model appears twice because the order it commits words in changes what it
+      writes, and the two orders fail in opposite directions.</p>
   </header>
 
   <div class="cards">
@@ -499,14 +567,22 @@ TEMPLATE = """<title>Ravaan Writes Urdu</title>
 
   <div class="note">
     <span class="label">read this first</span>
-    <p><strong>The two checkpoints are not trained on the same corpus.</strong> Each is its own
-      arm's best, which is what a demo of the best models means — and it is not the controlled
-      comparison. The unique-token count and the language mixture both differ, so nothing on this
-      page is evidence about autoregressive versus diffusion. That evidence is the crossover
-      measured on one matched corpus, and it lives in the project's log, not here.</p>
-    <p><strong>Five prompts of twelve, chosen by reading them.</strong> One of the twelve was not
-      Arabic script at all; the other six were dropped because one arm or the other degenerated.
-      Every generation made is in <code>reports/demo_samples.jsonl</code>.</p>
+    <p><strong>Both checkpoints are trained on the same corpus now.</strong> Earlier versions of
+      this page paired the two arms across different corpora and had to say so; this one does not.
+      What still differs is how long each trained — the autoregressive arm's best checkpoint is
+      its 4-epoch one, because it turns there and more compute actively makes it worse, while the
+      diffusion arm was still improving at 64. That gap is the finding, not a flaw in the setup,
+      and the measured crossover behind it lives in the project's log rather than here.</p>
+    <p><strong>The diffusion model is shown twice, and it is one model.</strong> Same weights,
+      same eight denoising steps; only the order it commits positions in differs. That order used
+      to be settled by the metrics and on this checkpoint it no longer is — one setting writes
+      well-formed words that circle back on themselves, the other writes more varied content and
+      occasionally fuses two words into something that is not one. Picking between them is a
+      fluent reader's call, so the page shows both instead of quietly choosing.</p>
+    <p><strong>Five prompts of twelve, chosen by reading them.</strong> One of the twelve is not
+      Arabic script at all and is the only one excluded for failing — eleven now survive, against
+      five on the checkpoint this page used to show. These five are kept so the two versions can
+      be compared. Every generation made is in <code>reports/demo_b64.jsonl</code>.</p>
     <p><strong>Neither model is reciting its corpus.</strong> Both were checked for verbatim
       n-gram overlap against the stream they trained on, with genuine held-out Urdu as the
       control — the check that caught an earlier checkpoint copying a quarter of its output back
@@ -538,14 +614,19 @@ TEMPLATE = """<title>Ravaan Writes Urdu</title>
   <section class="closing">
     <h2>The honest caption</h2>
     <p>The autoregressive arm writes fluent, grammatical, locally coherent Urdu and loses the
-      thread over a paragraph, which is what 70M parameters buys. The diffusion arm writes real
-      Urdu clauses in the right register and assembles them less reliably — it drifts into
-      repeating a noun phrase when the canvas outruns it. The step count is doing more work than
-      it looks: at 160 denoising steps this same checkpoint collapses into a loop, and at 8 it
-      does not.</p>
-    <p>The verdict on this page is a careful reader's, not a fluent speaker's. Whether these are
-      Urdu prose or Urdu-shaped noise is a native speaker's judgement, and the project's human
-      evaluation is what settles it.</p>
+      thread over a paragraph, which is what 70M parameters buys. The diffusion arm, at 64 epochs
+      on the same corpus, now holds a paragraph together well enough that eleven of the twelve
+      prompts in the pool survive selection where five did before. The decoder is doing more work
+      than it looks: at 160 denoising steps this same checkpoint collapses into a loop, at 8 it
+      does not, and the two schedules shown here fail in opposite directions rather than in
+      degree.</p>
+    <p><strong>One native speaker has now read this page, and that is new.</strong> The project's
+      maintainer — a fluent Urdu speaker — first reported the diffusion samples reading worse than
+      the AR arm's, which is what sent the older checkpoint back for re-measurement; on this one
+      the same reader calls the output substantially more coherent. That is one reader and an
+      informed one, so it is a lead rather than a result: it does not replace the three
+      independent annotators §8.3's generation claim still needs, and every other Urdu judgement
+      in this project remains an LLM's.</p>
   </section>
 </div>
 """
@@ -553,7 +634,7 @@ TEMPLATE = """<title>Ravaan Writes Urdu</title>
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--samples", default="reports/demo_samples.jsonl")
+    parser.add_argument("--samples", default="reports/demo_b64.jsonl")
     parser.add_argument("--out", default="reports/demo")
     parser.add_argument("--html", default=None, help="defaults to <out>.html")
     parser.add_argument("--all", action="store_true", help="render every prompt, not the five")
@@ -568,14 +649,16 @@ def main(argv: list[str] | None = None) -> int:
     )
     pairs = load(source, indices)
 
+    # Both checkpoints are arm B now, so one measurement covers the page. The two diffusion
+    # panels share a row because verbatim overlap is a property of the checkpoint, not of the
+    # schedule that decoded it — and `overlap.py` groups by arm, so they were scored together.
     overlap = {}
-    for key, path in (
-        ("ar", Path("reports/eval/overlap_demo_armB.json")),
-        ("diff", Path("reports/eval/overlap_demo_armA.json")),
-    ):
-        if path.exists():
-            data = json.loads(path.read_text(encoding="utf-8"))
-            row = next(r for name, r in data["verbatim_rate"].items() if name.startswith(key))
+    measured = Path("reports/eval/overlap_demo_b64.json")
+    for key in ARMS:
+        arm = SELECTORS[key][0]
+        if measured.exists():
+            data = json.loads(measured.read_text(encoding="utf-8"))
+            row = next(r for name, r in data["verbatim_rate"].items() if name.startswith(arm))
             control = data["verbatim_rate"]["held-out (control)"]
             overlap[key] = f"{row['16']:.3f} (held-out control {control['16']:.3f})"
         else:

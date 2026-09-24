@@ -52,7 +52,7 @@
     margin: 0;
   }
   .wrap {
-    max-width: 1080px;
+    max-width: 1300px;
     margin: 0 auto;
     padding: 0 20px;
     padding-block: 56px 72px;
@@ -87,7 +87,7 @@
     margin: 0;
   }
 
-  .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
   .card {
     background: var(--surface);
     border: 1px solid var(--rule);
@@ -98,7 +98,7 @@
     gap: 14px;
   }
   .card.ar { --accent: var(--ar); }
-  .card.diff { --accent: var(--diff); }
+  .card.diff_random, .card.diff_gumbel { --accent: var(--diff); }
   .card h2 {
     font-family: var(--display);
     font-size: 22px;
@@ -117,7 +117,8 @@
     padding-bottom: 6px;
   }
   .spec dt { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
-  .spec dd { margin: 0; text-align: right; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+  .spec dd { margin: 0; text-align: right; font-size: 13.5px;
+             font-variant-numeric: tabular-nums; }
   .spec dd.big {
     font-family: var(--mono);
     font-size: 20px;
@@ -185,7 +186,7 @@
     color: var(--muted);
   }
 
-  .panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .panels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
   .panel {
     background: var(--surface);
     border: 1px solid var(--rule);
@@ -196,7 +197,7 @@
     flex-direction: column;
   }
   .panel.ar { --accent: var(--ar); }
-  .panel.diff { --accent: var(--diff); }
+  .panel.diff_random, .panel.diff_gumbel { --accent: var(--diff); }
   .panel-head {
     display: flex;
     align-items: baseline;
@@ -260,7 +261,9 @@
   }
   .closing p { margin: 0; max-width: 70ch; color: var(--muted); }
 
-  @media (max-width: 820px) {
+  /* Three Nastaliq columns need real width; below that the comparison stacks rather than
+     wrapping 2+1, which would break the side-by-side read the page exists for. */
+  @media (max-width: 1080px) {
     .cards, .panels { grid-template-columns: minmax(0, 1fr); }
   }
 </style>
@@ -270,15 +273,16 @@
     <span class="eyebrow">Ravaan · 70M parameters · Urdu</span>
     <h1>Two ways to write a sentence in Urdu</h1>
     <p class="standfirst">Five prefixes from the held-out validation split, continued by the
-      project's best autoregressive checkpoint and its best masked-diffusion checkpoint. Same
-      prompts, same tokenizer, same 160 new tokens — and two decoders that have almost nothing
-      in common.</p>
+      project's best autoregressive checkpoint and its best masked-diffusion checkpoint —
+      trained this time on the same corpus. Same prompts, same tokenizer, same 160 new tokens.
+      The diffusion model appears twice because the order it commits words in changes what it
+      writes, and the two orders fail in opposite directions.</p>
   </header>
 
   <div class="cards">
       <article class="card ar">
         <h2>Ravaan-AR</h2>
-        <p class="blurb">The best Urdu model the project has produced. One token at a time, left to right; it chooses its own length and its likelihood is exact.</p>
+        <p class="blurb">One token at a time, left to right; it chooses its own length and its likelihood is exact. 160 tokens cost it 160 sequential forward passes.</p>
         <dl class="spec">
           <div><dt>held-out Urdu bpb</dt><dd class="big">0.7774</dd></div>
           <div><dt>checkpoint</dt><dd class="mono">ship-ar-b/ar-s0_fp25.pt</dd></div>
@@ -289,14 +293,27 @@
         </dl>
         <p class="caveat">held-out Urdu bits-per-byte — an exact NLL</p>
       </article>
-      <article class="card diff">
-        <h2>Ravaan-DIFF</h2>
-        <p class="blurb">The best diffusion checkpoint by held-out bits-per-byte. It fills a canvas of a width the caller fixed, unmasking a few positions per step in confidence order.</p>
+      <article class="card diff_random">
+        <h2>Ravaan-DIFF · random</h2>
+        <p class="blurb">The same checkpoint and the same eight steps as the panel beside it. It commits positions in a uniformly random order instead of by confidence — which is what changes, and the only thing that changes.</p>
         <dl class="spec">
-          <div><dt>held-out Urdu bpb</dt><dd class="big">0.8024</dd></div>
-          <div><dt>checkpoint</dt><dd class="mono">core-diff-s1/diff-s1_f1.pt</dd></div>
-          <div><dt>training corpus</dt><dd>arm A — 23,214,080 unique tokens</dd></div>
-          <div><dt>training length</dt><dd>426 epochs (9.9B tokens seen)</dd></div>
+          <div><dt>held-out Urdu bpb</dt><dd class="big">0.7646</dd></div>
+          <div><dt>checkpoint</dt><dd class="mono">ship-diff-b64/diff-s0_f1_weights.pt</dd></div>
+          <div><dt>training corpus</dt><dd>arm B — 85,362,688 unique tokens</dd></div>
+          <div><dt>training length</dt><dd>64 epochs (5.46B tokens seen)</dd></div>
+          <div><dt>decoder</dt><dd class="mono">8 denoising steps, random schedule, &lt;/s&gt; forbidden</dd></div>
+          <div><dt>verbatim overlap, 16-gram+</dt><dd>0.000 (held-out control 0.000)</dd></div>
+        </dl>
+        <p class="caveat">held-out Urdu bits-per-byte — an ELBO, so read it as ≤</p>
+      </article>
+      <article class="card diff_gumbel">
+        <h2>Ravaan-DIFF · gumbel 2</h2>
+        <p class="blurb">Ranks positions by log p plus Gumbel noise annealed to zero — the one-parameter family whose endpoints are `confidence` and `random`. The project&#x27;s shipped default.</p>
+        <dl class="spec">
+          <div><dt>held-out Urdu bpb</dt><dd class="big">0.7646</dd></div>
+          <div><dt>checkpoint</dt><dd class="mono">ship-diff-b64/diff-s0_f1_weights.pt</dd></div>
+          <div><dt>training corpus</dt><dd>arm B — 85,362,688 unique tokens</dd></div>
+          <div><dt>training length</dt><dd>64 epochs (5.46B tokens seen)</dd></div>
           <div><dt>decoder</dt><dd class="mono">8 denoising steps, gumbel schedule s=2, &lt;/s&gt; forbidden</dd></div>
           <div><dt>verbatim overlap, 16-gram+</dt><dd>0.000 (held-out control 0.000)</dd></div>
         </dl>
@@ -306,14 +323,22 @@
 
   <div class="note">
     <span class="label">read this first</span>
-    <p><strong>The two checkpoints are not trained on the same corpus.</strong> Each is its own
-      arm's best, which is what a demo of the best models means — and it is not the controlled
-      comparison. The unique-token count and the language mixture both differ, so nothing on this
-      page is evidence about autoregressive versus diffusion. That evidence is the crossover
-      measured on one matched corpus, and it lives in the project's log, not here.</p>
-    <p><strong>Five prompts of twelve, chosen by reading them.</strong> One of the twelve was not
-      Arabic script at all; the other six were dropped because one arm or the other degenerated.
-      Every generation made is in <code>reports/demo_samples.jsonl</code>.</p>
+    <p><strong>Both checkpoints are trained on the same corpus now.</strong> Earlier versions of
+      this page paired the two arms across different corpora and had to say so; this one does not.
+      What still differs is how long each trained — the autoregressive arm's best checkpoint is
+      its 4-epoch one, because it turns there and more compute actively makes it worse, while the
+      diffusion arm was still improving at 64. That gap is the finding, not a flaw in the setup,
+      and the measured crossover behind it lives in the project's log rather than here.</p>
+    <p><strong>The diffusion model is shown twice, and it is one model.</strong> Same weights,
+      same eight denoising steps; only the order it commits positions in differs. That order used
+      to be settled by the metrics and on this checkpoint it no longer is — one setting writes
+      well-formed words that circle back on themselves, the other writes more varied content and
+      occasionally fuses two words into something that is not one. Picking between them is a
+      fluent reader's call, so the page shows both instead of quietly choosing.</p>
+    <p><strong>Five prompts of twelve, chosen by reading them.</strong> One of the twelve is not
+      Arabic script at all and is the only one excluded for failing — eleven now survive, against
+      five on the checkpoint this page used to show. These five are kept so the two versions can
+      be compared. Every generation made is in <code>reports/demo_b64.jsonl</code>.</p>
     <p><strong>Neither model is reciting its corpus.</strong> Both were checked for verbatim
       n-gram overlap against the stream they trained on, with genuine held-out Urdu as the
       control — the check that caught an earlier checkpoint copying a quarter of its output back
@@ -345,18 +370,34 @@
           <div><dt>longest repeat</dt><dd>4</dd></div>
         </dl>
       </article>
-      <article class="panel diff">
+      <article class="panel diff_random">
         <header class="panel-head">
-          <span class="arm-name">Ravaan-DIFF</span>
+          <span class="arm-name">Ravaan-DIFF · random</span>
           <span class="arm-kind">masked diffusion</span>
         </header>
-        <p class="urdu" dir="rtl" lang="ur">پاکستان میں مہنگائی زیادہ ہے اور عوام کے مسائل کو حل کرنے میں کوئی کس نہیں ہے۔ اور حکومت کی جو حالت میں ہیں پہلے صورتحال یہ ہے نہ کہ پاکستان میں ان کی جو حالت میں ہے۔
-دوسری جانب اپوزیشن جماعتیں بھی یہ سیاست کر رہی ہیں اور اس جن کی وجہ سے اس حکومت کو نقصان دے رہی ہیں، اس کی وجہ یہ ہے کہ پاکستان مسلم لیگ (ن) کی حکومت کیا اور رہی ہے۔ اس سب میں بھی اپوزیشن جماعتیں حکومت کرتی ہے اور ن لیگ ن عمران خان کا اگلا ہی جماعت ہے اور اپنی جماعت ہے۔ اس ملک کو کونے کی اس حالت میں ہیں کہ انہیں یہ نہیں ہے کہ ہرآنے والا اس ملک میں ان کی مخالفت کر رہا ہے کہ وہ اپنا کو کیسا رہے ہیں۔ اس صورت میں پاکستان میں اس ملک کو پری بجا حقیقت یہ ہے کہ عمران خان کا</p>
+        <p class="urdu" dir="rtl" lang="ur">اسلام کا مقصد کیا ہے آ نے کے کہنے پر ملک چلانا یا پھر اس ملک کے لئے ہے جو قابل قبول کرنےلگے ۔
+یہ کہے مانے خواب نما شنے والے ہیں کوئی اور پھر بیرون ملک سے آئے آ کچھ آج ہر طرف ہمارے منافقت رونے لگے .اور کہہ رہے ہیں ملک کی حالت ہے ، ہے اس وقت مسلم لیگ (ن)ن) کی واحد جماعت ہے اس حکمران نے نے اپنے لئے رونا نہیں اور کیا تھا کے عمران خان کا نہیں پاکا ہے تو اس جماعت کے اور ملک تو کونے خواب میں مسلم لیگ(ن) کیا گیا ہے خواب تو کونے خواب ہو گا عوام ان کے تئیںبے فقف بے ہانپ رہے ہیں۔
+ حالات میں مزید کہا کر تے ہیں کہ ملک واپس جانے کا مطلب آ بدخواہ</p>
         <dl class="stats">
           <div><dt>script</dt><dd>1.00</dd></div>
-          <div><dt>distinct-1</dt><dd>0.48</dd></div>
-          <div><dt>rep</dt><dd>0.007</dd></div>
-          <div><dt>longest repeat</dt><dd>4</dd></div>
+          <div><dt>distinct-1</dt><dd>0.66</dd></div>
+          <div><dt>rep</dt><dd>0.000</dd></div>
+          <div><dt>longest repeat</dt><dd>3</dd></div>
+        </dl>
+      </article>
+      <article class="panel diff_gumbel">
+        <header class="panel-head">
+          <span class="arm-name">Ravaan-DIFF · gumbel 2</span>
+          <span class="arm-kind">masked diffusion</span>
+        </header>
+        <p class="urdu" dir="rtl" lang="ur">وہ عوام کی حکومت واپس آ نے کے لئے کوئی اقدامات نہیں کر رہی ہیں۔
+آجاس اختلاف کی جو جماعت پاکستان میں حکومت کر رہی ہے جو کہ بتائی جا رہی ہے کے عوام نے پاکستان مسلم لیگ (ن) کی حکومت کو چنا کچھ وہ کر رہے ہیں کہ وہ عمران خان کی حکومت پر آ رہے ہیں، وہ(ن) ہے اس پاکستان مسلم لیگ (ن) کی حکومت کی جو جماعت ہے اس کی کے عوام کو شکست کر چکی ہے اور جس جماعت پر عمران خان کا وزیراعظم آ رہا ہے وہ واحد جماعت ہے۔ اس پاکستان کے مانے پاکستان میں اس بات کا یہ ڈرامہ کیا رہا ہے کہ کوئی پوچھنے والا اس ملک میں ان کے لئے نہیں نہیں جانتا یہی ان کی توہین کی جا رہے ہیں۔
+آج پورے پاکستان میں اس اس امر کے لئے تیاری کر رہی ہے کہ عمران خان کا</p>
+        <dl class="stats">
+          <div><dt>script</dt><dd>1.00</dd></div>
+          <div><dt>distinct-1</dt><dd>0.44</dd></div>
+          <div><dt>rep</dt><dd>0.021</dd></div>
+          <div><dt>longest repeat</dt><dd>6</dd></div>
         </dl>
       </article>
       </div>
@@ -386,20 +427,30 @@
           <div><dt>longest repeat</dt><dd>2</dd></div>
         </dl>
       </article>
-      <article class="panel diff">
+      <article class="panel diff_random">
         <header class="panel-head">
-          <span class="arm-name">Ravaan-DIFF</span>
+          <span class="arm-name">Ravaan-DIFF · random</span>
           <span class="arm-kind">masked diffusion</span>
         </header>
-        <p class="urdu" dir="rtl" lang="ur">کا انتخاب ہے ، جو غیر ملکی کرنسی مارکیٹ کے سے میں ہے ، یہ اچھا بہتر ہے. یہ مارکیٹ کے حجم اور کرنسی کے زیادہ تجارت کی اجازت دیتا ہے.
-غیر الاقوامی کرنسی کرنسی مارکیٹ کے بارے میں یہ بہت محتاط ہے اور یہ بھی مشکل ہو جاتا ہے. لیکن تجارت کے انعقاد کے بارے میں نہیں ہے. کرنسی کے تبادلے کے لئے صرف ایک اشارے کے طور پر غیر کی کرنسیوں ٹریڈنگ کی طرف سے منعقد ہے. غیر ملکی کرنسی کی قیمتوں میں تیزی میں اضافہ ہوا ہے اور اس کی قیمت میں اضافہ ہوا ہے یا اس کے نتیجے میں کرنسی کے تبادلے کے نتیجے میں فروخت کیا جاتا ہے اور اس وجہ قیمت جس کا کے کے خلاف تجارت نہیں کر سکتے ہیں میں ہے.
-کیونکہ کرنسی کی مارکیٹ میں اس سے زیادہ اتار تجارت کا اضافہ طریقہ ہے.
-ایف ملکی کرنسی کے لئے آن</p>
+        <p class="urdu" dir="rtl" lang="ur">ہے ایکسچینج کے بعد نر کا ہے۔ چونکہ اسٹاک اس ایکسچینج سے باہر ہوسکتا ، جس کا تبادلہ دوسرے علاقوں سے شروع ہوتا ہے ، جس کے نتیجے ابتداء زیادہ ہوتا سکتے ہیں۔ اگرچہ کسی اور کمپنی کے لئے کوئنز کی تجارت کرنا زیادہ تر مشکل ہو جاتا ہے ، لیکن تجارت شروع کرنے سے پہلے اس کی ادائیگی کرنے پر لاگت آ جاتی ہے۔ کراسٹوڈیکس کے دنوںو کرنسیوں کی تعداد سوجن جو ہے یہاں تو مار پن مارکیٹ میں ہے ، ، چاہے وہ کم اور کم ہو (کنٹینلز ، یا اس سے زیادہ افراد میں) ہمیں صحیح سمت میں فروخت کیا گیا ہے اور کوئی بھی ہمیں گڈ کارن کرسکتا نہیں ، لیکن ہم کیسے ہیں میں نے ہوں گے ہم فاری طور پر اس سے زیادہ ہیں بخش یقینی راک ایس ، پلک ان ونگ ،نگ آن</p>
         <dl class="stats">
           <div><dt>script</dt><dd>1.00</dd></div>
-          <div><dt>distinct-1</dt><dd>0.44</dd></div>
-          <div><dt>rep</dt><dd>0.014</dd></div>
-          <div><dt>longest repeat</dt><dd>4</dd></div>
+          <div><dt>distinct-1</dt><dd>0.67</dd></div>
+          <div><dt>rep</dt><dd>0.000</dd></div>
+          <div><dt>longest repeat</dt><dd>3</dd></div>
+        </dl>
+      </article>
+      <article class="panel diff_gumbel">
+        <header class="panel-head">
+          <span class="arm-name">Ravaan-DIFF · gumbel 2</span>
+          <span class="arm-kind">masked diffusion</span>
+        </header>
+        <p class="urdu" dir="rtl" lang="ur">کا تاجر ہے جو انہیں غیر ملکی کرنسی کے تجارت کی اجازت دیتا ہے ، جو غیر ملکی غیر ملکی کرنسی سے شروع ہوتا ہے ، اور غیر ملکی کرنسی کے بند ہونے کی صورت میں غیر ملکی کرنسی کے لئے کرنسی ملکی کرنسی کی تجارت کرنا زیادہ تر مشکل ہو ہوسکتا ہے ، لیکن تجارت میں غیر ملکی کرنسی کی مارکیٹ پر ملکی غیر ملکی کرنسی کے جوڑے ہیں ملکی کرنے کے ل کے ہے ملکی مارکیٹ کو اس کی قیمت دی جاتی ہے ، یا فروخت ہونے کی صورت میں ، ، خرید میں ، اور اس کی خریداری میں فروخت ہوتی ہے۔ یا ، ملکی غیر ملکی کرنسی کے ساتھ ، خرید میں فروخت کیا جاتا ہے اور اس سے زیادہ جس کا کے کے اختیارات مارکیٹ میں فروخت ہوتے ہیں میں سے کسی ایک کی قیمت میں ، یا اس سے زیادہ مارکیٹ میں فروخت کیا جاتا ہے ، یا غیر غیر ملکی کرنسی کے ساتھ</p>
+        <dl class="stats">
+          <div><dt>script</dt><dd>1.00</dd></div>
+          <div><dt>distinct-1</dt><dd>0.34</dd></div>
+          <div><dt>rep</dt><dd>0.076</dd></div>
+          <div><dt>longest repeat</dt><dd>5</dd></div>
         </dl>
       </article>
       </div>
@@ -432,20 +483,32 @@
           <div><dt>longest repeat</dt><dd>3</dd></div>
         </dl>
       </article>
-      <article class="panel diff">
+      <article class="panel diff_random">
         <header class="panel-head">
-          <span class="arm-name">Ravaan-DIFF</span>
+          <span class="arm-name">Ravaan-DIFF · random</span>
           <span class="arm-kind">masked diffusion</span>
         </header>
-        <p class="urdu" dir="rtl" lang="ur">موجود رہ رہے ہیں، اور اس کے علاوہ کابل میں مختلف ملکوں کے سفیروں کے لوگوں کی تعداد واپسی کے ضمن میں افغانستان کے لیے بھی ایک کی حیثیت متعین کر دی گئی ہے۔
- کانگ کا نے افغانستان میں 19 انخلاء کے بعد سے کانگ کے مستقبل میں یہیں سے انکار کر دیا ہے۔ تاہم اس کے باوجود انتخابات بھی کانگ ان کی حکومت کا فیصلہ ہی ہے۔
-ان کے مطابق اس کے بغیر میں افغان سے تعلق رکھنے والے اور ان کے مخالفین میں سے تین لوگوں کی جماعت افغانستان کے بارے کے بات ایسے معلوم نہیں ہیں کہ وہ ملک میں مذہبی تبدیلیوں سے تعلق رکھتے ہیں اور وہ ان کی حکومت چلا رہے ہیں۔
-تاہم افغان حکومت کے حامی داروں کا کہنا ہے کہ وہ کابل میں اپنے انتظامی حکومت کے فیصلے کے بعد طالبان کی حکومت کو بھی یہاں قائم کریں گے۔ کانگ کا کے</p>
+        <p class="urdu" dir="rtl" lang="ur">نہیں رہ رہے۔
+گزشتہ فیصلہ بدھ کو افغان دارالحکومت میں پڑھا جا رہا اور کہا کہ پاکستان کی مقامی حکومت کے افغانستان میں آنے کے معاملے میں پاکستانی حکومت نے رد کر دیا ہے۔ ان کا کہنا کہ ہندوستان نے افغانستان کے لوگوں کس طرح سے ہی چلتا کیا۔ پاکستان کے لیے مشکل یہ تھا کہ انہوں نے ہندوستان کو پورے کابل میں تعینات کیا۔ انہوں نے کہا کہ ان لوگوں گھر سے پاکستان کو بلانے کی اجازت ہے‘ لیکن ان کے پاس دونوں ہیں اور ان سے پوچھا جاتا کہ وہ افغانستان میں موجود ہیں افغانستان میں ہے لیکن پاکستان میں نہیں ہیں۔ ہے۔ افغانستان میں تو افغان وہاں سے باہر پتہ چلانے والے کام کریں گے کہ اگر طرح بھی میں کریں گے کیونکہ پتہ چلانے والے کو کو پتہ جائے کہ وہ کب اس کر نہیں کریں گے۔ افغان حکومت کی تجویز تنقید کی۔
+ایرانی ملک کاقلب کا کہنا</p>
         <dl class="stats">
           <div><dt>script</dt><dd>1.00</dd></div>
-          <div><dt>distinct-1</dt><dd>0.55</dd></div>
+          <div><dt>distinct-1</dt><dd>0.56</dd></div>
           <div><dt>rep</dt><dd>0.000</dd></div>
           <div><dt>longest repeat</dt><dd>3</dd></div>
+        </dl>
+      </article>
+      <article class="panel diff_gumbel">
+        <header class="panel-head">
+          <span class="arm-name">Ravaan-DIFF · gumbel 2</span>
+          <span class="arm-kind">masked diffusion</span>
+        </header>
+        <p class="urdu" dir="rtl" lang="ur">موجود کام کر رہے ہیں اور ان اداروں کو افغانستان میں کیا جا رہا ہے۔ طالبان کے حکومت کی قبولیت کے نتیجے میں افغانستان کے حالات میں بہتری آ رہی ہے اور طالبان کی حکومت کا قبول یہ ہے کہ افغانستان کے حالات کس طرح بہتر ہوں گے اور ان کے لیے مشکل یہ ہے کہ افغانستان اور طالبان کو تسلیم کرنے کے لیے افغانستان میں طالبان کی حکومت کا بالخصوص طالبان کی حکومت کو قبولا لیا گیا ہے۔ ان کے بھیے کہ سکتے ہیں کہ ان کی حکومت حکومت کا قبول کیا گیا ہے اور افغانستان میں ہے لیکن ان کا یہ ہے کہ افغانستان کے طالبان نے ایسا کرنے کے لیے افغانستان میں طالبان کی حکومت کو قبول کرنے سے انکار کر دیا ہے اور افغانستان کی حکومت کو کہا ہے کہ وہ افغان حکومت کو تسلیم کرے لیکن طالبان کے کا رد تنقید ہے اور افغانستان میں طالبان کی حکومت کا اعلان کا کے</p>
+        <dl class="stats">
+          <div><dt>script</dt><dd>1.00</dd></div>
+          <div><dt>distinct-1</dt><dd>0.37</dd></div>
+          <div><dt>rep</dt><dd>0.091</dd></div>
+          <div><dt>longest repeat</dt><dd>8</dd></div>
         </dl>
       </article>
       </div>
@@ -478,22 +541,34 @@
           <div><dt>longest repeat</dt><dd>6</dd></div>
         </dl>
       </article>
-      <article class="panel diff">
+      <article class="panel diff_random">
         <header class="panel-head">
-          <span class="arm-name">Ravaan-DIFF</span>
+          <span class="arm-name">Ravaan-DIFF · random</span>
           <span class="arm-kind">masked diffusion</span>
         </header>
-        <p class="urdu" dir="rtl" lang="ur">پاکستانی مقیم پاکستانیوں کا mufti کرنے کا شکریہ اور سراہا۔
-وزیر خارجہ نے کہا کہ پاکستان اور برطانیہ کے مابین تعلقات اور یورپ کے ممالک کے تعلقات کو بڑھانے میں یورپی یونین اور یورپی یونین (ایس اور سی اے اے) کے درمیان سفارتی تعلقات کے عزم اور طریقے سے کام کرنے ہیں جس سے دونوں ممالک اور کے درمیان یورپ کے اہم امور پر تبادلہ خیال کرنے میں مدد ملے گی۔
-انہوں نے واضح کیا کہ ہم اور ساتھ سفارتی تعلقات کو یورپ اور انسانی حقوق کے کےپنوں میں سے وسیع کرنے کیلئے بھی پرعزم ہیں۔
-وزیر خارجہ
-پاکستان کے وزیر خارجہ نے ہم عمران کے کے مصروفیات کی دعوت کی، پاکستان نائب وزیر خارجہ مخدوم شاہ محمود قریشی، پاکستان کی وزیر خارجہ کے کو یورپ کی یورپ اور مستقبل کی خارجہ کانفرنس میں شرکت کی دعوت دی۔
-پاکستان کے وزیر خارجہ، وزیر اعظم جواد خان کی کے</p>
+        <p class="urdu" dir="rtl" lang="ur">سے زائد پاکستانیوں کا شکریہ بھی ادا کیا اور پاکستان کے ساتھ گہرا و معیاری عزم رکھتے ہوئے بھی برطانیہ اور شہریوں اور شکر گزار خطر ہوتا جا رہا ہے۔
+پاکستان اور برطانیہ تعلقات ایک وسیع اور تعمیری راستے پر گامزن ہیں لیکن اس کے باوجود اقتصادی اعتبار سے دنیا کسی ایک ملک کے برطانیہ میں کاروباری تعلقات بہت پروقار اور بہت سے مقامات پر یا دوسرے ملک کے مقابلے میں تعلقات کافی اچھے ہیں۔
+فنڈوڈ اکانومی ان تمام ممالک سے تعلق رکھنے والوں کے لیے نہایت اچھا ہے اور یہی وجہ ہے کہ یورپی ممالک یورپ اور برطانیہ اس کے پرچار کیلئے ہمآمد ہیں۔
+روپے کی نسبت چاندی کی کی بلند ترین سطح ڈالر کی قدر کم ہونے کی وجہ سے گرتی روپے کی سماجی قدر مستحکم نہیں ہو جاتی لیے ایسے سنگین حالات میں ابھی تک تفصیل پیش نہیں کی ہے انہوں اس امر کی کہ</p>
         <dl class="stats">
-          <div><dt>script</dt><dd>0.99</dd></div>
-          <div><dt>distinct-1</dt><dd>0.53</dd></div>
+          <div><dt>script</dt><dd>1.00</dd></div>
+          <div><dt>distinct-1</dt><dd>0.68</dd></div>
           <div><dt>rep</dt><dd>0.000</dd></div>
-          <div><dt>longest repeat</dt><dd>3</dd></div>
+          <div><dt>longest repeat</dt><dd>2</dd></div>
+        </dl>
+      </article>
+      <article class="panel diff_gumbel">
+        <header class="panel-head">
+          <span class="arm-name">Ravaan-DIFF · gumbel 2</span>
+          <span class="arm-kind">masked diffusion</span>
+        </header>
+        <p class="urdu" dir="rtl" lang="ur">کے برطانوی شہریوں کا بھی شکریہ ادا کیا اور انہیں مبارکباد کہ برٹش انہوں نے پاکستان اور برطانیہ، پاکستان اور برطانیہ کے تعلقات کے بارے میں مزید مضبوط بنانے میں مدد کی اور باہمی تعلقات، علاقائی اور بین الاقوامی امور پر تبادلہ خیال کیا۔ پاکستان کے برطانیہ کی طرف سے مقیم پاکستان اور برطانیہ کے برطانیہ میں اور کے کے دوطرفہ تعلقات تعلقات بہت سے ممالک اور ممالک کے کے تعلقات بھی انتہائی اہمیت کے حامل ہیں۔
+وزیرا ہاؤس کے مطابق، پاکستان اور برطانیہ نے کے کے اور برطانیہ کے درمیان دوطرفہ تعلقات تعلقات کو مزید مضبوط، علاقائی اور بین الاقوامی بڑھانے پر خوشی کا اظہار کیا۔ پاکستان اور برطانیہ کی حکومت برطانیہ کے درمیان باہمی تعلقات اور باہمی تعلقات اور تعاون میں اضافے کی اہمیت پر زور خیال کیا گیا۔ پاکستان اور برطانیہ کی طرف سے آنے اور برطانیہ کے مابین میں کا بات کرتے ہوئے، برطانوی سفیر نے تصدیق کی کے</p>
+        <dl class="stats">
+          <div><dt>script</dt><dd>1.00</dd></div>
+          <div><dt>distinct-1</dt><dd>0.44</dd></div>
+          <div><dt>rep</dt><dd>0.027</dd></div>
+          <div><dt>longest repeat</dt><dd>4</dd></div>
         </dl>
       </article>
       </div>
@@ -523,15 +598,29 @@
           <div><dt>longest repeat</dt><dd>3</dd></div>
         </dl>
       </article>
-      <article class="panel diff">
+      <article class="panel diff_random">
         <header class="panel-head">
-          <span class="arm-name">Ravaan-DIFF</span>
+          <span class="arm-name">Ravaan-DIFF · random</span>
           <span class="arm-kind">masked diffusion</span>
         </header>
-        <p class="urdu" dir="rtl" lang="ur">اپنائیں تو ہیں تو میں آپ کو اس لیے کہ آپ دیکھیں کہ میں بتاتی ہیں، لیکن آپ نہیں کو ئی شخصیت ہیں اور نہ ہی ان کا رشتہ ہے۔ انہوں نے کہا کہ ان کا تعلق بچوں سے ہوتا ہے، اور آپ کے بچوں کے ساتھ میں کہتی ہیں کہ میں ان کی اور بچوں کے ساتھ بہت عزت کرتے ہوں، یہ تو ممکن ہے کہ وہ اس دنیا میں اچھے بن ہوں، اور ان کے بچے انہوں عزت ہوں۔ ہوئے انہوں نے ان سے میرے والدین کے ساتھ بہت اچھا کے تعلقات تھے، لیکن انہوں نے اپنے والدین کی طرح بچوں سے متاثر کیا۔ میں نے ان کے شخصیت اور اخلاقی اقدار کو بہت متاثر کیا، اور نے کہا کہ میں بچوں سے بات نہیں ہوتی تھی کہ میں ان کے ساتھ بہترین کرتی ہوں لیکن جوتی ہے میں ان سے کسی سے چھوٹا نہیں ان سے</p>
+        <p class="urdu" dir="rtl" lang="ur">انہم کرتے ہیں تو مل کے، اگر چاہیں تو آپ کو کا ایک مل نہیں پاتا لیکن آپ نہیں کو… عام طور پر تنقید کا نام ہے ہے، تدّ صحافت کا بانی ہوتا ہے، اور اس ذریعہ آپ یونیورسٹیوں کے پروفیسر ہوتے ہیں اور جو کچھ آپ ان لوگوں کے ساتھ کرتے ہیں وہاں افسوس کی بات تو یہ ہے کہ جو اس کو اور جو پہلے اپنے کام ہیں ان کو بچے چاہ گئے۔ ایک صاحب جو کسی کسی کے ساتھنے کے لیے ایک وکیل پر ہوتے تھے، دوسروں کا کام دیتے ہیں۔ ان جی جی یا آپ کا شکریہ! ان وہ شخص بھی دل بے چین بیٹھا رہتا ہے۔ اسے کوئی سنل سنسنس کوئی بات نہیںائی: کہ میں اب تک بات ہاتھ میں ’گے ہوئے ہوں‘ ہے میں کرتے ہیں جس کی طرف اشارہ ہوتا ہے۔</p>
         <dl class="stats">
           <div><dt>script</dt><dd>1.00</dd></div>
-          <div><dt>distinct-1</dt><dd>0.47</dd></div>
+          <div><dt>distinct-1</dt><dd>0.63</dd></div>
+          <div><dt>rep</dt><dd>0.000</dd></div>
+          <div><dt>longest repeat</dt><dd>2</dd></div>
+        </dl>
+      </article>
+      <article class="panel diff_gumbel">
+        <header class="panel-head">
+          <span class="arm-name">Ravaan-DIFF · gumbel 2</span>
+          <span class="arm-kind">masked diffusion</span>
+        </header>
+        <p class="urdu" dir="rtl" lang="ur">مانتے تو ہیں لیکن مجھے آپ کو نہیں کونسا پتہ ہے کہ میں آپ کا دوست ہوں۔ لیکن آپ نہیں کونسا دوست میرے لیے آپ پر تنقید کا باعث ہے۔ نہیں ہے۔ آپ نے ان کو کبھی ناراض نہیں کیا ہے، اور آپ آپ سے ناراض کرتے ہیں۔ آپ چاہتے ہیں کہ آپ ان سے اور آپ کے ساتھ اور اٹھائیں۔
+لیکن یہ تو یہ ہے کہ آپ کو علمنے کوئی نہیں، نہیں ہے۔ آپ آپ سے پوچھتے ہیں کہ آپ نے آپ سے پوچھنے کے لیے کہا آپ نہیں کہتے تھے لیکن وہ جواب نہیں دیتے ہیں۔ کیسی مجھ سے راضی ہے، آپ سےتا ہے اور وہ آپ کو کہتا ہے۔ میں یہ نہیں مانتا۔ لیکن میں یہ نہیں مانتا کہ میں اس کے ساتھ میں نہیں ہوں۔ اور مجھے مجھے معلوم ہے میں اس سے ناراض ہوں یا نہیں میں اسے</p>
+        <dl class="stats">
+          <div><dt>script</dt><dd>1.00</dd></div>
+          <div><dt>distinct-1</dt><dd>0.42</dd></div>
           <div><dt>rep</dt><dd>0.000</dd></div>
           <div><dt>longest repeat</dt><dd>3</dd></div>
         </dl>
@@ -561,13 +650,18 @@
   <section class="closing">
     <h2>The honest caption</h2>
     <p>The autoregressive arm writes fluent, grammatical, locally coherent Urdu and loses the
-      thread over a paragraph, which is what 70M parameters buys. The diffusion arm writes real
-      Urdu clauses in the right register and assembles them less reliably — it drifts into
-      repeating a noun phrase when the canvas outruns it. The step count is doing more work than
-      it looks: at 160 denoising steps this same checkpoint collapses into a loop, and at 8 it
-      does not.</p>
-    <p>The verdict on this page is a careful reader's, not a fluent speaker's. Whether these are
-      Urdu prose or Urdu-shaped noise is a native speaker's judgement, and the project's human
-      evaluation is what settles it.</p>
+      thread over a paragraph, which is what 70M parameters buys. The diffusion arm, at 64 epochs
+      on the same corpus, now holds a paragraph together well enough that eleven of the twelve
+      prompts in the pool survive selection where five did before. The decoder is doing more work
+      than it looks: at 160 denoising steps this same checkpoint collapses into a loop, at 8 it
+      does not, and the two schedules shown here fail in opposite directions rather than in
+      degree.</p>
+    <p><strong>One native speaker has now read this page, and that is new.</strong> The project's
+      maintainer — a fluent Urdu speaker — first reported the diffusion samples reading worse than
+      the AR arm's, which is what sent the older checkpoint back for re-measurement; on this one
+      the same reader calls the output substantially more coherent. That is one reader and an
+      informed one, so it is a lead rather than a result: it does not replace the three
+      independent annotators §8.3's generation claim still needs, and every other Urdu judgement
+      in this project remains an LLM's.</p>
   </section>
 </div>

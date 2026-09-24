@@ -13,6 +13,13 @@ So this writes a **trace**: for every position, which step committed it and how 
 model was. `reports/demo_trace.json` is that, plus the per-position SentencePiece pieces, so a
 page can replay the decode rather than describe it.
 
+**The diffusion arm is traced twice, under both of §4.4's surviving unmasking schedules.** Same
+checkpoint, same seed, same eight steps — only the order it commits positions in differs, which
+is exactly the quantity this page draws. Finding BU is the reason: at 64 epochs `random` ties
+`gumbel 2` on script consistency and leads distinct-1, so §8.3's metrics no longer choose between
+them, and animating one alone would assert a default the measurements stopped supporting. See
+:data:`TRACKS`.
+
 **The traced loop is asserted equal to the shipped one.** The diffusion trace is produced by a
 re-implementation of `ravaan_infer.sampling.diffusion.sample_diffusion`'s commit loop — the
 library function returns only the finished tensor and has no hook to record intermediate state.
@@ -154,6 +161,16 @@ GUMBEL = 2.0
 TEMPERATURE = 1.0
 TOP_P = 0.95
 
+#: What the page animates: the AR arm, and the *same* diffusion checkpoint decoded under both
+#: of §4.4's surviving A4 schedules. Finding BU is why there are two — at 64 epochs `random`
+#: ties `gumbel 2` on script consistency and leads distinct-1, so §8.3 no longer picks between
+#: them and showing one would assert a default the measurements do not support. The commit order
+#: is the one thing this page exists to draw, and the schedule *is* the commit order.
+TRACKS = (
+    ("diff", "gumbel", GUMBEL),
+    ("diff_random", "random", 0.0),
+)
+
 #: Seeds drawn per prompt per arm before the filter and the selection rule run. Sixteen is enough
 #: that a prompt which degenerates on every draw is visibly a property of the prompt rather than
 #: of the seed — and that case should stay in the pool and stay off the page.
@@ -178,7 +195,10 @@ def _pieces(sp, ids: list[int], first_text_id: int) -> list[str | None]:
 
 
 @torch.no_grad()
-def _trace_diffusion(arm, prompt, *, seed: int, forbid, device: str) -> dict:
+def _trace_diffusion(
+    arm, prompt, *, seed: int, forbid, device: str,
+    schedule: str = SCHEDULE, gumbel: float = GUMBEL,
+) -> dict:
     """Run the absorbing-state decode and record every commit. Asserted against the real sampler.
 
     This is `sample_diffusion`'s loop with two lines added to remember what each step did. It is
@@ -221,13 +241,22 @@ def _trace_diffusion(arm, prompt, *, seed: int, forbid, device: str) -> dict:
         forwards += 1
         ids, confidence = sample_ids(logits, config, generator=generator, forbid=forbid_ids)
 
-        score = confidence.clamp_min(1e-20).log()
-        scale = GUMBEL * (1.0 - (index + 1) / len(counts))
-        if scale > 0:
-            draw = torch.rand(tokens.shape, device=device, generator=generator).clamp(
-                1e-20, 1.0 - 1e-20
-            )
-            score = score + scale * -(-draw.log()).log()
+        # Mirrors `sample_diffusion`'s three branches, including which of them draw from the
+        # generator and in what order — `random` consumes one `torch.rand` where `gumbel` with a
+        # positive scale consumes one and `confidence` consumes none. Get that wrong and the two
+        # decoders diverge on seed alone, which the assertion below would report as drift.
+        if schedule == "random":
+            score = torch.rand(tokens.shape, device=device, generator=generator)
+        elif schedule == "confidence":
+            score = confidence
+        else:
+            score = confidence.clamp_min(1e-20).log()
+            scale = gumbel * (1.0 - (index + 1) / len(counts))
+            if scale > 0:
+                draw = torch.rand(tokens.shape, device=device, generator=generator).clamp(
+                    1e-20, 1.0 - 1e-20
+                )
+                score = score + scale * -(-draw.log()).log()
         score = score.masked_fill(~masked, float("-inf"))
 
         order = score.argsort(dim=-1, descending=True)
@@ -251,8 +280,8 @@ def _trace_diffusion(arm, prompt, *, seed: int, forbid, device: str) -> dict:
         model,
         torch.tensor([prompt.tokens], dtype=torch.long, device=device),
         steps=STEPS,
-        schedule=SCHEDULE,
-        gumbel=GUMBEL,
+        schedule=schedule,
+        gumbel=gumbel,
         locked=torch.tensor([prompt.locked], dtype=torch.bool, device=device),
         config=config,
         forbid=forbid,
@@ -272,6 +301,8 @@ def _trace_diffusion(arm, prompt, *, seed: int, forbid, device: str) -> dict:
         "steps": steps_log,
         "forwards": forwards,
         "seconds": round(elapsed, 4),
+        "schedule": schedule,
+        "gumbel": gumbel if schedule == "gumbel" else None,
     }
 
 
@@ -419,18 +450,29 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
         )
         ar_prompt = prompt_builders.lm(ar_arm.framing, "ar", prefix=prefix_ids)
 
-        draws: dict[str, list[dict]] = {"diff": [], "ar": []}
+        names = [name for name, _, _ in TRACKS] + ["ar"]
+        draws: dict[str, list[dict]] = {name: [] for name in names}
         for offset in range(DRAWS):
             seed = base_seed + offset
             # `</s>` is forbidden for the diffusion arm only: on a fixed-width canvas it is not a
             # stop signal, it is a token that wins 47% of first commits (Finding AO).
-            diff = _trace_diffusion(
-                diff_arm,
-                diff_prompt,
-                seed=seed,
-                forbid=diff_arm.forbidden + (diff_arm.eos_id,),
-                device=device,
-            )
+            # Both schedules run from the same seed, so a difference between the two panels is
+            # the commit order and nothing else.
+            traced = [
+                (
+                    name,
+                    _trace_diffusion(
+                        diff_arm,
+                        diff_prompt,
+                        seed=seed,
+                        forbid=diff_arm.forbidden + (diff_arm.eos_id,),
+                        device=device,
+                        schedule=schedule,
+                        gumbel=gumbel,
+                    ),
+                )
+                for name, schedule, gumbel in TRACKS
+            ]
             ar = _trace_ar(
                 ar_arm,
                 ar_prompt,
@@ -439,7 +481,7 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
                 forbid=ar_arm.forbidden,
                 device=device,
             )
-            for name, draw in (("diff", diff), ("ar", ar)):
+            for name, draw in (*traced, ("ar", ar)):
                 draw["seed"] = seed
                 draw["pieces"] = _pieces(sp, draw["tokens"], first_text_id)
                 draw["text"] = sp.decode([t for t in draw["tokens"] if t >= first_text_id])
@@ -451,7 +493,7 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
                 draws[name].append(draw)
 
         shown = True
-        for name in ("diff", "ar"):
+        for name in names:
             eligible = [d for d in draws[name] if d["rejected"] is None]
             # A prompt on which every draw of either arm is rejected stays in the pool and off
             # the page — that is the case the filter exists to make visible rather than to paper
@@ -469,11 +511,12 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
             ]
 
         print(
-            f"  {spec['id']:<11} {_note('diff', record, draws):<44} {_note('ar', record, draws)}",
+            f"  {spec['id']:<11} "
+            + "  ".join(f"{_note(name, record, draws):<44}" for name in names),
             file=sys.stderr,
         )
         pool.append({"id": spec["id"], "prefix": spec["prefix"], "shown": shown,
-                     "diff": record["diff_pool"], "ar": record["ar_pool"]})
+                     **{name: record[f"{name}_pool"] for name in names}})
         if shown:
             samples.append(record)
         else:
@@ -486,6 +529,10 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
         "steps": STEPS,
         "schedule": SCHEDULE,
         "gumbel": GUMBEL,
+        "tracks": [
+            {"name": name, "schedule": schedule, "gumbel": gumbel if schedule == "gumbel" else None}
+            for name, schedule, gumbel in TRACKS
+        ],
         "temperature": TEMPERATURE,
         "top_p": TOP_P,
         "diff_release": arms["diff"].release,
@@ -512,7 +559,8 @@ def main() -> int:
     pool_path = args.out.with_name(args.out.stem + "_pool.json")
     pool_path.write_text(json.dumps(pool, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"\nwrote {args.out} — {len(payload['samples'])} samples", file=sys.stderr)
-    drawn = sum(len(entry[arm]) for entry in pool["pool"] for arm in ("diff", "ar"))
+    names = [name for name, _, _ in TRACKS] + ["ar"]
+    drawn = sum(len(entry[arm]) for entry in pool["pool"] for arm in names)
     print(f"wrote {pool_path} — {drawn} draws", file=sys.stderr)
     return 0
 

@@ -6,6 +6,18 @@
   "steps": 8,
   "schedule": "gumbel",
   "gumbel": 2.0,
+  "tracks": [
+   {
+    "name": "diff",
+    "schedule": "gumbel",
+    "gumbel": 2.0
+   },
+   {
+    "name": "diff_random",
+    "schedule": "random",
+    "gumbel": null
+   }
+  ],
   "temperature": 1.0,
   "top_p": 0.95,
   "diff_release": {
@@ -396,6 +408,360 @@
       "longest_repeat": 6
      },
      "rejected": "longest repeated run 6 words — a clause on a loop"
+    }
+   ],
+   "diff_random": [
+    {
+     "seed": 4,
+     "text": "آج موسم بہت تبدیل ہو رہا تھا تاہم اس دوران گزشتہ طرح چل رہی خبر آئی تھی، لاہور کے ندی نالوں، مساجدمیں گرج چمک گرمی کے باعث",
+     "stats": {
+      "characters": 111,
+      "words": 24,
+      "letters": 85,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9583333333333334,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 7,
+     "text": "آج موسم بہتا ہے میں جاؤں گا کوئی ٹرپ کرو تو اس موسم کی نہیں آپ کو موسم اور جو ضرورت ہے ان میں انداز اپنانا کسی",
+     "stats": {
+      "characters": 99,
+      "words": 25,
+      "letters": 75,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.88,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 8,
+     "text": "آج موسم بہت بداناہم ہے جب کہ اپنا چھ پہر ویگن رکھتا ہے کل و ج وہ نہ سیوں رات کے تاب جا تا ہے اور نہ",
+     "stats": {
+      "characters": 88,
+      "words": 24,
+      "letters": 64,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.875,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 11,
+     "text": "آج موسم بہت خشک اور کہیں رہا، خشک ہے اور اب موسم زیادہ واضح طور پر زائدگرنے کا امکان ہے مگرمزید گرمیوں کی آمد ہی سردی",
+     "stats": {
+      "characters": 106,
+      "words": 23,
+      "letters": 82,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8695652173913043,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 15,
+     "text": "آج موسم بہت پرانا ہو گیا کالا دھار بارش شروع ہوا عمر وار کم ہو سکتا ہو جاتا ہے تین بچے مختصر عمر میں ہو چکے اس طرح کا",
+     "stats": {
+      "characters": 106,
+      "words": 26,
+      "letters": 80,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8461538461538461,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 12,
+     "text": "آج موسم بہت زیادہ ھے اور اسکی وجہ یہ ہے کہ موسم زیادہ ہو نی ھے ۔ اسی زیادہ تر خواتین نے سارا سال موسم اِس مزے سے میچ کیا ۔",
+     "stats": {
+      "characters": 111,
+      "words": 28,
+      "letters": 80,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8214285714285714,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 6,
+     "text": "آج موسم بہت گرم ہے اور موسم برس کے موسم میں معمول پر بارش ہوتی ہے ہر وقت کوئی موسم پر رہنے کو بھوک میں نہیں تو موسم سرما میں میں",
+     "stats": {
+      "characters": 117,
+      "words": 28,
+      "letters": 89,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.7142857142857143,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 2,
+     "text": "آج موسم بہت بڑا ہے، اور گھر میں جو برفانیاں، وہ کچھ ایسی ہیں، کہ تبدیلی ابدی سے بھی ہو سکتی ہے۔\n۔ نظم",
+     "stats": {
+      "characters": 90,
+      "words": 21,
+      "letters": 64,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 5,
+     "text": "آج موسم بہت سرد ہو رہا تھا کہ درغش نے خطبہ کہہ دیا۔\n’’نہیں��� داؤ داخل کر سکتا ہے۔\nاس لیے سورج",
+     "stats": {
+      "characters": 83,
+      "words": 19,
+      "letters": 57,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 3,
+     "text": "آج موسم بہت حسین ہے اور ہر ہجوم دنیا کو خوبصورتی سے دکھایا جا رہا ہے۔ راۓ بابو میاِن شاہ تیرا پہاڑ کرتا اور",
+     "stats": {
+      "characters": 96,
+      "words": 21,
+      "letters": 73,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9523809523809523,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 0,
+     "text": "آج موسم بہت زیادہ گرمی سے شادی مر بھی گا؟ اور سردیوں کی چھٹیوں میں اذان بھی حرام ہے۔\nمزید پڑھیں\nمہاتشام گھر میں بھی",
+     "stats": {
+      "characters": 104,
+      "words": 22,
+      "letters": 80,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8636363636363636,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 10,
+     "text": "آج موسم بہت اچھی آبا ہوا ہے تو گرمی کیلئے سب سے دیربلائیں تو چلیں\nغذائیائیں ؟ گرمی کا موسم بہت خوشگوار ہے کیونکہ",
+     "stats": {
+      "characters": 101,
+      "words": 21,
+      "letters": 79,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8571428571428571,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 9,
+     "text": "آج موسم بہت اچھا ہے ؟ صبح سے سورج بہت زیادہ زیادہ اس کی وجہ کیا ہے ۔ شام میں موسم پینے کی وجوہات یہ ہیں ؟ –",
+     "stats": {
+      "characters": 96,
+      "words": 25,
+      "letters": 67,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.84,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 14,
+     "text": "آج موسم بہت خوشن ہے۔ زندگی کے ہاتھ بڑے بڑےلفظ ہے۔ موسم بڑے خوشدل پر آتا ہے۔ وہاں موسم\nزلزلوں اورسخا",
+     "stats": {
+      "characters": 88,
+      "words": 18,
+      "letters": 67,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.7777777777777778,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 1,
+     "text": "آج موسم بہت خشک اور�ا پڑ گیا ہے ، موسم کہیں بہتر ہو گیا ہے تو عموماً جلدی اور اچھی نگرانی کریں ۔ ہم سب ،",
+     "stats": {
+      "characters": 93,
+      "words": 23,
+      "letters": 65,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8695652173913043,
+       "2": 0.9545454545454546,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 13,
+     "text": "آج موسم بہت موزوں دن ہے کرنے والے سے سنتے ہوئے کہا جاتا تھا آج\nکوز عزت دن ہے کرنے والے عالی نام کے تمغے پر",
+     "stats": {
+      "characters": 95,
+      "words": 23,
+      "letters": 72,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8260869565217391,
+       "2": 0.8636363636363636,
+       "3": 0.9047619047619048,
+       "4": 0.95
+      },
+      "repetition": 0.050000000000000044,
+      "longest_repeat": 4
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
     }
    ],
    "ar": [
@@ -1113,6 +1479,361 @@
      "rejected": "distinct-1 0.60 — one word sprayed across the canvas"
     }
    ],
+   "diff_random": [
+    {
+     "seed": 3,
+     "text": "ملک کی معیشت میں بہتری کے لیے اپنے فرائض سر انجام دینے میں لیے ہوئے ہے۔جسٹس (ر) شہباز شریف کو یقین تھا کہ ملک کی معیشت دھڑ سے بدتر ہوتا گئی ہے مگر اب",
+     "stats": {
+      "characters": 120,
+      "words": 27,
+      "letters": 90,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": null
+    },
+    {
+     "seed": 8,
+     "text": "ملک کی معیشت میں بہتری کے لیے غیر ضروری اقدامات کرنا ہیں جو کہ ملکی مفاد میں تجارت کرتے ہیں، جب کہ مسئلہ یہ ہے کہ ان کے نظرییے مختلف ہوں گے۔قومی سلامتی کونسل کے",
+     "stats": {
+      "characters": 131,
+      "words": 28,
+      "letters": 101,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8928571428571429,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 7,
+     "text": "ملک کی معیشت میں بہتری کے لیے متعدد پالیسیاں تھیں جن میں میں جنہیں پی ایم ڈی پی نے اکٹھا کیا میں 0.5 فیصد اور 0.2 فیصد ہیں فیڈفنانس میں موجود مطابق",
+     "stats": {
+      "characters": 118,
+      "words": 25,
+      "letters": 87,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 5,
+     "text": "ملک کی معیشت میں بہتری کے لیے خواہ حکمت عملی کہا جائے گا۔ تحریک پاکستان بنانے سے متعلق تحریک زیر قیادت منصوبے یہ واضح کرنے کا راستہ فوری طور پر نہیں دیا جائے گا۔ حکومتی سیاست دانوں پر مشتمل",
+     "stats": {
+      "characters": 160,
+      "words": 32,
+      "letters": 126,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.875,
+       "2": 0.967741935483871,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 9,
+     "text": "ملک کی معیشت میں بہتری کے لیے اہم کردار ادا کرنے کی حوصلہ افزائی کرنا اور اس مقصد کے لیے ملک کی سیاست میں منظم جمہوری نظام کو تشکیل دینا، اس بحران پر قابو کام لینا اور اس",
+     "stats": {
+      "characters": 141,
+      "words": 31,
+      "letters": 109,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8709677419354839,
+       "2": 0.9666666666666667,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 10,
+     "text": "ملک کی معیشت میں بہتری کے لیے فنڈ جاری کیا ہے ْملک شہبازشریف نے مسائل گفتگو کا آغاز وزیراعظم سابق وزیراعظم اظہر محمود خان ارب پتی کا دور صدارت خطاب کیا ابھی ہم گفتگو کا حصہ",
+     "stats": {
+      "characters": 143,
+      "words": 29,
+      "letters": 113,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8275862068965517,
+       "2": 0.9642857142857143,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 1,
+     "text": "ملک کی معیشت میں بہتری کے لیے کیا گیا تھا۔تمام غربت نے جو کہا تھا کہ جو کم تھا اور سب سے زیادہ ٹھیکا نے جو ایک سال کے میں کیا کہا اور نتائج میرے سروے میں",
+     "stats": {
+      "characters": 124,
+      "words": 30,
+      "letters": 93,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.7333333333333333,
+       "2": 0.9655172413793104,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 2,
+     "text": "ملک کی معیشت میں بہتری کے لیے لے کر اور بھرپور کام کر رہا ہے ۔ انہوں نے کہا کہ پاکستانی سرمایہ کاروں نے شکر گزار کر دیا کہ جسٹس طارق باجوہ کو لے کر اور تیار کریں اور",
+     "stats": {
+      "characters": 136,
+      "words": 32,
+      "letters": 103,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.75,
+       "2": 0.9354838709677419,
+       "3": 0.9666666666666667,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 3
+     },
+     "rejected": null
+    },
+    {
+     "seed": 13,
+     "text": "ملک کی معیشت میں بہتری کے لیے بھی مدد دے گی ۔\n (س) پی بی ایف کیئرئر سینٹر میں انفرا سٹرکچر کی سہولیات کے لیے اقدامات کرے گی، اناظ (",
+     "stats": {
+      "characters": 102,
+      "words": 23,
+      "letters": 73,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 4,
+     "text": "ملک کی معیشت میں بہتری کے لیے بچت ضروری ہے گزشتہ سال چل رہے اس میں خسارے کاتقریبا کم جائزہ لیا جائے گا۔\nمیانائی کی واپسی پر ملک اور بیرون ملک 250 روپے کے",
+     "stats": {
+      "characters": 124,
+      "words": 27,
+      "letters": 93,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9629629629629629,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 15,
+     "text": "ملک کی معیشت میں بہتری کے لیے مزید مددگار ثابت ہو سکتی ہے، رپورٹ ہے پاکستان\nاس سے قبل گزشتہ روز اے پی۔ کی ایل۔ کے ساتھ ارب سے زائد رقم جمع بحالی کے بعد",
+     "stats": {
+      "characters": 122,
+      "words": 28,
+      "letters": 91,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9285714285714286,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 12,
+     "text": "ملک کی معیشت میں بہتری کے لیے مؤثر اقدامات کے عزم کا اعادہ کیا۔\nپاکستانی دہشت گردی اس وقت پاکستان بہت سے چیلنجز سامنا کر رہا ہے۔ واقعے کے دوران ہونے واقعات اور پاکستان کے اندرونی اور دفاعی",
+     "stats": {
+      "characters": 159,
+      "words": 31,
+      "letters": 126,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8709677419354839,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 0,
+     "text": "ملک کی معیشت میں بہتری کے لیےلاہی بنائے، نیک اکاؤنٹ میں مراکش نے 80 ہزار 19661 ووٹ کیے۔\nعالمی خبر ایجنسی نے بتایا کہ Abrarالاتفاق نے 901 ووٹ",
+     "stats": {
+      "characters": 111,
+      "words": 22,
+      "letters": 78,
+      "scripts": {
+       "arabic": 0.9358974358974359,
+       "latin": 0.0641025641025641
+      },
+      "script_consistency": 0.9358974358974359,
+      "distinct": {
+       "1": 0.8636363636363636,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 11,
+     "text": "ملک کی معیشت میں بہتری کے لیے دعا رضوان چل رہے ہیں۔جبکہ پاکستانی فوج کو میزائل لگنے سے روکنے کے لیے دعا رضوان چکرا رہے ہیں۔\nملک کی مجموعی سکیورٹی کی کے لئے پی آر کا",
+     "stats": {
+      "characters": 135,
+      "words": 29,
+      "letters": 104,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8275862068965517,
+       "2": 0.9642857142857143,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 6,
+     "text": "ملک کی معیشت میں بہتری کے لیے کام رہے ہیں، عمران خان خاموش رہی تو حکومت کو سپورٹ مل رہی ہے، عمران خان نے کہا عمران حکومت کو اس بات کو سمجھ جانا چاہیے، عمران خان",
+     "stats": {
+      "characters": 131,
+      "words": 29,
+      "letters": 99,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.6896551724137931,
+       "2": 0.8928571428571429,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": "distinct-1 0.69 — one word sprayed across the canvas"
+    },
+    {
+     "seed": 14,
+     "text": "ملک کی معیشت میں بہتری کے لیے ایک ٹھوس کاوش ہیں، اور اس طرح عمار کی روایت کے مطابق اور زیادہ کارآمد ہوگی۔\nآئی ایم ایف کی شرح کے مطابق اور یہ کہ دنیا",
+     "stats": {
+      "characters": 119,
+      "words": 27,
+      "letters": 90,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8148148148148148,
+       "2": 0.9230769230769231,
+       "3": 0.96,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 3
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    }
+   ],
    "ar": [
     {
      "seed": 11,
@@ -1822,6 +2543,360 @@
       },
       "repetition": 0.0714285714285714,
       "longest_repeat": 5
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    }
+   ],
+   "diff_random": [
+    {
+     "seed": 10,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ صبح شام جو بْباغ ہے ٹیُباغے سابق وزیراعظم شاہ محمود خان کو دعوتِ طولٰی دیتے ہیں ابھی ہم اُن میں حصہ نہیں",
+     "stats": {
+      "characters": 105,
+      "words": 22,
+      "letters": 78,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": null
+    },
+    {
+     "seed": 1,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہفقط غربت کےلیے ایک مقصد تھا پروگرام اس کم-\"ظفرہ غربتا نے صرف ایک سال کے کی کیا کہا اور نتائج میرے شفاف میں پیدا",
+     "stats": {
+      "characters": 111,
+      "words": 24,
+      "letters": 86,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9583333333333334,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 5,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ وہم کہاوت ہے کہ حب الملوکی تحریک راہِ کی پر گامزن کرنے کو ترجیح دینے والوں پر نہیں ہوتی۔المومنیندہ اللہ تعالیٰ",
+     "stats": {
+      "characters": 111,
+      "words": 21,
+      "letters": 87,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9523809523809523,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 14,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ وزیراعظم وفاقی کابینہ کے ایک اعلا عماری روایت کے مطابق منصوبہ بروئے کار لائیں،ایف اے ٹی ایف کی ماضی کے اقدامات اور کارکردگی بالخصوص دنیا خصوصاً",
+     "stats": {
+      "characters": 144,
+      "words": 26,
+      "letters": 116,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9230769230769231,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 7,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ چناں چہ میں عوام کو پی اے ڈی پی نے کامیاب کیا میں میں 98 فیصد لیڈر ہوں۔ا،وزیر اعظم نےفخریدہ بینظیر بھٹو دیا،",
+     "stats": {
+      "characters": 109,
+      "words": 23,
+      "letters": 81,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8695652173913043,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 4,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ پاکستان میں گزشتہ 70 سال کی دنیا کی تاریخ کاتقریبا ریکارڈ جائزہ لیا جائے گا کہ گزشتہ سال اس کی کل کا ملک تخمینہ 2 کروڑ 250 ارب کے حساب",
+     "stats": {
+      "characters": 135,
+      "words": 30,
+      "letters": 99,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8666666666666667,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 15,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ سیاسی جماعت کے مذہبی رہنما نہ لینے پر سزا مانگنے کی سزا چھ روزہ اور ان کے خلاف کی جانے والی سزا ۔ ٹیسٹ میچوں اور دو روز الضیاء",
+     "stats": {
+      "characters": 127,
+      "words": 29,
+      "letters": 97,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8275862068965517,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 3,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ صدر مملکت کی سرمایہ کاری ہماری ترجیح ہے۔ کسانوں کے حقوق کی کوئی پرواہ نہیں کرتا۔ سیلاب غریب عوام کے حقوق سے انصاف نہیں ہوتا سکھ برادری کا فائدہ پہنچا",
+     "stats": {
+      "characters": 150,
+      "words": 30,
+      "letters": 118,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8666666666666667,
+       "2": 0.9655172413793104,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 6,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ اس سال اگر عمران خان حکومت ہوتی تو پھر وزیر اعظم عمران خان صاحب نے مارشل ایوب خان نے عمران حکومت حکومت بنائی جبکہ اس وقت کے چیئرمین سینٹ بھی آمین",
+     "stats": {
+      "characters": 146,
+      "words": 31,
+      "letters": 115,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.7419354838709677,
+       "2": 0.9666666666666667,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 9,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ وزیر اعظم نوازشریف کی گرفتاری کی مذمت کرتے ہیں شہباز شریف کی گرفتاری کی آڑ میں منظم کاروائی ہورہی ہے ، حکومت کو اس صورتحال پر قابو نوٹس لینا چاہیے ،وزیر",
+     "stats": {
+      "characters": 153,
+      "words": 31,
+      "letters": 120,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8709677419354839,
+       "2": 0.9333333333333333,
+       "3": 0.9655172413793104,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 3
+     },
+     "rejected": null
+    },
+    {
+     "seed": 0,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ ’قبضادیاتفایہ’ کو 19661 ووٹ۔\nعالمی خبر ایجنسی نے کہا کہ ‘الاتفا’ نے 90.1 ووٹ کے",
+     "stats": {
+      "characters": 80,
+      "words": 15,
+      "letters": 51,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9333333333333333,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 11,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ خواتین کے گھپلے بنانے والوں کو معاملہ سپریم کورٹ آپ کے سامنے لے کر پیش کر رہے ہیں۔\nملک میں آج کب کیوں سے آئی آر کا سراغ",
+     "stats": {
+      "characters": 120,
+      "words": 28,
+      "letters": 91,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9285714285714286,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 13,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ بہت سے انسان حضرت موسیٰ (س) کی قربانیاں ان کی قربانیوں کے رحم میں پڑی ٓ، کہ انہوں نے کہا کہ اللہ ان کو قربان (ج",
+     "stats": {
+      "characters": 112,
+      "words": 26,
+      "letters": 80,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8846153846153846,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 2,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ یہ کہہ کر شرم آ۔\nوزیر اعظم نے کہا کہ ہاں، اس نے شکر گزار کر دیا کہ آپ باہر سے تشریف لے لیں اور تیار رہیں اور پھر",
+     "stats": {
+      "characters": 113,
+      "words": 29,
+      "letters": 82,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8620689655172413,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 12,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ دہشت گردی پاکستان کا خاتمہ کیا۔\nوزیراعظم نے کہا اس وقت دشمن بہت کام کررہا ہوں، سمجھتا نکلا کہاکہ ہم کبھی اپوزیشن میں دہشت گردی کے خلاف بول نہیں جاتے",
+     "stats": {
+      "characters": 149,
+      "words": 30,
+      "letters": 117,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9333333333333333,
+       "2": 0.9655172413793104,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 8,
+     "text": "وزیر اعظم نے اپنے خطاب میں کہا کہ ابھی کے کے بادل ہیں کہ کے کے بادل ان دنوں ہی میں تھے کہ ابھی کے کے بادل ان کے نظری عمل کو لگے۔\nقومی سلامتی کونسل کے ذیلی",
+     "stats": {
+      "characters": 121,
+      "words": 30,
+      "letters": 90,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.6,
+       "2": 0.7931034482758621,
+       "3": 0.8571428571428571,
+       "4": 0.9259259259259259
+      },
+      "repetition": 0.07407407407407407,
+      "longest_repeat": 4
      },
      "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
     }
@@ -2539,6 +3614,360 @@
      "rejected": "longest repeated run 7 words — a clause on a loop"
     }
    ],
+   "diff_random": [
+    {
+     "seed": 1,
+     "text": "چائے پینے کے بعد وہ خوب رو با ل یٰاب تھے اور سبھوں نے ایک ساتھ والی کلاس انگریزی کی تھی۔ اچھی طرح پڑھ کر ہمت دی تھا۔ فی",
+     "stats": {
+      "characters": 100,
+      "words": 24,
+      "letters": 73,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": null
+    },
+    {
+     "seed": 3,
+     "text": "چائے پینے کے بعد وہ کئی ان کاموں کو بھی انجام دینے میں کامیاب ہوجاتا ہے۔ قدرت کا ایک راز وہی ہے جو کبھی کسی اور معاملے کے گرد گھومتا پھر",
+     "stats": {
+      "characters": 117,
+      "words": 26,
+      "letters": 90,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": null
+    },
+    {
+     "seed": 10,
+     "text": "چائے پینے کے بعد وہ نواز شریف کے تو بقیہآبائ کیلئے کچھستہ اور فراغام رکھتے گا ؟یہ کیا تھی ؟پسندوان جا کر",
+     "stats": {
+      "characters": 85,
+      "words": 17,
+      "letters": 66,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": null
+    },
+    {
+     "seed": 2,
+     "text": "چائے پینے کے بعد وہ کیا چیز ہوئی، جو ٹھیک ہے۔ بھغم کچھ ایسی ہیں، کہ وہ سب گلاس سے اچھا ہو سکتا ہے۔ کووڈ۔ کوئی خلل",
+     "stats": {
+      "characters": 94,
+      "words": 22,
+      "letters": 67,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9545454545454546,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 4,
+     "text": "چائے پینے کے بعد وہ بھی یہی کوشش کرنے اور مارتے چل دیے۔ آئی ٹی ٹیم سے موکل کی گئی جانچ اسی ذرائع سے ملنے جا کر۔مگر",
+     "stats": {
+      "characters": 95,
+      "words": 22,
+      "letters": 71,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9545454545454546,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 15,
+     "text": "چائے پینے کے بعد وہ دن ایسنگ بیگ پر شروع ہوا عمر لاڈ عمر لیٹ کینسر ہے تین بچے پاس ہونے میں ریپٹرری طرح کا ہو گا",
+     "stats": {
+      "characters": 92,
+      "words": 22,
+      "letters": 70,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9545454545454546,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 9,
+     "text": "چائے پینے کے بعد وہ فلیٹ میں سے کرسی پرزی کے لیے بیٹھا ہوتا ہے ۔ شام 5 بجے کتنے پر ہے یہ اس لیے ہے لہٰذا کراچی اپنی آمد سالانہ",
+     "stats": {
+      "characters": 107,
+      "words": 26,
+      "letters": 78,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8846153846153846,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 11,
+     "text": "چائے پینے کے بعد وہ خاص بدن زور سے لگا اور سارے جسم ہرا رہا۔پہلے دن میں ایک مصروف ہوا میں بیٹھا ہوا ہونٹوں سے ٹکراتا ہوا لگ رہا",
+     "stats": {
+      "characters": 108,
+      "words": 24,
+      "letters": 83,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8333333333333334,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 6,
+     "text": "چائے پینے کے بعد وہ احساس ختم ہونے لگتی جس میں معمول پر بھوک ہوتی ہے۔ ہر صبح سے صبح ٹھیک رہنے سے بھوک میں کمی نہیں ہوتی اپنے خود کو تبدیل کرتی",
+     "stats": {
+      "characters": 123,
+      "words": 28,
+      "letters": 94,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8214285714285714,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 14,
+     "text": "چائے پینے کے بعد وہ تمام زندگی جب وہ چائے کے ڈنڈ میں پڑے قندے پی رہے تھے تو انہوں نے انہیں چائے کے قے بھی ساتھ ساتھ آ",
+     "stats": {
+      "characters": 98,
+      "words": 24,
+      "letters": 74,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.875,
+       "2": 0.9565217391304348,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 12,
+     "text": "چائے پینے کے بعد وہ تھوڑی کافی دیر تک منہ سے لیا نوش اپنے ۔ اپنے اسی سانپ نے بھی اپنے ایک سانپ لیا نوش ۔ ساڑھے تین گھنٹے کے بعد",
+     "stats": {
+      "characters": 108,
+      "words": 26,
+      "letters": 80,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.7692307692307693,
+       "2": 0.96,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 7,
+     "text": "چائے پینے کے بعد وہ نئے انداز سے کافی عرصے تک مستفید ہوتے تھے اس لیے کہ نوجوانوں میں کو پہلے اور پہلے نسل جب وہ نئے انداز سے پہنچنے کے بعد کامیابی",
+     "stats": {
+      "characters": 127,
+      "words": 28,
+      "letters": 99,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8571428571428571,
+       "2": 0.9259259259259259,
+       "3": 0.9615384615384616,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 3
+     },
+     "rejected": null
+    },
+    {
+     "seed": 5,
+     "text": "چائے پینے کے بعد وہ سجد و مغالطے بن گیا۔\nایک���� دِکھانے کی؟\nاسے پی لیں۔ دو",
+     "stats": {
+      "characters": 56,
+      "words": 12,
+      "letters": 36,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 8,
+     "text": "چائے پینے کے بعد وہ پریشان ہو نے\nپرانے دھمکایا کرتے تھے۔ مشقتی فلم وہ جیسے رہیوں رات نئی میں بننے والی تھی۔ اور نہ والی فلم",
+     "stats": {
+      "characters": 104,
+      "words": 22,
+      "letters": 80,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9090909090909091,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 13,
+     "text": "چائے پینے کے بعد وہ دقیق جھومتے ہوئے بیٹھ گیا تھا.\nدونوںبھی گاڑی چلاتے کر چلا گیا۔ وہ اس کے کوپے پر بیٹھ گیا",
+     "stats": {
+      "characters": 89,
+      "words": 19,
+      "letters": 68,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8947368421052632,
+       "2": 0.9444444444444444,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 0,
+     "text": "چائے پینے کے بعد وہ درمیان میں مر بھی جاتے ہیں۔ اسی لیے چائے اور چائے کے اور چائے اور چائے کے اور بد عبادات، درمیان میں سایہ دونوں",
+     "stats": {
+      "characters": 111,
+      "words": 24,
+      "letters": 85,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.625,
+       "2": 0.7391304347826086,
+       "3": 0.8636363636363636,
+       "4": 0.9047619047619048
+      },
+      "repetition": 0.09523809523809523,
+      "longest_repeat": 5
+     },
+     "rejected": "longest repeated run 5 words — a clause on a loop"
+    }
+   ],
    "ar": [
     {
      "seed": 12,
@@ -3252,6 +4681,360 @@
       "longest_repeat": 5
      },
      "rejected": "longest repeated run 5 words — a clause on a loop"
+    }
+   ],
+   "diff_random": [
+    {
+     "seed": 2,
+     "text": "بچے صبح سویرے اسکول جاتے ہوئیرہ گئے ایسے میں بچوں بھی چند کچھ سیکھ کر پڑھنے کہ عادت کہیں کے ہمیں ہوشابہی نہیں پڑتی۔ کوئی بھی وقت آئے",
+     "stats": {
+      "characters": 113,
+      "words": 24,
+      "letters": 88,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9583333333333334,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 9,
+     "text": "بچے صبح سویرے اسکول میں رہ کر باتیں کرتے ہیں استاد بالترتیب بولتے اور فارغ شام سے کلاس میں اکیلے چلے جاتے ہیں ایم اے کالج کراچی بچوں کا سالانہ ماہانہ",
+     "stats": {
+      "characters": 130,
+      "words": 27,
+      "letters": 103,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9259259259259259,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 3,
+     "text": "بچے صبح سویرے اسکول سویرے واپس جاتے ہیں تو ماموں نے ان کو زمین دے دی۔ وہ کہتے ہیں کہ تیری زمین اُن سے سب کچھ کھینچ",
+     "stats": {
+      "characters": 95,
+      "words": 23,
+      "letters": 70,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9130434782608695,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 13,
+     "text": "بچے صبح سویرے اسکول جاتے اور ناشتہ پڑھاتے تھے ۔اسکے بعد جب تیسرا اسکول گیا اور کرتا چلا گیا۔یہ اسکول کے لئے کافی فاصلہ پر تھا ۔ک",
+     "stats": {
+      "characters": 109,
+      "words": 23,
+      "letters": 83,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9130434782608695,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 7,
+     "text": "بچے صبح سویرے اسکول چھوڑنے آتے ہیں۔ کوئی ٹرپ کرو تو اس منفرد تھائی نوجوانوں کو کو سر اور کو سے جان کر نئے انداز سے پہنچنے کیلیئے وی",
+     "stats": {
+      "characters": 112,
+      "words": 25,
+      "letters": 86,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.88,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 6,
+     "text": "بچے صبح سویرے اسکول کھلے رہتے ہیں جس میں 12 چیزیں ہوتی ہیں۔ اسکول کی صبح سے صبح گیارہ بجے کو صبح سویرے کے اوقات کار کو تبدیل کر کے",
+     "stats": {
+      "characters": 111,
+      "words": 26,
+      "letters": 82,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8461538461538461,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 11,
+     "text": "بچے صبح سویرے اسکول جاتے ہیں، لیکن پہلی مرتبہ امتحان میں تاخیر پر ہوتا ہے، کوئی بھی بچے کو اسکول کی نقل تیار کرنے پہنچتا ہے کوئی بھی پڑھائی",
+     "stats": {
+      "characters": 120,
+      "words": 25,
+      "letters": 93,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.92,
+       "2": 0.9583333333333334,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 14,
+     "text": "بچے صبح سویرے اسکول جاتے ہیں اور خانہ ٹوٹ پڑتا ہے ، مشہور قول ہے کہ ناشتے میں کھانا بھی ختم ہونے لگا ہے ، چائے بھی ساتھ ساتھ آ کے",
+     "stats": {
+      "characters": 110,
+      "words": 27,
+      "letters": 81,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8148148148148148,
+       "2": 0.9615384615384616,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 8,
+     "text": "بچے صبح سویرے اسکول اور اسکول اسپرٹس لیے جاتے ہیں اور صبح نو بجے صبح وہ اپنے گھروں اور اسکول میں اسکول سے پرفارم کرتے ہیں جبکہ نئی ٹائم",
+     "stats": {
+      "characters": 116,
+      "words": 25,
+      "letters": 91,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.76,
+       "2": 0.9583333333333334,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 5,
+     "text": "بچے صبح سویرے اسکول کے طیع گلشن میں بہہو گئے۔\nاس ریسالہ زیر یا د بطور صدا م (قاسم ج) دو مد",
+     "stats": {
+      "characters": 71,
+      "words": 18,
+      "letters": 50,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 15,
+     "text": "بچے صبح سویرے اسکول کے باہر جمع ہونے والے شروع میں علم وار کو مار سکتا ہے۔\n- تین بچے پاس پوسٹ میں الٹر کی طرح گم ہو چکے ہیں۔",
+     "stats": {
+      "characters": 105,
+      "words": 26,
+      "letters": 76,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9615384615384616,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 4,
+     "text": "بچے صبح سویرے اسکول میںرہ رہے تھے ان کو چلو خبر آئی فلیرہ پاسکل کی ہی بات ہے اسکول میں صبح سوی\nمگر بات",
+     "stats": {
+      "characters": 83,
+      "words": 20,
+      "letters": 63,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.95,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 1,
+     "text": "بچے صبح سویرے اسکول میں باڑ ۓ تھے اور سب کے سب ایک ساتھ تھے۔ کلاسوں میں پڑھنے والے مرد و شخص ہمت کرتا تھا۔سب کا",
+     "stats": {
+      "characters": 92,
+      "words": 22,
+      "letters": 68,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9090909090909091,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 12,
+     "text": "بچے صبح سویرے اسکول داخل ہوسکےگا ۔\nمشش بند ۔ موسمی کم تر اور خشک ہوا ۔ بارش نوش ۔ مزید تین ہفتے کے بعد چھ",
+     "stats": {
+      "characters": 86,
+      "words": 22,
+      "letters": 60,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8636363636363636,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 0,
+     "text": "بچے صبح سویرے اسکول سے چھٹی گئے وہاں جامعہالحمد کی دعائیں پڑھیں ، رات گئے تک مکمل پڑھیں پڑھیں\nسواتشام گھر میں بھی معمولات بہتر",
+     "stats": {
+      "characters": 107,
+      "words": 21,
+      "letters": 85,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8571428571428571,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 10,
+     "text": "بچے صبح سویرے اسکول جا رہے تھے۔ بقیہ رکابوں رکابوں اور ناغذوں۔\nیہی تھی کہ بچے صبح اسکول جا رہے تھے",
+     "stats": {
+      "characters": 79,
+      "words": 17,
+      "letters": 60,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8235294117647058,
+       "2": 0.9375,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
     }
    ],
    "ar": [
@@ -3968,6 +5751,360 @@
      "rejected": "longest repeated run 6 words — a clause on a loop"
     }
    ],
+   "diff_random": [
+    {
+     "seed": 9,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے تحقیق کرنے والے ایک بھی فرد اس بیماری کے دوران انتہائی سرد ماحول میں رہتے ہوئے کہا ہے کہ سانس لینے کے تکلیف پر قابو مت لینا چاہیے اور ذمہ دار سے",
+     "stats": {
+      "characters": 145,
+      "words": 32,
+      "letters": 113,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.96875,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 15,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے سائنس دانوں کا پاس وقت نہیں ہے۔ ہم کوشش کریں گے بہتر بھلا پائے۔ کیٹر بائیو کے ساتھ ٹیسٹ کر سکتے ہیں۔ اس لیے آئی سی سی اور انفیکشن",
+     "stats": {
+      "characters": 130,
+      "words": 29,
+      "letters": 98,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9655172413793104,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 10,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے جو مشین کو ترجیح دی ہے اسی کے تحت ماہر تعلیم سابق ڈاکٹر اظہر محمود نے بھی صحت کی رکھنے کے لئے مشین کا ابھی ہم نے ہی حصہ لیا۔ ”جو",
+     "stats": {
+      "characters": 129,
+      "words": 31,
+      "letters": 96,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9032258064516129,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 1,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے بہت جسم اور دلی صحت کے لیے بہتر کام کرنے کے ساتھ پٹھوں کو ٹھیک کر کے بہتر حالت میں بہتری کی بہترین دائمی اور نتائج تشویشناک کرنے کی طرف 10 کروڑ",
+     "stats": {
+      "characters": 144,
+      "words": 32,
+      "letters": 110,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8125,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 6,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے اس طرح کی ضرورت ہوتی ہے ۔ عام طور پر حاملہ ذمیں 2فیصد اور دو فیصد ساتھ رہتے ہیں جبکہ کچھ فیصد صحت افزا ہیں۔ نتائج کے حتمی نتائج کے",
+     "stats": {
+      "characters": 131,
+      "words": 30,
+      "letters": 98,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9,
+       "2": 0.9655172413793104,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 2,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے سماجی رہنماوں میں تعاون کی ضرورت ہے۔ ڈبلیو اسپتال میں، ڈاکٹروں نے تجویز کیا ہے کہ ڈاکٹروں نے ایمز کو لے جایا اور اور گفتگو کرتے ہوئے جسمانی اور",
+     "stats": {
+      "characters": 144,
+      "words": 29,
+      "letters": 113,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8620689655172413,
+       "2": 0.9642857142857143,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 14,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے یہ کرنا ایک آپشن ہے۔ہماری عمارت روایت کے مطابق مریض زیادہ کارآمد ہوتا ہے۔ اے این ایف وی ایم کے ایم اور پی این وی وی ایم کے",
+     "stats": {
+      "characters": 123,
+      "words": 28,
+      "letters": 93,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.75,
+       "2": 0.9259259259259259,
+       "3": 0.9615384615384616,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 3
+     },
+     "rejected": null
+    },
+    {
+     "seed": 4,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے ان کو نکالنا مناسب نہیں ہے،\nجن کو باہر نکالا جائے گا کہ دونوں نام ہیں گاندھی ٹیسٹ کیے جائیں گے۔\nیاد رہے بھارت کے اس ریپ کیسز",
+     "stats": {
+      "characters": 125,
+      "words": 28,
+      "letters": 95,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9642857142857143,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 0,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے\nلکھتے دنہے 1960 سے 19661 دلہے لکھتے ہیں۔ خبر نہیں یہ ہے کہ شہرخاتون کے رہائشی\nصحت قلب چلے گئے اور",
+     "stats": {
+      "characters": 98,
+      "words": 21,
+      "letters": 67,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9523809523809523,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 12,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے اس کا وزن 3 سو گرام ہے۔ انتہائی اس وقت تک بہت ضروری ہے۔\nجبسا کے حمل کے ذریعے سے بیماری یا موت کے بعد جاتی نہیں جائے گی۔\n",
+     "stats": {
+      "characters": 121,
+      "words": 29,
+      "letters": 87,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8620689655172413,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 13,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے 30 شرینڈوں کا استعمال کیا جا سکتا ہے۔\nصحت سینٹرز نے خبردار کیا ہے، 30 شریانوں کا استعمال معمول کے مطابق کرنا ضروری ہے کیونکہ",
+     "stats": {
+      "characters": 125,
+      "words": 25,
+      "letters": 94,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.84,
+       "2": 0.9583333333333334,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 5,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے کچھ طریقے اور فیصلے کیے جاتے ہیں، ایک فرد کی بھال دیکھ بھال کرنے والے کی یا فروخت پر نہیں ہوتی۔\nمورو رس دیگر چیزوں کی دیکھ بھال",
+     "stats": {
+      "characters": 128,
+      "words": 28,
+      "letters": 98,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8214285714285714,
+       "2": 0.9629629629629629,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 11,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے روزانہ کی بنیاد پر ایک گولی چیز ایسی ہے لیکن یہ بھی ایسی ہے جس کی وجہ ماسوتا یعنی دماغی صحت کی ہے۔\nایک ڈاکٹر کا کہنا ہے کہ",
+     "stats": {
+      "characters": 123,
+      "words": 29,
+      "letters": 93,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.7931034482758621,
+       "2": 0.9642857142857143,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 3,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے دوا کی مقدار بہت زیادہ ہے۔ ان کے خیال میں زیادہ سے زیادہ وزن بھی کم ہوجاتا ہے۔ کھانے کی مقدار سے بھی اضافہ ہوتا ہے، جسمانی وزن میں بھی کئی",
+     "stats": {
+      "characters": 139,
+      "words": 31,
+      "letters": 105,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.6774193548387096,
+       "2": 0.9666666666666667,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": "distinct-1 0.68 — one word sprayed across the canvas"
+    },
+    {
+     "seed": 8,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے بہت ضروری ہے کہ وہ اپنے جذبات کے جال میں رکھیں کہ وہ اپنے مختلف موڈز کے ساتھ\nڈاکٹروں کا کہنا ہے کہ جذبات کے بجائے جذبات سے",
+     "stats": {
+      "characters": 123,
+      "words": 28,
+      "letters": 95,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.6785714285714286,
+       "2": 0.8518518518518519,
+       "3": 0.9615384615384616,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 3
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 7,
+     "text": "ڈاکٹروں کا کہنا ہے کہ صحت مند رہنے کے لیے ایل ای ایل کے آر پی کو مرمت کے لیے استعمال کیا جاسکتا\nجیسے اورجیا وائرس ہیں جو امراضتا کے علاقوں میں موجود ایل ای ایل کے",
+     "stats": {
+      "characters": 121,
+      "words": 27,
+      "letters": 94,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.7407407407407407,
+       "2": 0.8846153846153846,
+       "3": 0.92,
+       "4": 0.9583333333333334
+      },
+      "repetition": 0.04166666666666663,
+      "longest_repeat": 4
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    }
+   ],
    "ar": [
     {
      "seed": 2,
@@ -4681,6 +6818,362 @@
      "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
     }
    ],
+   "diff_random": [
+    {
+     "seed": 6,
+     "text": "یہ کتاب اردو ادب کی تاریخ پہلی بار ایسے اخبارات پر ہے جہاں شائع ہوتی رہی ہے اس زمانے میں اس کا عنوان کل کی وجہ انجم صباء عروج ہے۔ یہ کتاب جاں افزاء",
+     "stats": {
+      "characters": 128,
+      "words": 29,
+      "letters": 98,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9310344827586207,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 5,
+     "text": "یہ کتاب اردو ادب کی ایک اہم ترین سنگم کہا جانے گا، اور اس کتاب میں تحریک کی کوئی جانے یہ قوت اردو ادب کی قدرو عکاسی نہیں کر سکتی ہے۔ یہ کتاب مرکز",
+     "stats": {
+      "characters": 126,
+      "words": 29,
+      "letters": 95,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8620689655172413,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 1,
+     "text": "یہ کتاب اردو ادب کی بہ صورت ہے۔فقط اسطرف کے نام میں کم سے کم کیا جاتا ہے۔اسکتاب کو اس کے ادب میں استعمال ہوتا ہے شاعری اور اس کی",
+     "stats": {
+      "characters": 109,
+      "words": 25,
+      "letters": 82,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.84,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 9,
+     "text": "یہ کتاب اردو ادب کی ایک کتاب ہے۔ اور شاندار تحقیقی فوائد پیش کرتا ہے۔ اس کتاب کے تھوڑا کچھ سرد پور میں ہے ، جو ان کے ارد گرد 520 میل ہے ہے۔ یہاں",
+     "stats": {
+      "characters": 125,
+      "words": 30,
+      "letters": 88,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8333333333333334,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 12,
+     "text": "یہ کتاب اردو ادب کی ایک انتہائی نایاب خریدیos کتاب ہے اور یہ ناول جس کو موجودہ وقت کے عثمانی اور عثمانی ترکوں کے ہاتھوں ترجمہ کیا گیا ہے۔ یہ کتاب دہلی کے پور",
+     "stats": {
+      "characters": 138,
+      "words": 29,
+      "letters": 108,
+      "scripts": {
+       "arabic": 0.9814814814814815,
+       "latin": 0.018518518518518517
+      },
+      "script_consistency": 0.9814814814814815,
+      "distinct": {
+       "1": 0.7931034482758621,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 11,
+     "text": "یہ کتاب اردو ادب کی پہلی خرید کتاب سے چل رہے بحث میں ہے۔ کتاب میں اردو ادب کی یونین سے جڑی معلومات اور جمہوریت اور ہندوستانی ڈالر کے بارے میں بات کرنے کی ہے۔ کتابیں کافی",
+     "stats": {
+      "characters": 150,
+      "words": 32,
+      "letters": 116,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.78125,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 14,
+     "text": "یہ کتاب اردو ادب کی تعمیر و ترقی کے الاقوامی معیار کا ایک ذریعہ ہے۔ہماری عمارت روایت کے مطابق اسے بروئے کار آندھرا پردیش ایف اے، ایف اے، ایف اے اور ایف",
+     "stats": {
+      "characters": 132,
+      "words": 27,
+      "letters": 102,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8148148148148148,
+       "2": 0.9230769230769231,
+       "3": 0.96,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 3
+     },
+     "rejected": null
+    },
+    {
+     "seed": 3,
+     "text": "یہ کتاب اردو ادب کیبتاثیت اور خوبصورتی کی ترجمانی کرتا ہے۔) (8۔ اردو پر اردو کی طویل تاریخ ہے۔ طویل تاریخ ہے۔ اس سے اتفاق نہیں ہوتا اردو پر",
+     "stats": {
+      "characters": 120,
+      "words": 25,
+      "letters": 89,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.72,
+       "2": 0.875,
+       "3": 0.9565217391304348,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 3
+     },
+     "rejected": null
+    },
+    {
+     "seed": 0,
+     "text": "یہ کتاب اردو ادب کی نرالا ترین کاشت بد نما ہے۔\n(15, 1966ء)۔\nعالمی خبر رساںاں\nاردو مکالات\nخانبوں",
+     "stats": {
+      "characters": 76,
+      "words": 14,
+      "letters": 51,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 13,
+     "text": "یہ کتاب اردو ادب کی عظمت کو جان دیتے دکھتے ہیں‘‘ (بشکریہ: اے ایف)\nقرآن\nشیخ محمد یٰسین، مرکز مطالعہ ادب اہم اصول و انوش",
+     "stats": {
+      "characters": 99,
+      "words": 20,
+      "letters": 72,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 2,
+     "text": "یہ کتاب اردو ادب کی عظمت کا راز ۔یہ اصلی کتاب ہے اردو پر ایک عربی: Urduox نے بنائی ہے۔\n-\nاردو میں بہت سے نمونے لے کر انگریزی اور",
+     "stats": {
+      "characters": 109,
+      "words": 25,
+      "letters": 80,
+      "scripts": {
+       "arabic": 0.925,
+       "latin": 0.075
+      },
+      "script_consistency": 0.925,
+      "distinct": {
+       "1": 0.96,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 15,
+     "text": "یہ کتاب اردو ادب کی ادبی و ادبی خدمات کے حوالے سے ماہنامہ رپورٹڈ ہے۔\nجنگی سہ روزہ میں شرکت۔۔ کیسول۔\n ۔ ٹیسٹ۔۔ ۔ روز۔",
+     "stats": {
+      "characters": 97,
+      "words": 20,
+      "letters": 67,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 7,
+     "text": "یہ کتاب اردو ادب کی پھلوں اور مچھلیاں کا سوداگر ہے۔ اس پیتتااس سے استفادہ کیا جو\nجیتا اور گولا بناتا ہے۔ جوتاتا اس کو و",
+     "stats": {
+      "characters": 100,
+      "words": 21,
+      "letters": 77,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8571428571428571,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 10,
+     "text": "یہ کتاب اردو ادب کی قومی ثقافت میں عمدہ جگہ فراہم کرتا ہے۔ ہم وہ ازیںوے دوباغ، سابق صحافی اظہر محیّ۔ خالد ہیں جنھیں ایوارڈ ملا۔ ہم وہ",
+     "stats": {
+      "characters": 114,
+      "words": 23,
+      "letters": 86,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9130434782608695,
+       "2": 0.9545454545454546,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 4,
+     "text": "یہ کتاب اردو ادب کی کال آئی بنوکرنی سے چل نکلے اس اس کے بعد اردو ادب کی چال چلی گئی\nیہ کتاب اردو ادب کی بڑی ملازمتوں اور بڑے بڑے اخبار",
+     "stats": {
+      "characters": 115,
+      "words": 27,
+      "letters": 88,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8148148148148148,
+       "2": 0.9230769230769231,
+       "3": 0.96,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 3
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 8,
+     "text": "یہ کتاب اردو ادب کی اعلی تعلیم میں کے کے کے کے \"اردو ادب کی اعلی تعلیم اعلی تعلیم میں کے کے کے کے کے کے کے کے کے \"بھراوت \"قومی زبان",
+     "stats": {
+      "characters": 112,
+      "words": 27,
+      "letters": 82,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.37037037037037035,
+       "2": 0.46153846153846156,
+       "3": 0.56,
+       "4": 0.625
+      },
+      "repetition": 0.375,
+      "longest_repeat": 8
+     },
+     "rejected": "longest repeated run 8 words — a clause on a loop"
+    }
+   ],
    "ar": [
     {
      "seed": 13,
@@ -5391,6 +7884,360 @@
       },
       "repetition": 0.2222222222222222,
       "longest_repeat": 6
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    }
+   ],
+   "diff_random": [
+    {
+     "seed": 10,
+     "text": "لاہور شہر اپنی تاریخ اور اپنی ثقافت ایسی عمدہ ہے جو اپنے منفرد کردار کی بنا ہوتی ہے۔ لاہور شہرکے سابق سٹی آفیسر لاہور پولیس کو ذاتی احترام رکھنے کا درس دیتے تھے لیکن ہم سمجھتے",
+     "stats": {
+      "characters": 151,
+      "words": 31,
+      "letters": 119,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.967741935483871,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 11,
+     "text": "لاہور شہر اپنی تاریخ اور حالت تاریخ کا سب سے منفرد مقابلوں میں سے ایکو ہے۔ ایسی دفعہ میں بھی اگر کسی لاہوری کی وجہ سے سنتا تو آج لال لاوں گا لاہور",
+     "stats": {
+      "characters": 122,
+      "words": 28,
+      "letters": 93,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8928571428571429,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 1,
+     "text": "لاہور شہر اپنی تاریخ اور اپنے آپ کوفوط شہر ہے ایک زمانہ تھا کہ اس کے غازی محمد علی نے مراا محمد لاہیوال کے دریش کہا اور اس نے",
+     "stats": {
+      "characters": 101,
+      "words": 24,
+      "letters": 77,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8333333333333334,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 14,
+     "text": "لاہور شہر اپنی تاریخ اور جمع و ۔ کے والوں میں سے ایک ہے۔ اس ابن عمار کی روایت کے مطابق مرکز اور دارالحکومت لاہور جدید رجحانات اور حالات میں ہے۔ یہ منفرد اور بہترین",
+     "stats": {
+      "characters": 139,
+      "words": 30,
+      "letters": 106,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8333333333333334,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 5,
+     "text": "لاہور شہر اپنی تاریخ اور دھرتی کے نتوںوا کا اہم مرکز تھا پہلا لاہور اپنی تحریک کی مکمل ہی یہ تھی گویا شہری ریاست کا وجود نہیں تھا لاہور شہر اپنی تاریخ کا",
+     "stats": {
+      "characters": 129,
+      "words": 28,
+      "letters": 101,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8214285714285714,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 12,
+     "text": "لاہور شہر اپنی تاریخ اور پاکستان کی تاریخ ، عمارتوں میں پرانی عمارتوں اور لاہور میں مرکز آباد شہروں کی تعمیر بہت اہم ہے۔ لاہور شہر مقامات آپریشن استعمال کیا جاسکتا ہے ، یا پاکستان کے لئے",
+     "stats": {
+      "characters": 162,
+      "words": 32,
+      "letters": 127,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8125,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 7,
+     "text": "لاہور شہر اپنی تاریخ اور پارکوں گالیاں کا عمل ہے۔ اپنی شاعری اور انوؤں کے ذریعے شعور و کو بڑھاتا اور تعلیم و شعور کو جوتاتا، نظام و",
+     "stats": {
+      "characters": 107,
+      "words": 23,
+      "letters": 82,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.782608695652174,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 3,
+     "text": "لاہور شہر اپنی تاریخ اورب کی اہمیت نہایت ہی خوبصورتی سے شہر بن گیا ہے۔ یہ لاہور۔۔کئی صدیوں سے شہر کی تاریخ اور منصب نگار سے مختلف نہیں ہوتا سکھ،",
+     "stats": {
+      "characters": 120,
+      "words": 26,
+      "letters": 91,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8461538461538461,
+       "2": 0.96,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 9,
+     "text": "لاہور شہر اپنی تاریخ اور یہاں کی حکمرانی حقیقت تبدیل کرنے کی بھرپور کوشش تھی اور اس رنگ کے اس شدید سرد موسم میںلاہور شہر اپنی انفرادی تاریخ اور ملکی ریکارڈ کی حکمرانی کا کوئی لینا",
+     "stats": {
+      "characters": 155,
+      "words": 31,
+      "letters": 124,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8387096774193549,
+       "2": 0.9666666666666667,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 8,
+     "text": "لاہور شہر اپنی تاریخ اور ساری تاریخ و ثقافت کے کے ساتھ \"گندگی\" ماحول پیش کرتے ہوئےلاہور روانگی کے لیے دستیاب گرم بادلوں کے ساتھ \"بھرا ہوا \"قومی تر",
+     "stats": {
+      "characters": 122,
+      "words": 24,
+      "letters": 94,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8333333333333334,
+       "2": 0.9565217391304348,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 4,
+     "text": "لاہور شہر اپنی تاریخ اور تاریخی منزل قائم کرتا ہے۔ گزشتہ 70 سال کے اس کی تاریخ کا جو تاریخی ریکارڈ ہے وہی ہے اس میں لاہور شہر اس کی اینٹوں اور زنجیر",
+     "stats": {
+      "characters": 124,
+      "words": 28,
+      "letters": 93,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8214285714285714,
+       "2": 0.9629629629629629,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 15,
+     "text": "لاہور شہر اپنی تاریخ اور پرانی تاریخ کا اپنا سب سے مشہور و منفرد درجہ رکھتا ہے۔ لاہور کا پہلا ایک روزہ ٹیسٹ ۔ ٹیسٹ۔ کیپ۔ ٹیسٹ ۔ ٹیسٹ۔ ٹیسٹ ۔ ٹیسٹ۔",
+     "stats": {
+      "characters": 122,
+      "words": 27,
+      "letters": 87,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.7407407407407407,
+       "2": 0.8461538461538461,
+       "3": 0.92,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 3
+     },
+     "rejected": null
+    },
+    {
+     "seed": 13,
+     "text": "لاہور شہر اپنی تاریخ اور بیگمات کو جتاتے ہوئے خوشیوں سے بھرا ہوا شہر ہے۔\nقرآن سینٹر ملک محمد تنویر کے مطابق، کہ لاہور شہر کے پبلکن انجی",
+     "stats": {
+      "characters": 111,
+      "words": 23,
+      "letters": 86,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9130434782608695,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 6,
+     "text": "لاہور شہر اپنی تاریخ اور سروس میں کروڑوں کا اضافہ ریکارڈ اور مقبول بن چکا ہے ۔، لاہور شہر\n65ویں صدی کا آغاز 5 دسمبر، ملکی تاریخ میں سب اور شاندار 50",
+     "stats": {
+      "characters": 124,
+      "words": 27,
+      "letters": 89,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8888888888888888,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 2,
+     "text": "لاہور شہر اپنی تاریخ اور یاد رکھتا ہے ۔\nجماعت اسلامی لاہور کے رکن پنجاب اسمبلی نے کہا کہ لاہور لاہور نے اپنی تاریخ اور ذاتی و تاریخی خدمات لاہور سے واپس لے لیں اور لاہور",
+     "stats": {
+      "characters": 145,
+      "words": 31,
+      "letters": 113,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8064516129032258,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 0,
+     "text": "لاہور شہر اپنی تاریخ اور محبت سے ہاتھ دھو کرتا ہے۔\nکھلی لاہور\n15 مارچ 1966ء کو لاہور شہر ہر خبر پر قید وبند ہے۔ کیا لاہور شہر کروڑوں فلموں گا",
+     "stats": {
+      "characters": 117,
+      "words": 26,
+      "letters": 83,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8461538461538461,
+       "2": 0.96,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
      },
      "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
     }
@@ -6108,6 +8955,360 @@
      "rejected": "longest repeated run 5 words — a clause on a loop"
     }
    ],
+   "diff_random": [
+    {
+     "seed": 13,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے جذبے سے جھومتے ہوئے آنسو اقبالکے تشبیر رکھے اور یہی وجہ ہے کہ کرکٹ کے میدان میں کھلاڑیوں پر تابناک",
+     "stats": {
+      "characters": 99,
+      "words": 20,
+      "letters": 79,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": null
+    },
+    {
+     "seed": 7,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے خاطر خواہ کارکردگی کے مظاہرہ پر کئی ہی اس منفرد پاکستانی نوجوانوں کو خراج تحسین اور ان کی جان جیسے بہترین انداز سے پہنچنے والی اہم کامیابی کے",
+     "stats": {
+      "characters": 142,
+      "words": 28,
+      "letters": 114,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9642857142857143,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 11,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے پاکستان کرکٹ ٹیم کے خلاف انتہائی خوشی میں بجا طور پر مظاہرہ کیا ۔پاکستان میں محبت کی بہاریں روشن کرنے میںملک کا قیمتی لمحہ ضائع",
+     "stats": {
+      "characters": 128,
+      "words": 25,
+      "letters": 102,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.96,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 14,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے کھلاڑی بھرتی کروائے ۔ اسی پھنڈبرسر قندبانی طورپر پر لگا کر غیر ملکی کھلاڑیوں پر مشتمل قومی کرکٹ ٹیم نے کھیل شروع کیا",
+     "stats": {
+      "characters": 117,
+      "words": 23,
+      "letters": 93,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9565217391304348,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 15,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے باکسنگ کی بھرمار شروع کرکے عمر راؤنڈر کو باکسنگ پر بٹھایا دیا ہے۔ پاس کا تجربہ کار کے دن لگ ہیں ۔م دیگر",
+     "stats": {
+      "characters": 104,
+      "words": 23,
+      "letters": 79,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9565217391304348,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 10,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے اپنی کامیابی برقرار کرنے کیلئےآئےش رہنا ضروریا اور اگر آغاز سے شروع اور جیتنے کیلیے ہیضے کا کھیل کھیلا جاے جس",
+     "stats": {
+      "characters": 110,
+      "words": 21,
+      "letters": 89,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9523809523809523,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 8,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے کھیل بھی کر اپنا لوہا منوایا اور آج کل یہی فلم جیتے رہے گلےوں کے گلے بھی بننے لگے۔ اور نہ والے نئی فلمیں",
+     "stats": {
+      "characters": 105,
+      "words": 24,
+      "letters": 80,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9166666666666666,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 9,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے روایتی روایتی انداز میں شاندار شرکت کے ساتھ کرکٹ کا روایتی جشن بھی خوب مناتے دکھایا ہے کہ یکم فروری کو اسٹیڈیم کراچی 2019 کا سالانہ بیرونی",
+     "stats": {
+      "characters": 139,
+      "words": 27,
+      "letters": 108,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8888888888888888,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 3,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے ان خدمات کو سر انجام دینے کے قابل بنایا ہے۔ مزید چھ مختلف کھیلوں کے اسٹیڈیم، ہندوستان، افغانستان اور کشمیر کے درمیان میچ کے لئے اسٹیڈیم",
+     "stats": {
+      "characters": 136,
+      "words": 26,
+      "letters": 107,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8846153846153846,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 1,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے سیٹ باڑ تھڈو پر لٹکا دیا۔ چھ کھلاڑیوں کے ساتھ فرسٹ کلاس کھیل کھیلا۔ جیتنے والے کھلاڑی صرف سات کھلاڑیوں کے چھوڑ پر ہلاک ہوئے۔",
+     "stats": {
+      "characters": 125,
+      "words": 25,
+      "letters": 97,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.88,
+       "2": 0.9583333333333334,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 12,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے حصہ لیا اور ہے ٹیموں کے درمیان پا نی میچ کا فیصلہ ٹیم نے ٹیم نے کر لیا ہے۔ نو ر کتہ میدان کھیلا گیا پہلے میچ",
+     "stats": {
+      "characters": 109,
+      "words": 27,
+      "letters": 81,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8518518518518519,
+       "2": 0.9615384615384616,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 6,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے اپنا بھرپور مظاہرہ کیا۔ میں ڈسٹرکٹ کرکٹ کے میدان میں کھلاڑیوں نے بھرپور صلاحیتوں کا مظاہرہ کیا۔ دیگر میں کھلاڑیوں کا اظہار و شائقین کو تبدیل کر کے",
+     "stats": {
+      "characters": 147,
+      "words": 28,
+      "letters": 117,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.7142857142857143,
+       "2": 0.9259259259259259,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 4,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے شکست دی اور یہ گزشتہ سال چل رہی تھی۔ آئی سی سی نے ٹیم کو شکست دی اور اسی ٹیسٹ میں کپتانوں کو شکست دی اور ہندوستان",
+     "stats": {
+      "characters": 114,
+      "words": 27,
+      "letters": 86,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.7037037037037037,
+       "2": 0.8076923076923077,
+       "3": 0.88,
+       "4": 0.9583333333333334
+      },
+      "repetition": 0.04166666666666663,
+      "longest_repeat": 4
+     },
+     "rejected": null
+    },
+    {
+     "seed": 0,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے حکومت سے سول ایوی کی سہولتوں کے لئے دعائیںاور کامیاب انعقاد کیا.\nمزید پڑھیں\nحالات، انتظامات میں غیر ملکی کھلاڑیوں اور",
+     "stats": {
+      "characters": 118,
+      "words": 21,
+      "letters": 95,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 2,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نے رامباڈی ٹرافی کرائے پرسنم دہانی کرائی تھی، کہ رامبادی کے بعد یہ یہ بہترین اور تاریخی فتح ہوگی۔\nڈی",
+     "stats": {
+      "characters": 98,
+      "words": 19,
+      "letters": 77,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9473684210526315,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 5,
+     "text": "کرکٹ کے میدان میں کھلاڑیوں نےدگوں کا ایک نیا ریکارڈ چھیڑ دیا۔\nسینیسالہ نوجوان کو دگوں لڑنے\nچوتھا کپتان درو نبی داد مد",
+     "stats": {
+      "characters": 88,
+      "words": 18,
+      "letters": 70,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9444444444444444,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    }
+   ],
    "ar": [
     {
      "seed": 8,
@@ -6819,6 +10020,360 @@
       "longest_repeat": 6
      },
      "rejected": "longest repeated run 6 words — a clause on a loop"
+    }
+   ],
+   "diff_random": [
+    {
+     "seed": 8,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگیوں کو محور کرنا ہے۔لگنیکل پر گفتگو کرتے ہوئے مزید کہا کہ تھروکشن موڈ سسٹم کے نظری عمل کی طرف میں مصنوعات سے ہی",
+     "stats": {
+      "characters": 110,
+      "words": 24,
+      "letters": 86,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": null
+    },
+    {
+     "seed": 1,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگیاں مضبوط میں تبدیل کر نا تھا تب مشین ٹیکنالوجی سے لیکر روبوٹ تک بھی ٹھیک ہو نے میں تھے۔ کونسا چیزیں کیا کیں اور نتائج کب کئے",
+     "stats": {
+      "characters": 124,
+      "words": 28,
+      "letters": 96,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9642857142857143,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 0,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگیوں میں دھواں جمالکھایا13ڈ 29, 1944 کو ایپلیکیشن کا ہر خبر ف لیا, نوجوانوں نے نئے انسان کو مصنوعی روشنی سے ما",
+     "stats": {
+      "characters": 108,
+      "words": 22,
+      "letters": 77,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9545454545454546,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 2,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگیوں کو ایک دوسرے سے جوڑنے کے لیے تعاون کیا۔انہوں نے کہا کہ اس طریقے سے بنائی جانے والی نئی ٹیکنالوجی انٹرنیٹ کنیکشن سے کام لے کر اور مقامی زبان",
+     "stats": {
+      "characters": 142,
+      "words": 30,
+      "letters": 112,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9333333333333333,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 10,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگیاں عذاب کا ایندھن بنا دیا ہے۔ پھر جانوروں کی ٹیچراغ کے زمانے میں بھی ٹیکنالوجی نے بھرپور دنیا کی دیکھا دیکھی دیکھائی ہے۔ ابھی ہم آگےوں",
+     "stats": {
+      "characters": 134,
+      "words": 27,
+      "letters": 106,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9259259259259259,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 4,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگی کو کو ضروری موضوعات بنا کر نکال دیا دنیا اس کے ساتھ جدید ذرائع سے کمپیوٹر بن گئی دنیا کے دیگر ترقیات کی زندگی میں مزید بہتری آئی ہے۔ انہوں نے",
+     "stats": {
+      "characters": 142,
+      "words": 31,
+      "letters": 110,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9032258064516129,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 3,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگی کی اہمیت کو سر انجام دینے میں مدد کی ہے۔ اس کے ساتھ ہم شوبز افراد کو جو بھی بھی شخص اپنے کردار کی وجہ سے احساس نہیں ہوتا سکھائے جاتے",
+     "stats": {
+      "characters": 133,
+      "words": 31,
+      "letters": 101,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8709677419354839,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 6,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگی میں محبت میں اضافہ کیا اور آج کے سوشل میڈیا پلیٹ فارم نے ٹیکنالوجی کو 1652 کروڑ کے عوام کے ساتھ کیا۔ میڈیکل سائنس نے کچھ امید افزا نتائج بھی",
+     "stats": {
+      "characters": 141,
+      "words": 30,
+      "letters": 106,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8666666666666667,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 9,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگیوں میں حقیقت تبدیل کرنے کی مدد کی تھی اور اس کے نتیجے میں لوگوں کی زندگی میں منظم تبدیلیاں کا فوری جواب دینا تھا۔ مل کر بے قابو کام لینا اور",
+     "stats": {
+      "characters": 140,
+      "words": 32,
+      "letters": 108,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.84375,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 7,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگیوں میں کامیابیاں دیکھی جن کیمین سسٹم پیگری ڈی ایل نے حاصل کیا میں 0.5 فیصد اور نیتامین ڈیگریڈ فیصد نے نظام میں موجود",
+     "stats": {
+      "characters": 116,
+      "words": 24,
+      "letters": 90,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.8333333333333334,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": null
+    },
+    {
+     "seed": 11,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگیوں کو ایک کے گھورو ں اور اسیوں سے لوگوں کی زندگی کو ڈپریشن اور تشدد کی وجہ سے متاثر کرکے ان کی زندگی کیوں فراہم کی ہے۔",
+     "stats": {
+      "characters": 118,
+      "words": 28,
+      "letters": 90,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.75,
+       "2": 0.9629629629629629,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": null
+    },
+    {
+     "seed": 13,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگیوں کو زندگی کی راہ میں چیلنجوں سے بھر دیتی سنائی دی ہے۔\nقرآن سینٹر، انفرا سٹرکچر سسٹم، طبی نظام کےجدد، انواع",
+     "stats": {
+      "characters": 108,
+      "words": 22,
+      "letters": 83,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 1.0,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 0
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 14,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگیاں مانج والوں کی خوب جان لی ہے۔\nغیر ملکی خبررساں ادارے کے مطابق جوہری سپپک یو اے ٹی ایف کی نئی ٹیکنالوجی کو اور آگے بڑھتی",
+     "stats": {
+      "characters": 121,
+      "words": 27,
+      "letters": 94,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9629629629629629,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 12,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگیوں سے خریدی خدمات کا خاتمہ کیا۔\nچینیوں نے اس وقت تک بہت سے لوگوں کی زندگیوں ( الیکٹریکل بیماری یا موت کے اور لاکھوں",
+     "stats": {
+      "characters": 115,
+      "words": 25,
+      "letters": 89,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.96,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 5,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگیوں کے رشتوںواجسیسی نظام بنانے کے لئے ایک فرد کی السجا کرنے والے کو فوری طور پر نہیں روکنا تھا۔\nموسیقی کے",
+     "stats": {
+      "characters": 104,
+      "words": 22,
+      "letters": 82,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9090909090909091,
+       "2": 1.0,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 1
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
+    },
+    {
+     "seed": 15,
+     "text": "نئی ٹیکنالوجی نے لوگوں کی زندگیوں کا جنازہ کردیا ہے۔ امریکی ماہ شماریات رپورٹ میں بھی اضافہ ہوا ہے۔ جبکہ گزشتہ روز معروف\nسوشل کی سب ویب سائٹ تبدیل ارب پت اور گزشتہ روز مشہور شخصیات",
+     "stats": {
+      "characters": 149,
+      "words": 31,
+      "letters": 117,
+      "scripts": {
+       "arabic": 1.0
+      },
+      "script_consistency": 1.0,
+      "distinct": {
+       "1": 0.9032258064516129,
+       "2": 0.9666666666666667,
+       "3": 1.0,
+       "4": 1.0
+      },
+      "repetition": 0.0,
+      "longest_repeat": 2
+     },
+     "rejected": "byte-fallback pieces — one character over several positions, unrenderable"
     }
    ],
    "ar": [

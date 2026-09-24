@@ -187,6 +187,11 @@ def build(trace: Path, evaldir: Path) -> dict:
                 "topic": rec["topic"],
                 "prefix": rec["prefix"],
                 "diff": arm_payload(rec["diff"]),
+                # Same checkpoint, same seed, same eight steps — a different commit order, which
+                # is the one quantity this page draws. Finding BU: §8.3 stopped choosing between
+                # the two schedules at 64 epochs, so the page lets the reader switch rather than
+                # animating one and calling it the default.
+                "diff_random": arm_payload(rec["diff_random"]),
                 "ar": arm_payload(rec["ar"]),
             }
         )
@@ -202,6 +207,7 @@ def build(trace: Path, evaldir: Path) -> dict:
             "gumbel": payload["meta"]["gumbel"],
             "temperature": payload["meta"]["temperature"],
             "top_p": payload["meta"]["top_p"],
+            "tracks": payload["meta"]["tracks"],
         },
         "release": {
             "diff": {

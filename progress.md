@@ -12,6 +12,44 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 
 ## State of play
 
+> ## 🌐 THE CODE IS PUBLIC AND THE DEMO IS HOSTED, 2026-09-24 (session 35)
+>
+> **<https://github.com/AwaisAdilKhokhar/ravaan>** — public, Apache-2.0, 106 commits of history
+> plus four from this session. **Session 34's two debts are paid**: the repository the model cards
+> link to now exists, and everything from sessions 34 and 35 is committed.
+>
+> **<https://awaisadilkhokhar.github.io/ravaan/>** — the interactive decoder demo, on GitHub Pages
+> via the `site/` + Actions workflow pattern `modelDNA` already uses. No sign-in, unlike the
+> artifact host, which is why this is the link to put in a post.
+>
+> ✅ **Finding BP now has an artifact that *shows* it rather than stating it.** BP measured the
+> diffusion arm sampling 17.9× faster and noted no artifact said so. `scripts/demo_trace.py`
+> records, for every position, **which forward pass committed it**; the page replays both arms on
+> one clock, one tick per forward pass, so diffusion visibly finishes at pass 8 while the AR arm
+> is on token 8 of 32. `scripts/decoder_gif.py` renders the same trace as a 1200×628 GIF.
+>
+> ✅ **The traced loop is asserted equal to the shipped one, every run.** `sample_diffusion` has no
+> hook for intermediate state, so `_trace_diffusion` re-implements its commit loop — and then
+> checks its output token-for-token against the real sampler for the same seed, failing hard on a
+> mismatch. This is Finding BQ's lesson applied before the fact rather than after it: a
+> re-implementation verified by reading is not verified.
+>
+> ⚠️ **The demo's samples are selected, and the page says so in the page.** Best of 16 seeds per
+> arm under one rule applied independently to both; all 320 draws ship in
+> [`demo_trace_pool.json`](reports/demo_trace_pool.json) with the reason each was rejected. The
+> prompts are **hand-written, not held-out** — short, because short sentences are readable, and
+> chosen by someone who knows what the model does well. That is a selection effect and it is named
+> on the page rather than absorbed.
+>
+> ✅ **CI ran for the first time in the project's life and was worth having** — see Finding BR. It
+> was red on 28 ruff findings, **two of them real bugs**, and then red again for a different
+> reason. Both workflows are green as of 2026-09-24.
+>
+> **New findings: BR (the gate that never ran), BS (§8.3's repetition rate is the wrong instrument
+> at demo length), BT (byte fallback and Nastaliq both defeat per-token rendering).**
+>
+> ⚠️ **Spend unchanged at ~$1.90 — session 35 cost $0.** Everything ran on the idle 4060.
+
 > ## 📦 IT IS PUBLISHED, 2026-09-23 (session 34)
 >
 > **Both models are public on the Hugging Face Hub, Apache-2.0, as a matched pair.**
@@ -52,11 +90,12 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 > that **every Urdu judgement in this project is an LLM's** because G5's annotators were never
 > recruited.
 >
-> ⚠️ **Two debts this session created and did not pay.** (1) Both cards link to
-> `github.com/AwaisAdilKhokhar/ravaan`, **which does not exist** — it is a 404 on a public page.
-> (2) **Nothing is committed**; every artifact of this session is untracked. See "Next session".
+> ✅ ~~**Two debts this session created and did not pay.**~~ **Both paid in session 35.** The
+> repository exists, is public, and carries every artifact of sessions 34 and 35; the cards' link
+> resolves. See the 🌐 block above.
 >
-> ⚠️ **The HF write token was pasted into a chat transcript and must be rotated.**
+> ⚠️ **The HF write token was pasted into a chat transcript and must be rotated.** **Still open
+> as of session 35** — the only debt from this session that is still outstanding.
 
 > ## 🏁 The primary endpoint has an answer, 2026-09-21
 >
@@ -631,6 +670,9 @@ must say.
 | BO | 34 | **G0's novelty verdict has a shelf life, and two of its sub-claims expired while nobody was looking.** The review was written 2026-08-03 and re-run 2026-09-23 across arXiv, ACL Anthology, OpenReview **and the Hugging Face Hub**. The Urdu claim survives — no masked diffusion LM for Urdu exists, and the only Urdu model on the Hub carrying a diffusion tag is a **text-to-speech** model. Two other things are now false: **Diffutron** (arXiv:2603.20466, a 0.3B masked diffusion LM for **Turkish**, March 2026) kills "first diffusion LM for a non-English language"; and **Ni et al., *Diffusion Language Models are Super Data Learners*** (arXiv:2511.03276, **November 2025**) makes the data-constrained crossover claim at 1–1.7B on English and Python — **it predates the G0 review by nine months and was not in it** | ⚠️ **live, and it changes the framing rather than the result.** The phenomenon is established prior art; **Ravaan's contribution is the axis nobody tested — a naturally low-resource, non-Latin-script natural language on noisy web text.** Both released cards state all three points explicitly, because the disclosure is what makes the surviving claim hold up when a reader checks it. **Carry the search date with the claim, always** — §8.1 of the review already required the hedge and this is why |
 | BP | 34 | **The diffusion arm samples 17.9× faster and no artifact in this repository said so.** 160 tokens costs the AR arm **160 sequential forward passes**; the diffusion arm fills the same canvas in **8**. Measured over 12 matched `lm/continue` prompts on the 4060: median **0.37 s against 6.59 s**. The numbers were sitting in session 32's sweep and every session since, because `sample.py` has always written `seconds` and `forwards` into its JSONL | ✅ **used on the landing page and it is the most legible finding this project has for a non-specialist.** ⚠️ **It went unnoticed because every table in this repository scores likelihood and not one scored wall-clock at inference** — the project measured the thing it set out to measure and was blind to a free result beside it. Worth a line in the report: at 8 steps the better decode setting (Finding BG) is also the 20× cheaper one, which is not how these trade-offs usually run |
 | BQ | 34 | **A vendored package verified by reading is not verified — third instance, after AX and BB.** `scripts/release.py` rewrites `from ravaan.` to `from ravaan_infer.` textually, and a textual rewrite works perfectly on the machine that built it because the real `ravaan` is importable there. `scripts/verify_release.py` runs each staged release in a **subprocess whose cwd is the release and whose `sys.path` has this repository stripped out**, then asserts parameter count, Arabic-script share and longest repeated run on real generated text. It caught **three** defects on first run: `SamplingConfig(top_k=None)` where the dataclass requires an int, `build_generator(seed, device=…)` against the real signature `(device, seed)`, and the **cp1252 console hole** on Urdu output — the same class `ravaan/console.py` closed for this repo and which a fresh subprocess re-opened | ✅ **the gate is now structural, not a habit.** `push_hf.py` refuses to upload anything absent from `release_verify.json` or failing it, and `cards.py` refuses to write a card when `elbo_diff_b64.json` is missing. **Every number that reaches a public page is gated on the artifact that produced it.** The lesson generalizes past releases: the check has to run where the stranger runs it, not where the author does |
+| BR | 35 | **A CI gate that has never run is not a gate, and this one was hiding two real bugs.** `.github/workflows/tests.yml` was written in August and first executed on 2026-09-24, because until session 35 there was no remote to run it on. It came back red on **28 ruff findings, two of which were defects rather than style**: a literal `\n` inside the AR model card's H1 in `cards.py`, which would have shipped a broken title to the Hub on the next regeneration, and the same inside a rendered `<span>` in `landing.py`. Both were introduced earlier in session 35 by a bad multi-line edit and neither is visible from reading the diff. Then it was red a **second** time, for a different cause: the suite passed locally only off a **stale editable install**. `scripts/` is not a distributed package (`packages.find` ships `ravaan*` only) and `pytest`'s `pythonpath` was never set, so `test_substitutions` could not import its subject on a clean checkout; and five modules import `torch`/`numpy` at module scope, which errors during *collection* — not skipping — in the dependency-free job | ✅ **fixed and verified the way CI verifies it**: a venv with pytest and ruff only — **915 passed with torch present, 788 passed / 5 skipped without it**, ruff clean. `pythonpath = ["."]` makes the driver imports explicit rather than lucky, and the five modules now use `test_sampling.py`'s existing `importorskip` pattern. ⚠️ **The lesson generalises**: "it passes locally" was false for the whole life of the project and nothing could have told you |
+| BS | 35 | **§8.3's repetition rate is the wrong instrument below ~30 words, and it fails silently in the direction that matters.** It is `1 - distinct-4` over whitespace words, so a 20-word continuation has 17 four-grams and the metric reads **0.000 for nearly every draw** — including draws that are unreadable. Measured while selecting demo samples: the worst diffusion draw in the pool scored repetition **0.000**, longest-repeat **1** and distinct-2 **1.000** while spraying one word (`کہیں، کہیں، کہیں`) across the canvas non-contiguously, which every n-gram order above 1 scores as clean. What separates draws at this length is **`longest_repeat`** and **distinct-1**, the type/token ratio: on a 160-draw pool the failing draws sit at **0.61** and everything kept starts at **0.74**, which is not a close call | ⚠️ **live for §8.3 generally, not just for demos.** The metric is sound at the canvas widths §8.3 was written for and misleading below them; anything scoring short generations must lead on `longest_repeat` + distinct-1. A fourth clause was also needed — three or more punctuation marks in a row — because `،،،،` attaches to whitespace tokens and makes them *look* distinct to every word-based metric. Selection rule and all 320 draws are in [`demo_trace_pool.json`](reports/demo_trace_pool.json) |
+| BT | 35 | **Token-level truth and correct Urdu typography cannot be the same view, for two independent reasons.** (1) **§7's tokenizer has byte fallback**, so a character outside the 16k vocabulary arrives as two or three `<0xNN>` pieces occupying two or three *positions* — `…` is `<0xE2><0x80><0xA6>`. A diffusion decode commits positions in confidence order, so it can commit the middle byte of a character first, and a position-by-position rendering shows **U+FFFD** until the run completes. (2) **Nastaliq joins within a word** and a letter's shape depends on its neighbours, so splitting a word across `<span>`s to reveal its tokens separately produces text no Urdu reader would accept | ✅ **resolved by showing both, and labelling which is which**: the demo's cell canvas is per-token and exact (it is what shows diffusion committing position 19 before position 4), the prose is per-word and reveals a word when its **last** token commits. Byte-fallback draws are rejected from the demo pool outright rather than special-cased — on this checkpoint they are also the draws that had stopped writing Urdu. ⚠️ **Any future visualization of this model inherits both constraints** |
 
 > ⚠️ **One number in this table was carried wrong.** The status board reported Finding AS as
 > "AR gap +4.46 nats, DIFF +0.03" from session 23 through session 24. Session 23's measurement
@@ -680,6 +722,8 @@ above; the derivations are in git at `8cecdfd`. Dates are 2026.
 | 31 | 09-22 | **A releasable checkpoint exists.** Both arms trained on **arm B** — 85.4M unique tokens, 3.7× arm A and never trained on — 16 epochs, ~$4.10 on a rented 5090. **`ar-s0_fp25.pt` at 4 epochs is the best Urdu model the project has produced: urdu bpb 0.7774**, against arm A's best 0.8311 and `core-ar-s0`'s final 3.6143. **Memorization 0.000 at every n ≥ 16, equal to the held-out control.** `scripts/overlap.py` written and the recitation behind Finding BC measured | **BD, BE, BF** |
 | 32 | 09-23 | **A demo exists, and the decode sweep it needed overturned a verdict in this file.** Five held-out prefixes continued by each arm's best checkpoint → [`demo.md`](reports/demo.md), [the page](https://claude.ai/artifact/Nq8PsaqFUkw9BPjqix4cuJ), `scripts/demo_page.py`. §4.4's A3/A4 grid run on a full-scale checkpoint for the first time (300 generations): **the diffusion arm's slot-looping was substantially a decoder default** — 8 steps, not 160. Arm A's diffusion found to be the better *generator* as well as the better bound, so the demo pairs `ship-ar-b/ar-s0_fp25.pt` with `core-diff-s1/diff-s1_f1.pt` across corpus arms, disclosed on the page. **Both verified non-reciting: 0.000 at n ≥ 16 against a 0.000 control.** And the curve re-read: **the diffusion arm was stopped while it was still descending** | **BG, BH, BI** |
 | 33 | 09-23 | **The $6 run: `ship-diff-b64` at urdu bpb 0.7646, beating the AR arm's best 0.7774 on the same corpus** — the matched-corpus release pair exists. `scripts/elbo.py` and a seeded `Trainer.evaluate`; **arm A's whole curve now carries K = 9 error bars** and Finding BA is retired as a caveat there. `vast/` gained a shared-GPU pre-flight, a budget gate, a divisor check and on-box scoring | **BJ, BK, BL, BM, BN** |
+| 34 | 09-23 | **Both models published on the Hugging Face Hub as a matched pair, Apache-2.0** — [`ravaan-diff-70m`](https://huggingface.co/AwaisAdilKhokhar/ravaan-diff-70m) at **0.7659 ± 0.0018** (K = 9) and [`ravaan-ar-70m`](https://huggingface.co/AwaisAdilKhokhar/ravaan-ar-70m) at 0.7774 exact, margin **6.4 sem**. Safetensors, a vendored torch-only `ravaan_infer/`, and cards carrying every caveat. **The AR half is released at 4 epochs deliberately** and its card says why — Finding BF made legible. Four drivers added that **refuse rather than warn**; `verify_release.py` runs the release where a stranger would run it. Memorization re-measured on the *released* checkpoints: 0.000 at every n, against a 0.000 held-out control. G0's novelty review re-run and two sub-claims found expired | **BO, BP, BQ** |
+| 35 | 09-24 | **The code is public and the demo is hosted.** [`github.com/AwaisAdilKhokhar/ravaan`](https://github.com/AwaisAdilKhokhar/ravaan) created and pushed — **session 34's two debts paid**, the cards' 404 resolved, everything from both sessions committed. The interactive decoder demo is live at [awaisadilkhokhar.github.io/ravaan](https://awaisadilkhokhar.github.io/ravaan/) on Pages, with no sign-in wall. `scripts/demo_trace.py` records **which forward pass committed each position** and asserts its traced loop against the shipped sampler every run; `decoder_demo.py` and `decoder_gif.py` render it as a page and a 1200x628 GIF — **Finding BP, finally shown rather than stated**. CI executed for the first time in the project's life and was red twice before green | **BR, BS, BT** |
 
 ### The results worth keeping in front of you
 
@@ -1003,11 +1047,19 @@ Live only. Resolved notes have been dropped; they are in git at `8cecdfd`.
   revision is only caught by the final digest check. Acceptable: revisions change rarely and the
   failure is loud.
 - **Parallelizing normalization** — single-threaded is fast enough for one pass over 1.5 GB.
-- **CI is untested — there is no GitHub remote yet.** `.github/workflows/tests.yml` runs ruff +
-  pytest on 3.11 and 3.13 (two versions because Urdu handling depends on Unicode data, which moves
-  between releases). It will run on the first push. Also: session 17 committed a 166 MB removal
-  list and a download bundle by `git add -A`; **the blob is still in history and there is no remote
-  yet**, so removing it is cheap now and will not be later.
+- ✅ ~~**CI is untested — there is no GitHub remote yet.**~~ **Resolved 2026-09-24 (session 35).**
+  It ran, it was red twice, and it was worth having: see **Finding BR** for the two real bugs it
+  caught and the stale-editable-install problem it exposed. Both workflows green; `pythonpath` and
+  `importorskip` are the fixes. ⚠️ **What replaces this debt**: the suite is only green on a clean
+  checkout *because* session 35 checked it on one — a dependency-free venv, `915 passed` with torch
+  and `788 passed / 5 skipped` without. **Any new module importing `torch` or `numpy` at module
+  scope re-breaks the dependency-free job**, and it will fail during collection, so the whole run
+  exits 2 rather than skipping. Use `pytest.importorskip` at the top, as `test_sampling.py` does.
+- ✅ ~~The 166 MB blob from session 17.~~ **Gone, and the figure was stale before the push.**
+  Session 34 rewrote history with `git-filter-repo`; session 35 measured what actually shipped
+  before pushing: **the largest blob in history is `reports/freeze/removals_8.txt` at 19.9 MB**
+  (two versions) and **the whole pack is 11.22 MiB**. Nothing approaching GitHub's limits, and
+  nothing expensive was made permanent by publishing.
 - **Retry when convenient:** OpenReview `W5Ht05jF4c`, still behind browser verification. Low stakes
   now that both arms sit inside the fitted range.
 
@@ -1015,9 +1067,48 @@ Live only. Resolved notes have been dropped; they are in git at `8cecdfd`.
 
 ## Next session
 
-**START HERE. The models are published. The remaining work is writing, committing, and three
-people.** Six runs on local disk, **nothing is rented and nothing is accruing** since 2026-09-23.
-Weeks 1–11 complete. **There is no GPU work left that anything downstream is waiting on.**
+**START HERE. The models are published, the code is public, the demo is hosted. The remaining work
+is writing and three people.** Six runs on local disk, **nothing is rented and nothing is
+accruing** since 2026-09-23. Weeks 1–11 complete. **There is no GPU work left that anything
+downstream is waiting on, and no engineering debt blocking anything.**
+
+> 🌐 **Session 35 paid session 34's debts and hosted the demo.**
+> **<https://github.com/AwaisAdilKhokhar/ravaan>** — public, both workflows green.
+> **<https://awaisadilkhokhar.github.io/ravaan/>** — the interactive decoder demo, no sign-in.
+> Findings BR, BS, BT are the new entries; the 🌐 block at the top of this file is the record.
+>
+> ⚠️ **Spend unchanged at ~$1.90 — session 35 cost $0.**
+
+⚠️ **ONE DEBT IS STILL OPEN, AND IT IS A CREDENTIAL.**
+1. **Rotate the Hugging Face write token.** It was pasted into a chat transcript on 2026-09-23 and
+   **was still not rotated as of the end of session 35**. huggingface.co/settings/tokens — revoke,
+   recreate. This is the oldest unpaid debt in the file and the only one with a security cost.
+
+**Two things are done and should not be re-litigated.** The repository exists under the exact name
+both model cards link to, and the demo is hosted somewhere that does not require a Claude account.
+**Use the Pages URL in anything public** — the artifact at
+<https://claude.ai/artifact/BRg2JkGzCZvZhu1L79AU2h> is the same page behind a sign-in wall, kept
+only as a mirror.
+
+⚠️ **Before touching `scripts/` or `tests/`, read Finding BR.** The suite passed locally for the
+project's whole life off a stale editable install and nothing could have told you. It is now
+verified the way CI verifies it, and **a new module importing `torch` or `numpy` at module scope
+re-breaks the dependency-free job by failing collection, not by skipping**.
+
+⚠️ **Before scoring any short generation, read Finding BS.** §8.3's repetition rate reads 0.000 for
+nearly every draw under ~30 words, including unreadable ones. Lead on `longest_repeat` and
+distinct-1 at that length. This applies to G3's coherence scoring as much as to demos.
+
+**The demo is regenerated, never hand-edited** — the Urdu must come out of the sample file:
+
+```bash
+python scripts/demo_trace.py                  # sample both released models, recording commit order
+python scripts/decoder_demo.py --site         # -> reports/decoder_demo.html AND site/index.html
+python scripts/decoder_gif.py --og            # -> reports/decoder_demo.gif AND site/og.png
+```
+
+Pushing anything under `site/` redeploys Pages automatically. If the workflow ever needs a manual
+kick, it has a `workflow_dispatch` trigger — the Actions tab, or the API.
 
 > 📦 **Session 34 published the pair and put the bar on the headline.**
 > [`ravaan-diff-70m`](https://huggingface.co/AwaisAdilKhokhar/ravaan-diff-70m) at
@@ -1029,20 +1120,13 @@ Weeks 1–11 complete. **There is no GPU work left that anything downstream is w
 > ⚠️ **Spend unchanged at ~$1.90 — session 34 cost $0.** Everything it did ran on the idle 4060
 > or on the Hub.
 
-⚠️ **PAY THESE FIRST. Session 34 created two debts and both are visible to the public right now.**
-1. **`github.com/AwaisAdilKhokhar/ravaan` does not exist**, and **both published model cards link
-   to it.** It is a 404 on a page anyone can read. The repo is *ready* — session 34 rewrote history
-   with `git-filter-repo` and the 166 MB blob is gone (**`.git` 54 MB → 15 MB, 106 commits intact,
-   HEAD tree hash byte-identical before and after**), so it passes GitHub's limits. Create the
-   empty repo under that exact name, `git remote add origin`, push. Backup of the pre-rewrite
-   history is at **`D:/ravaan-git-backup.git`** — keep it until the push is confirmed, then it can
-   go.
-2. **Nothing from session 34 is committed.** `scripts/{release,verify_release,cards,push_hf,landing}.py`,
-   `release_assets/`, `reports/landing.html`, `reports/release_samples.*`,
-   `reports/eval/{elbo_diff_b64,elbo_diff_b_curve,elbo_diff_s0,overlap_release,release_verify}.json`
-   and this file. **The staged release itself is at `D:/ravaan-release/` and is deliberately not in
-   the repo** — 560 MB of weights that already live on the Hub.
-3. **Rotate the Hugging Face token.** It was pasted into a chat transcript on 2026-09-23.
+✅ ~~**PAY THESE FIRST. Session 34 created two debts.**~~ **Both paid in session 35.** The repo was
+created under the exact name the cards link to and pushed (history had already been rewritten with
+`git-filter-repo` in session 34 — **106 commits intact, HEAD tree hash byte-identical**), and
+everything from both sessions is committed. **The staged release stays at `D:/ravaan-release/` and
+is deliberately not in the repo** — 560 MB of weights that already live on the Hub. The pre-rewrite
+backup at **`D:/ravaan-git-backup.git`** can now go: the push is confirmed and `origin/main` holds
+the rewritten history.
 
 ⚠️ **The tooling session 34 added, and the one thing to understand about it.** Four drivers now
 gate the release path, and **each refuses rather than warns**: `release.py` stages a repo,
@@ -1080,8 +1164,9 @@ withdrawn.** Findings BH and BI: more epochs buy ~0.055 bpb on the diffusion arm
 corpus is already on disk — 12.14B characters of native Urdu against arm B's 247M drawn.
 
 ```bash
-ls -la /d/ravaan-runs/            # core-{ar,diff}-s0, core-diff-s1, ship-{ar,diff}-b
-git status --short                # session 31 is in at c15ec70; session 32 is NOT committed
+ls -la /d/ravaan-runs/            # core-{ar,diff}-s0, core-diff-s1, ship-{ar,diff}-b, ship-diff-b64
+git status --short                # clean through session 35; origin/main is current
+git log --oneline -6              # sessions 34-35 are the top four commits
 ```
 
 > ### ⚠️ The critical path is the annotators, and it is the only thing with lead time

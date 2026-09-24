@@ -401,17 +401,11 @@ footer .frow { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: basel
             <div class="sched" role="group" aria-label="commit order">
               <button type="button" class="sched-b" data-sched="gumbel" aria-pressed="true">gumbel 2</button>
               <button type="button" class="sched-b" data-sched="random" aria-pressed="false">random</button>
-              <button type="button" class="sched-b is-proposal" data-sched="block" aria-pressed="false">block 8 &lowast;</button>
             </div>
             <span class="arm-count" id="diffCount"></span>
           </div>
         </div>
-        <p class="proposal" id="proposalNote" hidden>
-          &lowast; <b>Proposed, not released.</b> The other two orders are the shipped decoder,
-          asserted token-for-token against it on every build. This one cuts the canvas into
-          left-to-right runs of eight, so each run is written against finished text — same eight
-          passes, and it assembles far fewer words back-to-front.
-        </p>
+        <p class="proposal" id="schedNote"></p>
         <div class="canvas" id="diffCanvas" aria-hidden="true"></div>
         <p class="ur-out" id="diffOut"></p>
       </div>
@@ -512,9 +506,25 @@ python ravaan-diff/generate.py --tokens 32 --prefix <b>"<span class="ur-arg" id=
       </span></li>
       <li><span class="tag">samples</span><span>
         Each sample is the best of <b id="drawsN">16</b> seeds per arm, picked by a fixed rule —
-        fewest repeated words, then highest type/token ratio — applied identically to both arms.
+        <b>fewest words that are not words</b>, then least prompt echo, then fewest repeated
+        words, then highest type/token ratio — applied identically to every panel.
         <b>Every rejected draw ships</b> in <code>reports/demo_trace_pool.json</code> with the
-        reason it lost.
+        reason it lost, and with its own scores.
+      </span></li>
+      <li><span class="tag">not a word</span><span>
+        Two failures, counted together. A word is <b>invented</b> when it does not appear twice in
+        713M characters of the Urdu this project trained on; a word is <b>fragmented</b> when it
+        is a single letter Urdu does not write on its own, which is what a real word broken across
+        several pieces looks like. Real held-out Urdu scores <b>0.4%</b> invented on the same test
+        — a writer uses words a corpus missed — so that is the floor each panel is read against,
+        not zero.
+        <br><br>
+        Until 2026-09-25 the rule above ran <em>without</em> either term, and therefore promoted
+        the most broken draw of the sixteen: fragmented non-words have no repeats and a perfect
+        type/token ratio, so they won on both of the terms that used to lead. A third panel, a
+        left-to-right windowed decoder, was on this page for a day for the same reason — it won
+        the metric for word order by committing a word's pieces <em>simultaneously</em>, which
+        that metric scores as in order. It is gone.
       </span></li>
       <li><span class="tag">scale</span><span>
         <b>70M parameters on 85M tokens.</b> This is a controlled comparison between two
@@ -556,15 +566,24 @@ let current = 0, tick = 0, timer = null, playing = false;
    stopped choosing between them, so the reader does. */
 let schedule = "gumbel";
 
-/* Three tracks, one checkpoint, one seed, eight forward passes each. `block` is the odd one: not
-   a schedule but a window -- the canvas is cut into left-to-right runs of eight and each is
-   finished before the next starts, so a run is written against real text instead of against
-   masks. It is marked with an asterisk everywhere it appears because, unlike the other two, it
-   is NOT what `pip install` gives you. */
+/* Two tracks, one checkpoint, one seed, eight forward passes each. Both are the shipped decoder
+   and both are asserted token-for-token against it on every build.
+
+   A third, `block 8`, was here on 2026-09-24 and came down on 2026-09-25: it cut the canvas into
+   left-to-right runs of eight, which won the out-of-order metric by committing four adjacent
+   positions at once -- scored as in-order, because same-pass pieces are ties -- while 71% of its
+   draws contained a word that is not a word. The note under the switch now carries what actually
+   separates the two that remain, which is the same quantity. */
 const TRACK = {
-  gumbel: { key: "diff",        label: "gumbel 2", shipped: true  },
-  random: { key: "diff_random", label: "random",   shipped: true  },
-  block:  { key: "diff_block",  label: "block 8",  shipped: false }
+  gumbel: { key: "diff",        label: "gumbel 2", shipped: true,
+            note: "<b>The release default.</b> It commits the pieces it is most confident about "
+                + "first, which keeps words intact and makes it circle: it restates a phrase "
+                + "from its own prompt in 60% of draws." },
+  random: { key: "diff_random", label: "random",   shipped: true,
+            note: "<b>Also the shipped decoder</b> &mdash; one flag away. Scattering the commits "
+                + "buys variety and costs word integrity: it echoes the prompt in 28% of draws "
+                + "where the default manages 60%, and invents a word in 39% where the default "
+                + "manages 13%. Measured over 80 draws each, not over the samples shown." }
 };
 function sample() {
   const s = DATA.samples[current];
@@ -593,7 +612,7 @@ document.querySelectorAll(".sched-b").forEach(b => {
     document.querySelectorAll(".sched-b").forEach(o =>
       o.setAttribute("aria-pressed", String(o.dataset.sched === schedule)));
     el("schedName").textContent = TRACK[schedule].label;
-    el("proposalNote").hidden = TRACK[schedule].shipped;
+    el("schedNote").innerHTML = TRACK[schedule].note;
     select(current);
   });
 });
@@ -668,6 +687,16 @@ function paint(prev) {
   scrub.value = tick;
 }
 
+/* A word counts as invented when it is absent from the corpus this project trained on. It is the
+   only number on this page that consults anything outside the sample, and it is the one that
+   agrees with a fluent reader: every other metric here scores `طبیعتکبھی` as clean text. Printed
+   over its denominator, because a decoder that writes only short common words scores zero on it
+   and has improved nothing. */
+function invented(d) {
+  const tail = `<small>of ${d.badWords} words</small>`;
+  return d.bad === 0 ? `none ${tail}` : `${d.bad} ${tail}`;
+}
+
 function readout() {
   const s = sample();
   const ratio = (s.ar.forwards / DATA.steps).toFixed(1);
@@ -675,6 +704,8 @@ function readout() {
     ["Forward passes", `${DATA.steps} <small>vs ${s.ar.forwards}</small>`],
     ["Diffusion is", `${ratio}× <small>fewer passes</small>`],
     ["Canvas width", `${s.diff.cells.filter(c => c >= 0).length} <small>tokens, fixed up front</small>`],
+    ["Not-a-word, diffusion", invented(s.diff)],
+    ["Not-a-word, AR", invented(s.ar)],
     ["Seeds drawn", `${DATA.draws} <small>per arm, best shown</small>`],
   ];
   el("readout").innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("");
@@ -829,5 +860,8 @@ el("speed").addEventListener("change", () => { if (playing) start(); });
     `${r.unique_tokens.toLocaleString()} unique tokens · 12L/640d · 16k SentencePiece`;
 })();
 
+/* The switch note is part of the panel, not a reaction to clicking it, so it is rendered before
+   the first paint rather than only in the click handler. */
+el("schedNote").innerHTML = TRACK[schedule].note;
 select(0);
 </script>

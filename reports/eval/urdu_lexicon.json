@@ -1,0 +1,17 @@
+{
+  "source": "data/urdu-sample/sample_urdu.txt",
+  "characters": 712603580,
+  "normalizer_version": "1.0.0",
+  "word_tokens": 146425722,
+  "types_seen": 778301,
+  "types_kept": 464762,
+  "min_count": 2,
+  "seconds": 328.0,
+  "control": {
+    "source": "data/freeze/heldout_urdu.jsonl",
+    "documents": 400,
+    "words": 221036,
+    "unknown": 955,
+    "rate": 0.00432
+  }
+}

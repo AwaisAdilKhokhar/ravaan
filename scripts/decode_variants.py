@@ -64,8 +64,12 @@ pin_utf8_streams()
 
 from scripts.demo_trace import PROMPTS  # noqa: E402
 
-#: A3's optimum, held three times now (Findings AP, BG, BU). Not a factor here: this file varies
-#: the commit *rule*, and re-opening the step axis alongside it would confound the two.
+#: The wordhood lexicon. Not optional: the table's leading columns are computed from it, and every
+#: conclusion this file reached on 2026-09-25 turned on them rather than on §8.3's three.
+LEXICON = REPO / "reports/eval/urdu_lexicon.tsv.gz"
+
+#: A3's optimum, held three times now (Findings AP, BG, BU). Overridable with `--steps` since
+#: session 38, which needed the axis and reached it by reassigning this from a scratch script.
 STEPS = 8
 TOP_P = 0.95
 
@@ -312,14 +316,23 @@ def reading_view(path: Path, temperature: float, seed: int) -> str:
 
 
 def summarize(path: Path) -> str:
-    """The grid as a table, led by the two columns the existing metrics do not have.
+    """The grid as a table, led by the column that turned out to decide it.
 
-    Ordered so the trade is readable in one pass: `forwards` is what a fix costs, `out-of-order`
-    and `echo` are what it buys, and distinct-1 and `longest_repeat` are §8.3's numbers carried
-    alongside so a variant that fixes the joins by degenerating into a loop is visible rather than
-    flattering. **`ooo` on a cell with few multi-piece words says little** — `n=` is printed next
-    to it because a rate over three words is not a rate, and a rule that avoids multi-piece words
-    rather than ordering them would otherwise read as a perfect score.
+    Ordered so the trade is readable in one pass: `forwards` is what a fix costs, `bad` and `echo`
+    are what it buys, and distinct-1 and `longest_repeat` are §8.3's numbers carried alongside so a
+    variant that fixes the joins by degenerating into a loop is visible rather than flattering.
+    **`ooo` on a cell with few multi-piece words says little** — `n=` is printed next to it because
+    a rate over three words is not a rate, and a rule that avoids multi-piece words rather than
+    ordering them would otherwise read as a perfect score.
+
+    ⚠️ **`ooo` led this table when it was written and no longer does.** It is a share of
+    multi-piece words written out of left-to-right order, and it counts a tie — two pieces of one
+    word committed on the *same* pass — as in order, which is defensible and is a door. `block8`
+    went through it: windows of eight at two passes each commit four adjacent positions at once,
+    which halved `ooo` and tripled `tied`, and the Urdu got worse. So `tied` is printed beside
+    `ooo` always, and the leading column is now `bad` — the share of draws carrying a word that is
+    not a word, invented or fragmented, measured against the corpus rather than against the string.
+    Real held-out Urdu scores 0.4% on `inv` and that, not zero, is the floor.
     """
     import statistics as st
     from collections import defaultdict
@@ -328,33 +341,57 @@ def summarize(path: Path) -> str:
     cells = defaultdict(list)
     for row in rows:
         label = row["variant"] if row["variant"] == "ar" else (
+            # The scale is part of the identity: Finding CE sweeps six of them and without this
+            # they would pool into one row and average the dial away.
             f"{row['variant']}/{row['schedule']}"
+            + (f" {row['gumbel']:g}" if row.get("gumbel") is not None else "")
         )
         cells[(label, row["temperature"])].append(row)
 
     out = [
-        f"{'decoder':<18}{'temp':>5}{'fwd':>6}{'ooo':>8}{'n':>5}"
-        f"{'echo':>7}{'d1':>7}{'lrep':>6}{'script':>8}{'words':>7}"
+        f"{'decoder':<18}{'temp':>5}{'fwd':>6}{'bad':>6}{'inv':>6}{'chars':>6}"
+        f"{'ooo':>6}{'tied':>6}{'n':>5}{'echo':>6}{'d1':>7}{'lrep':>6}{'words':>7}"
     ]
     out.append("-" * len(out[0]))
     for (label, temperature) in sorted(cells, key=lambda k: (k[0] != "ar", k[0], k[1])):
         draws = cells[(label, temperature)]
         multi = sum(d["commit_order"]["multi_piece"] for d in draws)
         disordered = sum(d["commit_order"]["out_of_order"] for d in draws)
+        pairs = sum(d["commit_order"].get("pairs", 0) for d in draws)
+        tied = sum(d["commit_order"].get("tied", 0) for d in draws)
+        # `fabrication` is absent from rows written before 2026-09-25. Those cells print `-`
+        # rather than a clean sweep on a file that was never scored.
+        scored = [d for d in draws if "fabrication" in d]
+        words = sum(d["fabrication"]["words"] for d in scored)
+        invented = sum(d["fabrication"]["fabricated"] for d in scored)
+        affected = sum(
+            1 for d in scored
+            if d["fabrication"]["fabricated"] or d["fabrication"]["fragments"]
+        )
+        letters = (
+            sum(d["fabrication"]["characters"] * d["fabrication"]["words"] for d in scored) / words
+            if words
+            else 0.0
+        )
         out.append(
             f"{label:<18}{temperature:>5}"
             f"{st.mean(d['forwards'] for d in draws):>6.1f}"
-            f"{(disordered / multi if multi else 0.0):>8.0%}{multi:>5}"
-            f"{st.mean(d['echo']['echoed'] for d in draws):>7.0%}"
+            + (f"{affected / len(scored):>6.0%}" if scored else f"{'-':>6}")
+            + (f"{invented / words:>6.1%}" if words else f"{'-':>6}")
+            + (f"{letters:>6.2f}" if words else f"{'-':>6}")
+            + f"{(disordered / multi if multi else 0.0):>6.0%}"
+            + (f"{tied / pairs:>6.0%}" if pairs else f"{'-':>6}")
+            + f"{multi:>5}"
+            f"{st.mean(d['echo']['echoed'] for d in draws):>6.0%}"
             f"{st.mean(d['stats']['distinct']['1'] for d in draws):>7.3f}"
             f"{st.mean(d['stats']['longest_repeat'] for d in draws):>6.1f}"
-            f"{st.mean(d['stats']['script_consistency'] for d in draws):>8.3f}"
             f"{st.mean(d['stats']['words'] for d in draws):>7.1f}"
         )
     return "\n".join(out)
 
 
 def main() -> int:
+    global STEPS, BLOCK_STEPS
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--release", type=Path, default=Path("D:/ravaan-release"))
@@ -368,6 +405,16 @@ def main() -> int:
                     help=f"repeatable; defaults to {TEMPERATURES}")
     ap.add_argument("--variant", action="append", choices=list(VARIANTS),
                     help=f"repeatable; defaults to {VARIANTS}")
+    # Session 38 reached both of these by reassigning module globals from a scratch script, which
+    # is not a thing anyone else can re-run. They are flags now. `--gumbel` in particular is the
+    # axis nobody had swept: every sweep before it ran s = 1 and s = 2, and the interior of the
+    # family — whose endpoints are `confidence` and `random` — is free, eight passes at any scale.
+    ap.add_argument("--steps", type=int, default=STEPS,
+                    help=f"A3's denoising steps for the un-windowed variants (default {STEPS})")
+    ap.add_argument("--block-steps", type=int, default=BLOCK_STEPS,
+                    help=f"passes spent inside one block (default {BLOCK_STEPS})")
+    ap.add_argument("--gumbel", type=float, action="append",
+                    help="repeatable gumbel scale; defaults to the two in SCHEDULES")
     ap.add_argument("--probe", action="store_true",
                     help="one prompt, one seed, every cell — to time the grid before running it")
     ap.add_argument("--summarize", action="store_true",
@@ -375,6 +422,7 @@ def main() -> int:
     ap.add_argument("--read", nargs=2, metavar=("TEMPERATURE", "SEED"),
                     help="write the side-by-side reading view at one temperature and seed")
     args = ap.parse_args()
+    STEPS, BLOCK_STEPS = args.steps, args.block_steps
 
     if args.read:
         temperature, seed = float(args.read[0]), int(args.read[1])
@@ -400,7 +448,22 @@ def main() -> int:
     from ravaan_infer.loader import load
     from ravaan_infer.sampling import prompts as prompt_builders
 
-    from ravaan.evaluation.generation import GenerationStats, commit_order, prefix_echo
+    from ravaan.evaluation.generation import (
+        GenerationStats,
+        commit_order,
+        prefix_echo,
+        same_pass,
+    )
+    from ravaan.evaluation.lexicon import Lexicon
+
+    if not LEXICON.exists():
+        raise SystemExit(
+            f"{LEXICON.relative_to(REPO)} is missing — run `python scripts/lexicon.py --control`. "
+            "Every conclusion in this file's table turned on the wordhood column, so it does not "
+            "run without one."
+        )
+    lexicon = Lexicon.load(LEXICON)
+    print(f"lexicon: {len(lexicon):,} word skeletons", file=sys.stderr)
 
     device = args.device
     arms = {"diff": load(args.release / "ravaan-diff-70m", device=device),
@@ -413,8 +476,15 @@ def main() -> int:
     draws = 1 if args.probe else args.draws
     temperatures = tuple(args.temperature) if args.temperature else TEMPERATURES
     variants = tuple(args.variant) if args.variant else VARIANTS
+    # `--gumbel` replaces the gumbel half of SCHEDULES and leaves `random` in place, because
+    # `random` is the scale's limit rather than a point on it — Finding CE is the sweep of the
+    # interior, and it needs the endpoint in the same table to be read as one dial.
+    schedules = (
+        tuple(("gumbel", scale) for scale in args.gumbel) + (("random", 0.0),)
+        if args.gumbel else SCHEDULES
+    )
     print(f"{len(specs)} prompts x {draws} seeds x {len(variants)} variants x "
-          f"{len(SCHEDULES)} schedules x {len(temperatures)} temperatures", file=sys.stderr)
+          f"{len(schedules)} schedules x {len(temperatures)} temperatures", file=sys.stderr)
 
     rows, verified = [], set()
     started = time.perf_counter()
@@ -428,7 +498,7 @@ def main() -> int:
         for temperature in temperatures:
             cells = [("ar", "ar", 0.0)] + [
                 (variant, schedule, gumbel)
-                for variant in variants for schedule, gumbel in SCHEDULES
+                for variant in variants for schedule, gumbel in schedules
             ]
             for variant, schedule, gumbel in cells:
                 for offset in range(draws):
@@ -461,7 +531,9 @@ def main() -> int:
                         "text": text, "written": written,
                         "stats": GenerationStats.of(written).to_dict(),
                         "commit_order": commit_order(pieces, draw["commit_step"]),
+                        "same_pass": same_pass(pieces, draw["commit_step"]),
                         "echo": prefix_echo(spec["prefix"], written),
+                        "fabrication": lexicon.measure(written).to_dict(),
                     })
             print(f"  {spec['id']:<11} t={temperature}  {len(rows)} draws  "
                   f"{time.perf_counter() - started:.0f}s", file=sys.stderr, flush=True)

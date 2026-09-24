@@ -146,6 +146,14 @@ def arm_payload(rec: dict) -> dict:
         "text": rec["text"],
         "d1": round(rec["stats"]["distinct"]["1"], 3),
         "run": rec["stats"]["longest_repeat"],
+        # Added 2026-09-25. The page draws commit order, and the thing commit order breaks is
+        # words — so the count of words that are not words belongs beside the pass count rather
+        # than in a report. Invented plus fragmented, summed the way `_rank` sums them: a word
+        # broken into real words is as wrong to a reader as an invented one, and the lexicon
+        # alone cannot see it. `bad` is printed over `badWords`, never alone — Finding BZ.
+        "bad": rec["fabrication"]["fabricated"] + rec["fabrication"]["fragments"],
+        "badWords": rec["fabrication"]["words"],
+        "unknown": rec["fabrication"]["unknown"],
     }
 
 
@@ -192,12 +200,13 @@ def build(trace: Path, evaldir: Path) -> dict:
                 # the two schedules at 64 epochs, so the page lets the reader switch rather than
                 # animating one and calling it the default.
                 "diff_random": arm_payload(rec["diff_random"]),
-                # ⚠️ The third order is a *proposal* and the page marks it as one. Findings BX/BY:
-                # the two shipped orders assemble 47–66% of their multi-piece words back to front
-                # against the AR arm's 0%, and a left-to-right window of eight halves that at the
-                # same eight forward passes. It is on the page because the page draws commit
-                # order and that is precisely what it changes — not because it has been adopted.
-                "diff_block": arm_payload(rec["diff_block"]),
+                # ⚠️ `diff_block` was a third panel here on 2026-09-24 and came down on
+                # 2026-09-25. It went up on `commit_order`, a metric it won by committing word
+                # pieces *simultaneously* rather than in order; the lexicon then measured 71% of
+                # its draws carrying a word that is not a word, against the shipped order's 13%
+                # and the AR arm's 13%. Finding CC. `demo_trace.py` no longer traces it, so
+                # there is nothing here to render — and a stale trace would fail `ORDER`'s check
+                # rather than quietly reappear.
                 "ar": arm_payload(rec["ar"]),
             }
         )

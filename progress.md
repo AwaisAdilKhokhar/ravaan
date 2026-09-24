@@ -12,6 +12,62 @@ Spec is the PRD; this file is the state of play. **Read "Next session" at the bo
 
 ## State of play
 
+> ## 📖 THE WORDS WERE NOT WORDS, AND NOTHING HERE ASKED, 2026-09-25 (session 38)
+>
+> **The same reader read session 37's regenerated page and said the diffusion Urdu was still
+> wrong.** It was, and this time the cause was not the weights, the schedule or the commit rule.
+> It was that **no metric in this project ever asked whether a word is a word.**
+>
+> ⚠️ **§8.3 is three properties of a string and none of them is wordhood.** Script consistency
+> asks what alphabet the letters are in. Distinct-*n* and the repetition rate ask how the words
+> are distributed. `commit_order` asks what order they were written in. A fabricated word is
+> script-consistent, unrepeated, and can be written in perfect left-to-right order — `بْباغ`,
+> `ٹیُباغے`, `طبیعتکبھی`, `علاجٹیکل` were **all four on the hosted page**, clean on every
+> instrument that existed. `ravaan/evaluation/lexicon.py` is the instrument that was missing:
+> **464,762 word skeletons** from the project's own 712.6M-character Urdu sample, and a control
+> that makes the number readable — **real held-out Urdu scores 0.43%**, so the floor is 0.43% and
+> not zero.
+>
+> 🔴 **`block 8` was on the public demo for one day and it was a regression.** Session 37 put it
+> up because `commit_order` said it halved the out-of-order rate at no extra passes. It did — by
+> committing **four adjacent positions per pass**, which `commit_order` scores as *in order*
+> because same-pass pieces are ties. Measured against the lexicon: **71% of its draws carried a
+> word that is not a word**, against the shipped order's 13% and the AR arm's 13%. **It is off
+> the page.** `same_pass` now prints beside `commit_order` everywhere so the door is shut.
+> **Blocks are dominated at every width and budget measured.**
+>
+> 🔴 **And the demo's selection rule was selecting for the failure.** `_rank` led on *fewest
+> repeated words, then highest type/token ratio* — and a draw of fragmented non-words wins both
+> by construction. Of sixteen seeds it reliably promoted the draw that had stopped writing words:
+> `طبیعتکبھی`, `علاجٹیکل`, `پابھیتا پرشیش` were each their prompt's **top-ranked** draw. Selection
+> now leads on wordhood. **Draws shown carrying a non-word: 6 of 30 → 1 of 30**, on draws that
+> were already on disk — **zero GPU time.**
+>
+> ✅ **Finding BU's open question is answered, and it answers in favour of what ships.** The gumbel
+> *scale* had only ever been swept at 1 and 2. Swept 1 → 8 → `random`, at eight passes for every
+> point, **invented-word draws rise 8% → 39% while prompt echo falls 73% → 28%** — one dial,
+> trading exactly the two failures a reader reports. §8.3 sees one end, the lexicon the other, and
+> `gumbel 2` sits where the invented rate **equals the AR arm's, 0.6%/13% against 0.6%/13%.**
+> `random` fabricates at 4× the rate. **`generate.py` and both cards are unchanged and now for a
+> measured reason rather than for want of one.**
+>
+> ✅ **Finding CA is confirmed from the other side for free.** Re-scoring session 37's temperature
+> sweep with the lexicon — no new GPU time — reproduces its conclusion by an independent route:
+> bad-draw share on `gumbel 2` goes **3% → 34%** over 0.7 → 1.3. ⚠️ **There is no clean-and-varied
+> setting. It is a Pareto frontier, not an unfound optimum.**
+>
+> ⚠️ **What is NOT fixed, and cannot be fixed by a decoder.** Every panel now writes real Urdu
+> words; several still write them in an order a reader would not choose. **That is the
+> 70M-parameter limit** and the page's `scale` caveat is the honest place for it.
+>
+> **New findings: CB (the wordhood instrument and its two self-inflicted defects), CC (the block-8
+> retraction and `commit_order`'s tie loophole), CD (the selection rule that selected for the
+> failure), CE (A4 is one dial, and it settles BU).** Full write-up:
+> [`reports/wordhood.md`](reports/wordhood.md).
+>
+> ⚠️ **Spend unchanged at ~$1.90 — session 38 cost $0.** 1,440 draws and a 712M-character lexicon
+> build on the idle 4060.
+
 > ## 🔬 IT IS THE COMMIT RULE, NOT THE WEIGHTS, 2026-09-24/25 (session 37)
 >
 > **The same fluent reader said the diffusion Urdu was still worse than the AR arm's on the
@@ -787,6 +843,11 @@ must say.
 ---
 
 ## Session log
+| CB | 38 | **Nothing in §8.3 asks whether a word is a word, and that is the whole of why four sessions of metrics kept disagreeing with a reader.** Script consistency asks what alphabet the letters are in; distinct-*n* and the repetition rate ask how the words are distributed; `commit_order` asks what order they were written in. A fabricated word is script-consistent, unrepeated, and can be written in perfect order — `بْباغ`, `ٹیُباغے`, `طبیعتکبھی`, `علاجٹیکل` were **all four on the hosted page**, scoring clean on every instrument this project had. `ravaan/evaluation/lexicon.py` holds **464,762 word skeletons** seen ≥ 2× in the project's own 712.6M-character Urdu sample and reports the share of a generation's words absent from it. ⚠️ **The control is the metric**: real held-out Urdu scores **0.43%** on the same instrument, so the floor is 0.43% and not zero — a corpus never contains every word a writer uses. ⚠️ **Two self-inflicted defects, both caught in-session**: the first tokenizer split on combining marks (Python's `\w` excludes category `Mn`), so `بْباغ` arrived as the two *real* words `ب` and `باغ` and scored clean — **the tokenizer split inside the defect it was built to find**; and a lexicon cannot see a real word split into real words (`خوب رو با ل یٰاب` survived the first fix), so `fragments` counts one-letter words Urdu does not write, which are 0.68% of held-out Urdu with `و ء آ` 73% of those | ✅ **live, and it is the cheapest instrument added to this project since `GenerationStats`.** 15 tests, dependency-free, in the CI job that proves the library imports without torch. ⚠️ **It is still not a speaker** — a sentence of real words can be ungrammatical and this calls it clean. It rules out one failure and leaves the rest to G5. ⚠️ **Generalize the tokenizer lesson**: before trusting a rate, check what the instrument counts as one unit. This is the third time (with BS's denominator and BZ's denominator) that the failure lived in the counting rather than in the number |
+| CC | 38 | **`block 8` was on the public demo for one day and was a regression; the metric that put it there was gamed, and the mechanism was in `commit_order`'s docstring the whole time.** `commit_order` counts a **tie** — two pieces of one word committed on the same pass — as in order, on the sound grounds that same-pass pieces were sampled independently and that is the schedule's property rather than the ordering's. Windows of eight at two passes commit **four adjacent positions at once**, converting violations into ties: `tied` **14% → 34%**, `ooo` halves as Finding BY reported, and measured against the lexicon **71% of `block8/random` draws carry a word that is not a word** against the shipped order's 13% and the AR arm's 13%. ⚠️ **A window of eight at two passes has *denser* local independence than no window at all** — the un-windowed decoder ranks across the whole canvas and commits wherever it is confident, where the windowed one must fill its quota inside eight positions. **Blocks are dominated at every width and budget measured**: `block4` at 15.2 passes, `block8` b4 at 16 passes, both worse than plain `gumbel 2` at 8 | ✅ **withdrawn from the page, retained in the code** so the retraction is reproducible. `same_pass` is now printed beside `commit_order` everywhere, and `commit_order` itself carries `pairs`/`tied`/`tied_rate` so the two cannot be separated. ⚠️ **This is Finding BZ through the other door, one session later.** BZ caught `wordwise` scoring 0% out-of-order by *avoiding* multi-piece words; nobody checked whether `block8` was scoring 30% by *tying* them. **A metric introduced in the same session as a rule that optimizes it must print every denominator it has, not the one that occurred to its author** |
+| CD | 38 | **The demo's selection rule was selecting for the failure a reader kept reporting.** `_rank` led on `longest_repeat` ascending then distinct-1 descending — *fewest repeated words, then highest type/token ratio* — and **a draw of fragmented non-words wins both by construction**: it has no repeats and a perfect type/token ratio. Of sixteen seeds per prompt it reliably promoted the draw that had stopped writing words; `طبیعتکبھی`, `علاجٹیکل` and `پابھیتا پرشیش` were each their prompt's **top-ranked** draw. Selection now leads on `fabricated + fragments`, then prompt echo, then the three old terms in their old order — **draws shown carrying a non-word: 6 of 30 → 1 of 30**, on draws that were already on disk | ✅ **live, and it cost no GPU time** — the pool had better draws all along. ⚠️ **Ranked on, never filtered on**: a threshold set on the day a metric is introduced is a threshold set to produce the answer that motivated it, and filtering would hide the rate rather than report it. The one draw that still carries an invented word is `address`/`gumbel 2`, where 2 of 16 clear the existing filter and neither is clean — **the page shows it and the readout says so**. ⚠️ **It is a change to what a demo cherry-picks**: the rule is quoted verbatim on the page, all 480 draws ship with per-draw scores and reasons, and it is applied identically to the AR arm, which also improves under it |
+| CE | 38 | **A4 is not a choice between two schedules, it is one dial, and it trades exactly the two failures a reader reports — so Finding BU's open question is answered, in favour of what ships.** The gumbel *scale* had only ever been swept at 1 and 2; swept at 1/2/3/4/6/8, **at eight forward passes for every point**, invented-word draws rise **8% → 13% → 16% → 15% → 24% → 28% → 39%** (`random`) while prompt echo falls **73% → 60% → 55% → 46% → 43% → 38% → 28%** and distinct-1 rises 0.618 → 0.877. **§8.3 and the lexicon each see one end of it**: distinct-1 prefers high scale because scattering commits raises variety, the lexicon prefers low scale because it keeps words intact, and neither alone can choose. Together they bracket it, and the shipped `gumbel 2` sits where the invented-word rate **equals the AR arm's — 0.6%/13% against 0.6%/13%**. `random` fabricates at 4× the rate on 3× the draws. Separately, re-scoring session 37's temperature sweep with the lexicon (**no new GPU time**) reaches Finding CA's conclusion by an independent route: bad-draw share on `gumbel 2` goes **3% → 5% → 13% → 14% → 23% → 18% → 34%** over 0.7 → 1.3 | ✅ **live. `release_assets/generate.py` and both model cards are unchanged and now for a measured reason rather than for want of one** — Finding BU's "§8.3 can no longer rank the two" is retired. ⚠️ **There is no clean-and-varied setting: this is a Pareto frontier, not an unfound optimum.** The demo's temperature of 1.0 is not the clean end — 0.8 roughly thirds the rate — but at 0.8 `gumbel 2` echoes its prompt in 78% of draws, the failure the page's filter screens on. ⚠️ **One lead, filed as a lead**: `wordwise/random` above t = 1.0, where session 37 did not look, scores the shipped decoder's `bad` with a quarter of its echo at 8.1 passes — but it leaks Roman Urdu there (`theen` for `تھیں`) and **is not in `ravaan_infer`**, so no card could name it. `block 8` is the record of what happens when a decoder reaches the page because a metric liked it |
+
 
 One line per session: what it delivered, and what it raised. The findings are in the register
 above; the derivations are in git at `8cecdfd`. Dates are 2026.
@@ -1174,24 +1235,46 @@ Live only. Resolved notes have been dropped; they are in git at `8cecdfd`.
 ## Next session
 
 **START HERE. The models are published, the code is public, both demos are hosted and correct.
-The remaining work is writing and three people** — and after session 37 the question to put to a
-fluent reader is sharper again, and is now a *three*-way forced choice on one page: **`gumbel 2`,
-`random`, or `block 8` — which of these reads best.** Six runs on local disk, **nothing is rented
-and nothing is accruing** since 2026-09-23. Weeks 1–11 complete. **There is no GPU work left that
-anything downstream is waiting on, and no engineering debt blocking anything.**
+The remaining work is writing and three people** — and after session 38 the question to put to a
+fluent reader is a *two*-way forced choice again, between the two orders that actually ship:
+**`gumbel 2` or `random` — which reads best.** The third option session 37 added was withdrawn in
+session 38 for cause (Finding CC). Six runs on local disk, **nothing is rented and nothing is
+accruing** since 2026-09-23. Weeks 1–11 complete. **There is no GPU work left that anything
+downstream is waiting on, and no engineering debt blocking anything.**
+
+⚠️ **Before scoring any Urdu generation, load the lexicon.** `ravaan.evaluation.lexicon` asks the
+question §8.3 never did — is the word a word — and it is the only instrument in this project that
+has ever agreed with a fluent reader on first contact. It needs
+`reports/eval/urdu_lexicon.tsv.gz`, which is committed; rebuild it with
+`python scripts/lexicon.py --control` if the corpus or the normalizer moves. **Read the rate
+against the control, 0.43%, not against zero.** Findings CB, CD.
+
+⚠️ **The A4 question is settled and should not be re-opened on §8.3.** Finding CE: the gumbel
+scale is one dial trading invented words against prompt echo, `gumbel 2` sits where the invented
+rate equals the AR arm's, and `random` fabricates at 4× the rate. **`generate.py` and both model
+cards stay as they are.** The remaining reader question is which of the two *reads* better, not
+which is cleaner — that is measured.
 
 ⚠️ **Ask it blind.** Finding BV is filed as a lead rather than a result precisely because that
 reader knew which arm was which, and session 37 is the third time the metrics and a reader have
 disagreed. The hosted demo labels its three orders, so it is the wrong instrument for the verdict
 even though it is the right one for showing the mechanism — **hide the labels before asking.**
 
-⚠️ **The candidate is `block 8` and it is on the demo, not in the release.** It halves the
-out-of-order rate at the same eight forward passes (Findings BX, BY) and its button is amber with
-a note saying it is not what `pip install` gives you. **Three artifacts still ship `gumbel 2`** —
-`release_assets/generate.py`, both model cards, `reports/release_samples.jsonl` — and moving them
-is one edit **gated on the reader, not on more measurement.** ⚠️ And `block 8` would have to go
-into `ravaan_infer` before any of them could honestly name it, which is a released package with
-downloads against it.
+⚠️ ~~**The candidate is `block 8`**~~ — **retracted 2026-09-25, Finding CC.** It won
+`commit_order` by committing four adjacent positions per pass, which that metric scores as *in
+order* because same-pass pieces are ties; **71% of its draws carried a word that is not a word.**
+It is off the demo. `same_pass` now prints beside `commit_order` everywhere so the same trade
+cannot be made again without showing its price. **Blocks are dominated at every width and budget
+measured.** The three artifacts that ship `gumbel 2` — `release_assets/generate.py`, both model
+cards, `reports/release_samples.jsonl` — are unchanged and Finding CE is now a positive reason to
+leave them alone rather than an absence of one.
+
+⚠️ **The standing lesson from sessions 36–38, in one line: a metric introduced in the same
+session as a rule that optimizes it must print every denominator it has.** BZ caught `wordwise`
+gaming `commit_order` by avoiding multi-piece words. CC caught `block8` gaming the same metric by
+tying them, one session later, after BZ had already been written down. CD caught the demo's own
+selection rule doing it a third time. **Check what the instrument counts as one unit before
+trusting the rate** — CB's tokenizer split inside the very defect it was built to detect.
 
 ⚠️ **Do not raise the decode temperature on §8.3's numbers** (Finding CA). They improve
 monotonically to 1.3 while the share of draws leaking out of Arabic script goes 2% → 26%.
@@ -1244,10 +1327,10 @@ re-opens both axes.
 **The demo is regenerated, never hand-edited** — the Urdu must come out of the sample file:
 
 ```bash
-# s37: a third commit order, block 8. The two schedules are asserted token-for-token against
-# the shipped sampler; block 8 cannot be - ravaan_infer has no windowed mode for it to equal -
-# so the page marks it a proposal in amber. ~6 min on the 4060.
-python scripts/demo_trace.py                  # both released models, THREE commit orders
+# s38: two commit orders, both shipped, selection led by wordhood. `demo_trace.py` refuses to
+# run without the lexicon rather than falling back to the rule that chose the broken draws.
+python scripts/lexicon.py --control           # -> reports/eval/urdu_lexicon.tsv.gz (+ .json)
+python scripts/demo_trace.py                  # both released models, TWO commit orders
 python scripts/decoder_demo.py --site         # -> reports/decoder_demo.html AND site/index.html
 python scripts/decoder_gif.py --og            # -> reports/decoder_demo.gif AND site/og.png
 ```

@@ -1,4 +1,4 @@
-"""§8.3's two order-dependent metrics, added after a fluent reader outranked the existing three.
+"""§8.3's three order-dependent metrics, added after a fluent reader outranked the existing three.
 
 Deliberately **not** in `test_sampling.py`, which gates its whole module behind
 `pytest.importorskip("torch")`. Neither metric needs torch or numpy — they are string and integer
@@ -13,13 +13,18 @@ would make a *silent* wrong answer, because both metrics are read as evidence in
   conflate the thing a word-aware commit rule fixes with the thing it cannot;
 * a word whose first piece came from the **prompt** is scored on what the decoder added. Counting
   given positions would report disorder on every word a prompt ends mid-way through.
+
+⚠️ **The first of those is a door, and `block8` went through it.** A rule that commits four
+adjacent positions at once turns out-of-order violations into ties and so wins `commit_order`
+while writing worse words — which is why `same_pass` exists and why the two are asserted
+together here rather than in separate files.
 """
 
 from __future__ import annotations
 
 import pytest
 
-from ravaan.evaluation.generation import commit_order, prefix_echo
+from ravaan.evaluation.generation import commit_order, prefix_echo, same_pass
 
 #: A word boundary as SentencePiece writes it. `scripts/demo_trace.py` renders it as a leading
 #: space before the trace reaches disk, so both spellings are exercised.
@@ -34,7 +39,10 @@ def test_commit_order_reads_left_to_right_as_ordered() -> None:
 def test_commit_order_catches_a_word_written_backwards() -> None:
     # The failure the demo showed: the second piece of a word committed a pass before its first.
     stats = commit_order([f"{SP}اردو", "ادب"], [3, 1])
-    assert stats == {"words": 1, "multi_piece": 1, "out_of_order": 1, "rate": 1.0}
+    assert stats == {
+        "words": 1, "multi_piece": 1, "out_of_order": 1, "rate": 1.0,
+        "pairs": 1, "tied": 0, "tied_rate": 0.0,
+    }
 
 
 def test_commit_order_treats_the_leading_space_spelling_the_same() -> None:
@@ -44,6 +52,27 @@ def test_commit_order_treats_the_leading_space_spelling_the_same() -> None:
 def test_commit_order_counts_a_same_step_word_as_ordered() -> None:
     """Two pieces on one step are independent draws, and that is a different metric's problem."""
     assert commit_order([f"{SP}اردو", "ادب"], [2, 2])["out_of_order"] == 0
+
+
+def test_same_pass_prices_the_tie_commit_order_forgives() -> None:
+    """The loophole, measured: the draw above scores 0 out-of-order and 100% tied."""
+    pieces, steps = [f"{SP}اردو", "ادب"], [2, 2]
+    assert commit_order(pieces, steps)["out_of_order"] == 0
+    assert same_pass(pieces, steps) == {
+        "pairs": 1, "tied": 1, "rate": 1.0, "multi_piece": 1, "words": 1,
+    }
+
+
+def test_same_pass_is_zero_when_the_word_was_written_in_order() -> None:
+    assert same_pass([f"{SP}اردو", "ادب"], [1, 2])["rate"] == 0.0
+
+
+def test_same_pass_has_no_pairs_to_score_without_multi_piece_words() -> None:
+    """A decoder that only writes single-token words scores 0 on both, and on nothing."""
+    result = same_pass([f"{SP}ایک", f"{SP}دو"], [0, 1])
+    assert result["pairs"] == 0
+    assert result["rate"] == 0.0
+    assert result["multi_piece"] == 0
 
 
 def test_commit_order_skips_given_positions() -> None:

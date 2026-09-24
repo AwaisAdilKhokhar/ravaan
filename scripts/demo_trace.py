@@ -13,15 +13,21 @@ So this writes a **trace**: for every position, which step committed it and how 
 model was. `reports/demo_trace.json` is that, plus the per-position SentencePiece pieces, so a
 page can replay the decode rather than describe it.
 
-**The diffusion arm is traced three times, and all three differ only in commit order.** Same
-checkpoint, same seed, same eight forward passes. Two are §4.4's surviving unmasking schedules —
-Finding BU is the reason both are shown: at 64 epochs `random` ties `gumbel 2` on script
-consistency and leads distinct-1, so §8.3's metrics no longer choose between them and animating
-one alone would assert a default the measurements stopped supporting. The third is `block8`,
-which is not a schedule but a **window**: Finding BX measured the arm assembling 47–66% of its
-multi-piece words out of order against the AR arm's 0%, and Finding BY measured windows halving
-that at no extra passes. ⚠️ **`block8` is a proposal and the other two are the release** — the
-page must say which is which. See :data:`TRACKS`.
+**The diffusion arm is traced twice, and both differ only in commit order.** Same checkpoint,
+same seed, same eight forward passes, §4.4's two surviving unmasking schedules. Finding BU is
+the reason both are shown: at 64 epochs `random` ties `gumbel 2` on script consistency and leads
+distinct-1, so §8.3's metrics stopped choosing between them and animating one alone would assert
+a default the measurements no longer supported.
+
+⚠️ **A third track was here for one day and has been withdrawn.** `block8` — the canvas cut into
+left-to-right windows of eight, two passes each — went up on 2026-09-24 because `commit_order`
+said it halved the out-of-order rate at no extra passes (Findings BX, BY). It did, and the way
+it did it was to commit four *adjacent* positions per pass, which `commit_order` scores as
+in-order because same-pass pieces are ties. Measured against the corpus lexicon the next day:
+**71% of its draws contained a word that is not a word**, against the shipped order's 13% and
+the AR arm's 13%. It is off the page and Finding CC is the record. `BLOCK`/`BLOCK_STEPS` and
+the windowed branch of :func:`_trace_diffusion` stay, because the retraction is reproducible
+only if the thing retracted still runs.
 
 **The traced loop is asserted equal to the shipped one.** The diffusion trace is produced by a
 re-implementation of `ravaan_infer.sampling.diffusion.sample_diffusion`'s commit loop — the
@@ -49,6 +55,16 @@ for a stated reason, and :func:`_rank` picks one of what is left. The rule is th
 arms and applied independently to each; every draw is written to `reports/demo_trace_pool.json`
 with the reason it was rejected, so anyone can check what the rule discarded. Cherry-picking a
 demo is normal; doing it silently is not, which is the line `demo_page.py` already took.
+
+⚠️ **And the rule itself was the bug, 2026-09-25.** A reader read the page this file built and
+said the Urdu was still wrong. It was: `_rank` led on *fewest repeated words, then highest
+type/token ratio*, and a draw of fragmented non-words wins both by construction. Of sixteen
+seeds it was reliably promoting the one that had stopped writing words — `طبیعتکبھی`,
+`علاجٹیکل`, `پابھیتا پرشیش` were each a prompt's top-ranked draw. Selection now leads on
+`ravaan.evaluation.lexicon`, which asks whether the words are words; the old terms survive as
+the tiebreak. **This is the fourth time in five sessions that a §8.3 proxy has ranked something
+opposite to the only fluent reader who has looked** (Findings BU, BV, BX, CA), and the first time
+one of them was doing it inside the demo's own choice of what to show.
 
 **One filter clause is about rendering, not quality, and is worth naming.** §7's tokenizer has
 byte fallback, so a character outside the 16k vocabulary arrives as two or three `<0xNN>` pieces
@@ -169,6 +185,12 @@ TOP_P = 0.95
 #: windows at two passes each — because a decoder that fixed the Urdu by spending more forward
 #: passes would be fixing it by becoming the AR arm, and this page's subject is the pass count.
 #: Finding BY: the narrower `block4` costs 15.2 passes and is not better on any axis.
+#:
+#: ⚠️ **And that arithmetic is the defect.** Four windows at two passes means four *adjacent*
+#: positions commit on one pass from independent marginals — denser local independence than the
+#: un-windowed decoder, which ranks across the whole canvas and takes whatever it is confident
+#: about wherever it sits. The tie rate goes 13.9% → 34.3% and the invented-word rate 0.6% →
+#: 5.2%. No longer in :data:`TRACKS`; kept so Finding CC can be re-run.
 BLOCK = 8
 BLOCK_STEPS = 2
 
@@ -178,23 +200,16 @@ BLOCK_STEPS = 2
 #: them and showing one would assert a default the measurements do not support. The commit order
 #: is the one thing this page exists to draw, and the schedule *is* the commit order.
 #:
-#: **A third track, added 2026-09-24, and it is not a schedule.** Finding BX measured why a fluent
-#: reader keeps calling the diffusion Urdu worse: the decoder commits three or four positions per
-#: pass from independent marginals, so **47–66% of multi-piece words are assembled out of order**
-#: against the AR arm's 0%. `block8` decodes the canvas in contiguous left-to-right windows of
-#: eight instead — full diffusion inside a window, so each window is written against finished text
-#: — which halves both that rate and the prompt-echo rate at **the same eight forward passes**
-#: (Finding BY). It belongs on this page because this page draws commit order, and that is the
-#: whole of what it changes.
-#:
-#: ⚠️ **It is a proposal, not the release.** The other two tracks are asserted token-for-token
-#: against the shipped `sample_diffusion`; `block8` cannot be, because the shipped sampler does
-#: not do it. The page must say so beside the switch rather than let a visitor read three tracks
-#: as three things they can `pip install`.
+#: ⚠️ **`diff_block` was the third entry here for one day, 2026-09-24 to 2026-09-25.** It is
+#: withdrawn rather than deleted, so that the tuple reads as a decision and not as something
+#: nobody thought of. It was added because `commit_order` scored it best; it was removed because
+#: `ravaan.evaluation.lexicon` scored it worst, by a factor of five, and a fluent reader agreed
+#: with the lexicon. **Both tracks below are the shipped decoder and are asserted token-for-token
+#: against it on every build**, which the withdrawn one could not be — and that asymmetry was
+#: visible the whole time it was up. Finding CC.
 TRACKS = (
     ("diff", "gumbel", GUMBEL, 0),
     ("diff_random", "random", 0.0, 0),
-    ("diff_block", "random", 0.0, BLOCK),
 )
 
 #: Seeds drawn per prompt per arm before the filter and the selection rule run. Sixteen is enough
@@ -418,6 +433,10 @@ def _trace_ar(arm, prompt, *, seed: int, budget: int, forbid, device: str) -> di
 
 #: A draw must clear all of these to be showable. Each is a stated reason, not a judgement of the
 #: text: a reader can disagree with the thresholds and re-rank the pool, which is why it ships.
+#: The word list selection leads on, built by `scripts/lexicon.py` from the project's own Urdu
+#: sample. Not optional and not silently skippable — see `build`.
+LEXICON = REPO / "reports/eval/urdu_lexicon.tsv.gz"
+
 MIN_WORDS = 12
 MIN_SCRIPT = 0.95
 MAX_LONGEST_REPEAT = 4
@@ -453,15 +472,36 @@ def _reject(draw: dict) -> str | None:
 def _rank(draw: dict) -> tuple:
     """The selection rule, in one place so it can be quoted on the page verbatim.
 
-    **§8.3's repetition rate is the wrong lead term at this length.** It is `1 - distinct-4` over
-    whitespace words, and a 20-word continuation has 17 four-grams, so it reads 0.000 for almost
-    every draw — including ones that repeat a *phrase* twice. What separates draws here is
-    `longest_repeat`, which leads, and then distinct-1, the type/token ratio, which is the order
-    that moves at all on 20 words. Distinct-2 and the seed break the remaining ties, so the rule
-    is a total order and the same pool always yields the same choice.
+    ⚠️ **Until 2026-09-25 this rule selected for the failure a reader kept reporting.** It led on
+    `longest_repeat` ascending and then distinct-1 descending — fewest repeated words, then
+    highest type/token ratio — and a draw of fragmented non-words scores *perfectly* on both. The
+    most broken `block8` draws in the pool won their prompts on merit under it: `طبیعتکبھی`,
+    `علاجٹیکل`, `پابھیتا پرشیش` were each the top-ranked of sixteen. It is Finding BU's inversion
+    (distinct-1 preferring `random` *because* it scatters commits) operating one level down,
+    inside the choice of what to show.
+
+    So the two reader-facing failures lead now, in the order a reader notices them: **a word that
+    is not a word**, then **the prompt said back**. The old terms are kept, in their old order,
+    as the tiebreak — they do separate draws once the two real failures are equal, and keeping
+    them means a pool where nothing fabricates still chooses exactly what it used to.
+
+    The lead term is `fabricated + fragments` and not `fabricated` alone, because the first pass
+    of this fix left `خوب رو با ل یٰاب` on the page: every piece of it is in the corpus, so the
+    lexicon passed it, and a reader sees one word broken across four. **The two are summed rather
+    than ordered** — a draw with one invented word is not better or worse than a draw with one
+    shattered one, and pretending to rank them would be a threshold dressed as an order.
+
+    **Ranking, not filtering.** `_reject` does not read either quantity. A threshold set on the
+    day a metric is introduced is a threshold set to produce the answer that motivated it, and
+    filtering on fabrication would hide the rate rather than report it: a prompt on which every
+    draw invents a word should show one and say so, which is what `reports/demo_trace.json`'s
+    per-draw `fabrication` block lets the page do.
     """
     stats = draw["stats"]
+    fabrication = draw["fabrication"]
     return (
+        fabrication["fabricated"] + fabrication["fragments"],
+        draw["echo"]["rate"],
         stats["longest_repeat"],
         -stats["distinct"]["1"],
         -stats["distinct"]["2"],
@@ -475,9 +515,12 @@ def _note(name: str, record: dict, draws: dict) -> str:
     if draw is None:
         return f"{name} — all {DRAWS} rejected"
     kept = sum(1 for d in draws[name] if d["rejected"] is None)
+    bad = [d for d in draws[name]
+           if d["fabrication"]["fabricated"] or d["fabrication"]["fragments"]]
+    fab = draw["fabrication"]
     return (
-        f"{name} seed {draw['seed']} run {draw['stats']['longest_repeat']} "
-        f"({kept}/{DRAWS} kept, {draw['forwards']} passes, {draw['seconds']:.2f}s)"
+        f"{name} seed {draw['seed']} bad {fab['fabricated'] + fab['fragments']} "
+        f"({DRAWS - len(bad)}/{DRAWS} clean, {kept}/{DRAWS} kept, {draw['forwards']} passes)"
     )
 
 
@@ -487,7 +530,25 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
     from ravaan_infer.loader import load
     from ravaan_infer.sampling import prompts as prompt_builders
 
-    from ravaan.evaluation.generation import GenerationStats, commit_order, prefix_echo
+    from ravaan.evaluation.generation import (
+        GenerationStats,
+        commit_order,
+        prefix_echo,
+        same_pass,
+    )
+    from ravaan.evaluation.lexicon import Lexicon
+
+    # Refuse rather than warn — the same line the release drivers take. A demo built without the
+    # lexicon would silently fall back to the rule that chose `طبیعتکبھی` over a repetitive draw,
+    # and nothing downstream would say so.
+    if not LEXICON.exists():
+        raise SystemExit(
+            f"{LEXICON.relative_to(REPO)} is missing — run `python scripts/lexicon.py --control` "
+            "first. Selection has led on fabricated words since 2026-09-25 and cannot fall back "
+            "to the rule it replaced."
+        )
+    lexicon = Lexicon.load(LEXICON)
+    print(f"lexicon: {len(lexicon):,} word skeletons", file=sys.stderr)
 
     arms = {
         "diff": load(release / "ravaan-diff-70m", device=device),
@@ -571,6 +632,13 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
                 # threshold set to produce the answer that motivated it.
                 draw["commit_order"] = commit_order(draw["pieces"], draw["commit_step"])
                 draw["echo"] = prefix_echo(spec["prefix"], written)
+                # Added 2026-09-25. `fabrication` is the only metric here that consults anything
+                # outside the sample, and it is the one that agrees with the reader: `block8`
+                # scored 11.3% on the page this file built the day before, against the shipped
+                # order's 1.1% and real Urdu's 0.4%. `same_pass` is the denominator of
+                # `commit_order`'s claim and is recorded wherever that is. Finding CB.
+                draw["fabrication"] = lexicon.measure(written).to_dict()
+                draw["same_pass"] = same_pass(draw["pieces"], draw["commit_step"])
                 draw["rejected"] = _reject(draw)
                 draws[name].append(draw)
 
@@ -588,7 +656,9 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
                     "text": d["text"],
                     "stats": d["stats"],
                     "commit_order": d["commit_order"],
+                    "same_pass": d["same_pass"],
                     "echo": d["echo"],
+                    "fabrication": d["fabrication"],
                     "rejected": d["rejected"],
                 }
                 for d in sorted(draws[name], key=lambda d: (d["rejected"] is not None, _rank(d)))
@@ -630,8 +700,18 @@ def build(release: Path, device: str, base_seed: int) -> tuple[dict, dict]:
         "diff_release": arms["diff"].release,
         "ar_release": arms["ar"].release,
         "prompt_source": "hand-written, not held-out corpus",
-        "selection": "lowest §8.3 repetition rate of DRAWS seeds; ties by longest_repeat, "
-                     "then seed. Applied independently to each arm.",
+        # ⚠️ The string this replaced described a rule the code did not implement — it named
+        # §8.3's repetition rate as the lead term where `_rank` has always led on
+        # `longest_repeat`. Quoted on the page, so it is worth keeping literally true.
+        "selection": "of DRAWS seeds: fewest words that are not words — invented (absent from "
+                     "the corpus lexicon) plus fragmented (a one-letter word Urdu does not "
+                     "write) — then least prompt echo, then fewest repeated words, then highest "
+                     "type/token ratio, then seed. Applied independently to each track. "
+                     "Ranked on, never filtered on.",
+        "lexicon": {
+            "path": str(LEXICON.relative_to(REPO)).replace("\\", "/"),
+            "skeletons": len(lexicon),
+        },
     }
     return {"meta": meta, "samples": samples}, {"meta": meta, "pool": pool}
 

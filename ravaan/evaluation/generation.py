@@ -185,11 +185,48 @@ def commit_order(pieces: Sequence[str | None], commit_step: Sequence[int]) -> di
             words[-1].append(step)
     multi = [w for w in words if len(w) > 1]
     disordered = [w for w in multi if any(b < a for a, b in zip(w, w[1:], strict=False))]
+    pairs = [(a, b) for w in multi for a, b in zip(w, w[1:], strict=False)]
+    tied = [1 for a, b in pairs if a == b]
     return {
         "words": len(words),
         "multi_piece": len(multi),
         "out_of_order": len(disordered),
         "rate": len(disordered) / len(multi) if multi else 0.0,
+        # The escape hatch this metric leaves open, priced. See `same_pass`.
+        "pairs": len(pairs),
+        "tied": len(tied),
+        "tied_rate": len(tied) / len(pairs) if pairs else 0.0,
+    }
+
+
+def same_pass(pieces: Sequence[str | None], commit_step: Sequence[int]) -> dict:
+    """Share of adjacent in-word piece pairs committed on the **same** forward pass.
+
+    :func:`commit_order` scores a tie as in order, and says so: two pieces committed on one pass
+    were sampled independently, which is the schedule's property rather than the ordering's. That
+    reasoning is sound and it leaves a door open — **a rule that converts violations into ties
+    wins the metric without writing better words.** `block8` walked through it. Cutting a 30-token
+    canvas into left-to-right windows of eight and spending two passes on each commits four
+    adjacent positions at once, so the tie rate goes from the shipped decoder's ~6% to ~36%, the
+    out-of-order rate halves, and the Urdu gets worse: measured against the corpus lexicon,
+    `block8` fabricated words at **11.3%** where the shipped order managed **1.1%** and real Urdu
+    scores **0.4%**.
+
+    So this is not an extra number, it is the denominator of the other one's claim, and the two
+    are reported together or neither is reported. It is the same lesson as Finding BZ — where the
+    rule built to fix the defect gamed the metric built to detect it — arriving a second time in
+    the same session, through the other door.
+
+    Returns the tie rate and, because a tie between two pieces of a word is only interesting if
+    the decoder is attempting multi-piece words at all, the counts it is a share of.
+    """
+    detail = commit_order(pieces, commit_step)
+    return {
+        "pairs": detail["pairs"],
+        "tied": detail["tied"],
+        "rate": detail["tied_rate"],
+        "multi_piece": detail["multi_piece"],
+        "words": detail["words"],
     }
 
 
@@ -199,4 +236,5 @@ __all__ = [
     "commit_order",
     "longest_repeated_run",
     "prefix_echo",
+    "same_pass",
 ]
